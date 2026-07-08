@@ -1,0 +1,4280 @@
+{
+  "cpu": [
+    {
+      "id": 30086,
+      "name": "پردازنده مرکزی اینتل مدل Core2 Duo E8400",
+      "price": 998000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 36784,
+      "name": "پردازنده اینتل Core-i3 6100 بدون باکس",
+      "price": 1890000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 3846,
+      "name": "خنک کننده پردازنده اوست GT-AV80 SIGMA COOL",
+      "price": 2400000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 38840,
+      "name": "پردازنده اینتل Core i3-2120 بدون باکس",
+      "price": 2500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44407,
+      "name": "خنک کننده پردازنده تسکو GAFAN 210",
+      "price": 2600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 9811,
+      "name": "خنک کننده پردازنده اوست GT-AV90 OMEGA",
+      "price": 2600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 30088,
+      "name": "پردازنده اینتل Core i3-4150 بدون باکس",
+      "price": 2790000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 9949,
+      "name": "خنک کننده پردازنده سیلوراستون AR09-115XS",
+      "price": 2800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 12691,
+      "name": "خنک کننده پردازنده اوست GT-AV905 FRGB",
+      "price": 2800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 28653,
+      "name": "پردازنده اینتل Core i3-4130 بدون باکس",
+      "price": 2848000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 30074,
+      "name": "پردازنده اینتل Core i3-4160 بدون باکس",
+      "price": 2898000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29709,
+      "name": "پردازنده اینتل Core-i3 3220 بدون باکس",
+      "price": 2989000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 12697,
+      "name": "فن پردازنده اوست GT-AV901 FRGB",
+      "price": 3200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44410,
+      "name": "خنک کننده پردازنده تسکو GAFan 230 VAYU",
+      "price": 3500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 4482,
+      "name": "خنک کننده پردازنده گیمدیاس BOREAS E2-410 WH",
+      "price": 3600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 410
+      }
+    },
+    {
+      "id": 27688,
+      "name": "پردازنده اینتل Core i5-3470 بدون باکس",
+      "price": 3749000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44275,
+      "name": "خنک کننده پردازنده اوست GT-AV904 FRGB",
+      "price": 3800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44281,
+      "name": "خنک کننده پردازنده دارک فلش C400 ARGB",
+      "price": 3900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 30080,
+      "name": "پردازنده اینتل Core i5-3570 بدون باکس",
+      "price": 3989000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 40444,
+      "name": "خنک کننده بادی پردازنده فاطر Fater FC-F35",
+      "price": 4200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 15961,
+      "name": "خنک کننده پردازنده سیلوراستون XE02-3647N",
+      "price": 4200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 16605,
+      "name": "خنک کننده پردازنده سیلوراستون XE02-3647S",
+      "price": 4200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29720,
+      "name": "پردازنده اینتل Core i5-4590 بدون باکس",
+      "price": 4298000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44413,
+      "name": "خنک کننده پردازنده تسکو GAFan 250 VAYU Aurora Light",
+      "price": 4300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 12708,
+      "name": "خنک کننده پردازنده اوست GT-AV1201 ARGB",
+      "price": 4300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44302,
+      "name": "خنک کننده پردازنده دارک فلش M400 DIGITAL WH/BK",
+      "price": 4800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1378,
+      "name": "فن پردازنده گیمدیاس BOREAS M2-51D WH",
+      "price": 4800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 31424,
+      "name": "پردازنده اینتل Core i3-7100 بدون باکس",
+      "price": 4890000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44416,
+      "name": "خنک کننده پردازنده تسکو GAFan 240 Cold Dark Matter",
+      "price": 4900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1568,
+      "name": "خنک کننده پردازنده اوست GT-AV1236 ARGB",
+      "price": 4900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 40464,
+      "name": "خنک کننده بادی پردازنده فاطر Fater FC-MIG29B",
+      "price": 5000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 40449,
+      "name": "خنک کننده پردازنده بادی فاطر  Fater FC-MiG29W",
+      "price": 5000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 31329,
+      "name": "پردازنده اینتل Core i3-8100 بدون باکس",
+      "price": 5400000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 30056,
+      "name": "پردازنده اینتل Core 2 Quad Q9400 بدون باکس",
+      "price": 5598000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44266,
+      "name": "خنک کننده پردازنده اوست GT-AV1204 ARGB",
+      "price": 6000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 38815,
+      "name": "پردازنده  اینتل Core i5 4670K بدون باکس",
+      "price": 6800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 30922,
+      "name": "پردازنده اینتل Core i3-9100 بدون باکس",
+      "price": 6989000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 495,
+      "name": "خنک کننده پردازنده سیلوراستون SST-HYD120W ARGB",
+      "price": 7200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 120
+      }
+    },
+    {
+      "id": 36622,
+      "name": "پردازنده اینتل Core i5-6600K بدون باکس",
+      "price": 7890000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 27693,
+      "name": "پردازنده اینتل Core i3-9100F",
+      "price": 7890000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 27716,
+      "name": "پردازنده اینتل Core i7-6700 بدون باکس",
+      "price": 9490000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44317,
+      "name": "خنک کننده پردازنده دارک فلش DG240 White",
+      "price": 9500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 240
+      }
+    },
+    {
+      "id": 44323,
+      "name": "خنک کننده مایع پردازنده دارک فلش DN-240",
+      "price": 9600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 27686,
+      "name": "پردازنده اینتل Core i7-4790 بدون باکس",
+      "price": 9890000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 4824,
+      "name": "خنک کننده پردازنده فاطر FW-240N2W1",
+      "price": 10000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44332,
+      "name": "خنک کننده مایع پردازنده دارک فلش DG360",
+      "price": 10200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44326,
+      "name": "خنک کننده مایع پردازنده دارک فلش DN-240 WH",
+      "price": 10200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 240
+      }
+    },
+    {
+      "id": 31173,
+      "name": "پردازنده اینتل Core i7-6700K بدون باکس",
+      "price": 10999000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44338,
+      "name": "خنک کننده مایع پردازنده دارک فلش DN-360",
+      "price": 11300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44335,
+      "name": "خنک کننده مایع پردازنده دارک فلش DG360 WH",
+      "price": 11300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 360
+      }
+    }
+  ],
+  "gpu": [
+    {
+      "id": 3680,
+      "name": "پایه نگهدارنده کارت گرافیک اوست سفید",
+      "price": 2400000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44524,
+      "name": "کارت گرافیک ایسوس GT610-SL 2GB D3",
+      "price": 7100000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 31826,
+      "name": "کارت گرافیک افاکس جی تی 210 - حافظه 1 گیگابایت",
+      "price": 8800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 30825,
+      "name": "کارت گرافیک بایوستار جی تی 730 - حافظه 2 گیگابایت",
+      "price": 8900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 27050,
+      "name": "کارت گرافیک ایسوس GT710 SL 2G D5",
+      "price": 9900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 24409,
+      "name": "کارت گرافیک آرک تک GT740 حافظه 2 گیگابایت",
+      "price": 10400000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32379,
+      "name": "کارت گرافیک بایوستار GeForce GT730 حافظه 4 گیگابایت",
+      "price": 11800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 27032,
+      "name": "کارت گرافیک پی ان وای Nvidia Quadro P620 حافظه 2 گیگابایت",
+      "price": 12900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 27038,
+      "name": "کارت گرافیک آرک تک مدل GT1030 LP حافظه 2 گیگابایت",
+      "price": 15500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 19147,
+      "name": "کارت گرافیک آرک تک RX550 حافظه 4 گیگابایت 128بیت GDDR5",
+      "price": 18500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR5"
+      }
+    },
+    {
+      "id": 36682,
+      "name": "کارت گرافیک زوتک GeForce GT 1030 حافظه 2 گیگابایت",
+      "price": 21000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 8145,
+      "name": "کارت گرافیک ایسوس GT730-4H-SL-2GD5",
+      "price": 22000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32492,
+      "name": "کارت گرافیک ایسوس GT1030-SL-2G-BRK حافظه 2 گیگابایت",
+      "price": 27000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 8757,
+      "name": "کارت گرافیک توربو چیپ Typhoon GTX750TI 4G D5",
+      "price": 28000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 15373,
+      "name": "کارت گرافیک ام اس آی GT730 مدل N730-4GD3V2 با حافظه 4 گیگابایت DDR3",
+      "price": 28000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 8144,
+      "name": "کارت گرافیک ایسوس Phoenix PH GTX1630 4G",
+      "price": 29000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33532,
+      "name": "کارت گرافیک ام اس آی GeForce GT 1030 4GD4 LP OC",
+      "price": 29000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1952,
+      "name": "کارت گرافیک ام اس آی GeForce RTX 4080 Super Expert حافظه 16 گیگابایت",
+      "price": 33000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 31004,
+      "name": "کارت گرافیک ایسوس مدل DUAL-GTX1650-O4G حافظه 4 گیگابایت",
+      "price": 38000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1153,
+      "name": "کارت گرافیک ام اس آی GeForce RTX 3050 VENTUS 2X 6G OC",
+      "price": 39800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 351,
+      "name": "کارت گرافیک ایسوس Dual RTX 3050 OC حافظه 6 گیگابایت",
+      "price": 48500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44536,
+      "name": "کارت گرافیک زوتک GAMING GeForce RTX3050 Twin Edge OC 6GB GDDR6",
+      "price": 53000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44602,
+      "name": "کارت گرافیک ایسوس TUF Gaming GeForce RTX 3050 OC Edition 8GB GDDR6",
+      "price": 53000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44584,
+      "name": "کارت گرافیک ایسوس Dual RTX 5050 OC 8GB GDDR6",
+      "price": 69900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 19130,
+      "name": "کارت گرافیگ ایسوس Dual GeForce RTX 3050 OC Edition 8G",
+      "price": 72900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 15379,
+      "name": "کارت گرافیک ایسوس DUAL-RTX3060-12G-OC-V2 حافظه 12 گیگابایت",
+      "price": 74000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 26954,
+      "name": "کارت گرافیک ایسوس Dual GeForce RTX 3060 OC Edition 12GB GDDR6",
+      "price": 75000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44671,
+      "name": "کارت گرافیک ام اس آی GeForce RTX 5050 8G SHADOW 2X OC GDDR6",
+      "price": 75000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 2102,
+      "name": "کارت گرافیک ایسوس Dual GeForce RTX 4060 OC Edition 8GB GDDR6",
+      "price": 89000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44731,
+      "name": "کارت گرافیک گیگابایت GeForce RTX 5050 GAMING OC 8G GDDR6",
+      "price": 89000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 7349,
+      "name": "کارت گرافیک ایسوس ProArt RTX 4060 OC Edition حافظه 8 گیگابایت",
+      "price": 89000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44746,
+      "name": "کارت گرافیک گیگابایت GeForce RTX 5060 Eagle Max OC 8G",
+      "price": 89000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 43110,
+      "name": "کارت گرافیک ایسوس Dual GeForce RTX 5060 OC Edition 8GB",
+      "price": 98000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44272,
+      "name": "بسته 10 عددی کارت گرافیک آرک تک GT740 حافظه 2 گیگابایت",
+      "price": 104000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 43230,
+      "name": "کارت گرافیک سافایر PULSE RX 9060XT GAMING OC 16GB GDDR6 DUAL",
+      "price": 105000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 43395,
+      "name": "کارت گرافیک ایسوس PRIME RTX 5060 Ti OC حافظه 8 گیگابایت",
+      "price": 109000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44575,
+      "name": "کارت گرافیک سافایر PURE AMD Radeon RX9060 XT OC 16GB GDDR6",
+      "price": 114000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 43240,
+      "name": "کارت گرافیک ازراک AMD Radeon™ RX 9060 XT Steel Legend 16GB OC",
+      "price": 115000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 43405,
+      "name": "کارت گرافیک ایسوس TUF Gaming RTX 5060 OC حافظه 8 گیگابایت",
+      "price": 115000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 43385,
+      "name": "کارت گرافیک ایسوس Prime RTX 5060 OC حافظه 8 گیگابایت",
+      "price": 118000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44563,
+      "name": "کارت گرافیک سافایر NITRO+ AMD Radeon RX9060 XT OC 16GB GDDR6",
+      "price": 124000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44608,
+      "name": "کارت گرافیک ایسوس Asus Dual Radeon RX 9060 XT 16GB GDDR6",
+      "price": 128000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 5448,
+      "name": "کارت گرافیک ایسوس Dual GeForce RTX 4060 TI OC Edition ظرفیت 16 گیگابایت",
+      "price": 128000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44539,
+      "name": "کارت گرافیک زوتک GAMING GeForce RTX5060 Ti 16GB Twin Edge GDDR7",
+      "price": 135000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33307,
+      "name": "کارت گرافیک ایسوس PRIME GeForce RTX 5070 12GB GDDR7",
+      "price": 141000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1130,
+      "name": "کارت گرافیک ام اس آی GeForce RTX 4070 SUPER 12G GAMING X SLIM GDDR6X",
+      "price": 147000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33130,
+      "name": "کارت گرافیک ام اس آی GeForce RTX™ 5070 12G VENTUS 3X OC",
+      "price": 149000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 848,
+      "name": "کارت گرافیک ام اس آی GeForce RTX 4070 VENTUS SUPER 3X OC ظرفیت 12 گیگابایت",
+      "price": 149000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44617,
+      "name": "کارت گرافیک ایسوس PRIME GeForce RTX 5060 Ti 16GB GDDR7 OC Edition",
+      "price": 152000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33136,
+      "name": "کارت گرافیک ام اس آی GeForce RTX™ 5070 12G SHADOW 2X OC",
+      "price": 156000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    }
+  ],
+  "motherboard": [
+    {
+      "id": 28588,
+      "name": "مادربرد آرک تک ARKTEK H61M-EL LGA 1155",
+      "price": 6800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44524,
+      "name": "کارت گرافیک ایسوس GT610-SL 2GB D3",
+      "price": 7100000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 28586,
+      "name": "مادربرد آرک تک H81M-EL",
+      "price": 7200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44569,
+      "name": "مادربرد دل M.B DELL Z270 NEW",
+      "price": 8600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 3614,
+      "name": "مادربرد بایوستار A520MT با سوکت AM4 و حافظه DDR4",
+      "price": 8600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "socket": "AM4",
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 1178,
+      "name": "مادربرد فاطر H510M-K DDR4",
+      "price": 9700000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 27050,
+      "name": "کارت گرافیک ایسوس GT710 SL 2G D5",
+      "price": 9900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44497,
+      "name": "مادربرد ازراک H610M-HDV/M.2 Plus D5",
+      "price": 13300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1528,
+      "name": "مادربرد ایسوس PRIME H610M-K DDR5",
+      "price": 13898000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR5"
+      }
+    },
+    {
+      "id": 44055,
+      "name": "مادربرد آرک تک AK-B760M EG",
+      "price": 14000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34270,
+      "name": "مادربرد ایسوس PRIME A620M-K DDR5",
+      "price": 14298000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR5"
+      }
+    },
+    {
+      "id": 21446,
+      "name": "مادربرد ایسوس PRIME H610M-K D4",
+      "price": 14989000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44503,
+      "name": "مادربرد ازراک  H610M-X WH با سوکت LGA 1700 و حافظه DDR5",
+      "price": 15000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "socket": "LGA1700",
+        "ramType": "DDR5"
+      }
+    },
+    {
+      "id": 3500,
+      "name": "مادربرد ایسوس PRIME H610M-A D5 DDR5",
+      "price": 16498000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR5"
+      }
+    },
+    {
+      "id": 44512,
+      "name": "مادربرد ازراک B760M-H2/M.2 DDR5",
+      "price": 17500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR5"
+      }
+    },
+    {
+      "id": 37009,
+      "name": "مادربرد ایسوس PRIME B760M-K DDR5",
+      "price": 18978000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR5"
+      }
+    },
+    {
+      "id": 21451,
+      "name": "مادربرد ایسوس PRIME H610M-A D4",
+      "price": 19289000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 16867,
+      "name": "مادربرد ایسوس PRIME H610M-A WiFi D4 DDR4",
+      "price": 19899000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 44254,
+      "name": "مانیتور ایسوس VA249HG سایز 24 اینچ",
+      "price": 20000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 8145,
+      "name": "کارت گرافیک ایسوس GT730-4H-SL-2GD5",
+      "price": 22000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 43215,
+      "name": "مادربرد ازراک B760M Pro-A WiFi DDR5",
+      "price": 24000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR5"
+      }
+    },
+    {
+      "id": 7970,
+      "name": "مادربرد ایسوس Prime B760M-K D4",
+      "price": 25499000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32492,
+      "name": "کارت گرافیک ایسوس GT1030-SL-2G-BRK حافظه 2 گیگابایت",
+      "price": 27000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 8144,
+      "name": "کارت گرافیک ایسوس Phoenix PH GTX1630 4G",
+      "price": 29000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44314,
+      "name": "مانیتور 24 اینچ ایسوس VZ24EHF",
+      "price": 29000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 38527,
+      "name": "پاور کامپیوتر ایسوس ROG THOR 850P2 Platinum Full Modular",
+      "price": 29500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 2248,
+      "name": "مانیتور گیمینگ ایسوس VA24EHF سایز 24 اینچ",
+      "price": 30000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 36175,
+      "name": "مانیتور ایسوس VA27EHF سایز 27 اینچ",
+      "price": 35000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 21440,
+      "name": "مادربرد ایسوس Prime B660-PLUS D4 با سوکت 1700",
+      "price": 35500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "socket": "LGA1700"
+      }
+    },
+    {
+      "id": 44260,
+      "name": "مانیتور قابل حمل ایسوس ZenScreen MB165B سایز 15.6 اینچ",
+      "price": 37000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 31004,
+      "name": "کارت گرافیک ایسوس مدل DUAL-GTX1650-O4G حافظه 4 گیگابایت",
+      "price": 38000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 41100,
+      "name": "مانیتور ایسوس VZ27EHF سایز 27 اینچ",
+      "price": 40000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44293,
+      "name": "مانیتور 24 اینچ ایسوس VA24EQSB",
+      "price": 40000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44257,
+      "name": "مانیتور 15.6 اینچ قابل حمل ایسوس ZenScreen MB166C",
+      "price": 45000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33487,
+      "name": "مادربرد ازراک Z890 Pro RS WiFi D5",
+      "price": 46000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 351,
+      "name": "کارت گرافیک ایسوس Dual RTX 3050 OC حافظه 6 گیگابایت",
+      "price": 48500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44308,
+      "name": "مانیتور 24 اینچ ایسوس VA24EQSB-W",
+      "price": 50000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44602,
+      "name": "کارت گرافیک ایسوس TUF Gaming GeForce RTX 3050 OC Edition 8GB GDDR6",
+      "price": 53000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44470,
+      "name": "مادربرد ازراک Z890 LiveMixer WiFi DDR5",
+      "price": 53490000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR5"
+      }
+    },
+    {
+      "id": 4074,
+      "name": "مادربرد ایسوس TUF Gaming Z790-PLUS Wifi DDR5",
+      "price": 55678000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR5"
+      }
+    },
+    {
+      "id": 14233,
+      "name": "مادربرد ایسوس TUF Gaming Z790-PLUS Wifi D4",
+      "price": 56900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 4080,
+      "name": "مانیتور گیمینگ ایسوس TUF Gaming VG27AQA1A سایز 27 اینچ",
+      "price": 60000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 14347,
+      "name": "مادربرد ایسوس Prime Z790-P D4",
+      "price": 61989000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 24457,
+      "name": "مانیتور گیمینگ ایسوس VG328H1B سایز 31.5 اینچ",
+      "price": 64000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33187,
+      "name": "مادربرد ایسوس PRIME Z890-P DDR5",
+      "price": 65897000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR5"
+      }
+    },
+    {
+      "id": 33190,
+      "name": "مادربرد ایسوس PRIME Z890-P WIFI DDR5",
+      "price": 65979000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR5"
+      }
+    },
+    {
+      "id": 44287,
+      "name": "بسته 10 عددی مادربرد آرک تک H61M-EL",
+      "price": 68000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32950,
+      "name": "مادربرد ایسوس TUF GAMING B860-PLUS WIFI DDR5",
+      "price": 68790000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR5"
+      }
+    },
+    {
+      "id": 44584,
+      "name": "کارت گرافیک ایسوس Dual RTX 5050 OC 8GB GDDR6",
+      "price": 69900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 24915,
+      "name": "مانیتور ایسوس ProArt PA248QV سایز 24 اینچ",
+      "price": 70000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    }
+  ],
+  "ram": [
+    {
+      "id": 44494,
+      "name": "رم کامپیوتر کینگستون DDR2 تک کاناله 800 مگاهرتز ظرفیت 2 گیگابایت",
+      "price": 750000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 26828,
+      "name": "رم کامپیوتر کینگستون ValueRAM CL11 ظرفیت 4 گیگابایت و فرکانس 1600 مگاهرتز",
+      "price": 1800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44500,
+      "name": "رم کامپیوتر کینگستون  DDR3 1600MHz ظرفیت 8 گیگابایت",
+      "price": 3900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 3968,
+      "name": "رم کامپیوتر DDR4 ای دیتا فرکانس U-DIMM 3200 ظرفیت 8 گیگ",
+      "price": 8100000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 24314,
+      "name": "رم کامپیوتر کینگ مکس حافظه 8 گیگابایت فرکانس 3200 مگاهرتز",
+      "price": 8200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44233,
+      "name": "رم کامپیوتر ای دیتا ظرفیت 16 گیگابایت و فرکانس 3200 مگاهرتز",
+      "price": 16800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 38608,
+      "name": "رم لپ تاپ ای دیتا ظرفیت 16 گیگابایت 4800 مگاهرتز DDR5 تک کاناله",
+      "price": 28800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR5"
+      }
+    },
+    {
+      "id": 3952,
+      "name": "رم کامپیوتر ای دیتا DDR5 تک کاناله 5600 مگاهرتز CL46 ظرفیت 16 گیگابایت",
+      "price": 31000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR5"
+      }
+    },
+    {
+      "id": 44239,
+      "name": "رم کامپیوتر لکسار ظرفیت 16 گیگابایت و فرکانس 5600 مگاهرتز",
+      "price": 35000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44296,
+      "name": "بسته 10 عددی رم کامپیوتر DDR4 ای دیتا فرکانس U-DIMM 3200 ظرفیت 8 گیگ",
+      "price": 81000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 44290,
+      "name": "بسته 10 عددی رم کامپیوتر ای دیتا ظرفیت 16 گیگابایت و فرکانس 3200 مگاهرتز",
+      "price": 168000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34030,
+      "name": "گوشی موبايل سامسونگ Galaxy A25 5G ظرفیت 256 گیگابایت رم 8 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34390,
+      "name": "گوشی موبایل پوکو F5 Pro 5G ظرفیت 512 گیگابایت رم 12 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32878,
+      "name": "رم کامپیوتر کینگستون مدل HyperX Fury DDR4 2400MHz",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 32858,
+      "name": "رم کینگستون مدل HyperX FURY با فرکانس 2400 مگاهرتز و حافظه 16 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32774,
+      "name": "گوشی موبایل شیائومی مدل POCO X3 Pro M2102J20SG دو سیم‌ کارت ظرفیت 128 گیگابایت و 6 گیگابایت رم",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32770,
+      "name": "گوشی موبایل شیائومی مدل redmi 9T ظرفیت 128 گیگابایت و رم 4 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32750,
+      "name": "گوشی موبایل شیائومی مدل Redmi Note 9T 5G ظرفیت 128 گیگابایت و رم 4 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32716,
+      "name": "گوشی موبایل موتورولا مدل Moto G 5G XT2113-3 دو سیم کارت ظرفیت 128 گیگابایت و رم 6 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32709,
+      "name": "گوشی موبایل موتورولا مدل Motorola Moto G 5G Plus حافظه داخلی 128GB رم 8GB با قابلیت 5G",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32708,
+      "name": "رم دسکتاپ زپلین DDR4 دو کاناله 3000 مگاهرتز مدل سوپرا گیمر ظرفیت 32 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 33331,
+      "name": "گوشی موبایل سامسونگ Galaxy A56 دو سیم کارت ظرفیت 256 گیگابایت و رم 12 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33319,
+      "name": "گوشی موبایل سامسونگ Galaxy A36 دو سیم کارت ظرفیت 256 گیگابایت و رم 8 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33313,
+      "name": "گوشی موبایل شیائومی Redmi Note 13 Pro Plus 5G ظرفیت 512 گیگابایت رم 8 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33295,
+      "name": "گوشی موبایل شیائومی Redmi Note 14 Pro 4G دو سیم کارت ظرفیت 512 گیگابایت و رم 12 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33562,
+      "name": "گوشی موبایل سامسونگ Galaxy S25 Ultra دو سیم کارت ظرفیت 256 گیگابایت و رم 12 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33541,
+      "name": "رم لپ تاپ 8 گیگابایت کینگستون 12800s DDR3L 1600Mhz",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33544,
+      "name": "رم لپ تاپ DDR4 تک کاناله 2666 مگاهرتز CL19 کروشیال ظرفیت 8 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 33367,
+      "name": "تبلت شیائومی Pad 7 Pro Wi-Fi ظرفیت 512 گیگابایت رم 12 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32462,
+      "name": "گوشی موبایل موتورولا مدل One Fusion حافظه داخلی 128GB رم 4GB",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33700,
+      "name": "رم زپلین تک کاناله با ظرفیت 8 گیگابایت و فرکانس 3600 مگاهرتز",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 31772,
+      "name": "رم دسکتاپ DDR4 دو کاناله 3200 مگاهرتز CL16 کینگستون مدل HyperX Predator RGB ظرفیت 32 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 31761,
+      "name": "رم دسکتاپ DDR4 دو کاناله 3200 مگاهرتز CL16 جی اسکیل مدل Ripjaws V ظرفیت 16 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 31756,
+      "name": "رم دسکتاپ DDR4 دو کاناله 3000 مگاهرتز CL16 آسگارد مدل Shadow Hunter RGB ظرفیت 16 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 31749,
+      "name": "رم کامپیوتر ژل Potenza ظرفیت 16 گیگابایت و فرکانس 3200 مگاهرتز",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 31737,
+      "name": "رم دسکتاپ DDR4 تک کاناله 2400 مگاهرتز CL15 ژل مدل Pristine ظرفیت 16 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 32066,
+      "name": "رم دسکتاپ کورسیر مدل VENGEANCE RGB PRO Black فرکانس 3200 مگاهرتز حافظه 32 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 30147,
+      "name": "گوشی موبایل شیائومی مدل POCO F3 5G M2012K11AG دو سیم‌ کارت ظرفیت 128 گیگابایت و 6 گیگابایت رم",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 30142,
+      "name": "گوشی موبایل شیائومی مدل Redmi Note 10 pro M2101K6G دو سیم‌ کارت ظرفیت 128 گیگابایت و رم 6 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 30099,
+      "name": "لپ تاپ اچ پی 15 اینچی مدل OMEN 15t-EK000-6B پردازنده Core i7 رم 32GB حافظه 1TB SSD گرافیک 6GB RTX 2060",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29842,
+      "name": "گوشی موبایل سامسونگ مدل Galaxy S21 Ultra 5G دو سیم کارت ظرفیت 512 گیگابایت رم 16 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 31586,
+      "name": "رم دسکتاپ DDR4 تک کاناله 2400 مگاهرتز CL16 کرسیر مدل Vengeance LPX ظرفیت 8 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 31574,
+      "name": "رم کامپیوتر RAM ای دیتا تک کاناله مدل SPECTRIX D60G DDR4 RGB CL17 با حافظه 8 گیگابایت و فرکانس 3600 مگاهرتز",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 31563,
+      "name": "رم دسکتاپ DDR4 دو کاناله 3000 مگاهرتز کینگستون CL15 HyperX Predator ظرفیت 8 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 31550,
+      "name": "رم دسکتاپ DDR3 تک کاناله 1600 مگاهرتز زپلین مدلز ظرفیت 8 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 31540,
+      "name": "رم دسکتاپ DDR3 تک کاناله 1600 مگاهرتز کینگستون CL11 U-DIMM KVR ظرفیت 8 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 31520,
+      "name": "رم کامپیوتر کینگستون CL9 DIMM KVR ظرفیت 4 گیگابایت و فرکانس 1333مگاهرتز",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 31467,
+      "name": "رم دسکتاپ تک کاناله ای دیتا مدل GAMMIX D20 DDR4 CL18 حافظه 16 گیگابایت فرکانس 3600 مگاهرتز",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 31466,
+      "name": "رم لپ تاپ DDR4 تک کاناله 2666 مگاهرتز CL19 کروشیال ظرفیت 16 گیگابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "ramType": "DDR4"
+      }
+    },
+    {
+      "id": 31340,
+      "name": "رم دو کاناله کرسیر مدل VENGEANCE RGB PRO با حافظه 64 گیگابایت و فرکانس 3200 مگاهرتز",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    }
+  ],
+  "storage": [
+    {
+      "id": 43815,
+      "name": "اس اس دی M.2 ترنسند 830S ظرفیت 128 گیگابایت",
+      "price": 4300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 890,
+      "name": "اس اس دی اینترنال هایک سمی WAVE(S) SATA 3.0 ظرفیت 128 گیگابایت",
+      "price": 5500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 3874,
+      "name": "اس اس دی اینترنال هایک‌ ویژن E100 ظرفیت 128 گیگابایت",
+      "price": 5600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1246,
+      "name": "اس اس دی اینترنال فدک 128 گیگابایت FDK B5 SERIES",
+      "price": 6000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32372,
+      "name": "اس اس دی اینترنال لکسار NS100 با ظرفیت 128 گیگابایت",
+      "price": 7000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 896,
+      "name": "اس اس دی اینترنال هایک سمی WAVE(S) SATA 3.0 ظرفیت 256 گیگابایت",
+      "price": 7500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 10891,
+      "name": "اس اس دی اینترنال داهوا C800A ظرفیت 128 گیگابایت",
+      "price": 7500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44518,
+      "name": "اس اس دی اینترنال هایک ویژن C100 ظرفیت 240 گیگابایت",
+      "price": 7600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 21169,
+      "name": "اس اس دی اینترنال ادلینک S20 با ظرفیت 120 گیگابایت",
+      "price": 8200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 6518,
+      "name": "اس اس دی اینترنال بایوستار S160 ظرفیت 256 گیگابایت",
+      "price": 8500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 808,
+      "name": "اس اس دی اینترنال فدک FDK B5 SERIES با ظرفیت 256 گیگابایت",
+      "price": 8600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32368,
+      "name": "اس اس دی اینترنال وسترن دیجیتال سری سبز ظرفیت 240 گیگابایت",
+      "price": 8600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 6070,
+      "name": "اس اس دی اینترنال ای دیتا SU650 ظرفیت 256 گیگابایت",
+      "price": 8800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 6088,
+      "name": "اس اس دی اینترنال ای دیتا Ultimate SU650 ظرفیت 256 گیگابایت",
+      "price": 10000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 21859,
+      "name": "اس اس دی اینترنال اپیسر AS350 PANTHER ظرفیت 128 گیگابایت",
+      "price": 10500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 906,
+      "name": "اس اس دی اینترنال هایک سمی WAVE(S) SATA 3.0 ظرفیت 512 گیگابایت",
+      "price": 10500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 18626,
+      "name": "اس اس دی اینترنال اپیسر Panther AS340 ظرفیت 240 گیگابایت",
+      "price": 10600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 7406,
+      "name": "اس اس دی اینترنال ای دیتا LEGEND 710 M2 ظرفیت 256 گیگابایت",
+      "price": 10600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 31364,
+      "name": "اس اس دی اینترنال وسترن دیجیتال سبز ظرفیت 480 گیگابایت",
+      "price": 10700000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 40489,
+      "name": "اس اس دی اینترنال پی ان وای CS900 Series ظرفیت 500 گیگابایت",
+      "price": 10700000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 884,
+      "name": "اس اس دی اینترنال هایک سمی WAVE(P) NVMe M.2 ظرفیت 256 گیگابایت",
+      "price": 11000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44725,
+      "name": "اس اس دی اینترنال ژوپین M.2 ظرفیت 512 گیگابایت",
+      "price": 11000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 5290,
+      "name": "اس اس دی اینترنال سامسونگ PRO 990 با ظرفیت 4 ترابایت",
+      "price": 11600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 802,
+      "name": "اس اس دی  اینترنال  فدک FDK B5 SERIES با ظرفیت 512 گیگابایت",
+      "price": 11700000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 35470,
+      "name": "اس اس دی اینترنال پی ان وای CS900 Series ظرفیت 250 گیگابایت",
+      "price": 12000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33769,
+      "name": "اس اس دی اینترنال بایوستار M760 ظرفیت 512 گیگابایت",
+      "price": 12000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 2374,
+      "name": "اس اس دی اینترنال فدک FDK B5 SERIES M.2 ظرفیت 256 گیگابایت",
+      "price": 12500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 886,
+      "name": "اس اس دی اینترنال هایک سمی WAVE(P) NVMe M.2 ظرفیت 512 گیگابایت",
+      "price": 12600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 6082,
+      "name": "اس اس دی اینترنال ای دیتا Ultimate SU650 ظرفیت 512 گیگابایت",
+      "price": 12700000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 43855,
+      "name": "اس اس دی اینترنال توربو چیپ M.2 ظرفیت 128 گیگابایت",
+      "price": 13000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 3872,
+      "name": "اس اس دی اینترنال هایک ویژن E1000 M.2 2280 PCIe با ظرفیت 256 گیگابایت",
+      "price": 15000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32432,
+      "name": "اس اس دی اینترنال بایوستار S160 ظرفیت 512 گیگابایت",
+      "price": 15000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32211,
+      "name": "اس اس دی اینترنال ای دیتا Ultimate SU630 با ظرفیت 480 گیگابایت",
+      "price": 15200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32865,
+      "name": "اس اس دی اینترنال سامسونگ EVO 870 ظرفیت 250",
+      "price": 15700000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34903,
+      "name": "اس اس دی اینترنال وسترن دیجیتال Blue SA510 ظرفیت 500GB",
+      "price": 16300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 10722,
+      "name": "اس اس دی اینترنال داهوا C800A ظرفیت 512 گیگابایت",
+      "price": 16400000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44668,
+      "name": "اس اس دی اینترنال M.2 وسترن دیجیتال Blue SN580 500GB",
+      "price": 17000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 22640,
+      "name": "اس اس دی اینترنال وسترن دیجیتال Green ظرفیت 1 ترابایت",
+      "price": 17000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44656,
+      "name": "اس اس دی اینترنال وسترن دیجیتال Green SN3000 M.2 500GB",
+      "price": 18000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 910,
+      "name": "اس اس دی اینترنال هایک سمی WAVE(P) NVMe M.2 ظرفیت یک ترابایت",
+      "price": 18500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32805,
+      "name": "اس اس دی اینترنال ای دیتا SU800 ظرفیت 256 گیگابایت",
+      "price": 18600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29180,
+      "name": "اس اس دی اینترنال لکسار NM620 M.2 2280 NVMe با ظرفیت 1 ترابایت",
+      "price": 19000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 31647,
+      "name": "اس اس دی اینترنال وسترن دیجیتال Blue SA510 ظرفیت 1 ترابایت",
+      "price": 19000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 796,
+      "name": "اس اس دی اینترنال فدک FDK B5 SERIES با ظرفیت 1 ترابایت",
+      "price": 21000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 4336,
+      "name": "اس اس دی اینترنال کیوکسیا EXCERIA G2 M.2 NVMe ظرفیت 500 گیگابایت",
+      "price": 21000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 878,
+      "name": "اس اس دی اینترنال هایک سمی WAVE(S) SATA 3.0 ظرفیت یک ترابایت",
+      "price": 21000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 35545,
+      "name": "اس اس دی اینترنال پاتریوت P220 SATA ظرفیت 1 ترابایت",
+      "price": 21500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 35431,
+      "name": "اس اس دی اینترنال ای دیتا LEGEND 710 PCIe Gen3x4 M.2 2280 512GB",
+      "price": 21500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 31371,
+      "name": "اس اس دی اینترنال ای دیتا ایکس پی جی SPECTRIX S40G M.2 2280 ظرفیت 256 گیگابایت",
+      "price": 22000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 9757,
+      "name": "اس اس دی اینترنال ام اس آی  Spatium S270 با ظرفیت 480 گیگابایت",
+      "price": 22400000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    }
+  ],
+  "psu": [
+    {
+      "id": 43445,
+      "name": "کابل برق اورجینال پاور کامپیوتر",
+      "price": 750000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33514,
+      "name": "پاور کامپیوتر نوا 300W",
+      "price": 4000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 300
+      }
+    },
+    {
+      "id": 33523,
+      "name": "پاور کامپیوتر نوا 350W",
+      "price": 4600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 350
+      }
+    },
+    {
+      "id": 34144,
+      "name": "پاور کامپیوتر اوست GT-AV350-BW",
+      "price": 5400000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 22671,
+      "name": "منبع تغذیه کامپیوتر اوست GT AV400 BW 80 Plus White توان 400 وات",
+      "price": 6200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 400
+      }
+    },
+    {
+      "id": 22675,
+      "name": "پاور کامپیوتر اوست GT-AV500-BW",
+      "price": 7100000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 874,
+      "name": "پاور کامپیوتر گیمدیاس Aura GP650",
+      "price": 7500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 4952,
+      "name": "پاور کامپیوتر 500 وات فاطر Fater TX500 80+ GOLD",
+      "price": 8000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 500
+      }
+    },
+    {
+      "id": 5040,
+      "name": "پاور کامپیوتر فاطر VS600",
+      "price": 8000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 728,
+      "name": "پاور کامپیوتر اوست GT-AV600-BW 80 Plus White توان 600 وات",
+      "price": 8200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 600
+      }
+    },
+    {
+      "id": 44089,
+      "name": "پاور کامپیوتر گیمدیاس AURA GP750",
+      "price": 8500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 730,
+      "name": "پاور کامپیوتر اوست GT-AV700-BW",
+      "price": 9500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 40664,
+      "name": "پاور کامپیوتر فاطر FP-B650",
+      "price": 9700000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44113,
+      "name": "پاور کامپیوتر اف اس پی HYDRO PRO 700W ATX3.0 BRONZE",
+      "price": 11300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 700
+      }
+    },
+    {
+      "id": 44161,
+      "name": "پاور کامپیوتر اف اس پی HYDRO PRO 700W ATX3.1 BRONZE",
+      "price": 11900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 700
+      }
+    },
+    {
+      "id": 44092,
+      "name": "پاور کامپیوتر گیمدیاس HELIOS M2-750B",
+      "price": 12000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 43780,
+      "name": "پاور کامپیوتر اوست 750وات GT-AV750W GOLD FULL LITE B V3",
+      "price": 12900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 750
+      }
+    },
+    {
+      "id": 44098,
+      "name": "پاور کامپیوتر گیمدیاس HELIOS P2-750G",
+      "price": 13000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44104,
+      "name": "پاور کامپیوتر گیمدیاس HELIOS M2-850",
+      "price": 14000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 21308,
+      "name": "پاور کامپیوتر اوست GT-AV750-GF",
+      "price": 14300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 4944,
+      "name": "پاور کامپیوتر 850 وات فاطر Fater TX850M 80+ Gold",
+      "price": 14800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 850
+      }
+    },
+    {
+      "id": 44119,
+      "name": "پاور کامپیوتر اف اس پی Hydro PRO ATX3.0 800W",
+      "price": 15000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 800
+      }
+    },
+    {
+      "id": 44170,
+      "name": "پاور کامپیوتر اف اس پی VIC GD 750W ATX3.1",
+      "price": 16300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 750
+      }
+    },
+    {
+      "id": 44128,
+      "name": "پاور کامپیوتر اف اس پی VITA GD 750W ATX3.1",
+      "price": 17300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 750
+      }
+    },
+    {
+      "id": 44134,
+      "name": "پاور کامپیوتر اف اس پی VITA GM 750W ATX3.1",
+      "price": 18000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 750
+      }
+    },
+    {
+      "id": 34816,
+      "name": "پاور کامپیوتر اوست AV850 GFB V3",
+      "price": 18000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44137,
+      "name": "پاور کامپیوتر اف اس پی VIC GD 850W ATX3.1",
+      "price": 18000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 850
+      }
+    },
+    {
+      "id": 44143,
+      "name": "پاور کامپیوتر اف اس پی VITA GD 850W ATX3.1",
+      "price": 19000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 850
+      }
+    },
+    {
+      "id": 44179,
+      "name": "پاور کامپیوتر اف اس پی VITA GM 850W",
+      "price": 22500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 850
+      }
+    },
+    {
+      "id": 44083,
+      "name": "پاور کامپیوتر فاطر P1000 Platinium",
+      "price": 23800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44107,
+      "name": "پاور کامپیوتر گیمدیاس HELIOS P2-1000G",
+      "price": 25000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 43485,
+      "name": "پاور کامپیوتر اوست 1000 وات AV1000-PTB V3 گواهی 80 پلاس پلاتینیوم",
+      "price": 26000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 1000
+      }
+    },
+    {
+      "id": 43765,
+      "name": "پاور کامپیوتر اوست 1000 وات AV1000-PTW V3 گواهی 80 پلاس پلاتینیوم",
+      "price": 26000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 1000
+      }
+    },
+    {
+      "id": 43495,
+      "name": "پاور کامپیوتر اوست 1200 وات AV1200-PTW V3 W گواهی 80 پلاس پلاتینیوم",
+      "price": 27500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "socket": "LGA1200",
+        "wattage": 1200
+      }
+    },
+    {
+      "id": 43490,
+      "name": "پاور کامپیوتر اوست 1200 وات AV1200-PTB V3 گواهی 80 پلاس پلاتینیوم",
+      "price": 27500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "socket": "LGA1200",
+        "wattage": 1200
+      }
+    },
+    {
+      "id": 44110,
+      "name": "پاور کامپیوتر گیمدیاس HELIOS P2-1300G",
+      "price": 29000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 38527,
+      "name": "پاور کامپیوتر ایسوس ROG THOR 850P2 Platinum Full Modular",
+      "price": 29500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44191,
+      "name": "بسته 10 عددی پاور کامپیوتر نوا 300W",
+      "price": 40000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 300
+      }
+    },
+    {
+      "id": 44194,
+      "name": "بسته 10 عددی پاور کامپیوتر نوا 350W",
+      "price": 46000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 350
+      }
+    },
+    {
+      "id": 44152,
+      "name": "پاور کامپیوتر اف اس پی 1350 وات HYDRO PTM PRO Platinum",
+      "price": 49500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 1350
+      }
+    },
+    {
+      "id": 44212,
+      "name": "بسته 10 عددی پاور کامپیوتر اوست GT-AV350-BW",
+      "price": 54000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44158,
+      "name": "پاور کامپیوتر اف اس پی Hydro PTM PRO ATX3.1 1650W",
+      "price": 60400000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 1650
+      }
+    },
+    {
+      "id": 44215,
+      "name": "بسته 10 عددی پاور کامپیوتر اوست GT AV400 BW 80 Plus Silver توان 400 وات",
+      "price": 62000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 400
+      }
+    },
+    {
+      "id": 44218,
+      "name": "بسته 10 عددی پاور کامپیوتر اوست GT-AV500-BW",
+      "price": 71000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44197,
+      "name": "بسته 10 عددی پاور کامپیوتر گیمدیاس Aura GP650",
+      "price": 75000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44221,
+      "name": "بسته 10 عددی پاور کامپیوتر اوست GT-AV600-BW 80 Plus White توان 600 وات",
+      "price": 82000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 600
+      }
+    },
+    {
+      "id": 44209,
+      "name": "بسته 10 عددی پاور کامپیوتر 500 وات فاطر Fater TX500 80+ GOLD",
+      "price": 82000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 500
+      }
+    },
+    {
+      "id": 44206,
+      "name": "بسته 10 عددی پاور کامپیوتر گیمدیاس AURA GP750",
+      "price": 85000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44305,
+      "name": "بسته 10 عددی پاور کامپیوتر ایسوس ROG THOR 850P2 Platinum Full Modular",
+      "price": 295000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32983,
+      "name": "هارددیسک اکسترنال سیلیکون پاور Armor A65 ظرفیت 1 ترابایت",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    }
+  ],
+  "case": [
+    {
+      "id": 43375,
+      "name": "فن کیس کولرمستر MASTERFAN MF120 HALO",
+      "price": 950000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33598,
+      "name": "فن کیس مجیک MF120 ARGB",
+      "price": 1100000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33115,
+      "name": "فن کیس اوست AVI-120RB ARGB مشکی",
+      "price": 1500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33112,
+      "name": "فن کیس اوست AVI-120RW ARGB سفید",
+      "price": 1500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1108,
+      "name": "کیس کامپیوتر سابیت C-10",
+      "price": 3500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1351,
+      "name": "کیس کامپیوتر سابیت c-15",
+      "price": 3500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44251,
+      "name": "کیس کامپیوتر تسکو TC 4483",
+      "price": 3800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 5180,
+      "name": "کیس کامپیوتر فاطر F-3206",
+      "price": 3900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34153,
+      "name": "کیس کامپیوتر فاطر F-3205",
+      "price": 3900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 5184,
+      "name": "کیس کامپیوتر فاطر F-3204",
+      "price": 3900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 15961,
+      "name": "خنک کننده پردازنده سیلوراستون XE02-3647N",
+      "price": 4200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 16605,
+      "name": "خنک کننده پردازنده سیلوراستون XE02-3647S",
+      "price": 4200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 2026,
+      "name": "فن کیس ام اس آی MPG F120 ARGB-3B",
+      "price": 4500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 2078,
+      "name": "فن کیس ام اس آی MPG F120 ARGB-3W",
+      "price": 4500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34348,
+      "name": "کیس کامپیوتر فاطر F-3301",
+      "price": 4800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44000,
+      "name": "کیس کامپیوتر لاجی کی LK-C151BW",
+      "price": 5300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44242,
+      "name": "کیس گیمینگ تسکو TSCO GC 4501 Black",
+      "price": 6100000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44245,
+      "name": "کیس گیمینگ تسکو TSCO GC 4503 Black",
+      "price": 6200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 5144,
+      "name": "کیس گیمینگ Mid Tower فاطر FG-523W",
+      "price": 6600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 523
+      }
+    },
+    {
+      "id": 5170,
+      "name": "کیس کامپیوتر فاطر FG-523B",
+      "price": 6800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1716,
+      "name": "کیس گیمینگ فاطر FG-520B",
+      "price": 7000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 43085,
+      "name": "کیس کامپیوتر فاطر FG-527 WH ARGB",
+      "price": 7000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 527
+      }
+    },
+    {
+      "id": 34267,
+      "name": "کیس کامپیوتر فاطر FG-530B",
+      "price": 7200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1686,
+      "name": "کیس گیمینگ فاطر FG-530W",
+      "price": 7400000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 530
+      }
+    },
+    {
+      "id": 34183,
+      "name": "کیس کامپیوتر گیمینگ فاطر FG-740G",
+      "price": 8000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 35527,
+      "name": "کیس اوست GT-AV201-MB",
+      "price": 8100000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 41885,
+      "name": "کیس گیمینگ اوست GT-AV201-MB Plus",
+      "price": 8500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34177,
+      "name": "کیس کامپیوتر گیمینگ فاطر FG-718",
+      "price": 8500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 41535,
+      "name": "کیس کامپیوتر فاطر FG-720 B",
+      "price": 8500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 6795,
+      "name": "کیس کامپیوتر فاطر FG-730B",
+      "price": 8500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34195,
+      "name": "کیس کامپیوتر گیمینگ فاطر FG-740M",
+      "price": 8500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 5156,
+      "name": "کیس گیمینگ فاطر FG-720W",
+      "price": 8600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 720
+      }
+    },
+    {
+      "id": 44086,
+      "name": "کیس گیمینگ اوست AQ15-B",
+      "price": 8800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44248,
+      "name": "کیس کامپیوتر تسکو GC 4491",
+      "price": 9300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44095,
+      "name": "کیس کامپیوتر دارک فلش DS900 Mesh BK",
+      "price": 9500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44080,
+      "name": "کیس گیمینگ اوست AQ-15 TG-B",
+      "price": 10000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 41420,
+      "name": "کیس کامپیوتر دارک فلش DK431 Mesh BK",
+      "price": 10000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 41425,
+      "name": "کیس کامپیوتر دارک فلش DK431 Glass BK",
+      "price": 10000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44200,
+      "name": "کیس گیمینگ تسکو TSCO GC 4510 B",
+      "price": 10000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44203,
+      "name": "کیس گیمینگ تسکو TSCO GC 4510 W",
+      "price": 10000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 4510
+      }
+    },
+    {
+      "id": 44185,
+      "name": "کیس گیمینگ تسکو TSCO GC 4511 B",
+      "price": 10200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 3672,
+      "name": "کیس گیمینگ کامپیوتر اوست GT-AV302-MW",
+      "price": 10200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44227,
+      "name": "کیس کامپیوتر تسکو TSCO GC4508 B",
+      "price": 10200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44188,
+      "name": "کیس گیمینگ تسکو TSCO GC 4511 W",
+      "price": 10200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 4511
+      }
+    },
+    {
+      "id": 44230,
+      "name": "کیس کامپیوتر تسکو TSCO GC4508 W",
+      "price": 10200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 4508
+      }
+    },
+    {
+      "id": 44236,
+      "name": "کیس گیمینگ تسکو TSCO GC 4492",
+      "price": 10400000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44101,
+      "name": "کیس کامپیوتر دارک فلش DK431 Mesh WH",
+      "price": 10600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 5160,
+      "name": "کیس کامپیوتر فاطر FG-790B",
+      "price": 10700000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 626,
+      "name": "کیس کامپیوتر فاطر FG-790W",
+      "price": 10800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 790
+      }
+    },
+    {
+      "id": 44068,
+      "name": "کیس کامپیوتر گیمدیاس AURA GC105",
+      "price": 11000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    }
+  ],
+  "cooler": [
+    {
+      "id": 44485,
+      "name": "پایه خنک کننده لپ تاپ تسکو TCLP 3101",
+      "price": 1800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 3846,
+      "name": "خنک کننده پردازنده اوست GT-AV80 SIGMA COOL",
+      "price": 2400000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44407,
+      "name": "خنک کننده پردازنده تسکو GAFAN 210",
+      "price": 2600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 9811,
+      "name": "خنک کننده پردازنده اوست GT-AV90 OMEGA",
+      "price": 2600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 9949,
+      "name": "خنک کننده پردازنده سیلوراستون AR09-115XS",
+      "price": 2800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 12691,
+      "name": "خنک کننده پردازنده اوست GT-AV905 FRGB",
+      "price": 2800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44410,
+      "name": "خنک کننده پردازنده تسکو GAFan 230 VAYU",
+      "price": 3500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 4482,
+      "name": "خنک کننده پردازنده گیمدیاس BOREAS E2-410 WH",
+      "price": 3600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 410,
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44482,
+      "name": "پایه خنک کننده لپ تاپ تسکو GCLP 3143",
+      "price": 3700000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44275,
+      "name": "خنک کننده پردازنده اوست GT-AV904 FRGB",
+      "price": 3800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44281,
+      "name": "خنک کننده پردازنده دارک فلش C400 ARGB",
+      "price": 3900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 40444,
+      "name": "خنک کننده بادی پردازنده فاطر Fater FC-F35",
+      "price": 4200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 15961,
+      "name": "خنک کننده پردازنده سیلوراستون XE02-3647N",
+      "price": 4200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 16605,
+      "name": "خنک کننده پردازنده سیلوراستون XE02-3647S",
+      "price": 4200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44413,
+      "name": "خنک کننده پردازنده تسکو GAFan 250 VAYU Aurora Light",
+      "price": 4300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 12708,
+      "name": "خنک کننده پردازنده اوست GT-AV1201 ARGB",
+      "price": 4300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44302,
+      "name": "خنک کننده پردازنده دارک فلش M400 DIGITAL WH/BK",
+      "price": 4800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44416,
+      "name": "خنک کننده پردازنده تسکو GAFan 240 Cold Dark Matter",
+      "price": 4900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 1568,
+      "name": "خنک کننده پردازنده اوست GT-AV1236 ARGB",
+      "price": 4900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 40464,
+      "name": "خنک کننده بادی پردازنده فاطر Fater FC-MIG29B",
+      "price": 5000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 40449,
+      "name": "خنک کننده پردازنده بادی فاطر  Fater FC-MiG29W",
+      "price": 5000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44266,
+      "name": "خنک کننده پردازنده اوست GT-AV1204 ARGB",
+      "price": 6000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44479,
+      "name": "پایه خنک کننده لپ تاپ تسکو GCLP 3160",
+      "price": 6900000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 495,
+      "name": "خنک کننده پردازنده سیلوراستون SST-HYD120W ARGB",
+      "price": 7200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 120,
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44317,
+      "name": "خنک کننده پردازنده دارک فلش DG240 White",
+      "price": 9500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 240,
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44323,
+      "name": "خنک کننده مایع پردازنده دارک فلش DN-240",
+      "price": 9600000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Liquid AIO 240mm"
+      }
+    },
+    {
+      "id": 4824,
+      "name": "خنک کننده پردازنده فاطر FW-240N2W1",
+      "price": 10000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44329,
+      "name": "خنک کننده مایع اوست GT-AV240E POLARIS W",
+      "price": 10200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Liquid AIO 240mm"
+      }
+    },
+    {
+      "id": 44320,
+      "name": "خنک کننده مایع اوست GT-AV240E POLARIS B",
+      "price": 10200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Liquid AIO 240mm"
+      }
+    },
+    {
+      "id": 44332,
+      "name": "خنک کننده مایع پردازنده دارک فلش DG360",
+      "price": 10200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Liquid AIO 360mm"
+      }
+    },
+    {
+      "id": 44326,
+      "name": "خنک کننده مایع پردازنده دارک فلش DN-240 WH",
+      "price": 10200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 240,
+        "coolerType": "Liquid AIO 240mm"
+      }
+    },
+    {
+      "id": 44338,
+      "name": "خنک کننده مایع پردازنده دارک فلش DN-360",
+      "price": 11300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Liquid AIO 360mm"
+      }
+    },
+    {
+      "id": 44335,
+      "name": "خنک کننده مایع پردازنده دارک فلش DG360 WH",
+      "price": 11300000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 360,
+        "coolerType": "Liquid AIO 360mm"
+      }
+    },
+    {
+      "id": 44389,
+      "name": "خنک کننده مایع گیمدیاس AURA GL240 LCD WH",
+      "price": 11500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Liquid AIO 240mm"
+      }
+    },
+    {
+      "id": 4820,
+      "name": "خنک کننده پردازنده فاطر FW-240R2W1",
+      "price": 11500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44344,
+      "name": "خنک کننده مایع پردازنده دارک فلش DN-360 WH",
+      "price": 12200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 360,
+        "coolerType": "Liquid AIO 360mm"
+      }
+    },
+    {
+      "id": 44341,
+      "name": "خنک کننده مایع اوست GT-AV360E POLARIS B",
+      "price": 14200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Liquid AIO 360mm"
+      }
+    },
+    {
+      "id": 44347,
+      "name": "خنک کننده مایع اوست GT-AV360E POLARIS W",
+      "price": 14200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Liquid AIO 360mm"
+      }
+    },
+    {
+      "id": 1502,
+      "name": "خنک کننده پردازنده گیگابایت AORUS WATERFORCE X II 240",
+      "price": 17500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44353,
+      "name": "خنک کننده مایع اوست GT-AV360T FROZEN W",
+      "price": 20000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Liquid AIO 360mm"
+      }
+    },
+    {
+      "id": 44350,
+      "name": "خنک کننده مایع اوست GT-AV360T FROZEN B",
+      "price": 20000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Liquid AIO 360mm"
+      }
+    },
+    {
+      "id": 44182,
+      "name": "بسته 10 عددی خنک کننده پردازنده اوست GT-AV80 SIGMA COOL",
+      "price": 24000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44173,
+      "name": "بسته 10 عددی خنک کننده پردازنده اوست GT-AV90 OMEGA",
+      "price": 26000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44149,
+      "name": "بسته 10 عددی خنک کننده پردازنده بادی فاطر  Fater FC-MiG29W",
+      "price": 34000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44299,
+      "name": "بسته 10 عددی خنک کننده پردازنده اوست GT-AV904 FRGB",
+      "price": 38000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 44422,
+      "name": "خنک کننده مایع اوست GT-AV360L ICE VEIN",
+      "price": 39000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Liquid AIO 360mm"
+      }
+    },
+    {
+      "id": 44167,
+      "name": "پک ده عددی خنک کننده پردازنده اوست GT-AV1236 ARGB",
+      "price": 49000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 34120,
+      "name": "فن کیس کولر مستر MASTERFAN MF120 S2",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 23023,
+      "name": "کیس کامپیوتر کولر مستر مدل اوست GT-AV08-BG",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    },
+    {
+      "id": 22645,
+      "name": "کیس گیمینگ کولر مستر MASTERBOX MB540 ARGB",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "coolerType": "Air Cooler"
+      }
+    }
+  ],
+  "case_fan": [
+    {
+      "id": 43375,
+      "name": "فن کیس کولرمستر MASTERFAN MF120 HALO",
+      "price": 950000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33598,
+      "name": "فن کیس مجیک MF120 ARGB",
+      "price": 1100000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33115,
+      "name": "فن کیس اوست AVI-120RB ARGB مشکی",
+      "price": 1500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33112,
+      "name": "فن کیس اوست AVI-120RW ARGB سفید",
+      "price": 1500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 15961,
+      "name": "خنک کننده پردازنده سیلوراستون XE02-3647N",
+      "price": 4200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 16605,
+      "name": "خنک کننده پردازنده سیلوراستون XE02-3647S",
+      "price": 4200000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 2026,
+      "name": "فن کیس ام اس آی MPG F120 ARGB-3B",
+      "price": 4500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 2078,
+      "name": "فن کیس ام اس آی MPG F120 ARGB-3W",
+      "price": 4500000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34120,
+      "name": "فن کیس کولر مستر MASTERFAN MF120 S2",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34117,
+      "name": "فن کیس اوست GT-AVS120 ARGB مشکی",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 13669,
+      "name": "فن کیس گرین GF120-RGB",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 13585,
+      "name": "فن کیس گرین GF120-FSB",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 11646,
+      "name": "فن کیس دیپ کول MF120 GT بسته 3 عددی",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 11449,
+      "name": "فن کیس گیم مکس GMX-12-DBB",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 5430,
+      "name": "فن کیس ایسوس ASUS TUF GAMING TF120 ARGB Black",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 4496,
+      "name": "فن کیس گیمدیاس AEOLUS M2-1201",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 4466,
+      "name": "فن خنک کننده کیس گیمدیاس AEOLUS M3-1204R",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 2296,
+      "name": "کیت نورپردازی فن کیس لیان لی SIDE ARGB KIT White بسته 3 عددی",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 2018,
+      "name": "فن کیس ام اس آی MEG SILENT GALE P12",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 3392,
+      "name": "فن کیس گیمینگ گیم‌ مکس DRH400 بسته 4 عددی",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 3284,
+      "name": "فن کیس ایسوس ASUS TUF GAMING TF120 ARGB Black",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 2452,
+      "name": "فن کیس لیان لی UNI FAN AL V2 Black بسته 3 عددی",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 2398,
+      "name": "فن کیس لیان لی UNI FAN SL V2 120 Black بسته 3 عددی",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 2084,
+      "name": "فن کیس ام اس آی MAG MAX F12A-3",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1366,
+      "name": "فن کیس Gamdias Aeolus P2-1201",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 6775,
+      "name": "فن کیس اوست سفید GT-AVS120 W ARGB",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {
+        "wattage": 120
+      }
+    },
+    {
+      "id": 2080,
+      "name": "فن کیس ام اس آی MAG MAX F12A-3H",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44917,
+      "name": "کیس , فن و پاور گیمینگ کولرمستر مدل TD500 MAX",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 11413,
+      "name": "فن کیس سیلوراستون SST-AP140i-ARGB",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 11395,
+      "name": "فن کیس ریدمکس NV-T120FBR3 ARGB Black",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 11389,
+      "name": "فن کیس گیم مکس FN-12Rainbow C9 Infinity",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 11377,
+      "name": "فن کیس دیپ کول FK120 3 in 1",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 11659,
+      "name": "فن کیس گیم مکس GameMax GMX-12-CBB",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 11641,
+      "name": "فن کیس دیپ کول RF 120 FS",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 11539,
+      "name": "فن کیس گیم مکس GMX-12-RBB",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 11677,
+      "name": "فن کیس گیم مکس FN-12Rainbow-C9",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34132,
+      "name": "فن کیس دیپ کول RF120 FS",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34114,
+      "name": "فن کیس اوست GT-AVN120 ARGB White",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33580,
+      "name": "فن کیس گیمینگ گیم مکس GAMEMAX FN12A S3I White بسته 3 عددی",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33571,
+      "name": "فن کیس گیمینگ گیم‌ مکس RD300 بسته 3 عددی",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33568,
+      "name": "فن کیس گیم مکس FN12A C8I White",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 5404,
+      "name": "فن کیس دیپ کول FC120 3 IN 1 BLACK",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 5399,
+      "name": "فن کیس دیپ کول FC120",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 5384,
+      "name": "فن کیس دیپ کول XFAN 120",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 6771,
+      "name": "فن کیس کاگر VORTEX RGB HPB 120 Cooling Kit",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1712,
+      "name": "فن کیس لاجی کی F326B بسته سه عددی",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1699,
+      "name": "فن کیس لاجی کی F324B بسته سه عددی",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1676,
+      "name": "فن کیس لاجی کی F323B بسته سه عددی",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 1666,
+      "name": "فن کیس لاجی کی F321B بسته سه عددی",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 2554,
+      "name": "فن کیس گیمینگ گیم‌ مکس KF300R Black بسته 3 عددی",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    }
+  ],
+  "monitor": [
+    {
+      "id": 44821,
+      "name": "مانیتور گیمینگ 31.5 اینچ ام اس آی MAG 32C6X",
+      "price": 0,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44380,
+      "name": "پایه مانیتور تسکو TMS 2003",
+      "price": 800000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44254,
+      "name": "مانیتور ایسوس VA249HG سایز 24 اینچ",
+      "price": 20000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44314,
+      "name": "مانیتور 24 اینچ ایسوس VZ24EHF",
+      "price": 29000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 2248,
+      "name": "مانیتور گیمینگ ایسوس VA24EHF سایز 24 اینچ",
+      "price": 30000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 36175,
+      "name": "مانیتور ایسوس VA27EHF سایز 27 اینچ",
+      "price": 35000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44260,
+      "name": "مانیتور قابل حمل ایسوس ZenScreen MB165B سایز 15.6 اینچ",
+      "price": 37000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 41100,
+      "name": "مانیتور ایسوس VZ27EHF سایز 27 اینچ",
+      "price": 40000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44293,
+      "name": "مانیتور 24 اینچ ایسوس VA24EQSB",
+      "price": 40000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44257,
+      "name": "مانیتور 15.6 اینچ قابل حمل ایسوس ZenScreen MB166C",
+      "price": 45000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44308,
+      "name": "مانیتور 24 اینچ ایسوس VA24EQSB-W",
+      "price": 50000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 4080,
+      "name": "مانیتور گیمینگ ایسوس TUF Gaming VG27AQA1A سایز 27 اینچ",
+      "price": 60000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 24457,
+      "name": "مانیتور گیمینگ ایسوس VG328H1B سایز 31.5 اینچ",
+      "price": 64000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 24915,
+      "name": "مانیتور ایسوس ProArt PA248QV سایز 24 اینچ",
+      "price": 70000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 35701,
+      "name": "مانیتور ایسوس ProArt PA248CRV سایز 24 اینچ",
+      "price": 74000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 44401,
+      "name": "مانیتور 31.5 اینچ ایسوس VP32UQ",
+      "price": 88000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 41135,
+      "name": "مانیتور ایسوس TUF Gaming VG32VQR سایز 31.5 اینچ",
+      "price": 90000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 8318,
+      "name": "مانیتور ایسوس PA279CV سایز 27 اینچ",
+      "price": 100000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 16508,
+      "name": "مانیتور 31.5 اینچ ایسوس ProArt PA329CV",
+      "price": 160000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32624,
+      "name": "مانیتور خمیده گیمینگ 49 اینچ ایسوس ROG Strix XG49VQ",
+      "price": 180000000,
+      "inStock": true,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34102,
+      "name": "مانیتور ام اس آی گیمینگ خمیده MEG381CQR سایز 38 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34054,
+      "name": "مانیتور گیمینگ خمیده تویستد مایندز Twisted Minds TM32CFHD180VA سایز 32 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34045,
+      "name": "مانیتور گیمینگ ام اس آی G32CQ4 سایز 32 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34024,
+      "name": "مانیتور گیمینگ تویستد مایندز  TM24RFA سایز 23.6 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 34306,
+      "name": "مانیتور گیمینگ خمیده سامسونگ 32 اینچ Odyssey G6 LS32BG650",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32853,
+      "name": "مانیتور ال جی مدل 22MK430H-B سایز 22 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32840,
+      "name": "مانیتور بنکیو مدل EW3280U سایز 32 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 32835,
+      "name": "مانیتور بنکیو مدل PD3200U سایز 32 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33109,
+      "name": "مانیتور 23.8 اینچ کووری 24N1",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33106,
+      "name": "مانیتور 23.8 اینچ کووری 24P02",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33100,
+      "name": "مانیتور 22 اینچ کووری 22N1",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 33661,
+      "name": "پایه نگهدارنده مانیتور ارگو WLA009",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 30032,
+      "name": "مانیتور ال جی مدل 34UC79G-B سایز 34 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 30010,
+      "name": "مانیتور بنکیو مدل EX3203 سایز 32 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 30008,
+      "name": "مانیتور بنکیو مدل SW2700PT سایز 27 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29996,
+      "name": "مانیتور سامسونگ مدل LC49HG90 سایز 48.9 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29992,
+      "name": "مانیتور خمیده 49 اینچ سامسونگ مدل C49HG90DMM",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29973,
+      "name": "مانیتور بنکیو مدل MOBIUZ EX2710",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29978,
+      "name": "مانیتور گیمینگ بنکیو مدل EX2780Q سایز 27 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29937,
+      "name": "مانیتور منحنی گیمینگ سامسونگ LC27G75TQSNXZA سایز 27 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29918,
+      "name": "مانیتور گیمینگ 27 اینچ ایسوس TUF GAMING VG279QM",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29908,
+      "name": "مانیتور 32 اینچ خمیده سامسونگ مدل C32T550",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29888,
+      "name": "مانیتور گیمینگ 31.5 اینچ خمیده ام اس آی Optix MAG322CR",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29877,
+      "name": "مانیتور ال ای دی بنکیو مدل XL2720Z سایز 27 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29096,
+      "name": "مانیتور 32 اینچ خمیده سامسونگ مدل U32R590",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29091,
+      "name": "مانیتور بنکیو 25اینچ مدل MOBIUZ EX2510",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29079,
+      "name": "مانیتور بنکیو مدل XL2411K سایز 24 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29072,
+      "name": "مانیتور ام اس آی Optix G32C4 سایز 32 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29054,
+      "name": "مانیتور مستر تک مدل GP275 AQ سایز 27 اینچ",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    },
+    {
+      "id": 29043,
+      "name": "مانیتور ایسوس 28 اینچ مدل VP28UQGL",
+      "price": 0,
+      "inStock": false,
+      "brand": "نامشخص",
+      "specs": {}
+    }
+  ]
+}

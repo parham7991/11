@@ -1,0 +1,70 @@
+{
+  "name": "template-nextjs",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "",
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "next lint",
+    "format": "prettier --write $(git diff --name-only --diff-filter=ACMRT | grep -E '\\.(js|ts|tsx|jsx|json|css|scss|md)$')",
+    "format:all": "prettier --write .",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "@heroui/accordion": "^2.2.24",
+    "@heroui/react": "^2.8.2",
+    "@heroui/skeleton": "^2.2.17",
+    "@tanstack/react-query": "^5.84.2",
+    "formik": "^2.4.6",
+    "framer-motion": "^12.23.12",
+    "html-to-text": "^9.0.5",
+    "immer": "^10.1.1",
+    "ioredis": "^5.7.0",
+    "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
+    "keen-slider": "^6.8.6",
+    "next": "16.0.0",
+    "nextjs-toploader": "^3.9.17",
+    "react": "19.1.1",
+    "react-countdown": "^2.3.6",
+    "react-date-object": "^2.1.9",
+    "react-dom": "19.1.1",
+    "react-icons": "^5.5.0",
+    "react-inner-image-zoom": "^4.0.1",
+    "react-intersection-observer": "^9.16.0",
+    "react-multi-date-picker": "^4.5.2",
+    "react-use": "^17.6.0",
+    "sonner": "^2.0.7",
+    "swiper": "^11.2.10",
+    "yup": "^1.7.0",
+    "zustand": "^5.0.7"
+  },
+  "devDependencies": {
+    "@types/html-to-text": "^9.0.4",
+    "@types/js-cookie": "^3.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-inner-image-zoom": "^3.0.3",
+    "autoprefixer": "^10.4.21",
+    "baseline-browser-mapping": "^2.9.3",
+    "browserslist": "^4.26.3",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.5",
+    "postcss": "^8",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write"
+    ],
+    "*.{json,css,scss,md}": "prettier --write"
+  }
+}

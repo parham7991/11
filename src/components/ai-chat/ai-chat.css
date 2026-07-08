@@ -1,0 +1,805 @@
+/* ════════════════════════════════════════════════════════════════
+   🤖 دستیار هوشمند آفلند — استایل خفنِ ویجت چت
+   RTL کامل · سازگار با دارک‌مود · ریسپانسیو (موبایل تمام‌صفحه)
+   ════════════════════════════════════════════════════════════════ */
+
+.aic-root {
+  --aic-primary: #386bf9;
+  --aic-primary-2: #6f3cf5;
+  --aic-primary-3: #2554d6;
+  --aic-glow: rgba(56, 107, 249, 0.45);
+  --aic-bg: #ffffff;
+  --aic-surface: #f5f7fc;
+  --aic-surface-2: #eef2fb;
+  --aic-text: #14233b;
+  --aic-muted: #6b7790;
+  --aic-border: #e6e9f2;
+  --aic-bubble-bot: #ffffff;
+  --aic-shadow: 0 24px 70px rgba(20, 35, 80, 0.22);
+  position: fixed;
+  z-index: 9998;
+  bottom: 22px;
+  font-family: inherit;
+  direction: rtl;
+  font-size: 14px;
+}
+.aic-root[data-position='left'] {
+  left: 22px;
+  right: auto;
+}
+.aic-root[data-position='right'] {
+  right: 22px;
+  left: auto;
+}
+
+html.dark .aic-root {
+  --aic-bg: #0e1626;
+  --aic-surface: #0b1322;
+  --aic-surface-2: #141d30;
+  --aic-text: #eef4ff;
+  --aic-muted: #93a1ba;
+  --aic-border: rgba(148, 163, 184, 0.16);
+  --aic-bubble-bot: #18233a;
+  --aic-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+}
+
+/* ════════════ دکمهٔ شناور (FAB) ════════════ */
+.aic-fab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 62px;
+  height: 62px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(140deg, var(--aic-primary), var(--aic-primary-2) 60%, var(--aic-primary-3));
+  background-size: 180% 180%;
+  box-shadow: 0 12px 34px var(--aic-glow), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  animation: aic-fab-gradient 6s ease infinite;
+}
+@keyframes aic-fab-gradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.aic-fab:hover {
+  transform: translateY(-4px) scale(1.07);
+  box-shadow: 0 18px 44px var(--aic-glow), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.aic-fab:active {
+  transform: scale(0.94);
+}
+.aic-fab svg {
+  width: 29px;
+  height: 29px;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+  transition: transform 0.3s ease;
+}
+.aic-fab:hover svg {
+  transform: rotate(-8deg) scale(1.08);
+}
+/* دو حلقهٔ پالس */
+.aic-fab::before,
+.aic-fab::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--aic-primary);
+  opacity: 0;
+  animation: aic-pulse 2.6s ease-out infinite;
+}
+.aic-fab::after {
+  animation-delay: 1.3s;
+}
+@keyframes aic-pulse {
+  0% { transform: scale(1); opacity: 0.55; }
+  100% { transform: scale(1.85); opacity: 0; }
+}
+/* نشان آنلاین */
+.aic-fab__badge {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 2.5px solid #fff;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
+  animation: aic-online 2s infinite;
+}
+html.dark .aic-fab__badge {
+  border-color: #0e1626;
+}
+@keyframes aic-online {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55); }
+  100% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+}
+
+/* ════════════ پنجرهٔ چت ════════════ */
+.aic-window {
+  position: absolute;
+  bottom: 80px;
+  width: min(392px, calc(100vw - 28px));
+  height: min(620px, calc(100dvh - 130px));
+  display: flex;
+  flex-direction: column;
+  background: var(--aic-bg);
+  color: var(--aic-text);
+  border: 1px solid var(--aic-border);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--aic-shadow);
+  transform-origin: bottom var(--aic-origin, right);
+  animation: aic-pop 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* جهت‌دهی پنجره با مختصات فیزیکی (نه logical) تا در RTL هم درست بماند */
+.aic-root[data-position='right'] .aic-window {
+  right: 0;
+  left: auto;
+}
+.aic-root[data-position='left'] .aic-window {
+  left: 0;
+  right: auto;
+}
+@keyframes aic-pop {
+  from { opacity: 0; transform: translateY(20px) scale(0.92); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ════════════ هدر ════════════ */
+.aic-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 15px 16px 16px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--aic-primary) 0%, var(--aic-primary-2) 100%);
+  overflow: hidden;
+}
+/* درخشش متحرک پشت هدر */
+.aic-header::before {
+  content: '';
+  position: absolute;
+  inset: -50% -10%;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.25), transparent 45%);
+  animation: aic-header-shine 7s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes aic-header-shine {
+  0%, 100% { transform: translateX(0); opacity: 0.8; }
+  50% { transform: translateX(20%); opacity: 1; }
+}
+.aic-header__avatar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+}
+.aic-header__avatar svg {
+  width: 24px;
+  height: 24px;
+}
+.aic-header__meta {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+.aic-header__title {
+  font-weight: 800;
+  font-size: 14.5px;
+  line-height: 1.3;
+  letter-spacing: 0.1px;
+}
+.aic-header__status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  opacity: 0.92;
+  margin-top: 1px;
+}
+.aic-header__status::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: aic-online 2s infinite;
+}
+.aic-header__actions {
+  display: flex;
+  gap: 5px;
+  position: relative;
+}
+.aic-iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.aic-iconbtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.08);
+}
+.aic-iconbtn:active {
+  transform: scale(0.9);
+}
+.aic-iconbtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ════════════ بدنه پیام‌ها ════════════ */
+.aic-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.05), transparent 40%),
+    var(--aic-surface);
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+.aic-body::-webkit-scrollbar {
+  width: 6px;
+}
+.aic-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--aic-primary), var(--aic-primary-2));
+  border-radius: 999px;
+}
+.aic-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ردیف پیام (با آواتار ربات) */
+.aic-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 90%;
+  animation: aic-msg-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes aic-msg-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.aic-row--user {
+  align-self: flex-start;
+  flex-direction: row-reverse;
+}
+.aic-row--bot {
+  align-self: flex-end;
+}
+.aic-mini-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  flex-shrink: 0;
+  color: #fff;
+  background: linear-gradient(135deg, var(--aic-primary), var(--aic-primary-2));
+  box-shadow: 0 3px 8px var(--aic-glow);
+}
+.aic-mini-avatar svg {
+  width: 16px;
+  height: 16px;
+}
+
+.aic-bubble {
+  padding: 11px 15px;
+  border-radius: 18px;
+  font-size: 13.5px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  word-break: break-word;
+  box-shadow: 0 2px 10px rgba(20, 35, 80, 0.05);
+}
+.aic-row--user .aic-bubble {
+  background: linear-gradient(135deg, var(--aic-primary), var(--aic-primary-3));
+  color: #fff;
+  border-bottom-right-radius: 6px;
+}
+.aic-row--bot .aic-bubble {
+  background: var(--aic-bubble-bot);
+  color: var(--aic-text);
+  border: 1px solid var(--aic-border);
+  border-bottom-left-radius: 6px;
+}
+.aic-bubble a {
+  color: inherit;
+  text-decoration: underline;
+  font-weight: 700;
+  text-underline-offset: 2px;
+}
+.aic-row--bot .aic-bubble a {
+  color: var(--aic-primary);
+}
+/* مکان‌نمای تایپ زنده */
+.aic-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--aic-primary);
+  margin-inline-start: 2px;
+  vertical-align: text-bottom;
+  animation: aic-blink 1s step-end infinite;
+}
+@keyframes aic-blink {
+  50% { opacity: 0; }
+}
+
+/* ════════════ کارت‌های محصول (منابع) ════════════ */
+.aic-sources {
+  align-self: flex-end;
+  max-width: 94%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: -3px;
+  margin-inline-end: 36px;
+}
+/* کارت محصول غنی */
+.aic-card {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 11px;
+  padding: 10px;
+  text-decoration: none;
+  color: var(--aic-text);
+  background: var(--aic-bg);
+  border: 1px solid var(--aic-border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  animation: aic-msg-in 0.35s ease;
+}
+.aic-card::before {
+  /* نوار رنگیِ کنار کارت هنگام هاور */
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 3px;
+  background: linear-gradient(var(--aic-primary), var(--aic-primary-2));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.aic-card:hover {
+  border-color: var(--aic-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px var(--aic-glow);
+}
+.aic-card:hover::before {
+  opacity: 1;
+}
+.aic-card--out {
+  opacity: 0.72;
+}
+
+/* رسانه (عکس + بج) */
+.aic-card__media {
+  position: relative;
+  width: 62px;
+  height: 62px;
+  flex-shrink: 0;
+}
+.aic-card__img {
+  width: 62px;
+  height: 62px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: linear-gradient(135deg, var(--aic-surface-2), var(--aic-surface));
+  border: 1px solid var(--aic-border);
+}
+.aic-card__img--ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--aic-muted);
+}
+.aic-card__img--ph svg {
+  width: 28px;
+  height: 28px;
+}
+.aic-card__badge {
+  position: absolute;
+  top: -6px;
+  inset-inline-start: -6px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(220, 38, 38, 0.4);
+}
+.aic-card__out {
+  position: absolute;
+  bottom: 4px;
+  inset-inline: 4px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.66);
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 2px 0;
+  border-radius: 6px;
+}
+
+/* بدنه اطلاعات */
+.aic-card__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+.aic-card__brand {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--aic-primary);
+}
+.aic-card__title {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.aic-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+  font-size: 10.5px;
+  color: var(--aic-muted);
+}
+.aic-card__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #f59e0b;
+  font-weight: 700;
+}
+.aic-card__rating svg {
+  width: 11px;
+  height: 11px;
+}
+.aic-card__reviews {
+  color: var(--aic-muted);
+  font-weight: 500;
+}
+.aic-card__warranty {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.aic-card__warranty svg {
+  width: 11px;
+  height: 11px;
+  color: #10b981;
+}
+.aic-card__prices {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  margin-top: 3px;
+}
+.aic-card__old {
+  font-size: 10.5px;
+  color: var(--aic-muted);
+  text-decoration: line-through;
+}
+.aic-card__price {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #059669;
+}
+.aic-card__price--na {
+  color: var(--aic-muted);
+  font-weight: 600;
+}
+html.dark .aic-card__price {
+  color: #34d399;
+}
+
+/* دکمه مشاهده */
+.aic-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  align-self: center;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--aic-primary);
+  padding: 5px 9px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, rgba(56, 107, 249, 0.1), rgba(111, 60, 245, 0.1));
+  transition: all 0.25s ease;
+}
+.aic-card:hover .aic-card__cta {
+  background: linear-gradient(135deg, var(--aic-primary), var(--aic-primary-2));
+  color: #fff;
+}
+.aic-card__cta svg {
+  transition: transform 0.25s ease;
+}
+.aic-card:hover .aic-card__cta svg {
+  transform: translateX(-2px);
+}
+
+/* ════════════ تایپینگ ════════════ */
+.aic-typing {
+  display: inline-flex;
+  gap: 4px;
+  padding: 13px 16px;
+  background: var(--aic-bubble-bot);
+  border: 1px solid var(--aic-border);
+  border-radius: 18px;
+  border-bottom-left-radius: 6px;
+}
+.aic-typing span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--aic-primary);
+  opacity: 0.5;
+  animation: aic-bounce 1.3s infinite ease-in-out;
+}
+.aic-typing span:nth-child(2) { animation-delay: 0.16s; }
+.aic-typing span:nth-child(3) { animation-delay: 0.32s; }
+@keyframes aic-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ════════════ دکمه‌های پویا (پیشنهاد بعدی) ════════════ */
+.aic-actions {
+  align-self: flex-end;
+  max-width: 94%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: -2px;
+  margin-inline-end: 36px;
+  animation: aic-msg-in 0.35s ease;
+}
+.aic-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1.5px solid var(--aic-primary);
+  background: linear-gradient(135deg, rgba(56, 107, 249, 0.08), rgba(111, 60, 245, 0.08));
+  color: var(--aic-primary);
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.aic-action-btn::before {
+  content: '⟵';
+  font-size: 11px;
+  opacity: 0.7;
+}
+.aic-action-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--aic-primary), var(--aic-primary-2));
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px var(--aic-glow);
+}
+.aic-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ════════════ سؤال‌های پیشنهادی ════════════ */
+.aic-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 16px 10px;
+  background: var(--aic-surface);
+}
+.aic-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--aic-border);
+  background: var(--aic-bg);
+  color: var(--aic-text);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+.aic-chip:hover {
+  border-color: var(--aic-primary);
+  color: var(--aic-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--aic-glow);
+}
+.aic-chip__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--aic-primary);
+}
+
+/* ════════════ ورودی ════════════ */
+.aic-input {
+  display: flex;
+  align-items: flex-end;
+  gap: 9px;
+  padding: 12px;
+  border-top: 1px solid var(--aic-border);
+  background: var(--aic-bg);
+}
+.aic-input__field {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  background: var(--aic-surface);
+  border: 1.5px solid var(--aic-border);
+  border-radius: 16px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.aic-input__field:focus-within {
+  border-color: var(--aic-primary);
+  box-shadow: 0 0 0 3px var(--aic-glow);
+}
+.aic-input textarea {
+  flex: 1;
+  resize: none;
+  max-height: 120px;
+  min-height: 44px;
+  padding: 11px 15px;
+  font-family: inherit;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--aic-text);
+  background: transparent;
+  border: none;
+  outline: none;
+}
+.aic-input textarea::placeholder {
+  color: var(--aic-muted);
+}
+.aic-send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, var(--aic-primary), var(--aic-primary-2));
+  box-shadow: 0 6px 16px var(--aic-glow);
+  transition: transform 0.18s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
+}
+.aic-send:hover:not(:disabled) {
+  transform: scale(1.08) rotate(-6deg);
+}
+.aic-send:active:not(:disabled) {
+  transform: scale(0.92);
+}
+.aic-send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.aic-send svg {
+  width: 21px;
+  height: 21px;
+}
+
+/* فوتر */
+.aic-footer {
+  text-align: center;
+  font-size: 10px;
+  color: var(--aic-muted);
+  padding: 5px 0 9px;
+  background: var(--aic-bg);
+  letter-spacing: 0.2px;
+}
+.aic-footer b {
+  color: var(--aic-primary);
+}
+
+/* ════════════ ریسپانسیو ════════════ */
+/* تبلت کوچک و موبایل بزرگ */
+@media (max-width: 480px) {
+  .aic-root {
+    bottom: 16px;
+  }
+  .aic-root[data-position='left'] { left: 16px; }
+  .aic-root[data-position='right'] { right: 16px; }
+  .aic-fab {
+    width: 56px;
+    height: 56px;
+  }
+  .aic-fab svg { width: 26px; height: 26px; }
+
+  /* پنجره تمام‌صفحه روی موبایل */
+  .aic-window {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    bottom: 0;
+    border-radius: 0;
+    animation: aic-slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes aic-slide-up {
+    from { opacity: 0; transform: translateY(100%); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .aic-header {
+    padding-top: max(16px, env(safe-area-inset-top));
+    border-radius: 0;
+  }
+  .aic-input {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  .aic-row { max-width: 92%; }
+}
+
+/* صفحات خیلی کوتاه */
+@media (max-height: 560px) and (min-width: 481px) {
+  .aic-window {
+    height: calc(100dvh - 100px);
+  }
+}
+
+/* احترام به ترجیح کاهش حرکت */
+@media (prefers-reduced-motion: reduce) {
+  .aic-fab,
+  .aic-fab::before,
+  .aic-fab::after,
+  .aic-fab__badge,
+  .aic-header::before,
+  .aic-header__status::before,
+  .aic-typing span,
+  .aic-cursor {
+    animation: none !important;
+  }
+}

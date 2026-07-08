@@ -1,0 +1,3523 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  direction: rtl !important;
+  overflow-x: hidden;
+}
+
+@layer utilities {
+  .container_page {
+    @apply mx-auto w-[95%] max-w-[1440px] md:w-[95%] print:w-full;
+  }
+  .shadow_pro {
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  }
+
+  /* Modern Shimmer Animation for Image Loading */
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s ease-in-out infinite;
+  }
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+@font-face {
+  font-family: 'black';
+  src: url('../../public/font/Farsinumerals/IRANYekanXFaNum-Black.ttf');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'bold';
+  src: url('../../public/font/IRANYekanX\ family/IRANYekanX-Bold.ttf');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'bold';
+  src: url('../../public/font/Farsinumerals/IRANYekanXFaNum-Bold.ttf');
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'light';
+  src: url('../../public/font/Farsinumerals/IRANYekanXFaNum-Light.ttf');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'reqular';
+  src: url('../../public/font/Farsinumerals/IRANYekanXFaNum-Regular.ttf');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'medium';
+  src: url('../../public/font/Farsinumerals/IRANYekanXFaNum-Medium.ttf');
+  font-display: swap;
+}
+
+.swiper-pagination .swiper-pagination-bullet {
+  @apply !h-3 !w-3 !border !border-black !bg-white;
+}
+
+.swiper-pagination .swiper-pagination-bullet-active {
+  @apply !h-3 !w-3 !bg-black;
+}
+
+.container_sidebar {
+  @apply flex h-fit flex-col justify-between rounded-b-3xl rounded-t-[4rem] bg-neutral-50 shadow lg:h-[90vh] lg:min-w-[280px];
+}
+.container_bg_sidebar {
+  @apply relative flex h-[110px] w-full items-center gap-3 bg-[url('../../public/images/bg-investor-mobile.png')] bg-no-repeat px-5 sm:h-[144px] sm:justify-between md:!h-[127px] md:bg-[url('../../public/images/bg-investor-tablet.png')] lg:!h-[107px] lg:bg-[url('../../public/images/bg-investor.png')] lg:bg-cover;
+}
+
+.container_bg_sidebar > p {
+  @apply text-right text-sm font-normal text-neutral-50;
+}
+
+.container_sidebar .menu {
+  @apply mx-auto mt-[30px] flex flex-col pb-6;
+}
+.container_sidebar .menu .active {
+  @apply absolute right-0 h-12 w-1.5 rounded-bl-[9px] rounded-tl-[9px] bg-main;
+}
+.container_sidebar .menu .container_link {
+  @apply relative flex w-full items-center gap-5;
+}
+.container_sidebar .menu .link {
+  @apply mx-auto flex w-[90%] items-center justify-between p-3 sm:w-[85%];
+}
+
+.container_sidebar .menu .link .name {
+  @apply flex items-center gap-2;
+}
+.container_sidebar .menu .link .name span {
+  @apply text-right font-medium text-sm text-neutral-400;
+}
+.container_sidebar .menu .badge {
+  @apply flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500 text-xs;
+}
+
+.container_sidebar .menu .badge span {
+  @apply mt-1 font-medium text-[13px] text-white;
+}
+
+.container_accordion_filter hr {
+  @apply hidden;
+}
+
+.container_category hr {
+  @apply hidden;
+}
+
+.shadow_menu_bottom {
+  box-shadow:
+    3px 1px 6px 0px #0000001a,
+    11px 3px 11px 0px #00000017,
+    24px 7px 15px 0px #0000000d,
+    43px 12px 18px 0px #00000003,
+    67px 19px 20px 0px #00000000;
+}
+
+.data-\[fill-start\=true\]\:border-s-primary[data-fill-start='true'] {
+  border-inline-start-color: transparent !important;
+}
+
+/* Enhanced Article Content Styles */
+.container_des h1 {
+  @apply mb-6 mt-10 border-r-4 border-blue-500 bg-gradient-to-r from-blue-50 to-transparent py-3 pr-4 text-right font-bold text-[20px] leading-[1.4] text-gray-900 lg:py-4 lg:pr-5 lg:text-[32px];
+}
+
+.container_des h2 {
+  @apply mb-4 mt-6 border-b-2 border-r-2 border-gray-200 border-r-blue-500 pb-2 pr-3 text-right font-bold text-[18px] leading-[1.4] text-gray-800 lg:mb-5 lg:mt-8 lg:pb-3 lg:pr-4 lg:text-[28px];
+}
+.container_des * {
+  font-family: inherit !important;
+}
+
+.container_des h3 {
+  @apply mb-3 mt-5 border-r-2 border-r-purple-500 pr-3 text-right font-bold text-[16px] leading-[1.5] text-gray-800 lg:mb-4 lg:mt-6 lg:pr-4 lg:text-[24px];
+}
+
+.container_des h4 {
+  @apply mb-3 mt-4 text-right font-bold text-[15px] leading-[1.5] text-gray-700 lg:mb-4 lg:mt-5 lg:text-[20px];
+}
+
+.container_des h5 {
+  @apply mb-2 mt-3 text-right font-medium text-[14px] leading-[1.5] text-gray-700 lg:mb-3 lg:mt-4 lg:text-[18px];
+}
+
+.container_des h6 {
+  @apply mb-2 mt-3 text-right font-medium text-[13px] leading-[1.5] text-gray-600 lg:mb-3 lg:mt-4 lg:text-[16px];
+}
+
+.container_des p {
+  @apply mb-4 text-justify font-reqular text-[14px] leading-[1.8] text-gray-700 lg:mb-6 lg:text-[17px] lg:leading-[2.4];
+}
+
+.container_des a {
+  @apply font-medium text-blue-600 underline decoration-blue-400 decoration-2 underline-offset-4 transition-all duration-300 hover:text-purple-600 hover:decoration-purple-500;
+  background: linear-gradient(to right, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.container_des a:hover {
+  background: linear-gradient(to right, #8b5cf6, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.container_des strong,
+.container_des b {
+  @apply font-bold text-gray-900;
+}
+
+.container_des em,
+.container_des i {
+  @apply italic text-gray-600;
+}
+
+.container_des ul,
+.container_des ol {
+  @apply my-4 mr-4 space-y-2 lg:my-6 lg:mr-6 lg:space-y-3;
+}
+
+.container_des ul li {
+  @apply relative pr-5 text-justify font-reqular text-[14px] leading-[1.8] text-gray-700 lg:pr-6 lg:text-[17px] lg:leading-[2];
+}
+
+.container_des ul li::before {
+  content: '';
+  @apply absolute right-0 top-[0.6em] h-1.5 w-1.5 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 lg:top-[0.7em] lg:h-2 lg:w-2;
+}
+
+.container_des ol {
+  @apply list-decimal;
+}
+
+.container_des ol li {
+  @apply text-justify font-reqular text-[14px] leading-[1.8] text-gray-700 marker:font-bold marker:text-blue-600 lg:text-[17px] lg:leading-[2];
+}
+
+.container_des blockquote {
+  @apply my-6 border-r-3 border-blue-500 bg-gradient-to-l from-blue-50 via-purple-50/50 to-transparent py-3 pl-3 pr-4 italic lg:my-8 lg:border-r-4 lg:py-4 lg:pl-4 lg:pr-6;
+}
+
+.container_des blockquote p {
+  @apply mb-0 font-medium text-[14px] leading-[1.8] text-gray-700 lg:text-[18px] lg:leading-[2];
+}
+
+.container_des code {
+  @apply rounded-md bg-gray-100 px-1.5 py-0.5 font-mono text-[12px] text-pink-600 lg:px-2 lg:py-1 lg:text-[14px];
+}
+
+.container_des pre {
+  @apply my-4 overflow-x-auto rounded-lg bg-gray-900 p-3 text-[12px] lg:my-6 lg:rounded-xl lg:p-6 lg:text-[14px];
+}
+
+.container_des pre code {
+  @apply bg-transparent text-gray-100;
+}
+
+.container_des img {
+  @apply mx-auto my-6 !rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl lg:my-8 lg:!rounded-2xl lg:shadow-xl lg:hover:shadow-2xl;
+}
+
+.container_des hr {
+  @apply my-6 border-0 border-t-2 border-gray-200 lg:my-10;
+}
+
+.container_des table {
+  @apply my-6 w-full overflow-hidden rounded-lg border border-gray-200 text-[13px] shadow-md lg:my-8 lg:rounded-xl lg:text-[15px] lg:shadow-lg;
+}
+
+.container_des table thead {
+  @apply bg-gradient-to-r from-blue-500 to-purple-600;
+}
+
+.container_des table thead th {
+  @apply px-3 py-2 text-right font-bold text-[13px] text-white lg:px-4 lg:py-3 lg:text-[15px];
+}
+
+.container_des table tbody tr {
+  @apply transition-colors hover:bg-gray-50;
+}
+
+.container_des table tbody tr:nth-child(even) {
+  @apply bg-gray-50/50;
+}
+
+.container_des table tbody td {
+  @apply border-t border-gray-200 px-3 py-2 text-[13px] text-gray-700 lg:px-4 lg:py-3 lg:text-[15px];
+}
+
+/* Modern Highlighted Text with Special Design */
+.container_des [data-text-highlight='true'],
+.container_des [data-text-highlight='idea'],
+.container_des [data-text-highlight='tip'],
+.container_des [data-text-highlight='important'],
+.container_des [data-text-highlight='warning'],
+.container_des [data-text-highlight='star'] {
+  @apply relative my-5 inline-block rounded-2xl px-5 py-4 font-medium text-gray-800 transition-all duration-500 lg:my-6 lg:px-7 lg:py-5;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 251, 235, 0.9) 0%,
+    rgba(254, 243, 199, 0.9) 50%,
+    rgba(255, 251, 235, 0.9) 100%
+  );
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+  box-shadow:
+    0 4px 6px -1px rgba(251, 191, 36, 0.1),
+    0 2px 4px -1px rgba(251, 191, 36, 0.06),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Gradient Border Effect */
+.container_des [data-text-highlight='true']::before,
+.container_des [data-text-highlight='idea']::before,
+.container_des [data-text-highlight='tip']::before,
+.container_des [data-text-highlight='important']::before,
+.container_des [data-text-highlight='warning']::before,
+.container_des [data-text-highlight='star']::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 1rem;
+  padding: 2px;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706, #f59e0b, #fbbf24);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+  animation: borderRotate 3s linear infinite;
+  background-size: 200% 200%;
+}
+
+/* Icon Badges */
+.container_des [data-text-highlight='true']::after,
+.container_des [data-text-highlight='idea']::after {
+  content: '💡';
+  @apply absolute -right-2 -top-3 flex h-10 w-10 items-center justify-center rounded-full text-[20px] lg:-right-3 lg:-top-4 lg:h-12 lg:w-12 lg:text-[24px];
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  box-shadow:
+    0 4px 6px -1px rgba(245, 158, 11, 0.3),
+    0 2px 4px -1px rgba(245, 158, 11, 0.2),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.8);
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+.container_des [data-text-highlight='tip']::after {
+  content: '✨';
+  @apply absolute -right-2 -top-3 flex h-10 w-10 items-center justify-center rounded-full text-[20px] lg:-right-3 lg:-top-4 lg:h-12 lg:w-12 lg:text-[24px];
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  box-shadow:
+    0 4px 6px -1px rgba(245, 158, 11, 0.3),
+    0 2px 4px -1px rgba(245, 158, 11, 0.2),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.8);
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+.container_des [data-text-highlight='important']::after {
+  content: '🔥';
+  @apply absolute -right-2 -top-3 flex h-10 w-10 items-center justify-center rounded-full text-[20px] lg:-right-3 lg:-top-4 lg:h-12 lg:w-12 lg:text-[24px];
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  box-shadow:
+    0 4px 6px -1px rgba(245, 158, 11, 0.3),
+    0 2px 4px -1px rgba(245, 158, 11, 0.2),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.8);
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+.container_des [data-text-highlight='warning']::after {
+  content: '⚡';
+  @apply absolute -right-2 -top-3 flex h-10 w-10 items-center justify-center rounded-full text-[20px] lg:-right-3 lg:-top-4 lg:h-12 lg:w-12 lg:text-[24px];
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  box-shadow:
+    0 4px 6px -1px rgba(245, 158, 11, 0.3),
+    0 2px 4px -1px rgba(245, 158, 11, 0.2),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.8);
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+.container_des [data-text-highlight='star']::after {
+  content: '⭐';
+  @apply absolute -right-2 -top-3 flex h-10 w-10 items-center justify-center rounded-full text-[20px] lg:-right-3 lg:-top-4 lg:h-12 lg:w-12 lg:text-[24px];
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  box-shadow:
+    0 4px 6px -1px rgba(245, 158, 11, 0.3),
+    0 2px 4px -1px rgba(245, 158, 11, 0.2),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.8);
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+.container_des [data-text-highlight='true']:hover,
+.container_des [data-text-highlight='idea']:hover,
+.container_des [data-text-highlight='tip']:hover,
+.container_des [data-text-highlight='important']:hover,
+.container_des [data-text-highlight='warning']:hover,
+.container_des [data-text-highlight='star']:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 10px 15px -3px rgba(251, 191, 36, 0.2),
+    0 4px 6px -2px rgba(251, 191, 36, 0.1),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Border Rotation Animation */
+@keyframes borderRotate {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Icon Float Animation */
+@keyframes iconFloat {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-4px) rotate(-5deg);
+  }
+  75% {
+    transform: translateY(-2px) rotate(5deg);
+  }
+}
+
+/* globals.css یا styles.css */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera*/
+}
+
+/* Loading Progress Bar */
+.loading-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #3b82f6);
+  background-size: 200% 100%;
+  animation: progress-shimmer 1.5s ease-in-out infinite;
+  transition: width 0.3s ease-out;
+  border-radius: 0 0 2px 2px;
+}
+
+@keyframes progress-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Fade in animation for progress bar */
+.loading-progress-bar {
+  opacity: 0;
+  animation: fadeInProgress 0.3s ease-out forwards;
+}
+
+@keyframes fadeInProgress {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   Offland Ultra Dark Mode System
+   ========================================================= */
+:root {
+  --offl-bg: #ffffff;
+  --offl-bg-soft: #f6f8fc;
+  --offl-surface: #ffffff;
+  --offl-surface-2: #f1f5f9;
+  --offl-border: #e4e7e9;
+  --offl-text: #111827;
+  --offl-text-muted: #64748b;
+  --offl-primary: #386bf9;
+  --offl-primary-glow: rgba(56, 107, 249, 0.3);
+}
+html.dark {
+  --offl-bg: #070b16;
+  --offl-bg-soft: #0b1222;
+  --offl-surface: #101827;
+  --offl-surface-2: #172033;
+  --offl-border: rgba(148, 163, 184, 0.18);
+  --offl-text: #eef4ff;
+  --offl-text-muted: #9aa8bd;
+  --offl-primary: #6ea0ff;
+  --offl-primary-glow: rgba(72, 124, 255, 0.35);
+}
+html { background: var(--offl-bg); transition: background-color 240ms ease, color 240ms ease; }
+html.dark body {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(56, 107, 249, 0.18), transparent 30rem),
+    radial-gradient(circle at 88% 18%, rgba(139, 92, 246, 0.14), transparent 28rem),
+    radial-gradient(circle at 50% 100%, rgba(14, 165, 233, 0.09), transparent 36rem),
+    var(--offl-bg) !important;
+  color: var(--offl-text) !important;
+}
+html.dark body::before {
+  content: '';
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent 75%);
+}
+html.dark ::selection { background: rgba(80, 130, 255, 0.38); color: #fff; }
+html.dark .bg-white,
+html.dark .bg-neutral-50,
+html.dark .bg-slate-50,
+html.dark .bg-gray-50,
+html.dark .bg-zinc-50 { background-color: var(--offl-surface) !important; }
+html.dark .bg-\[\#F3F6FB\],
+html.dark .bg-\[\#f3f6fb\],
+html.dark .bg-\[\#E4E7E9\],
+html.dark .bg-\[\#e4e7e9\],
+html.dark .bg-gray-100,
+html.dark .bg-zinc-100,
+html.dark .bg-slate-100,
+html.dark .bg-neutral-100 { background-color: var(--offl-surface-2) !important; }
+html.dark .text-black,
+html.dark .text-neutral-900,
+html.dark .text-zinc-900,
+html.dark .text-gray-900,
+html.dark .text-slate-900,
+html.dark .text-\[\#232429\] { color: var(--offl-text) !important; }
+html.dark .text-neutral-800,
+html.dark .text-zinc-800,
+html.dark .text-gray-800,
+html.dark .text-slate-800,
+html.dark .text-neutral-700,
+html.dark .text-zinc-700,
+html.dark .text-gray-700,
+html.dark .text-slate-700,
+html.dark .text-\[\#545A66\],
+html.dark .text-\[\#545a66\] { color: #d7e2f3 !important; }
+html.dark .text-neutral-600,
+html.dark .text-zinc-600,
+html.dark .text-gray-600,
+html.dark .text-slate-600,
+html.dark .text-neutral-500,
+html.dark .text-zinc-500,
+html.dark .text-gray-500,
+html.dark .text-slate-500,
+html.dark .text-zinc-400,
+html.dark .text-gray-400,
+html.dark .text-neutral-400,
+html.dark .text-\[\#7D8793\],
+html.dark .text-\[\#7d8793\],
+html.dark .text-\[\#616A76\],
+html.dark .text-\[\#616a76\] { color: var(--offl-text-muted) !important; }
+html.dark .border,
+html.dark .border-b,
+html.dark .border-t,
+html.dark .border-l,
+html.dark .border-r,
+html.dark .border-gray-100,
+html.dark .border-gray-200,
+html.dark .border-zinc-100,
+html.dark .border-zinc-200,
+html.dark .border-neutral-100,
+html.dark .border-neutral-200,
+html.dark .border-\[\#E4E7E9\],
+html.dark .border-\[\#e4e7e9\] { border-color: var(--offl-border) !important; }
+html.dark .shadow,
+html.dark .shadow-sm,
+html.dark .shadow-md,
+html.dark .shadow-lg,
+html.dark .shadow-xl,
+html.dark .shadow-2xl,
+html.dark .shadow_pro,
+html.dark .shadow_category {
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.04) !important;
+}
+html.dark header,
+html.dark .container_page.bg-blue,
+html.dark .lg\:bg-white { background-color: rgba(7, 11, 22, 0.86) !important; }
+html.dark header { backdrop-filter: blur(18px); }
+html.dark [data-slot='input-wrapper'],
+html.dark [data-slot='base'],
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: rgba(15, 23, 42, 0.88) !important;
+  color: var(--offl-text) !important;
+  border-color: var(--offl-border) !important;
+}
+html.dark input::placeholder,
+html.dark textarea::placeholder { color: #7f8da3 !important; }
+html.dark [data-slot='content'],
+html.dark [data-slot='popover'],
+html.dark [role='dialog'],
+html.dark [role='menu'],
+html.dark .custom_sidebar,
+html.dark .custom_sidebar_category {
+  background-color: rgba(12, 18, 32, 0.96) !important;
+  color: var(--offl-text) !important;
+  border-color: var(--offl-border) !important;
+  backdrop-filter: blur(20px);
+}
+html.dark .mix-blend-multiply { mix-blend-mode: normal !important; }
+html.dark img { filter: saturate(0.98) contrast(1.03); }
+html.dark .line-through { color: #718096 !important; }
+html.dark .product-attributes tbody tr,
+html.dark .shop_attributes tbody tr,
+html.dark table tbody tr { background-color: rgba(15, 23, 42, 0.72) !important; }
+html.dark .product-attributes tbody tr:nth-child(even),
+html.dark .shop_attributes tbody tr:nth-child(even),
+html.dark table tbody tr:nth-child(even) { background-color: rgba(30, 41, 59, 0.7) !important; }
+html.dark .product-attributes th,
+html.dark .product-attributes td,
+html.dark table th,
+html.dark table td { color: var(--offl-text) !important; border-color: var(--offl-border) !important; }
+html.dark .container_des h1,
+html.dark .container_des h2,
+html.dark .container_des h3,
+html.dark .container_des h4,
+html.dark .container_des h5,
+html.dark .container_des h6,
+html.dark .container_des strong,
+html.dark .container_des b { color: #f8fbff !important; }
+html.dark .container_des p,
+html.dark .container_des li,
+html.dark .container_des blockquote p,
+html.dark .container_des td { color: #cbd7e9 !important; }
+html.dark .container_des h1,
+html.dark .container_des blockquote,
+html.dark .container_des [data-text-highlight='true'],
+html.dark .container_des [data-text-highlight='idea'],
+html.dark .container_des [data-text-highlight='tip'],
+html.dark .container_des [data-text-highlight='important'],
+html.dark .container_des [data-text-highlight='warning'],
+html.dark .container_des [data-text-highlight='star'] {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.86)) !important;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.35) !important;
+}
+html.dark .container_des code { background-color: rgba(30, 41, 59, 0.95) !important; color: #f0abfc !important; }
+html.dark .container_des pre { background-color: #050814 !important; border: 1px solid var(--offl-border); }
+html.dark footer { background: radial-gradient(circle at 20% 0%, rgba(56, 107, 249, 0.18), transparent 28rem), #050814 !important; }
+/* footer trust logos - no bg, white logos on dark */
+html.dark .footer-trust-logo {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html.dark .shadow_menu_bottom {
+  background: rgba(8, 13, 26, 0.92) !important;
+  border-top: 1px solid var(--offl-border);
+  box-shadow: 0 -18px 60px rgba(0, 0, 0, 0.42) !important;
+  backdrop-filter: blur(18px);
+}
+html.dark body,
+html.dark body *:not(svg):not(path):not(circle):not(rect):not(line):not(polyline) {
+  transition-property: background-color, border-color, color, box-shadow, filter, opacity, transform;
+  transition-duration: 220ms;
+  transition-timing-function: ease;
+}
+.theme-toggle-button::before {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  background: conic-gradient(from 90deg, transparent, rgba(56, 107, 249, 0.45), rgba(139, 92, 246, 0.38), transparent 35%);
+  animation: themeSpin 5s linear infinite;
+}
+.theme-toggle-button::after { content: ''; position: absolute; inset: 2px; border-radius: 1.35rem; background: inherit; }
+.theme-toggle-button > * { z-index: 1; }
+.theme-orbit {
+  pointer-events: none;
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 107, 249, 0.2);
+  animation: themePulse 2.8s ease-in-out infinite;
+}
+.theme-orbit-two { inset: -12px; border-color: rgba(139, 92, 246, 0.16); animation-delay: 0.7s; }
+.theme-command-panel { transform-origin: bottom left; }
+@keyframes themeSpin { to { transform: rotate(360deg); } }
+@keyframes themePulse { 0%, 100% { opacity: 0.25; transform: scale(0.96); } 50% { opacity: 0.8; transform: scale(1.06); } }
+@media (prefers-reduced-motion: reduce) {
+  html.dark body,
+  html.dark body *,
+  .theme-toggle-button::before,
+  .theme-orbit { animation: none !important; transition: none !important; }
+}
+html.dark * { scrollbar-color: #334155 #0b1222; }
+html.dark *::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #386bf9, #7c3aed); border-radius: 999px; }
+html.dark *::-webkit-scrollbar-track { background: #0b1222; }
+
+/* =========================================================
+   Offland Dark Mode V5.1 — Deep coverage and product-image studio
+   Built on the previous working version, without changing the main UX.
+   ========================================================= */
+html.dark {
+  --offl-card: rgba(13, 20, 35, 0.92);
+  --offl-card-strong: rgba(17, 27, 46, 0.96);
+  --offl-card-soft: rgba(30, 41, 59, 0.78);
+  --offl-text-strong: #f8fbff;
+  --offl-text-body: #d7e2f3;
+  --offl-text-soft: #9aa8bd;
+  --offl-hairline: rgba(148, 163, 184, 0.16);
+  --offl-product-pad: #f8fafc;
+  --offl-product-pad-2: #eef4ff;
+}
+
+/* color interaction: keep brand blue coherent everywhere */
+html.dark .bg-main,
+html.dark .hover\:bg-main\/90:hover,
+html.dark .hover\:bg-blue-600:hover,
+html.dark .hover\:bg-blue-700:hover {
+  background: linear-gradient(135deg, #386bf9 0%, #5f8dff 54%, #7c3aed 100%) !important;
+  box-shadow: 0 12px 36px rgba(56, 107, 249, 0.28) !important;
+}
+/* prevent purple rectangle behind header logo in dark mode */
+html.dark header .header-logo-bar {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html.dark .text-main,
+html.dark .text-blue-500,
+html.dark .text-blue-600,
+html.dark .hover\:text-blue-500:hover,
+html.dark .hover\:text-blue-600:hover,
+html.dark .hover\:text-main:hover {
+  color: #82aaff !important;
+}
+html.dark .border-main,
+html.dark .border-blue-500,
+html.dark .border-r-blue-500,
+html.dark .border-b-blue-500,
+html.dark .hover\:border-main:hover {
+  border-color: rgba(130, 170, 255, 0.72) !important;
+}
+html.dark .bg-blue-50,
+html.dark .bg-main\/10,
+html.dark .hover\:bg-blue-50:hover,
+html.dark .hover\:bg-main\/10:hover {
+  background-color: rgba(56, 107, 249, 0.13) !important;
+}
+
+/* stronger generic surface coverage: many old boxes were still visually white */
+html.dark .bg-\[\#FCFCFC\],
+html.dark .bg-\[\#fcfcfc\],
+html.dark .bg-\[\#F9FAFB\],
+html.dark .bg-\[\#f9fafb\],
+html.dark .bg-\[\#F5F5F5\],
+html.dark .bg-\[\#f5f5f5\],
+html.dark .bg-\[\#F8FAFC\],
+html.dark .bg-\[\#f8fafc\],
+html.dark .bg-default-50,
+html.dark .bg-default-100,
+html.dark .bg-default-200,
+html.dark .bg-content1,
+html.dark .bg-content2,
+html.dark .bg-content3,
+html.dark .bg-content4 {
+  background: linear-gradient(145deg, var(--offl-card), rgba(8, 13, 26, 0.94)) !important;
+  color: var(--offl-text-body) !important;
+  border-color: var(--offl-hairline) !important;
+}
+
+html.dark .bg-white:not(body):not(html),
+html.dark .bg-neutral-50,
+html.dark .bg-gray-50,
+html.dark .bg-slate-50,
+html.dark .bg-zinc-50 {
+  background: linear-gradient(145deg, var(--offl-card-strong), rgba(10, 16, 30, 0.94)) !important;
+}
+
+html.dark .bg-gray-100,
+html.dark .bg-slate-100,
+html.dark .bg-zinc-100,
+html.dark .bg-neutral-100,
+html.dark .bg-gray-200,
+html.dark .bg-slate-200,
+html.dark .bg-zinc-200,
+html.dark .bg-neutral-200 {
+  background: linear-gradient(145deg, var(--offl-card-soft), rgba(12, 18, 32, 0.82)) !important;
+}
+
+html.dark [class*='bg-'][class*='white'],
+html.dark [class*='bg-'][class*='gray'],
+html.dark [class*='bg-'][class*='slate'],
+html.dark [class*='bg-'][class*='zinc'],
+html.dark [class*='bg-'][class*='neutral'] {
+  border-color: var(--offl-hairline);
+}
+
+html.dark .text-\[\#0C0C0C\],
+html.dark .text-\[\#0c0c0c\],
+html.dark .text-\[\#111827\],
+html.dark .text-\[\#232429\],
+html.dark .text-\[\#0F1014\],
+html.dark .text-\[\#0f1014\] {
+  color: var(--offl-text-strong) !important;
+}
+html.dark .text-\[\#545A66\],
+html.dark .text-\[\#545a66\],
+html.dark .text-\[\#616A76\],
+html.dark .text-\[\#616a76\],
+html.dark .text-\[\#7D8793\],
+html.dark .text-\[\#7d8793\],
+html.dark .text-\[\#A6AFB9\],
+html.dark .text-\[\#a6afb9\] {
+  color: var(--offl-text-soft) !important;
+}
+
+html.dark .border-\[\#F3F6FB\],
+html.dark .border-\[\#f3f6fb\],
+html.dark .border-\[\#E4E7E9\],
+html.dark .border-\[\#e4e7e9\],
+html.dark .border-\[\#F5F5F5\],
+html.dark .border-\[\#f5f5f5\] {
+  border-color: var(--offl-hairline) !important;
+}
+
+/* make surfaces readable in blog/mag pages where gray-on-dark was disappearing */
+html.dark .container_des,
+html.dark .container_des * {
+  text-shadow: none;
+}
+html.dark .container_des h1,
+html.dark .container_des h2,
+html.dark .container_des h3,
+html.dark .container_des h4,
+html.dark .container_des h5,
+html.dark .container_des h6 {
+  color: var(--offl-text-strong) !important;
+  border-color: rgba(130, 170, 255, 0.4) !important;
+}
+html.dark .container_des p,
+html.dark .container_des li,
+html.dark .container_des td,
+html.dark .container_des span:not([class*='text-white']) {
+  color: #c8d4e7 !important;
+}
+html.dark .container_des .text-gray-400,
+html.dark .container_des .text-zinc-400,
+html.dark .container_des .text-neutral-400 {
+  color: #a7b4c8 !important;
+}
+html.dark .container_des blockquote,
+html.dark .container_des [data-text-highlight='true'],
+html.dark .container_des [data-text-highlight='idea'],
+html.dark .container_des [data-text-highlight='tip'],
+html.dark .container_des [data-text-highlight='important'],
+html.dark .container_des [data-text-highlight='warning'],
+html.dark .container_des [data-text-highlight='star'] {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.14), transparent 14rem),
+    linear-gradient(135deg, rgba(22, 33, 55, 0.96), rgba(11, 18, 32, 0.94)) !important;
+  color: #d7e2f3 !important;
+  border: 1px solid rgba(130, 170, 255, 0.18) !important;
+}
+html.dark .container_des table thead,
+html.dark table thead {
+  background: linear-gradient(135deg, #386bf9, #5f8dff, #7c3aed) !important;
+}
+
+/* HeroUI and popups: remove white islands */
+html.dark [data-slot='base'],
+html.dark [data-slot='main-wrapper'],
+html.dark [data-slot='input-wrapper'],
+html.dark [data-slot='inner-wrapper'],
+html.dark [data-slot='content'],
+html.dark [data-slot='popover'],
+html.dark [data-slot='trigger'][aria-expanded='true'] {
+  color: var(--offl-text-body) !important;
+}
+html.dark [data-slot='content'],
+html.dark [data-slot='popover'],
+html.dark [role='dialog'],
+html.dark [role='menu'],
+html.dark .custom_sidebar,
+html.dark .custom_sidebar_category {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(56, 107, 249, 0.16), transparent 16rem),
+    linear-gradient(145deg, rgba(8, 13, 26, 0.98), rgba(15, 23, 42, 0.96)) !important;
+  border: 1px solid rgba(148, 163, 184, 0.18) !important;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.52) !important;
+}
+html.dark [data-hover='true'],
+html.dark [data-focus='true'] {
+  border-color: rgba(130, 170, 255, 0.42) !important;
+}
+
+/* Header and search refinements */
+html.dark header {
+  background: rgba(7, 11, 22, 0.82) !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.26);
+}
+html.dark header .container_page,
+html.dark header .lg\:bg-white {
+  background: transparent !important;
+}
+html.dark [data-slot='input-wrapper'] {
+  background:
+    linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.76)) !important;
+  border: 1px solid rgba(130, 170, 255, 0.18) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
+}
+html.dark [data-slot='input-wrapper']:focus-within {
+  border-color: rgba(130, 170, 255, 0.65) !important;
+  box-shadow:
+    0 0 0 4px rgba(56, 107, 249, 0.13),
+    0 16px 34px rgba(0, 0, 0, 0.28) !important;
+}
+
+/* PRODUCT IMAGE STUDIO
+   White product photos are intentionally placed on a premium light pad,
+   not left as random white blocks. */
+html.dark .product-gallery-shell {
+  background:
+    radial-gradient(circle at 10% 0%, rgba(56, 107, 249, 0.12), transparent 18rem),
+    linear-gradient(145deg, rgba(12, 18, 32, 0.92), rgba(8, 13, 26, 0.94)) !important;
+  border: 1px solid rgba(148, 163, 184, 0.18) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42) !important;
+}
+html.dark .product-image-stage {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(255, 255, 255, 0.98) 0 36%, rgba(238, 244, 255, 0.96) 56%, rgba(209, 222, 245, 0.92) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 23, 42, 0.05),
+    inset 0 -28px 60px rgba(56, 107, 249, 0.08),
+    0 18px 55px rgba(0, 0, 0, 0.28) !important;
+}
+html.dark .product-image-stage::before,
+html.dark .product-card-image-pad::before,
+html.dark .assembly-image-pad::before,
+html.dark .product-thumb-stage::before {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.34), transparent 24%, transparent 70%, rgba(56,107,249,0.10)),
+    radial-gradient(circle at 50% 85%, rgba(56, 107, 249, 0.12), transparent 44%);
+  opacity: 0.85;
+}
+html.dark .product-image-stage::after,
+html.dark .product-card-image-pad::after {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 12%;
+  height: 24%;
+  border-radius: 999px;
+  background: radial-gradient(ellipse, rgba(15, 23, 42, 0.16), transparent 70%);
+  filter: blur(10px);
+}
+html.dark .product-image-stage .iiz,
+html.dark .product-image-stage .iiz__img,
+html.dark .product-image-stage img {
+  position: relative;
+  z-index: 1;
+  mix-blend-mode: multiply;
+  filter: saturate(1.02) contrast(1.02) drop-shadow(0 18px 22px rgba(15, 23, 42, 0.16)) !important;
+}
+html.dark .product-card-image-pad,
+html.dark .product-card-image-pad > span,
+html.dark .product-card-image-pad > div[class*='w-'] {
+  border-radius: 1.25rem;
+}
+html.dark .product-card-image-pad::before {
+  border-radius: 1.25rem;
+  inset: 0.35rem;
+  background:
+    radial-gradient(circle at 50% 36%, rgba(255,255,255,0.98), rgba(244,248,255,0.94) 58%, rgba(226,235,250,0.9) 100%) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 23, 42, 0.04),
+    0 14px 38px rgba(0,0,0,0.16);
+}
+html.dark .product-card-image-pad img,
+html.dark .product-card-image-pad picture,
+html.dark .product-card-image-pad [data-nimg],
+html.dark .product-card-image-pad > div:not(:empty) {
+  position: relative;
+  z-index: 1;
+}
+html.dark .product-card-image-pad img,
+html.dark .product-card-image-pad [data-nimg] {
+  mix-blend-mode: multiply;
+  filter: saturate(1.03) contrast(1.02) drop-shadow(0 14px 20px rgba(15, 23, 42, 0.14)) !important;
+}
+html.dark .product-card-image-pad:hover::before {
+  background:
+    radial-gradient(circle at 50% 34%, rgba(255,255,255,1), rgba(239,246,255,0.98) 58%, rgba(210,225,252,0.96) 100%) !important;
+}
+html.dark .product-thumb-stage,
+html.dark .assembly-image-pad {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(255,255,255,0.98), rgba(238,244,255,0.94) 62%, rgba(211,224,248,0.9)) !important;
+  border-color: rgba(255,255,255,0.18) !important;
+  box-shadow: 0 12px 34px rgba(0,0,0,0.22) !important;
+}
+html.dark .product-thumb-stage img,
+html.dark .assembly-image-pad img,
+html.dark .assembly-image-pad [data-nimg] {
+  position: relative;
+  z-index: 1;
+  mix-blend-mode: multiply;
+  filter: saturate(1.03) contrast(1.02) drop-shadow(0 8px 12px rgba(15,23,42,0.14)) !important;
+}
+
+/* product/card shell: make all cards feel designed */
+html.dark .group.relative.flex.h-full,
+html.dark .group.relative.overflow-hidden,
+html.dark .rounded-xl.shadow,
+html.dark .rounded-lg.shadow,
+html.dark .shadow_pro {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.09), transparent 14rem),
+    linear-gradient(145deg, rgba(17, 27, 46, 0.94), rgba(9, 14, 28, 0.94)) !important;
+  border: 1px solid rgba(148, 163, 184, 0.16) !important;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
+}
+html.dark .group.relative.flex.h-full:hover,
+html.dark .group.relative.overflow-hidden:hover {
+  border-color: rgba(130, 170, 255, 0.42) !important;
+  box-shadow:
+    0 24px 76px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(56, 107, 249, 0.16),
+    0 0 42px rgba(56, 107, 249, 0.08) !important;
+}
+
+/* product detail sticky boxes and tabs */
+html.dark .sticky.top-0,
+html.dark .sticky.bottom-0 {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(56,107,249,0.12), transparent 16rem),
+    linear-gradient(145deg, rgba(12, 18, 32, 0.94), rgba(20, 30, 50, 0.88)) !important;
+  border: 1px solid rgba(148, 163, 184, 0.16) !important;
+  backdrop-filter: blur(18px);
+}
+html.dark .sticky.top-0 button.bg-blue-600,
+html.dark .sticky.top-0 button[class*='bg-blue-600'] {
+  background: linear-gradient(135deg, #386bf9, #6ea0ff) !important;
+  color: #fff !important;
+}
+html.dark [data-tab].rounded-lg,
+html.dark .scroll-mt-28.rounded-lg {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.08), transparent 18rem),
+    linear-gradient(145deg, rgba(13, 20, 35, 0.94), rgba(8, 13, 26, 0.94)) !important;
+  border: 1px solid rgba(148, 163, 184, 0.16) !important;
+}
+
+/* filters/profile/cart/checkout */
+html.dark aside,
+html.dark .container_sidebar,
+html.dark .container_accordion_filter,
+html.dark .container_category,
+html.dark .container_sidebar .menu,
+html.dark .container_sidebar .link {
+  background-color: transparent !important;
+  border-color: rgba(148, 163, 184, 0.16) !important;
+}
+html.dark .container_sidebar {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(56,107,249,0.12), transparent 18rem),
+    linear-gradient(145deg, rgba(17, 27, 46, 0.94), rgba(8, 13, 26, 0.94)) !important;
+}
+html.dark .container_sidebar .menu .link:hover,
+html.dark .container_sidebar .menu .container_link:hover {
+  background: rgba(56, 107, 249, 0.08) !important;
+  border-radius: 1rem;
+}
+html.dark .container_sidebar .menu .active {
+  background: linear-gradient(180deg, #386bf9, #6ea0ff) !important;
+  box-shadow: 0 0 22px rgba(56,107,249,0.34);
+}
+
+/* bottom navigation active pill */
+html.dark .shadow_menu_bottom button[class*='bg-main/10'] {
+  background:
+    linear-gradient(135deg, rgba(56, 107, 249, 0.16), rgba(255,255,255,0.04)) !important;
+  box-shadow: inset 0 0 0 1px rgba(130, 170, 255, 0.16);
+}
+
+/* badges and status colors */
+html.dark .bg-red-500,
+html.dark .bg-\[\#F93838\],
+html.dark .bg-\[\#f93838\] {
+  background: linear-gradient(135deg, #ef4444, #fb7185) !important;
+  box-shadow: 0 10px 28px rgba(239, 68, 68, 0.24) !important;
+}
+html.dark .bg-\[\#00D757\],
+html.dark .hover\:bg-\[\#00c853\]:hover {
+  background: linear-gradient(135deg, #05b86b, #39e58d) !important;
+  box-shadow: 0 12px 32px rgba(5, 184, 107, 0.24) !important;
+}
+html.dark .bg-\[\#F9C638\],
+html.dark .bg-\[\#ffab00\],
+html.dark .bg-yellow-500 {
+  background: linear-gradient(135deg, #f59e0b, #facc15) !important;
+}
+
+/* focus/accessibility: visible in dark */
+html.dark a:focus-visible,
+html.dark button:focus-visible,
+html.dark input:focus-visible,
+html.dark textarea:focus-visible,
+html.dark select:focus-visible {
+  outline: 2px solid rgba(130, 170, 255, 0.75) !important;
+  outline-offset: 3px;
+}
+
+/* skeleton/loading and dividers */
+html.dark .bg-default-300,
+html.dark .bg-default-200,
+html.dark .bg-default-100 {
+  background-color: rgba(51, 65, 85, 0.85) !important;
+}
+html.dark .animate-shimmer {
+  background-image: linear-gradient(90deg, transparent, rgba(130, 170, 255, 0.18), transparent) !important;
+}
+html.dark hr,
+html.dark .h-px,
+html.dark .w-px {
+  border-color: rgba(148, 163, 184, 0.16) !important;
+  background-color: rgba(148, 163, 184, 0.16) !important;
+}
+
+/* print remains normal */
+@media print {
+  html.dark body,
+  html.dark .bg-white,
+  html.dark .bg-gray-100,
+  html.dark .bg-slate-100,
+  html.dark .product-image-stage,
+  html.dark .product-card-image-pad::before {
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Refined product list image pad: scope the light studio to the image box only */
+html.dark .product-card-image-pad::before,
+html.dark .product-card-image-pad::after {
+  content: none !important;
+}
+html.dark .product-image-pad {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 1.25rem;
+}
+html.dark .product-image-pad::before {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 50% 36%, rgba(255,255,255,0.99), rgba(244,248,255,0.96) 58%, rgba(226,235,250,0.92) 100%) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 23, 42, 0.04),
+    inset 0 -20px 44px rgba(56, 107, 249, 0.08),
+    0 14px 38px rgba(0,0,0,0.16);
+}
+html.dark .product-image-pad::after {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 10%;
+  z-index: -1;
+  height: 22%;
+  border-radius: 999px;
+  background: radial-gradient(ellipse, rgba(15, 23, 42, 0.18), transparent 70%);
+  filter: blur(10px);
+}
+html.dark .product-image-pad img,
+html.dark .product-image-pad [data-nimg] {
+  mix-blend-mode: multiply;
+  filter: saturate(1.03) contrast(1.02) drop-shadow(0 14px 20px rgba(15, 23, 42, 0.14)) !important;
+}
+
+/* =========================================================
+   Offland Dark Mode V5.2 — final visual coverage pass
+   Fixes white islands in featured sections, category pages,
+   comment/question empty states and magazine gray readability.
+   ========================================================= */
+html.dark [class*='from-gray-50'][class*='to-white'],
+html.dark [class*='from-gray-50'][class*='to-transparent'],
+html.dark [class*='from-white'][class*='to-purple'],
+html.dark [class*='from-white'][class*='to-blue'],
+html.dark [class*='from-blue-100'][class*='to-purple-50'],
+html.dark [class*='from-blue-100'][class*='to-pink-100'],
+html.dark [class*='from-blue-50'][class*='to-purple-50'],
+html.dark [class*='from-amber-50'][class*='to-orange-100'],
+html.dark [class*='from-slate-100'][class*='to-white'] {
+  background-image:
+    radial-gradient(circle at 12% 0%, rgba(56, 107, 249, 0.16), transparent 18rem),
+    radial-gradient(circle at 100% 35%, rgba(124, 58, 237, 0.13), transparent 20rem),
+    linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(7, 12, 24, 0.96)) !important;
+  color: var(--offl-text-body) !important;
+  border-color: var(--offl-hairline) !important;
+}
+
+/* Featured homepage carousel: turn the pale promo area into a premium dark showcase */
+html.dark .relative.mx-auto.mb-8.w-\[99\%\],
+html.dark [class*='from-blue-100'][class*='via-blue-50'][class*='to-purple-50'] {
+  background:
+    radial-gradient(circle at 8% 10%, rgba(56, 107, 249, 0.18), transparent 26rem),
+    radial-gradient(circle at 88% 18%, rgba(168, 85, 247, 0.16), transparent 24rem),
+    linear-gradient(135deg, rgba(10, 18, 34, 0.98), rgba(15, 23, 42, 0.94) 48%, rgba(7, 12, 24, 0.98)) !important;
+  border-color: rgba(130, 170, 255, 0.24) !important;
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+html.dark .relative.mx-auto.mb-8.w-\[99\%\]::before,
+html.dark [class*='from-blue-100'][class*='via-blue-50'][class*='to-purple-50']::before {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
+}
+html.dark .relative.mx-auto.mb-8.w-\[99\%\] h6,
+html.dark [class*='from-blue-100'][class*='via-blue-50'][class*='to-purple-50'] h6 {
+  color: #f8fbff !important;
+}
+
+/* Category pages: title/story/filter/results shells */
+html.dark .container_page.mt-7,
+html.dark .container_page.mt-6.rounded-xl,
+html.dark .container_page.category-dark-shell {
+  background:
+    radial-gradient(circle at 95% 0%, rgba(56, 107, 249, 0.1), transparent 20rem),
+    linear-gradient(145deg, rgba(11, 18, 32, 0.66), rgba(7, 12, 24, 0.48)) !important;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 1.5rem;
+  padding: clamp(0.75rem, 1.4vw, 1.25rem);
+}
+html.dark .container_page h1,
+html.dark .container_page h2,
+html.dark .container_page h3,
+html.dark .container_page h4,
+html.dark .container_page h5,
+html.dark .container_page h6 {
+  color: #f8fbff !important;
+}
+html.dark .container_page p:not(.text-white),
+html.dark .container_page span:not(.text-white):not([class*='bg-gradient']) {
+  color: inherit;
+}
+
+/* Story/category circles should be dark-framed but image area still clean */
+html.dark a .rounded-full,
+html.dark span.rounded-full {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255,255,255,0.96), rgba(238,244,255,0.92) 62%, rgba(210,225,252,0.9)) !important;
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.28),
+    inset 0 0 0 1px rgba(15,23,42,0.06) !important;
+}
+html.dark a .rounded-full + p,
+html.dark a p {
+  color: #d7e2f3 !important;
+}
+
+/* Product comments / questions empty states: no white blocks */
+html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br,
+html.dark div[class*='rounded-2xl'][class*='border-gray-200'][class*='from-gray-50'][class*='to-white'] {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(56, 107, 249, 0.16), transparent 22rem),
+    radial-gradient(circle at 100% 80%, rgba(168, 85, 247, 0.12), transparent 18rem),
+    linear-gradient(145deg, rgba(18, 27, 45, 0.96), rgba(8, 13, 26, 0.96)) !important;
+  border: 1px solid rgba(148, 163, 184, 0.18) !important;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255,255,255,0.04) !important;
+}
+/* Empty state grid overlay removed for Turbopack CSS parser safety. */
+html.dark .rounded-full.bg-blue-100,
+html.dark .rounded-full.bg-purple-100 {
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255,255,255,0.28), transparent 34%),
+    linear-gradient(135deg, rgba(56,107,249,0.24), rgba(124,58,237,0.26)) !important;
+  box-shadow: 0 18px 45px rgba(56, 107, 249, 0.18) !important;
+}
+html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br h3,
+html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br p {
+  color: #e8f0ff !important;
+}
+html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br p {
+  color: #aebbd0 !important;
+}
+
+/* Magazine cards and gray boxes: readable, not muddy */
+html.dark .bg-gray-400,
+html.dark .bg-gray-500,
+html.dark .bg-slate-400,
+html.dark .bg-slate-500,
+html.dark .bg-zinc-400,
+html.dark .bg-zinc-500 {
+  background-color: rgba(71, 85, 105, 0.52) !important;
+}
+html.dark .bg-gray-400\/50,
+html.dark .bg-slate-400\/50,
+html.dark .bg-zinc-400\/50,
+html.dark [class*='bg-gray-400/'],
+html.dark [class*='bg-slate-400/'],
+html.dark [class*='bg-zinc-400/'] {
+  background-color: rgba(71, 85, 105, 0.34) !important;
+}
+html.dark .line-clamp-2,
+html.dark .line-clamp-3,
+html.dark .line-clamp-4 {
+  color: #dbe7f8;
+}
+html.dark article .bg-gradient-to-br.from-white,
+html.dark article [class*='from-white'][class*='via-blue'] {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(56,107,249,0.12), transparent 18rem),
+    linear-gradient(145deg, rgba(15,23,42,0.94), rgba(8,13,26,0.94)) !important;
+}
+html.dark article .text-gray-700,
+html.dark article .group-hover\:text-gray-900:hover,
+html.dark article p {
+  color: #cbd7e9 !important;
+}
+html.dark article .bg-white,
+html.dark aside .bg-white,
+html.dark aside a.bg-white,
+html.dark aside .border-gray-200.bg-white {
+  background:
+    linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
+  border-color: rgba(148, 163, 184, 0.18) !important;
+}
+html.dark aside h3,
+html.dark aside h4,
+html.dark aside p,
+html.dark aside span:not(.text-white) {
+  color: #dbe7f8 !important;
+}
+
+/* Keep image studio consistent on category mobile and thumbnails */
+html.dark .product-image-pad,
+html.dark .product-thumb-stage,
+html.dark .assembly-image-pad {
+  border: 1px solid rgba(255,255,255,0.16) !important;
+}
+html.dark .product-image-pad::before {
+  background:
+    radial-gradient(circle at 50% 36%, rgba(255,255,255,0.99), rgba(244,248,255,0.96) 58%, rgba(226,235,250,0.92) 100%),
+    linear-gradient(135deg, rgba(56,107,249,0.06), rgba(124,58,237,0.05)) !important;
+}
+
+/* Navigation arrows in dark */
+html.dark .featured-swiper-button-prev,
+html.dark .featured-swiper-button-next,
+html.dark button[aria-label='عکس قبلی'],
+html.dark button[aria-label='عکس بعدی'] {
+  background: rgba(10, 16, 30, 0.86) !important;
+  border-color: rgba(130,170,255,0.24) !important;
+  color: #eaf1ff !important;
+  backdrop-filter: blur(14px);
+}
+html.dark .featured-swiper-button-prev svg,
+html.dark .featured-swiper-button-next svg,
+html.dark button[aria-label='عکس قبلی'] svg,
+html.dark button[aria-label='عکس بعدی'] svg {
+  color: #eaf1ff !important;
+}
+
+/* prevent SVG fill hardcoded black icons from disappearing where currentColor isn't used */
+html.dark svg path[fill='#0F1014'],
+html.dark svg path[fill='#0f1014'] {
+  fill: #dbe7f8 !important;
+}
+html.dark svg path[stroke='#0F1014'],
+html.dark svg path[stroke='#0f1014'] {
+  stroke: #dbe7f8 !important;
+}
+
+/* final hardening for white islands */
+html.dark div[style*='background: white'],
+html.dark div[style*='background-color: white'],
+html.dark section[style*='background: white'],
+html.dark section[style*='background-color: white'] {
+  background: var(--offl-card) !important;
+}
+
+/* =========================================================
+   Offland Dark Mode V5.4 — DOM snapshot targeted premium pass
+   Safe selectors only, compatible with Turbopack CSS parser.
+   ========================================================= */
+html.dark {
+  --dm-bg-0: #050814;
+  --dm-bg-1: #080d1a;
+  --dm-bg-2: #0d1629;
+  --dm-card: rgba(15, 24, 42, 0.94);
+  --dm-card-2: rgba(20, 31, 52, 0.92);
+  --dm-stroke: rgba(148, 163, 184, 0.18);
+  --dm-stroke-2: rgba(130, 170, 255, 0.28);
+  --dm-text: #eef4ff;
+  --dm-text-2: #cbd7e9;
+  --dm-muted: #9aa8bd;
+  --dm-blue: #7da7ff;
+  --dm-blue-strong: #386bf9;
+  --dm-purple: #8b5cf6;
+}
+
+/* full-page atmosphere */
+html.dark .category-dark-shell,
+html.dark .home-special-section,
+html.dark .product-carousel-section {
+  position: relative;
+}
+html.dark .category-dark-shell::before,
+html.dark .home-special-section::before,
+html.dark .featured-product-showcase::before {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(56, 107, 249, 0.10), transparent 22rem),
+    radial-gradient(circle at 90% 10%, rgba(139, 92, 246, 0.09), transparent 24rem);
+  opacity: 0.9;
+}
+html.dark .category-dark-shell > *,
+html.dark .home-special-section > *,
+html.dark .featured-product-showcase > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Mag header: no pale/flat strip */
+html.dark .mag-header-shell {
+  background:
+    linear-gradient(180deg, rgba(7, 11, 22, 0.94), rgba(7, 11, 22, 0.78)) !important;
+  border-color: rgba(148, 163, 184, 0.14) !important;
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.34) !important;
+}
+html.dark .mag-header-mainbar {
+  background:
+    linear-gradient(90deg, rgba(56, 107, 249, 0.96), rgba(73, 128, 255, 0.94) 44%, rgba(124, 58, 237, 0.9)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 14px 38px rgba(56,107,249,0.18) !important;
+}
+html.dark .mag-short-ticker {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255,255,255,0.09), transparent 10rem),
+    linear-gradient(135deg, rgba(0,0,0,0.92), rgba(15,23,42,0.92)) !important;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 28px rgba(0,0,0,0.28);
+}
+html.dark .mag-store-cta {
+  background: rgba(8,13,26,0.86) !important;
+  color: #dbeafe !important;
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.26) !important;
+}
+
+/* Mag listing page */
+html.dark .mag-page-shell {
+  background: #020617 !important;
+}
+html.dark .mag-hottest-section {
+  color: var(--dm-text);
+}
+html.dark .mag-section-title-card,
+html.dark .mag-featured-heading {
+  background:
+    linear-gradient(135deg, rgba(17,27,46,0.96), rgba(10,16,30,0.96)) !important;
+  border: 1px solid var(--dm-stroke-2) !important;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+}
+html.dark .mag-section-title-card h3,
+html.dark .mag-section-title-card h6,
+html.dark .mag-featured-heading h3 {
+  color: var(--dm-text) !important;
+}
+html.dark .mag-hottest-grid {
+  border-radius: 1.5rem;
+}
+html.dark .mag-article-card,
+html.dark .mag-featured-card,
+html.dark .short-news-card {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(56,107,249,0.10), transparent 16rem),
+    linear-gradient(145deg, rgba(17,27,46,0.96), rgba(8,13,26,0.96)) !important;
+  border-color: var(--dm-stroke) !important;
+  box-shadow:
+    0 22px 70px rgba(0,0,0,0.34),
+    inset 0 1px 0 rgba(255,255,255,0.035) !important;
+}
+html.dark .mag-article-card:hover,
+html.dark .mag-featured-card:hover,
+html.dark .short-news-card:hover {
+  border-color: rgba(125,167,255,0.5) !important;
+  box-shadow:
+    0 28px 86px rgba(0,0,0,0.44),
+    0 0 0 1px rgba(56,107,249,0.18),
+    0 0 46px rgba(56,107,249,0.10) !important;
+}
+html.dark .mag-article-image {
+  background: #050814 !important;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 -28px 80px rgba(56,107,249,0.08);
+}
+html.dark .mag-article-image img {
+  filter: saturate(1.08) contrast(1.04) brightness(0.92) !important;
+}
+html.dark .mag-article-content p,
+html.dark .mag-article-content span,
+html.dark .mag-featured-card h4,
+html.dark .mag-featured-card span:not(.text-white) {
+  color: var(--dm-text-2) !important;
+  -webkit-text-fill-color: currentColor !important;
+  background: none !important;
+}
+html.dark .mag-article-content p[class*='text-gray-900'],
+html.dark .mag-featured-card h4,
+html.dark .short-news-card h3 {
+  color: var(--dm-text) !important;
+}
+html.dark .mag-read-more {
+  background: rgba(8,13,26,0.86) !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  backdrop-filter: blur(12px);
+}
+html.dark .mag-read-more span {
+  color: #dbeafe !important;
+}
+html.dark .short-news-hero,
+html.dark .single-blog-summary {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(56,107,249,0.16), transparent 18rem),
+    radial-gradient(circle at 100% 100%, rgba(236,72,153,0.10), transparent 18rem),
+    linear-gradient(145deg, rgba(17,27,46,0.96), rgba(8,13,26,0.96)) !important;
+  border: 1px solid var(--dm-stroke) !important;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.36) !important;
+}
+html.dark .short-news-hero h1,
+html.dark .short-news-hero p,
+html.dark .single-blog-summary p,
+html.dark .short-news-card p,
+html.dark .short-news-card div {
+  color: var(--dm-text-2) !important;
+}
+html.dark .short-news-hero h1,
+html.dark .short-news-card h3 {
+  color: var(--dm-text) !important;
+}
+html.dark .short-news-excerpt {
+  background: rgba(71,85,105,0.24) !important;
+  border: 1px solid rgba(148,163,184,0.12);
+}
+html.dark .short-news-excerpt a {
+  color: #93c5fd !important;
+}
+
+/* Single blog page */
+html.dark .single-blog-article {
+  color: var(--dm-text-2);
+}
+html.dark .single-blog-category > div:first-child {
+  background: rgba(8,13,26,0.88) !important;
+  border: 1px solid rgba(255,255,255,0.14);
+}
+html.dark .single-blog-title {
+  background: linear-gradient(135deg, #f8fbff 0%, #a9c7ff 50%, #c4b5fd 100%) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 14px 30px rgba(56,107,249,0.14));
+}
+html.dark .single-blog-cover {
+  background:
+    linear-gradient(135deg, rgba(56,107,249,0.30), rgba(139,92,246,0.24), rgba(236,72,153,0.18)) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+}
+html.dark .single-blog-cover img {
+  filter: saturate(1.08) contrast(1.05) brightness(0.95) !important;
+}
+
+/* Home product sections */
+html.dark .featured-product-showcase,
+html.dark .home-special-section,
+html.dark .product-carousel-section {
+  border-radius: 1.5rem;
+}
+html.dark .featured-product-showcase {
+  background:
+    radial-gradient(circle at 10% 5%, rgba(56,107,249,0.22), transparent 26rem),
+    radial-gradient(circle at 90% 20%, rgba(139,92,246,0.18), transparent 24rem),
+    linear-gradient(135deg, rgba(7,12,24,0.98), rgba(15,23,42,0.96)) !important;
+  border-color: rgba(125,167,255,0.26) !important;
+}
+html.dark .featured-product-showcase h6,
+html.dark .home-special-section h6,
+html.dark .product-carousel-section h6 {
+  color: var(--dm-text) !important;
+}
+html.dark .featured-product-showcase a[href*='vitrin_id'],
+html.dark .product-carousel-section a[href*='vitrin_id'] {
+  background: rgba(56,107,249,0.13) !important;
+  border-color: rgba(125,167,255,0.36) !important;
+  color: #dbeafe !important;
+}
+
+/* Category pages */
+html.dark .category-dark-shell,
+html.dark .category-filter-panel,
+html.dark .category-sortbar,
+html.dark .category-mobile-filterbar {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(56,107,249,0.10), transparent 18rem),
+    linear-gradient(145deg, rgba(13,20,35,0.94), rgba(8,13,26,0.94)) !important;
+  border-color: var(--dm-stroke) !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.28) !important;
+}
+html.dark .category-sortbar {
+  border: 1px solid var(--dm-stroke) !important;
+  border-radius: 1rem;
+  padding: 0.75rem 1rem !important;
+  margin-bottom: 0.75rem;
+}
+html.dark .category-filter-panel {
+  border: 1px solid var(--dm-stroke) !important;
+  border-radius: 1.25rem;
+  padding: 0.75rem !important;
+}
+html.dark .category-filter-panel p,
+html.dark .category-filter-panel span,
+html.dark .category-sortbar p,
+html.dark .category-sortbar span,
+html.dark .category-mobile-filterbar span {
+  color: var(--dm-text-2) !important;
+}
+html.dark .category-products-grid {
+  border-radius: 1.25rem;
+}
+html.dark .category-mobile-product-row {
+  background: rgba(15,24,42,0.72) !important;
+  border-color: var(--dm-stroke) !important;
+  border-radius: 1rem;
+  margin-bottom: 0.55rem;
+  padding: 0.5rem;
+}
+html.dark .category-mobile-product-row p {
+  color: var(--dm-text) !important;
+}
+html.dark .container_accordion_filter,
+html.dark .container_accordion_filter [data-slot='trigger'],
+html.dark .container_accordion_filter [data-slot='content'] {
+  background: transparent !important;
+  color: var(--dm-text-2) !important;
+}
+html.dark .container_accordion_filter [data-slot='title'],
+html.dark .container_accordion_filter label,
+html.dark .container_accordion_filter span {
+  color: var(--dm-text-2) !important;
+}
+
+/* Product details and empty states */
+html.dark form[data-question-form],
+html.dark [data-question-form] {
+  background:
+    linear-gradient(145deg, rgba(17,27,46,0.96), rgba(8,13,26,0.96)) !important;
+  border: 1px solid var(--dm-stroke) !important;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.30) !important;
+}
+html.dark form[data-question-form] span,
+html.dark form[data-question-form] textarea {
+  color: var(--dm-text-2) !important;
+}
+html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(56,107,249,0.16), transparent 22rem),
+    linear-gradient(145deg, rgba(17,27,46,0.96), rgba(8,13,26,0.96)) !important;
+  border-color: var(--dm-stroke) !important;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.34) !important;
+}
+html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br h3,
+html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br p {
+  color: var(--dm-text-2) !important;
+}
+html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br h3 {
+  color: var(--dm-text) !important;
+}
+
+/* Product image studio refinements */
+html.dark .product-image-stage,
+html.dark .product-image-pad,
+html.dark .product-thumb-stage,
+html.dark .assembly-image-pad {
+  background:
+    radial-gradient(circle at 50% 38%, rgba(255,255,255,0.99), rgba(241,246,255,0.97) 58%, rgba(219,232,253,0.94) 100%) !important;
+  border-color: rgba(255,255,255,0.18) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(15,23,42,0.05),
+    inset 0 -24px 58px rgba(56,107,249,0.10),
+    0 18px 50px rgba(0,0,0,0.26) !important;
+}
+html.dark .product-image-stage img,
+html.dark .product-image-pad img,
+html.dark .product-thumb-stage img,
+html.dark .assembly-image-pad img,
+html.dark .product-image-stage [data-nimg],
+html.dark .product-image-pad [data-nimg],
+html.dark .product-thumb-stage [data-nimg],
+html.dark .assembly-image-pad [data-nimg] {
+  mix-blend-mode: multiply !important;
+  filter: saturate(1.03) contrast(1.03) drop-shadow(0 18px 20px rgba(15,23,42,0.16)) !important;
+}
+html.dark .product-gallery-shell {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(56,107,249,0.14), transparent 18rem),
+    linear-gradient(145deg, rgba(12,18,32,0.94), rgba(7,12,24,0.94)) !important;
+}
+
+/* hard final text contrast */
+html.dark .text-transparent:not(.single-blog-title) {
+  -webkit-text-fill-color: currentColor;
+}
+html.dark p,
+html.dark li,
+html.dark td,
+html.dark th {
+  text-wrap: pretty;
+}
+html.dark .text-gray-900,
+html.dark .text-slate-900,
+html.dark .text-zinc-900,
+html.dark .text-neutral-900 {
+  color: var(--dm-text) !important;
+}
+html.dark .text-gray-600,
+html.dark .text-slate-600,
+html.dark .text-zinc-600,
+html.dark .text-neutral-600,
+html.dark .text-gray-500,
+html.dark .text-slate-500,
+html.dark .text-zinc-500,
+html.dark .text-neutral-500 {
+  color: var(--dm-muted) !important;
+}
+
+/* =========================================================
+   Offland Dark Mode V6.0 — Premium UX & Detail Layer
+   Enhanced hover effects, banner animations, card polish
+   ========================================================= */
+
+/* ── CSS Custom Properties for Dark Mode ── */
+:root {
+  --offl-glow-blue: rgba(56, 107, 249, 0.35);
+  --offl-glow-purple: rgba(139, 92, 246, 0.28);
+  --offl-glow-cyan: rgba(14, 165, 233, 0.2);
+}
+
+/* ── Banner hover effects ── */
+html.dark .banner-card {
+  border: none !important;
+  box-shadow: none !important;
+  transition: none;
+}
+html.dark .banner-card:hover {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ── Product card hover polish ── */
+html.dark .keen-slider__slide {
+  border-color: rgba(148, 163, 184, 0.08) !important;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+html.dark .keen-slider__slide:hover {
+  border-color: rgba(130, 170, 255, 0.2) !important;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(56, 107, 249, 0.06) !important;
+  transform: translateY(-4px);
+}
+
+/* ── CardProduct in dark ── */
+html.dark .product-card-image-pad {
+  background:
+    radial-gradient(circle at 50% 44%, rgba(255,255,255,0.96) 0 34%, rgba(238,244,255,0.94) 54%, rgba(209,222,245,0.90) 100%) !important;
+}
+
+/* ── Carousel section title bar ── */
+html.dark .product-carousel-section {
+  border-radius: 1rem;
+}
+html.dark .product-carousel-section .border-b {
+  border-color: rgba(148, 163, 184, 0.12) !important;
+}
+html.dark .product-carousel-section h6 {
+  color: var(--offl-text) !important;
+}
+
+/* ── Featured carousel dark polish ── */
+html.dark .featured-product-showcase {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(56, 107, 249, 0.22), transparent 30rem),
+    radial-gradient(circle at 88% 18%, rgba(139, 92, 246, 0.16), transparent 28rem),
+    linear-gradient(145deg, rgba(12, 18, 32, 0.96), rgba(20, 30, 50, 0.92)) !important;
+  border-color: rgba(130, 170, 255, 0.18) !important;
+}
+html.dark .featured-product-showcase .swiper-slide > div > div {
+  background: rgba(15, 23, 42, 0.72) !important;
+  border-color: rgba(148, 163, 184, 0.12) !important;
+  backdrop-filter: blur(12px);
+}
+html.dark .featured-product-showcase .swiper-slide:hover > div > div {
+  border-color: rgba(130, 170, 255, 0.28) !important;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 20px rgba(56, 107, 249, 0.08) !important;
+}
+html.dark .featured-product-showcase h6 {
+  color: var(--offl-text) !important;
+}
+
+/* ── Header theme toggle button ── */
+html.dark .header-theme-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+html.dark .header-theme-btn:hover {
+  background: rgba(56, 107, 249, 0.15);
+  border-color: rgba(130, 170, 255, 0.35);
+  box-shadow: 0 4px 16px rgba(56, 107, 249, 0.18);
+}
+
+/* ── Footer trust logos glow ── */
+html.dark .footer-trust-logo {
+  transition: all 0.3s ease;
+}
+html.dark .footer-trust-logo:hover {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+  transform: scale(1.08);
+}
+
+/* ── Button hover glow ── */
+html.dark .bg-main:hover {
+  box-shadow: 0 12px 40px rgba(56, 107, 249, 0.38) !important;
+  filter: brightness(1.1);
+}
+
+/* ── Scrollbar neon ── */
+html.dark *::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #386bf9, #7c3aed) !important;
+  border-radius: 999px !important;
+}
+
+/* ── Cart/profile buttons in header ── */
+html.dark header button[class*="bg-white"],
+html.dark header a[class*="bg-white"] {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border-color: rgba(148, 163, 184, 0.15) !important;
+  backdrop-filter: blur(12px);
+}
+html.dark header button[class*="bg-white"]:hover,
+html.dark header a[class*="bg-white"]:hover {
+  border-color: rgba(130, 170, 255, 0.3) !important;
+  background: rgba(15, 23, 42, 0.8) !important;
+}
+
+/* ── Search bar dark polish ── */
+html.dark [data-slot="input-wrapper"] {
+  background:
+    linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.76)) !important;
+  border: 1px solid rgba(130, 170, 255, 0.18) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
+  transition: all 0.3s ease;
+}
+html.dark [data-slot="input-wrapper"]:focus-within {
+  border-color: rgba(130, 170, 255, 0.55) !important;
+  box-shadow:
+    0 0 0 4px rgba(56, 107, 249, 0.13),
+    0 16px 34px rgba(0, 0, 0, 0.28) !important;
+}
+
+/* ── Link hover effects ── */
+html.dark a:not(.footer-trust-logo):hover img {
+  filter: brightness(1.05) saturate(1.05);
+}
+
+/* ── Skeleton shimmer in dark mode ── */
+html.dark .animate-pulse {
+  background: linear-gradient(
+    110deg,
+    rgba(30, 41, 59, 0.6) 8%,
+    rgba(56, 107, 249, 0.08) 18%,
+    rgba(30, 41, 59, 0.6) 33%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: shimmer 1.5s linear infinite !important;
+}
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+
+/* ── Category section dark ── */
+html.dark .category-dark-shell {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(56, 107, 249, 0.1), transparent 24rem),
+    rgba(12, 18, 32, 0.6) !important;
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  backdrop-filter: blur(8px);
+}
+
+/* ── Price tags in dark mode ── */
+html.dark .bg-\[\#ffab00\] {
+  background: linear-gradient(135deg, #f59e0b, #f97316) !important;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+}
+html.dark .bg-\[\#F93838\] {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+/* ── Brand card hover ── */
+html.dark .brand-card,
+html.dark [class*="brand"] img {
+  transition: all 0.3s ease;
+  filter: brightness(0.9) saturate(0.9);
+}
+html.dark .brand-card:hover,
+html.dark [class*="brand"]:hover img {
+  filter: brightness(1) saturate(1) drop-shadow(0 4px 12px rgba(56, 107, 249, 0.15));
+  transform: scale(1.04);
+}
+
+/* ── Smooth transition for all dark mode elements ── */
+html.dark *:not(.animate-pulse) {
+  transition-property: background-color, border-color, color, box-shadow, filter, opacity, transform;
+  transition-duration: 220ms;
+  transition-timing-function: ease;
+}
+
+/* ── Top slider dark polish ── */
+html.dark .bg-\[\#F3F6FB\] {
+  background:
+    radial-gradient(circle at 80% 20%, rgba(56, 107, 249, 0.12), transparent 22rem),
+    linear-gradient(145deg, rgba(12, 18, 32, 0.94), rgba(7, 11, 22, 0.98)) !important;
+}
+
+/* ── Navigation buttons dark ── */
+html.dark .featured-swiper-button-prev,
+html.dark .featured-swiper-button-next {
+  background: rgba(15, 23, 42, 0.85) !important;
+  border-color: rgba(148, 163, 184, 0.15) !important;
+  backdrop-filter: blur(12px);
+}
+html.dark .featured-swiper-button-prev:hover,
+html.dark .featured-swiper-button-next:hover {
+  background: rgba(30, 41, 59, 0.9) !important;
+  border-color: rgba(130, 170, 255, 0.35) !important;
+  box-shadow: 0 8px 24px rgba(56, 107, 249, 0.15);
+}
+
+/* ── HeaderTop dark polish ── */
+html.dark header .bg-\[\#F3F6FB\],
+html.dark .header-top-bar {
+  background: rgba(12, 18, 32, 0.92) !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+/* ── View all button dark ── */
+html.dark .product-carousel-section a[class*="rounded-lg"] {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border-color: rgba(148, 163, 184, 0.15) !important;
+  backdrop-filter: blur(8px);
+}
+html.dark .product-carousel-section a[class*="rounded-lg"]:hover {
+  background: rgba(56, 107, 249, 0.15) !important;
+  border-color: rgba(130, 170, 255, 0.35) !important;
+  box-shadow: 0 4px 16px rgba(56, 107, 249, 0.12);
+}
+
+/* ── Pagination dots dark ── */
+html.dark .bg-blue-500:not(.bg-main) {
+  box-shadow: 0 0 8px rgba(56, 107, 249, 0.4);
+}
+html.dark .bg-gray-300,
+html.dark .bg-gray-400 {
+  background-color: rgba(148, 163, 184, 0.2) !important;
+}
+
+/* ── Footer bottom bar ── */
+html.dark footer .bg-white {
+  background: linear-gradient(145deg, rgba(12, 18, 32, 0.96), rgba(7, 11, 22, 0.98)) !important;
+  border-top: 1px solid rgba(148, 163, 184, 0.08);
+}
+html.dark footer .bg-white p {
+  color: var(--offl-text-muted) !important;
+}
+html.dark footer .bg-white .text-blue-500 {
+  color: var(--offl-primary) !important;
+}
+
+/* ── HeaderBottom dark ── */
+html.dark .shadow_menu_bottom {
+  background: rgba(8, 13, 26, 0.94) !important;
+  border-top: 1px solid rgba(148, 163, 184, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+/* ── Special section dark ── */
+html.dark .special-section,
+html.dark [class*="special"] {
+  background:
+    radial-gradient(circle at 15% 10%, rgba(56, 107, 249, 0.14), transparent 22rem),
+    radial-gradient(circle at 85% 80%, rgba(139, 92, 246, 0.1), transparent 20rem),
+    rgba(12, 18, 32, 0.7) !important;
+  border-color: rgba(148, 163, 184, 0.1) !important;
+}
+
+/* ── Skeleton loaders dark ── */
+html.dark .Skeleton,
+html.dark [class*="skeleton"],
+html.dark .bg-gray-200 {
+  background: rgba(30, 41, 59, 0.5) !important;
+}
+
+/* ── Mobile menu dark ── */
+html.dark .custom_sidebar,
+html.dark .custom_sidebar_category {
+  background: rgba(12, 18, 32, 0.97) !important;
+  border-color: rgba(148, 163, 184, 0.08) !important;
+  backdrop-filter: blur(20px);
+}
+
+/* ── Selection color ── */
+html.dark ::selection {
+  background: rgba(56, 107, 249, 0.35);
+  color: #fff;
+}
+
+/* ── Focused input glow ── */
+html.dark input:focus,
+html.dark textarea:focus {
+  box-shadow: 0 0 0 3px rgba(56, 107, 249, 0.2) !important;
+}
+
+/* ── Divider lines ── */
+html.dark .h-px.bg-white {
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.2), transparent) !important;
+}
+
+/* =========================================================
+   Offland V6.1 — Flash hover & Price clarity
+   ========================================================= */
+
+/* ── Banner card: no border, clean look ── */
+html.dark .banner-card {
+  border: none !important;
+  box-shadow: none !important;
+  transition: none;
+}
+html.dark .banner-card:hover {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ── Banner flash glow in dark mode ── */
+html.dark .banner-flash {
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(130, 170, 255, 0) 45%,
+    rgba(130, 170, 255, 0.35) 50%,
+    rgba(130, 170, 255, 0) 55%,
+    transparent 60%
+  ) !important;
+  background-size: 250% 100% !important;
+}
+
+/* ── Price styling: clear and readable ── */
+
+/* Original price (struck through) - light mode */
+.original-price {
+  background-color: #fee2e2 !important;
+  color: #dc2626 !important;
+  text-decoration: line-through !important;
+  text-decoration-color: #ef4444 !important;
+  text-decoration-thickness: 2px !important;
+  border-radius: 6px !important;
+  padding: 1px 8px !important;
+}
+
+/* Final/sale price - light mode */
+.final-price {
+  color: #059669 !important;
+}
+
+/* Original price - dark mode */
+html.dark .original-price {
+  background-color: rgba(220, 38, 38, 0.15) !important;
+  color: #fca5a5 !important;
+  text-decoration-color: #f87171 !important;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+/* Final/sale price - dark mode */
+html.dark .final-price {
+  color: #34d399 !important;
+}
+
+/* Discount badge glow */
+html.dark .discount-badge {
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+}
+
+/* ── Card product hover: subtle lift, no border flash ── */
+html.dark .keen-slider__slide:hover {
+  border-color: rgba(148, 163, 184, 0.12) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35) !important;
+  transform: translateY(-3px);
+}
+
+/* ── Price text in dark mode: ensure visibility ── */
+html.dark .text-black:not(.original-price):not(.final-price) {
+  color: var(--offl-text) !important;
+}
+
+/* ── Product name dark mode: dark text on light bg ── */
+html.dark .product-card-image-pad p:not(.final-price):not(.original-price) {
+  color: #111827 !important;
+}
+
+/* =========================================================
+   V6.2 — Price readability in dark mode
+   ========================================================= */
+
+/* ── Final price in dark: bright green ── */
+html.dark .final-price {
+  color: #34d399 !important;
+  text-shadow: 0 0 12px rgba(52, 211, 153, 0.15);
+}
+
+/* ── Original (struck) price in dark ── */
+html.dark .original-price {
+  background-color: rgba(220, 38, 38, 0.15) !important;
+  color: #fca5a5 !important;
+  text-decoration-color: #f87171 !important;
+  border: 1px solid rgba(220, 38, 38, 0.2) !important;
+}
+
+/* =========================================================
+   V6.3 — Product name: Persian font + English digits
+   IRANYekanXNoEn = فارسی بدون اعداد انگلیسی
+   اعداد انگلیسی (0-9) از فونت سیستم خوانده می‌شن
+   ========================================================= */
+
+/* ── Register NoEn font for Persian-only chars ── */
+@font-face {
+  font-family: 'en-num';
+  src: url('../../public/font/NonEnglish/IRANYekanXNoEn-Medium.ttf') format('truetype');
+  font-display: swap;
+  font-weight: 500;
+}
+
+/* ── Product name: NoEn font → English digits fall through to system font ── */
+.product-name {
+  font-family: 'en-num', Tahoma, Arial, sans-serif !important;
+  color: #1e293b !important;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* ── Product name in dark mode: DARK text on light card bg ── */
+html.dark .product-name {
+  color: #111827 !important;
+  text-shadow: none;
+}
+
+/* ── Product card name text in dark: en-num font for English digits ── */
+html.dark .product-card-image-pad p {
+  font-family: 'en-num', Tahoma, Arial, sans-serif !important;
+  color: #111827 !important;
+  text-shadow: none;
+}
+
+/* ── Slider card name text (not prices!) ── */
+html.dark .keen-slider__slide p:not(.final-price):not(.original-price),
+html.dark .swiper-slide p:not(.final-price):not(.original-price) {
+  font-family: 'en-num', Tahoma, Arial, sans-serif !important;
+  color: #111827 !important;
+  text-shadow: none;
+}
+
+/* ── Price numbers: keep Persian digits (FaNum font) ── */
+.final-price,
+.original-price {
+  font-family: 'medium', 'IRANYekanXFaNum', Tahoma, sans-serif !important;
+}
+
+/* ── Price colors in dark mode (on dark card shell) ── */
+html.dark .final-price {
+  color: #34d399 !important;
+  text-shadow: 0 0 10px rgba(52, 211, 153, 0.2);
+}
+
+html.dark .original-price {
+  background-color: rgba(220, 38, 38, 0.15) !important;
+  color: #fca5a5 !important;
+  text-decoration-color: #f87171 !important;
+  border: 1px solid rgba(220, 38, 38, 0.2) !important;
+}
+
+/* ── Force FaNum font on prices in sliders (override generic p rule) ── */
+html.dark .keen-slider__slide .final-price,
+html.dark .keen-slider__slide .original-price,
+html.dark .swiper-slide .final-price,
+html.dark .swiper-slide .original-price {
+  font-family: 'medium', 'IRANYekanXFaNum', Tahoma, sans-serif !important;
+}
+
+/* =========================================================
+   V6.5 — Category filters dark mode + SEO tag fixes
+   ========================================================= */
+
+/* ── Category page: main shell ── */
+html.dark .category-dark-shell {
+  color: var(--offl-text) !important;
+}
+
+/* ── Category filter panel (desktop sidebar) ── */
+html.dark .category-filter-panel,
+html.dark .custom_sidebar.container_filter {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(56,107,249,0.10), transparent 14rem),
+    linear-gradient(160deg, rgba(15,22,40,0.97), rgba(8,12,24,0.98)) !important;
+  border: 1px solid rgba(148,163,184,0.14) !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 16px 50px rgba(0,0,0,0.35) !important;
+}
+
+/* ── Filter title "فیلترها" ── */
+html.dark .category-filter-panel > div:first-child > p,
+html.dark .category-filter-panel p.text-\[\#0C0C0C\],
+html.dark .category-filter-panel p[class*="text-[#0C0C0C]"] {
+  color: #eef4ff !important;
+}
+
+/* ── "حذف فیلترها" button ── */
+html.dark .category-filter-panel button span {
+  color: var(--offl-primary) !important;
+}
+
+/* ── ToggleFilter: background + text ── */
+html.dark .category-filter-panel .rounded-lg.lg\:bg-\[\#F3F6FB\],
+html.dark .category-filter-panel div[class*="lg:bg-[#F3F6FB]"] {
+  background: rgba(56,107,249,0.06) !important;
+  border-radius: 0.75rem !important;
+}
+html.dark .category-filter-panel p.text-\[\#0C0C0C\] {
+  color: var(--offl-text) !important;
+}
+
+/* ── CheckboxFilter container background ── */
+html.dark .container_accordion_filter,
+html.dark div.lg\:bg-\[\#F3F6FB\] {
+  background: rgba(56,107,249,0.04) !important;
+}
+
+/* ── Accordion item titles in dark ── */
+html.dark .container_accordion_filter [data-slot="trigger"],
+html.dark .container_accordion_filter button[aria-expanded] {
+  color: var(--offl-text) !important;
+}
+html.dark .container_accordion_filter .text-\[\#0C0C0C\] {
+  color: var(--offl-text) !important;
+}
+
+/* ── Accordion borders in dark ── */
+html.dark .container_accordion_filter .border-\[\#E4E7E9\],
+html.dark .container_accordion_filter .border-b.border-\[\#E4E7E9\],
+html.dark .container_accordion_filter [class*="border-[#E4E7E9]"] {
+  border-color: rgba(148,163,184,0.14) !important;
+}
+
+/* ── Accordion chevron icons in dark ── */
+html.dark .container_accordion_filter svg path[stroke="#393B40"] {
+  stroke: var(--offl-text) !important;
+}
+
+/* ── Checkbox labels in dark ── */
+html.dark .container_accordion_filter .text-\[\#0C0C0C\],
+html.dark .container_accordion_filter label span {
+  color: var(--offl-text) !important;
+}
+
+/* ── Search input inside filters in dark ── */
+html.dark .container_accordion_filter input.bg-\[\#f5f6f6\],
+html.dark .container_accordion_filter input[class*="bg-[#f5f6f6]"],
+html.dark .container_accordion_filter input[class*="bg-[#F5F6F6]"] {
+  background: rgba(148,163,184,0.08) !important;
+  border: 1px solid rgba(148,163,184,0.18) !important;
+  color: var(--offl-text) !important;
+}
+
+/* ── Range price inputs in dark ── */
+html.dark .category-filter-panel input[class*="bg-[#F5F6F6]"],
+html.dark .category-filter-panel input[class*="bg-[#f5f6f6]"] {
+  background: rgba(148,163,184,0.08) !important;
+  border: 1px solid rgba(148,163,184,0.18) !important;
+  color: var(--offl-text) !important;
+}
+
+/* ── Sort bar in dark ── */
+html.dark .category-sortbar {
+  border-color: rgba(148,163,184,0.14) !important;
+}
+html.dark .category-sortbar span,
+html.dark .category-sortbar p {
+  color: var(--offl-text-muted) !important;
+}
+html.dark .category-sortbar .text-main {
+  color: var(--offl-primary) !important;
+}
+
+/* ── Sort modal in dark ── */
+html.dark .category-sort-modal,
+html.dark [role="dialog"] .flex.flex-col.items-center.rounded-xl.bg-white {
+  background: rgba(12,18,32,0.98) !important;
+  border: 1px solid rgba(148,163,184,0.18) !important;
+}
+html.dark .category-sort-modal .text-\[\#232429\],
+html.dark [role="dialog"] .text-\[\#232429\] {
+  color: var(--offl-text) !important;
+}
+
+/* ── Mobile filter bar ── */
+html.dark .category-mobile-filterbar {
+  background: rgba(8,12,24,0.95) !important;
+  border-bottom: 1px solid rgba(148,163,184,0.14) !important;
+}
+html.dark .category-mobile-filterbar button,
+html.dark .category-mobile-filterbar span {
+  color: var(--offl-text) !important;
+}
+html.dark .category-mobile-filterbar .border-gray-200 {
+  border-color: rgba(148,163,184,0.18) !important;
+  background: rgba(148,163,184,0.06) !important;
+}
+
+/* ── Mobile product row in category ── */
+html.dark .category-mobile-product-row {
+  border-color: rgba(148,163,184,0.12) !important;
+  background: transparent !important;
+}
+html.dark .category-mobile-product-row .text-black {
+  color: var(--offl-text) !important;
+}
+
+/* ── Category grid background ── */
+html.dark .category-products-grid {
+  background: transparent !important;
+}
+
+/* ── Category tags section in dark ── */
+html.dark .category-tags-section {
+  background: rgba(12,18,32,0.5) !important;
+  border: 1px solid rgba(148,163,184,0.12) !important;
+  border-radius: 1rem !important;
+}
+html.dark .category-tags-section .text-gray-800 {
+  color: var(--offl-text) !important;
+}
+html.dark .category-tags-section .border-gray-200 {
+  border-color: rgba(148,163,184,0.14) !important;
+}
+
+/* ── Category description h2 SEO styling in dark ── */
+html.dark .container_des h2 {
+  color: #eef4ff !important;
+  border-bottom: 1px solid rgba(148,163,184,0.18) !important;
+  padding-bottom: 0.5rem !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 0.75rem !important;
+  font-weight: 700 !important;
+}
+html.dark .container_des p,
+html.dark .container_des li,
+html.dark .container_des span {
+  color: var(--offl-text-muted) !important;
+}
+
+/* ── Breadcrumbs in dark ── */
+html.dark .category-dark-shell a.text-\[\#A8AFB8\],
+html.dark .category-dark-shell .text-\[\#A8AFB8\] {
+  color: #6b7a94 !important;
+}
+html.dark .category-dark-shell .text-\[\#616A76\] {
+  color: var(--offl-text) !important;
+}
+
+/* ── BackPrevPage mobile header ── */
+html.dark .sticky.top-0.bg-white {
+  background: rgba(8,12,24,0.97) !important;
+  border-color: rgba(148,163,184,0.14) !important;
+  backdrop-filter: blur(18px) !important;
+}
+html.dark .sticky.top-0.bg-white .text-\[\#0C0C0C\],
+html.dark .sticky.top-0.bg-white .text-\[\#545A66\] {
+  color: var(--offl-text) !important;
+}
+html.dark .sticky.top-0.bg-white svg path[stroke="#545A66"] {
+  stroke: var(--offl-text) !important;
+}
+
+/* ── Category h1 title in dark ── */
+html.dark .category-dark-shell h1,
+html.dark .category-dark-shell .text-\[\#232429\] {
+  color: #ffffff !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+/* ── Empty category in dark ── */
+html.dark .text-\[\#7D8793\] {
+  color: var(--offl-text-muted) !important;
+}
+
+/* ── CategoryDescription "مشاهده بیشتر/کمتر" in dark ── */
+html.dark .container_des + span .text-main,
+html.dark .container_page + span .text-main {
+  color: var(--offl-primary) !important;
+}
+
+/* ── HeroUI Accordion content area in dark ── */
+html.dark [data-slot="base"][class*="border"] {
+  border-color: rgba(148,163,184,0.14) !important;
+}
+
+/* ── Switch component in dark ── */
+html.dark .category-filter-panel [data-slot="track"] {
+  background: rgba(148,163,184,0.25) !important;
+}
+html.dark .category-filter-panel [data-selected="true"][data-slot="track"] {
+  background: var(--offl-primary) !important;
+}
+
+/* ── Category filter text (generic class for dark mode) ── */
+html.dark .category-filter-text {
+  color: var(--offl-text) !important;
+}
+
+/* ── ToggleFilter background in dark ── */
+html.dark .category-toggle-filter {
+  background: rgba(56,107,249,0.06) !important;
+  border-color: rgba(148,163,184,0.14) !important;
+}
+
+/* ── CheckboxFilter background in dark ── */
+html.dark .category-checkbox-filter {
+  background: rgba(56,107,249,0.04) !important;
+}
+
+/* ── CheckboxFilter borders in dark ── */
+html.dark .category-checkbox-filter .border-\[\#E4E7E9\],
+html.dark .category-checkbox-filter [class*="border-[#E4E7E9]"] {
+  border-color: rgba(148,163,184,0.14) !important;
+}
+
+/* ── Checkbox labels in dark (HeroUI) ── */
+html.dark .category-checkbox-filter [data-slot="label"] span,
+html.dark .category-checkbox-filter [data-slot="label"] {
+  color: var(--offl-text) !important;
+}
+
+/* ── Checkbox wrapper checkmark in dark ── */
+html.dark .category-checkbox-filter [data-slot="wrapper"] {
+  border-color: rgba(148,163,184,0.3) !important;
+}
+html.dark .category-checkbox-filter [data-selected="true"][data-slot="wrapper"] {
+  background: var(--offl-primary) !important;
+  border-color: var(--offl-primary) !important;
+}
+
+/* ── Search input inside CheckboxFilter in dark ── */
+html.dark .category-checkbox-filter input {
+  background: rgba(148,163,184,0.08) !important;
+  border: 1px solid rgba(148,163,184,0.18) !important;
+  color: var(--offl-text) !important;
+}
+
+/* ── "موردی یافت نشد" in dark ── */
+html.dark .category-checkbox-filter .text-gray-500 {
+  color: var(--offl-text-muted) !important;
+}
+
+/* ── SortModal text in dark ── */
+html.dark .category-sort-modal .text-\[\#232429\] {
+  color: var(--offl-text) !important;
+}
+
+/* ── Accordion chevron SVG in CheckboxFilter ── */
+html.dark .category-checkbox-filter svg path[stroke="#393B40"] {
+  stroke: var(--offl-text) !important;
+}
+
+/* ── Price range slider track in dark ── */
+html.dark .category-filter-panel .bg-\[\#4285F4\],
+html.dark .category-filter-panel [class*="bg-[#4285F4]"] {
+  background: var(--offl-primary) !important;
+}
+
+/* ── Range input labels in dark ── */
+html.dark .category-filter-panel label {
+  color: var(--offl-text-muted) !important;
+}
+
+/* ── Category filter h2 heading in dark ── */
+html.dark .category-filter-panel h2 {
+  color: #eef4ff !important;
+}
+
+/* ── ToggleFilter h3 headings in dark ── */
+html.dark .category-toggle-filter h3 {
+  color: var(--offl-text) !important;
+}
+
+/* ── Product page h2 tabs in dark ── */
+html.dark .product-details-section h2,
+html.dark h2.text-gray-900 {
+  color: var(--offl-text) !important;
+}
+
+/* ── Compare page h2 in dark ── */
+html.dark .font-yekan.font-semibold.text-base.text-gray-800,
+html.dark .font-yekan.font-semibold.text-xl.text-gray-800 {
+  color: var(--offl-text) !important;
+}
+
+/* =========================================================
+   V6.6 — Premium SEO + Dark Mode Polish + قیمت بروز Badge
+   ========================================================= */
+
+/* ── Factor box (product page sidebar) in dark ── */
+html.dark .factor-box {
+  background: linear-gradient(160deg, rgba(12,18,32,0.97), rgba(8,12,26,0.98)) !important;
+  border: 1px solid rgba(148,163,184,0.16) !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4) !important;
+  border-radius: 1rem !important;
+}
+html.dark .factor-box .text-black,
+html.dark .factor-box .text-zinc-400,
+html.dark .factor-box .text-slate-700,
+html.dark .factor-box .text-blue {
+  color: var(--offl-text) !important;
+}
+html.dark .factor-box .bg-slate-100 {
+  background: transparent !important;
+}
+
+/* ── قیمت بروز badge in dark ── */
+html.dark .price-updated-badge {
+  background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(20,184,166,0.12)) !important;
+  border: 1px solid rgba(16,185,129,0.25) !important;
+}
+html.dark .price-updated-badge .text-emerald-700 {
+  color: #6ee7b7 !important;
+}
+html.dark .price-updated-badge span[class*="emerald-600"] {
+  color: rgba(110,231,183,0.6) !important;
+}
+
+/* ── Product page main shell in dark ── */
+html.dark .container_page.bg-white {
+  background: transparent !important;
+}
+html.dark .product-page-shell,
+html.dark .container_page.bg-white {
+  color: var(--offl-text) !important;
+}
+
+/* ── Product title in dark ── */
+html.dark h1.text-black,
+html.dark .text-2xl.text-black {
+  color: #ffffff !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+/* ── Product details sections in dark ── */
+html.dark .scroll-mt-28.bg-white,
+html.dark .scroll-mt-28.rounded-lg.border.border-gray-200.bg-white {
+  background: rgba(12,18,32,0.6) !important;
+  border-color: rgba(148,163,184,0.14) !important;
+  border-radius: 1rem !important;
+}
+html.dark .scroll-mt-28 h2 {
+  color: var(--offl-text) !important;
+  border-color: rgba(148,163,184,0.18) !important;
+}
+html.dark .scroll-mt-28 p,
+html.dark .scroll-mt-28 span,
+html.dark .scroll-mt-28 li {
+  color: var(--offl-text-muted) !important;
+}
+
+/* ── Product tags section in dark ── */
+html.dark .product-tags-section {
+  background: rgba(12,18,32,0.4) !important;
+  border: 1px solid rgba(148,163,184,0.12) !important;
+  border-radius: 1rem !important;
+}
+html.dark .product-tags-section h2,
+html.dark .product-tags-section .text-gray-800 {
+  color: var(--offl-text) !important;
+}
+html.dark .product-tags-section .border-gray-200 {
+  border-color: rgba(148,163,184,0.14) !important;
+}
+
+/* ── Warranty badge in dark ── */
+html.dark .bg-main.p-2.text-white {
+  background: linear-gradient(135deg, var(--offl-primary), #6ea0ff) !important;
+  box-shadow: 0 4px 16px rgba(56,107,249,0.25);
+}
+
+/* ── Fast shipping badge in dark ── */
+html.dark .rounded-full.bg-main {
+  background: linear-gradient(135deg, var(--offl-primary), #6ea0ff) !important;
+  box-shadow: 0 4px 12px rgba(56,107,249,0.2);
+}
+
+/* ── Short attribute in dark ── */
+html.dark h3.text-black {
+  color: var(--offl-text) !important;
+}
+
+/* ── Product page breadcrumb in dark ── */
+html.dark .container_page.bg-white .text-\[\#A8AFB8\] {
+  color: #6b7a94 !important;
+}
+
+/* ── Cart page in dark ── */
+html.dark .cart-page-shell {
+  background: transparent !important;
+  color: var(--offl-text) !important;
+}
+
+/* ── Checkout page in dark ── */
+html.dark .checkout-shell {
+  background: transparent !important;
+  color: var(--offl-text) !important;
+}
+
+/* ── Profile page in dark ── */
+html.dark .profile-shell {
+  background: transparent !important;
+  color: var(--offl-text) !important;
+}
+
+/* ── Result/search page in dark ── */
+html.dark .result-shell {
+  color: var(--offl-text) !important;
+}
+
+/* ── Blog pages in dark ── */
+html.dark .blog-shell {
+  color: var(--offl-text) !important;
+}
+html.dark .blog-shell .text-gray-900,
+html.dark .blog-shell .text-\[\#000000\] {
+  color: var(--offl-text) !important;
+}
+
+/* ── Category description h2 in dark ── */
+html.dark .container_des h2 {
+  color: #eef4ff !important;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* ── Pagination in dark ── */
+html.dark .pagination-btn,
+html.dark button[class*="pagination"] {
+  background: rgba(148,163,184,0.08) !important;
+  color: var(--offl-text) !important;
+  border: 1px solid rgba(148,163,184,0.16) !important;
+}
+html.dark .pagination-btn.active,
+html.dark .pagination-btn[class*="bg-main"] {
+  background: var(--offl-primary) !important;
+  color: #fff !important;
+  border-color: var(--offl-primary) !important;
+}
+
+/* ── Product image area in dark ── */
+html.dark .product-image-area {
+  background: radial-gradient(circle at 50% 44%, rgba(255,255,255,0.96) 0 34%, rgba(238,244,255,0.94) 54%, rgba(209,222,245,0.90) 100%) !important;
+  border-radius: 1rem !important;
+}
+
+/* ── Compare page dark ── */
+html.dark .compare-shell {
+  color: var(--offl-text) !important;
+}
+html.dark .compare-shell .text-gray-800 {
+  color: var(--offl-text) !important;
+}
+html.dark .compare-shell .border-gray-200 {
+  border-color: rgba(148,163,184,0.14) !important;
+}
+
+/* ── "ناموجود" text in dark ── */
+html.dark .text-red-500 {
+  color: #f87171 !important;
+}
+
+/* ── Brand page in dark ── */
+html.dark .brand-shell {
+  color: var(--offl-text) !important;
+}
+
+/* ── Tags page in dark ── */
+html.dark .tags-shell {
+  color: var(--offl-text) !important;
+}
+
+/* ── Smooth transitions for all dark mode changes ── */
+html.dark * {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+}
+
+/* ── Price text in product page dark ── */
+html.dark .factor-box .font-bold.text-\[16px\] {
+  color: #34d399 !important;
+  font-weight: 800 !important;
+}
+html.dark .factor-box .line-through {
+  color: #f87171 !important;
+  text-decoration-color: #f87171 !important;
+}
+
+/* ── Green price in final factor ── */
+html.dark .factor-box span.text-zinc-400:last-of-type {
+  color: #34d399 !important;
+}
+
+/* ── Keyboard focus ring for a11y ── */
+html.dark :focus-visible {
+  outline: 2px solid var(--offl-primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* =========================================================
+   V6.7 — Articles + Home Page Premium Dark Mode
+   ========================================================= */
+
+/* ── Article cards in dark ── */
+html.dark .mag-article-card {
+  background: linear-gradient(160deg, rgba(15,22,40,0.95), rgba(8,12,26,0.97)) !important;
+  border: 1px solid rgba(148,163,184,0.14) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3) !important;
+}
+html.dark .mag-article-card:hover {
+  border-color: rgba(130,170,255,0.35) !important;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 24px rgba(56,107,249,0.08) !important;
+}
+html.dark .mag-article-card .bg-gradient-to-r.from-gray-900 {
+  color: #eef4ff !important;
+  background: none !important;
+  -webkit-text-fill-color: #eef4ff !important;
+}
+html.dark .mag-article-card:hover .from-gray-900 {
+  color: #93c5fd !important;
+  -webkit-text-fill-color: #93c5fd !important;
+}
+html.dark .mag-article-card .text-gray-600,
+html.dark .mag-article-card .text-gray-500 {
+  color: #94a3b8 !important;
+}
+html.dark .mag-article-card .text-gray-700 {
+  color: #cbd5e1 !important;
+}
+html.dark .mag-article-card .text-gray-900 {
+  color: #eef4ff !important;
+}
+html.dark .mag-article-card .border-gray-100 {
+  border-color: rgba(148,163,184,0.1) !important;
+}
+html.dark .mag-article-card .bg-white {
+  background: rgba(30,41,59,0.8) !important;
+}
+html.dark .mag-article-card .mag-read-more {
+  background: rgba(30,41,59,0.95) !important;
+  color: #93c5fd !important;
+}
+html.dark .mag-article-card .mag-read-more span {
+  color: #93c5fd !important;
+}
+html.dark .mag-article-card .mag-article-image .bg-gradient-to-t {
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent) !important;
+}
+
+/* ── HomeArticles section header in dark ── */
+html.dark .home-articles-header h2,
+html.dark .home-articles-header .text-gray-900 {
+  color: #eef4ff !important;
+}
+html.dark .home-articles-header button,
+html.dark .home-articles-header a {
+  background: rgba(30,41,59,0.6) !important;
+  border-color: rgba(148,163,184,0.18) !important;
+  color: #cbd5e1 !important;
+}
+html.dark .home-articles-header button:hover,
+html.dark .home-articles-header a:hover {
+  background: rgba(56,107,249,0.15) !important;
+  border-color: rgba(130,170,255,0.4) !important;
+  color: #93c5fd !important;
+}
+
+/* ── Home page section titles in dark ── */
+html.dark h2.text-gray-900 {
+  color: #eef4ff !important;
+}
+html.dark h2.font-bold {
+  color: #eef4ff !important;
+}
+
+/* ── Brands section in dark ── */
+html.dark .keen-slider .text-gray-700 {
+  color: #cbd5e1 !important;
+}
+html.dark .keen-slider .text-gray-600 {
+  color: #94a3b8 !important;
+}
+html.dark .keen-slider .text-gray-900 {
+  color: #eef4ff !important;
+}
+html.dark .keen-slider .bg-white\/80 {
+  background: rgba(30,41,59,0.8) !important;
+  color: #93c5fd !important;
+}
+html.dark .keen-slider .border-blue-300 {
+  border-color: rgba(130,170,255,0.3) !important;
+}
+
+/* ── Special section in dark ── */
+html.dark .home-special-section {
+  background: transparent !important;
+}
+html.dark .home-special-section .border-gray-200 {
+  border-color: rgba(148,163,184,0.14) !important;
+}
+
+/* ── Category description text in dark ── */
+html.dark .container_des {
+  color: var(--offl-text-muted) !important;
+}
+html.dark .container_des p,
+html.dark .container_des li,
+html.dark .container_des span,
+html.dark .container_des td,
+html.dark .container_des th,
+html.dark .container_des strong,
+html.dark .container_des b,
+html.dark .container_des em,
+html.dark .container_des a {
+  color: var(--offl-text-muted) !important;
+}
+html.dark .container_des h2,
+html.dark .container_des h3,
+html.dark .container_des h4 {
+  color: var(--offl-text) !important;
+}
+
+/* ── Article type badge in dark ── */
+html.dark .from-blue-600.to-purple-600.text-white {
+  background: linear-gradient(135deg, rgba(56,107,249,0.85), rgba(139,92,246,0.85)) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(56,107,249,0.25) !important;
+}
+
+/* ── Date text in articles dark ── */
+html.dark .text-gray-500,
+html.dark .text-gray-400 {
+  color: #64748b !important;
+}
+
+/* ── Skeleton article card in dark ── */
+html.dark .skeleton-article-card {
+  background: rgba(15,22,40,0.8) !important;
+  border: 1px solid rgba(148,163,184,0.1) !important;
+}
+
+/* ── "مشاهده همه" link in dark ── */
+html.dark .home-articles-header .border-gray-200 {
+  border-color: rgba(148,163,184,0.18) !important;
+}
+
+/* ── Article card hover: colored underline ── */
+html.dark .mag-article-card .from-blue-500 {
+  background: linear-gradient(to right, var(--offl-primary), transparent) !important;
+}
+html.dark .mag-article-card .text-blue-600 {
+  color: var(--offl-primary) !important;
+}
+
+/* ── Price badge gradient in dark ── */
+html.dark .price-updated-badge {
+  animation: pricePulse 3s ease-in-out infinite;
+}
+@keyframes pricePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.2); }
+  50% { box-shadow: 0 0 16px 4px rgba(16,185,129,0.15); }
+}
+
+/* ── Factor box premium glow ── */
+html.dark .factor-box {
+  animation: factorGlow 4s ease-in-out infinite;
+}
+@keyframes factorGlow {
+  0%, 100% { box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 0 rgba(56,107,249,0); }
+  50% { box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px 0 rgba(56,107,249,0.06); }
+}
+
+/* ── Add to cart button glow in dark ── */
+html.dark .bg-main {
+  box-shadow: 0 4px 16px rgba(56,107,249,0.2);
+}
+
+/* ── "ادامه خرید" and "مشاهده در سبد" buttons in dark ── */
+html.dark .factor-box .border-\[\#E4E7E9\] {
+  border-color: rgba(148,163,184,0.2) !important;
+  color: var(--offl-primary) !important;
+  background: rgba(56,107,249,0.08) !important;
+}
+
+/* ── Product ID text in dark ── */
+html.dark .text-zinc-400 {
+  color: #64748b !important;
+}
+
+/* ── Article title: override bg-clip-text in dark ── */
+html.dark .mag-article-title {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: #eef4ff !important;
+  color: #eef4ff !important;
+}
+html.dark .mag-article-card:hover .mag-article-title {
+  -webkit-text-fill-color: #93c5fd !important;
+  color: #93c5fd !important;
+}
+
+/* ── Article short description in dark ── */
+html.dark .mag-article-card .text-gray-600,
+html.dark .mag-article-card .line-clamp-3 {
+  color: #94a3b8 !important;
+}
+html.dark .mag-article-card:hover .text-gray-800 {
+  color: #cbd5e1 !important;
+}
+
+/* ── Category badge background fix in dark ── */
+html.dark .mag-article-card .shadow-lg .bg-gradient-to-r {
+  box-shadow: 0 4px 12px rgba(56,107,249,0.3) !important;
+}
+
+/* ── "بیشتر بخوانید" in dark ── */
+html.dark .mag-article-card .text-blue-600 {
+  color: var(--offl-primary) !important;
+}
+
+/* ── Article card border in HomeArticles ── */
+html.dark .border-2.border-gray-100 {
+  border-color: rgba(148,163,184,0.1) !important;
+}
+html.dark .border-blue-200 {
+  border-color: rgba(130,170,255,0.3) !important;
+}
+
+/* ── Date text icon color in dark ── */
+html.dark .mag-article-card svg.text-blue-500 {
+  color: var(--offl-primary) !important;
+}
+
+/* ── Skeleton shimmer in dark ── */
+html.dark .skeleton-article-card .bg-gray-200 {
+  background: rgba(148,163,184,0.1) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   🌙 DARK MODE FIX — عنوان مقاله و متن زیر تایتل
+   مشکل: عنوان‌ها از `bg-clip-text` با گرادینت تیره (gray-900→gray-700)
+   استفاده می‌کنند، پس رنگ متن از background-image می‌آید نه از color.
+   به همین دلیل override معمولِ `.text-gray-900` در دارک روی آن‌ها اثر
+   ندارد و عنوان در دارک‌مود محو/نامرئی می‌شود.
+   راه‌حل: گرادینت متنِ این عنوان‌ها در دارک به رنگ‌های روشن تغییر کند
+   و متن‌های زیر تایتل (تاریخ/خلاصه) هم خوانا شوند.
+   ════════════════════════════════════════════════════════════════ */
+
+/* عنوانِ کارت مقاله (Article.tsx) — روشن و خوانا در دارک */
+html.dark .mag-article-title {
+  background-image: linear-gradient(to right, #eef4ff, #cdd9f5) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+/* رنگ هاور عنوان کارت در دارک — آبی/بنفش روشن‌تر برای کنتراست بهتر */
+html.dark .mag-article-card:hover .mag-article-title,
+html.dark .group:hover .mag-article-title {
+  background-image: linear-gradient(to right, #8ab4ff, #c4a3ff) !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+/* عنوانِ صفحهٔ مقاله (SingleBlog.tsx) — روشن و خوانا در دارک */
+html.dark .single-blog-title {
+  background-image: linear-gradient(to bottom right, #ffffff, #e6eeff, #cdd9f5) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+/* متن زیر تایتل: تاریخ مقاله در کارت‌ها (آیکن + تاریخ) */
+html.dark .mag-article-card .mag-article-content span,
+html.dark .mag-article-card .mag-article-content .text-gray-500,
+html.dark .mag-article-card .mag-article-content .text-gray-600 {
+  color: #aab8d0 !important;
+}
+
+/* خلاصهٔ مقاله (short_des) — کمی روشن‌تر برای خوانایی */
+html.dark .mag-article-card .mag-article-content p:not(.mag-article-title) {
+  color: #b8c4da !important;
+}
+/* هنگام هاور، خلاصه/تاریخ در نسخهٔ روشن به gray-800/900 می‌رفت که در دارک
+   نامرئی می‌شود؛ اینجا آن را روشن‌تر می‌کنیم. */
+html.dark .mag-article-card:hover .mag-article-content p:not(.mag-article-title),
+html.dark .group:hover .mag-article-content p:not(.mag-article-title) {
+  color: #e3ebf9 !important;
+}
+
+/* آیکن تاریخ در کارت مقاله — هماهنگ با تم دارک */
+html.dark .mag-article-card .mag-article-content svg {
+  color: var(--offl-primary) !important;
+}
+
+/* متادیتای صفحهٔ مقاله (تاریخ/بازدید) که روی کارت‌های خاکستریِ روشن بودند */
+html.dark .single-blog-article .from-gray-50,
+html.dark .single-blog-article .to-gray-100 {
+  background-color: var(--offl-surface-2) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   🎮 Assemble Header Button — دکمهٔ اسمبل آنلاین هوشمند
+   ════════════════════════════════════════════════════════════════ */
+
+.asm-header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px 10px 14px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #386bf9 0%, #6f3cf5 50%, #ec4899 100%);
+  background-size: 200% 200%;
+  color: #fff !important;
+  font-family: 'bold', Tahoma, sans-serif;
+  text-decoration: none !important;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 6px 20px rgba(56, 107, 249, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: asmHeaderGradientShift 6s ease infinite;
+  white-space: nowrap;
+  cursor: pointer;
+}
+@keyframes asmHeaderGradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.asm-header-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transition: right 0.6s ease;
+}
+.asm-header-btn:hover::before {
+  right: 100%;
+}
+.asm-header-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow:
+    0 12px 32px rgba(56, 107, 249, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+}
+.asm-header-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+.asm-header-btn--active {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  animation: asmHeaderActivePulse 2s ease infinite;
+}
+@keyframes asmHeaderActivePulse {
+  0%, 100% { box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4), 0 0 0 1px rgba(255,255,255,0.15) inset; }
+  50% { box-shadow: 0 8px 30px rgba(5, 150, 105, 0.7), 0 0 0 1px rgba(255,255,255,0.3) inset; }
+}
+
+.asm-header-btn__icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+.asm-header-btn__icon svg {
+  width: 18px;
+  height: 18px;
+  color: #fff;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+.asm-header-btn__pulse {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: asmHeaderPulse 1.8s ease infinite;
+}
+@keyframes asmHeaderPulse {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); transform: scale(1); }
+  70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); transform: scale(0.8); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); transform: scale(0.8); }
+}
+
+.asm-header-btn__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  align-items: flex-start;
+}
+.asm-header-btn__title {
+  font-size: 13.5px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.2px;
+}
+.asm-header-btn__subtitle {
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0.92;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'reqular', Tahoma, sans-serif;
+  letter-spacing: 0.1px;
+}
+.asm-header-btn__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+  animation: asmHeaderDot 1.5s ease infinite;
+}
+@keyframes asmHeaderDot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.asm-header-btn__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  margin-inline-start: 2px;
+  transition: transform 0.25s ease;
+}
+.asm-header-btn:hover .asm-header-btn__arrow {
+  transform: translateX(-3px);
+  background: rgba(255, 255, 255, 0.25);
+}
+.asm-header-btn__arrow svg {
+  width: 14px;
+  height: 14px;
+  color: #fff;
+}
+
+@media (max-width: 1024px) {
+  .asm-header-btn__content,
+  .asm-header-btn__arrow {
+    display: none;
+  }
+  .asm-header-btn {
+    padding: 8px;
+  }
+  .asm-header-btn__icon {
+    width: 38px;
+    height: 38px;
+  }
+  .asm-header-btn__icon svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ── Ultimate magazine dark/prose refinements ── */
+html.dark .mag-page-shell,
+html.dark .single-blog-content-card {
+  color-scheme: dark;
+}
+
+.single-blog-prose.container_des {
+  width: 100%;
+}
+
+.single-blog-prose.container_des p,
+.single-blog-prose.container_des li,
+.single-blog-prose.container_des span {
+  line-height: 2.25rem;
+  color: rgb(30 41 59);
+  font-size: 1.0625rem;
+}
+
+html.dark .single-blog-prose.container_des p,
+html.dark .single-blog-prose.container_des li,
+html.dark .single-blog-prose.container_des span {
+  color: rgb(226 232 240);
+}
+
+.single-blog-prose.container_des h1,
+.single-blog-prose.container_des h2,
+.single-blog-prose.container_des h3 {
+  scroll-margin-top: 7rem;
+  color: rgb(15 23 42);
+  font-weight: 900;
+  line-height: 1.8;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+html.dark .single-blog-prose.container_des h1,
+html.dark .single-blog-prose.container_des h2,
+html.dark .single-blog-prose.container_des h3 {
+  color: white;
+}
+
+.single-blog-prose.container_des blockquote {
+  position: relative;
+  margin: 2rem 0;
+  border-right: 0;
+  border-radius: 1.25rem;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08));
+  padding: 1.25rem 1.5rem;
+  color: rgb(51 65 85);
+}
+
+.single-blog-prose.container_des blockquote::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 1rem;
+  bottom: 1rem;
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #3b82f6, #a855f7);
+}
+
+html.dark .single-blog-prose.container_des blockquote {
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.12), rgba(168, 85, 247, 0.12));
+  color: rgb(203 213 225);
+}
+
+.single-blog-prose.container_des img {
+  border-radius: 1.25rem;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.14);
+}
+
+html.dark .single-blog-prose.container_des img {
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+}
+
+
+/* ── Flawless magazine article layout/prose image fixes ── */
+.single-blog-content-card,
+.single-blog-content-card * {
+  min-width: 0;
+}
+
+.single-blog-prose.container_des {
+  overflow: visible !important;
+}
+
+.single-blog-prose.container_des figure,
+.single-blog-prose.container_des picture,
+.single-blog-prose.container_des img {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.single-blog-prose.container_des figure {
+  max-width: 100%;
+  margin: 2rem auto;
+}
+
+.single-blog-prose.container_des img {
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 2rem auto !important;
+  border-radius: 1rem;
+  object-fit: contain;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.14);
+}
+
+html.dark .single-blog-content-card {
+  background: rgb(15 23 42);
+  border-color: rgb(30 41 59);
+  color: rgb(226 232 240);
+}
+
+html.dark .single-blog-prose.container_des {
+  color: rgb(226 232 240) !important;
+}
+
+html.dark .single-blog-prose.container_des img {
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+html.dark .single-blog-prose.container_des a {
+  color: rgb(147 197 253);
+}
+
+html.dark .single-blog-prose.container_des table,
+html.dark .single-blog-prose.container_des th,
+html.dark .single-blog-prose.container_des td {
+  border-color: rgb(51 65 85);
+}
+
+/* ── Magazine home refined Bento layout (stable/responsive) ── */
+.mag-bento-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  padding: 0.75rem;
+  overflow: hidden;
+}
+
+.mag-bento-board > * {
+  direction: rtl;
+}
+
+.mag-bento-featured {
+  min-height: 430px;
+}
+
+.mag-bento-side-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.mag-bento-compact {
+  min-height: 220px;
+}
+
+@media (min-width: 640px) {
+  .mag-bento-board {
+    padding: 1rem;
+  }
+
+  .mag-bento-side-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .mag-bento-board {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+    align-items: stretch;
+    min-height: 520px;
+  }
+
+  .mag-bento-featured {
+    min-height: 520px;
+    order: 2;
+  }
+
+  .mag-bento-side-grid {
+    order: 1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    min-height: 520px;
+  }
+
+  .mag-bento-compact {
+    min-height: 0;
+  }
+}
+
+@media (min-width: 1280px) {
+  .mag-bento-board {
+    gap: 1.15rem;
+    padding: 1.15rem;
+  }
+
+  .mag-bento-side-grid {
+    gap: 1.15rem;
+  }
+}
+
+/* image visibility hardening for mag bento */
+.mag-bento-featured,
+.mag-bento-compact {
+  isolation: isolate;
+  background-color: #020617;
+}
+
+.mag-bento-featured img,
+.mag-bento-compact img {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.mag-bento-featured > div:first-child,
+.mag-bento-compact > div:first-child {
+  z-index: 0;
+}
+
+/* explicit image-card sizing for the final magazine bento */
+@media (min-width: 1024px) {
+  .mag-bento-featured {
+    min-height: 520px;
+  }
+
+  .mag-bento-compact {
+    min-height: 250px;
+  }
+}
+
+/* ── Magazine bento as full-image banners ── */
+.mag-banner-card {
+  isolation: isolate;
+}
+
+.mag-banner-card img {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+@media (max-width: 639px) {
+  .mag-bento-featured {
+    min-height: 460px !important;
+  }
+
+  .mag-bento-compact {
+    min-height: 270px !important;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .mag-bento-featured {
+    min-height: 500px !important;
+  }
+
+  .mag-bento-compact {
+    min-height: 300px !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mag-bento-featured {
+    min-height: 540px !important;
+  }
+
+  .mag-bento-compact {
+    min-height: 260px !important;
+  }
+}

@@ -1,0 +1,386 @@
+/* ════════════════════════════════════════════════════════════════════
+   🏆 تم مناسبتی «جام جهانی» — World Cup Event Theme
+   ════════════════════════════════════════════════════════════════════
+   فعال‌سازی: کلاس `event-worldcup` روی <html> (توسط EventThemeProvider).
+   پالت: سبز چمن زمین فوتبال + طلایی جام + لهجهٔ مشکی/سفید.
+   سازگار با دارک‌مود (html.dark.event-worldcup).
+   همهٔ override ها محدود به وقتی است که کلاس event-worldcup فعال باشد،
+   پس وقتی تم خاموش است هیچ اثری روی سایت ندارد.
+   ════════════════════════════════════════════════════════════════════ */
+
+html.event-worldcup {
+  /* ── پالت رنگ تم ── */
+  --wc-pitch-1: #0a7d3c; /* سبز چمن روشن */
+  --wc-pitch-2: #065f30; /* سبز چمن تیره */
+  --wc-pitch-deep: #043d1f;
+  --wc-gold-1: #ffd54a; /* طلایی روشن */
+  --wc-gold-2: #f5a623; /* طلایی/نارنجی */
+  --wc-gold-deep: #c4860b;
+  --wc-accent: #0a7d3c;
+  --wc-accent-strong: #ffb300;
+  --wc-ink: #0b2e1a;
+
+  /* تزریق روی متغیرهای اصلی سایت برای پوشش سراسری */
+  --offl-primary: var(--wc-pitch-1);
+  --offl-primary-glow: rgba(245, 166, 35, 0.32);
+  scroll-behavior: smooth;
+}
+
+html.dark.event-worldcup {
+  --wc-pitch-1: #12a154;
+  --wc-pitch-2: #0a7d3c;
+  --wc-gold-1: #ffdf6b;
+  --wc-gold-2: #ffb73d;
+  --offl-primary: #2fd07a;
+  --offl-primary-glow: rgba(255, 183, 61, 0.4);
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   1) پس‌زمینهٔ سراسری: نوار درخشش طلایی-سبز بالای صفحه
+   ──────────────────────────────────────────────────────────────────── */
+html.event-worldcup body::after {
+  content: '';
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 6px;
+  z-index: 60;
+  background: linear-gradient(
+    90deg,
+    var(--wc-pitch-2),
+    var(--wc-gold-1),
+    var(--wc-pitch-1),
+    var(--wc-gold-2),
+    var(--wc-pitch-2)
+  );
+  background-size: 300% 100%;
+  animation: wc-stripe-slide 6s linear infinite;
+  pointer-events: none;
+}
+@keyframes wc-stripe-slide {
+  to {
+    background-position: 300% 0;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   2) هدر سایت
+   ──────────────────────────────────────────────────────────────────── */
+html.event-worldcup header {
+  position: relative;
+  border-bottom: 2px solid transparent;
+  background-image: linear-gradient(
+    180deg,
+    rgba(10, 125, 60, 0.06),
+    transparent 70%
+  );
+}
+html.event-worldcup header::before {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--wc-pitch-2), var(--wc-gold-1), var(--wc-pitch-1));
+  background-size: 200% 100%;
+  animation: wc-stripe-slide 5s linear infinite;
+  opacity: 0.9;
+}
+/* تزئین کنار لوگو */
+html.event-worldcup header .logo::after,
+html.event-worldcup header a[href='/'] > svg + ::after {
+  content: '🏆';
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   3) رنگ‌دهی عناصر اصلی (دکمه‌ها، لینک‌ها، تأکیدها)
+   ──────────────────────────────────────────────────────────────────── */
+/* دکمه‌های آبیِ اصلی → سبز چمن با درخشش طلایی */
+html.event-worldcup .bg-main,
+html.event-worldcup .bg-blue-500,
+html.event-worldcup .bg-blue-600,
+html.event-worldcup .bg-\[\#386bf9\],
+html.event-worldcup .bg-\[\#386BF9\] {
+  background-color: var(--wc-pitch-1) !important;
+  box-shadow: 0 6px 18px rgba(10, 125, 60, 0.28);
+}
+html.event-worldcup .text-main,
+html.event-worldcup .text-blue-500,
+html.event-worldcup .text-blue-600,
+html.event-worldcup .text-\[\#386bf9\],
+html.event-worldcup .text-\[\#386BF9\] {
+  color: var(--wc-pitch-1) !important;
+}
+html.event-worldcup .border-blue-500,
+html.event-worldcup .border-blue-600,
+html.event-worldcup .border-main {
+  border-color: var(--wc-pitch-1) !important;
+}
+
+/* گرادینت‌های آبی-بنفش رایج سایت → سبز-طلایی */
+html.event-worldcup .from-blue-500,
+html.event-worldcup .from-blue-600 {
+  --tw-gradient-from: var(--wc-pitch-1) !important;
+}
+html.event-worldcup .to-purple-600,
+html.event-worldcup .to-purple-500,
+html.event-worldcup .via-indigo-500,
+html.event-worldcup .via-purple-500 {
+  --tw-gradient-to: var(--wc-gold-2) !important;
+  --tw-gradient-via: var(--wc-gold-1) !important;
+}
+
+/* بَدج‌ها/تگ‌های گرادینتی (کارت محصول، مقاله و...) → طلایی-سبز */
+html.event-worldcup .bg-gradient-to-r.from-blue-600.to-purple-600,
+html.event-worldcup .bg-gradient-to-r.from-blue-500.to-purple-600,
+html.event-worldcup .bg-gradient-to-br.from-blue-500.to-purple-600 {
+  background-image: linear-gradient(
+    100deg,
+    var(--wc-pitch-2),
+    var(--wc-pitch-1) 45%,
+    var(--wc-gold-2)
+  ) !important;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   4) کارت‌ها: حاشیهٔ ظریف طلایی هنگام هاور + خط زمین فوتبال
+   ──────────────────────────────────────────────────────────────────── */
+html.event-worldcup .shadow_pro:hover,
+html.event-worldcup .shadow_category:hover,
+html.event-worldcup .mag-article-card:hover {
+  box-shadow:
+    0 14px 40px rgba(10, 125, 60, 0.18),
+    0 0 0 1.5px var(--wc-gold-1) !important;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   5) بنر مناسبتی بالای سایت
+   ──────────────────────────────────────────────────────────────────── */
+.event-banner {
+  position: relative;
+  z-index: 55;
+  overflow: hidden;
+  color: #fff7e0;
+  background:
+    radial-gradient(circle at 12% 50%, rgba(255, 213, 74, 0.28), transparent 40%),
+    linear-gradient(100deg, var(--wc-pitch-deep), var(--wc-pitch-1) 50%, var(--wc-pitch-2));
+  border-bottom: 2px solid rgba(255, 213, 74, 0.5);
+  font-family: inherit;
+}
+.event-banner__glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 223, 107, 0.16),
+    transparent
+  );
+  background-size: 40% 100%;
+  background-repeat: no-repeat;
+  animation: wc-banner-sheen 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes wc-banner-sheen {
+  0% {
+    background-position: -40% 0;
+  }
+  100% {
+    background-position: 140% 0;
+  }
+}
+.event-banner__inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 9px 16px;
+}
+.event-banner__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.event-banner__title strong {
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+}
+.event-banner__spark {
+  display: inline-block;
+  font-size: 18px;
+  animation: wc-spin 3.2s ease-in-out infinite;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+@keyframes wc-spin {
+  0%,
+  100% {
+    transform: rotate(-12deg) scale(1);
+  }
+  50% {
+    transform: rotate(12deg) scale(1.18);
+  }
+}
+
+/* متن چرخان (marquee) */
+.event-banner__marquee {
+  flex: 1;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.event-banner__marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: wc-marquee 22s linear infinite;
+}
+.event-banner__marquee-item {
+  font-size: 12.5px;
+  padding-inline: 8px;
+  opacity: 0.92;
+}
+/* در RTL متن از راست به چپ حرکت کند */
+@keyframes wc-marquee {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.event-banner__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--wc-ink);
+  background: linear-gradient(180deg, var(--wc-gold-1), var(--wc-gold-2));
+  padding: 6px 14px;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.event-banner__cta:hover {
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 7px 20px rgba(255, 183, 61, 0.45);
+}
+.event-banner__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+.event-banner__close:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* روی موبایل، marquee و عنوان کوچک‌تر */
+@media (max-width: 640px) {
+  .event-banner__marquee {
+    display: none;
+  }
+  .event-banner__title {
+    font-size: 12px;
+    flex: 1;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   6) دکوراسیون شناور (توپ/جام/ستاره)
+   ──────────────────────────────────────────────────────────────────── */
+.event-decor {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.event-decor__item {
+  position: absolute;
+  top: 100%;
+  display: inline-block;
+  line-height: 1;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.12));
+  animation-name: wc-float-up;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes wc-float-up {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-118vh) translateX(var(--drift, 0px)) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* اگر کاربر حرکت کم را ترجیح می‌دهد، انیمیشن‌ها را آرام/خاموش کن */
+@media (prefers-reduced-motion: reduce) {
+  html.event-worldcup body::after,
+  .event-banner__glow,
+  .event-banner__spark,
+  .event-banner__marquee-track,
+  .event-decor__item,
+  html.event-worldcup header::before {
+    animation: none !important;
+  }
+  .event-decor {
+    display: none;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   7) منوی پایین موبایل + فوتر + لینک‌های فعال
+   ──────────────────────────────────────────────────────────────────── */
+/* آیتم فعال منوی پایین (که با bg-main / text-main رنگ می‌شد) */
+html.event-worldcup .fill-main,
+html.event-worldcup svg.fill-main {
+  fill: var(--wc-pitch-1) !important;
+}
+/* خط/نوار جداکنندهٔ طلایی بالای فوتر */
+html.event-worldcup footer {
+  border-top: 3px solid transparent;
+  border-image: linear-gradient(90deg, var(--wc-pitch-2), var(--wc-gold-1), var(--wc-pitch-1)) 1;
+}
+
+/* رینگ/فوکوس فیلدها هماهنگ با تم */
+html.event-worldcup .ring-blue-500,
+html.event-worldcup .focus\:ring-blue-500:focus,
+html.event-worldcup .focus\:border-blue-500:focus {
+  --tw-ring-color: var(--wc-pitch-1) !important;
+  border-color: var(--wc-pitch-1) !important;
+}
+
+/* اسکرول‌بار سفارشی هماهنگ با تم (دسکتاپ) */
+html.event-worldcup ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--wc-pitch-1), var(--wc-gold-2)) !important;
+}
+
+/* لودر/تاپ‌لودر (nextjs-toploader) — اگر رنگش آبی بود سبز شود */
+html.event-worldcup #nprogress .bar {
+  background: linear-gradient(90deg, var(--wc-pitch-1), var(--wc-gold-1)) !important;
+}
+html.event-worldcup #nprogress .peg {
+  box-shadow: 0 0 10px var(--wc-gold-1), 0 0 6px var(--wc-pitch-1) !important;
+}

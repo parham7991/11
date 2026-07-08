@@ -1,0 +1,10 @@
+src/.phpunit.cache
+node_modules
+.next
+.idea
+npm-debug.log
+yarn-error.log
+.env
+.idea/sonarlint
+.husky
+.vscode

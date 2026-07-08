@@ -25,7 +25,7 @@
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "keen-slider": "^6.8.6",
-    "next": "16.0.0",
+    "next": "16.0.10",
     "nextjs-toploader": "^3.9.17",
     "react": "19.1.1",
     "react-countdown": "^2.3.6",

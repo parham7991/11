@@ -74,8 +74,8 @@ const ThemeToggle = () => {
               <button
                 key={option.mode}
                 type="button"
-                onClick={() => {
-                  setMode(option.mode);
+                onClick={(event) => {
+                  setMode(option.mode, { x: event.clientX, y: event.clientY });
                   setIsOpen(false);
                 }}
                 className={`group flex w-full items-center justify-between rounded-2xl px-3 py-2.5 text-right transition-all duration-300 ${
@@ -103,7 +103,7 @@ const ThemeToggle = () => {
           aria-label="تغییر حالت نمایش"
           title={`تم فعلی: ${activeOption.title} (${resolvedTheme === 'dark' ? 'تاریک' : 'روشن'})`}
           onClick={() => setIsOpen((prev) => !prev)}
-          onDoubleClick={toggleTheme}
+          onDoubleClick={(event) => toggleTheme({ x: event.clientX, y: event.clientY })}
           className="theme-toggle-button group relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-3xl border border-white/30 bg-white/90 text-main shadow-2xl shadow-blue-500/25 backdrop-blur-2xl transition-all duration-500 hover:-translate-y-1 hover:scale-105 active:scale-95 dark:border-white/10 dark:bg-slate-950/90 dark:text-blue-300 dark:shadow-blue-400/10 lg:h-16 lg:w-16"
         >
           <span className="absolute inset-0 bg-gradient-to-br from-blue-500/15 via-purple-500/10 to-cyan-400/15 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />

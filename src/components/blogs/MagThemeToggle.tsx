@@ -10,7 +10,7 @@ export default function MagThemeToggle() {
   return (
     <button
       type="button"
-      onClick={toggleTheme}
+      onClick={(event) => toggleTheme({ x: event.clientX, y: event.clientY })}
       aria-label={isDark ? 'فعال‌سازی حالت روشن مجله' : 'فعال‌سازی حالت تاریک مجله'}
       title={isDark ? 'حالت روشن' : 'حالت تاریک'}
       className="mag-theme-toggle group relative inline-flex items-center gap-3 overflow-hidden rounded-2xl border border-white/15 bg-white/12 px-3 py-2.5 text-white shadow-lg backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/18 active:scale-95 dark:border-blue-300/15 dark:bg-slate-950/45 dark:hover:bg-slate-900/70 lg:px-4"

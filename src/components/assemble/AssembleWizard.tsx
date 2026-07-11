@@ -34,6 +34,8 @@ import BuildIdentityCard from './BuildIdentityCard';
 import RadialGauge from './RadialGauge';
 import SpecRadar from './SpecRadar';
 import PcBuildVisual from './PcBuildVisual';
+import BudgetBreakdown from './BudgetBreakdown';
+import Collapsible from './Collapsible';
 
 // ════════════════════════════════════════════════════════════════
 // 📋 نوع‌ها
@@ -198,6 +200,16 @@ type Summary = {
   resolution?: Resolution;
   debug?: any;
   error?: string;
+  ai?: {
+    name: string;
+    tagline: string;
+    emoji: string;
+    color: string;
+    providerId: string;
+    providerName: string;
+    model: string;
+    free: boolean;
+  };
 };
 
 // ════════════════════════════════════════════════════════════════
@@ -853,12 +865,17 @@ export default function AssembleWizard() {
     text: string;
     provider?: string;
     loading: boolean;
+    name?: string;
+    tagline?: string;
+    emoji?: string;
+    color?: string;
   }>({ enabled: false, text: '', loading: false });
 
   // ═════ استیت‌های جدید نسخهٔ Ultimate AI Master ═════
   const [assembleTheme, setAssembleTheme] = useState<AssembleTheme>('stealth');
   const [invoiceOpen, setInvoiceOpen] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<'wizard' | 'progrid'>('wizard');
+  const [resultTab, setResultTab] = useState<'overview' | 'parts' | 'analysis' | 'layout'>('overview');
 
   const { mutate: addBulk, isPending: buying } = useAddBulkCart();
 
@@ -983,6 +1000,10 @@ export default function AssembleWizard() {
               enabled: aiData.enabled !== false,
               text: aiData.analysis || aiData.fallback || '',
               provider: aiData.provider,
+              name: aiData.ai?.name,
+              tagline: aiData.ai?.tagline,
+              emoji: aiData.ai?.emoji,
+              color: aiData.ai?.color,
               loading: false,
             });
           })
@@ -1463,6 +1484,13 @@ export default function AssembleWizard() {
                   <div className="aw-result-head__text">
                     <span className="aw-result-head__eyebrow">سیستم پیشنهادی</span>
                     <h2 className="aw-result-head__title">اسمبل {result.useCaseLabel}</h2>
+                    {result?.ai && (
+                      <span className="aw-ai-badge" style={{ ['--ai' as any]: result.ai.color }}>
+                        <span className="aw-ai-badge__ic">{result.ai.emoji}</span>
+                        <span className="aw-ai-badge__name">{result.ai.name}</span>
+                        <span className="aw-ai-badge__prov">{result.ai.providerName}{result.ai.free ? ' · رایگان' : ''}</span>
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="aw-result-head__gauges">
@@ -1509,7 +1537,24 @@ export default function AssembleWizard() {
                 </div>
               </div>
 
+              {/* تب‌های نتایج — کاهش شلوغی صفحه */}
+              <div className="aw-result-tabs" role="tablist">
+                {(['overview', 'parts', 'analysis', 'layout'] as const).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    role="tab"
+                    aria-selected={resultTab === t}
+                    className={`aw-result-tab${resultTab === t ? ' aw-result-tab--active' : ''}`}
+                    onClick={() => setResultTab(t)}
+                  >
+                    {t === 'overview' ? 'نمای کلی' : t === 'parts' ? 'قطعات' : t === 'analysis' ? 'تحلیل و سازگاری' : 'چیدمان و هویت'}
+                  </button>
+                ))}
+              </div>
+
               {/* ═════ شوی کیس + رادار + امتیاز ═════ */}
+              {resultTab === 'overview' && (
               <div className="aw-showcase">
                 <div className="aw-showcase__visual">
                   <PcBuildVisual
@@ -1538,6 +1583,7 @@ export default function AssembleWizard() {
                       <b>{displaySummary?.itemCount || parts.length}</b>
                     </div>
                   </div>
+                  <BudgetBreakdown parts={parts as any} budget={budget} />
                   <div className="aw-radar-card">
                     <div className="aw-radar-card__head">نقشهٔ توانمندی سیستم</div>
                     <SpecRadar axes={radarAxes} size={236} />
@@ -1545,7 +1591,10 @@ export default function AssembleWizard() {
                 </div>
               </div>
 
+              )}
+
               {/* ═════ داشبورد تله‌متری زندهٔ Ultimate AI Master ═════ */}
+              {resultTab === 'analysis' && (
               <TelemetryDashboard
                 parts={parts as any}
                 onAutoBalance={(target) => {
@@ -1558,39 +1607,58 @@ export default function AssembleWizard() {
                   }
                 }}
               />
+              )}
 
               {/* ═════ شناسنامه گرافیکی سیستم + QR ═════ */}
+              {resultTab === 'layout' && (
               <BuildIdentityCard
                 parts={parts as any}
                 useCaseLabel={result?.useCaseLabel}
                 totalPrice={displaySummary?.totalAfter || 0}
                 title={result?.useCaseLabel ? `سیستم ${result.useCaseLabel} — آفلند` : undefined}
               />
+              )}
 
-              <div className="asm__smart-dashboard">
-                <div className="asm__smart-dashboard-head">
-                  <div>
-                    <strong>داشبورد تصمیم‌گیری هوشمند</strong>
-                    <span>جزئیات استفاده از اسلات‌ها، ظرفیت و توازن سیستم</span>
-                  </div>
-                  <em>{result.compatibilityScore || 0}% سازگاری</em>
-                </div>
-                <div className="asm__smart-grid">
-                  {insights.map((item, i) => (
-                    <div key={i} className={`asm__smart-card asm__smart-card--${item.tone}`}>
-                      <span className="asm__smart-icon">{item.icon}</span>
-                      <div>
-                        <small>{item.title}</small>
-                        <b>{item.value}</b>
-                        <span>{item.meta}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              {resultTab === 'layout' && (
+              <div className="aw-layout-visual">
+                <PcBuildVisual
+                  parts={parts as any}
+                  theme={assembleTheme}
+                  blockedIds={blockedPartIds}
+                  unavailableIds={unavailablePartIds}
+                />
               </div>
+              )}
+
+              {resultTab === 'analysis' && (
+              <>
+              <Collapsible title="داشبورد تصمیم‌گیری هوشمند" icon={<SparkIcon />} defaultOpen>
+                <div className="asm__smart-dashboard">
+                  <div className="asm__smart-dashboard-head">
+                    <div>
+                      <strong>داشبورد تصمیم‌گیری هوشمند</strong>
+                      <span>جزئیات استفاده از اسلات‌ها، ظرفیت و توازن سیستم</span>
+                    </div>
+                    <em>{result.compatibilityScore || 0}% سازگاری</em>
+                  </div>
+                  <div className="asm__smart-grid">
+                    {insights.map((item, i) => (
+                      <div key={i} className={`asm__smart-card asm__smart-card--${item.tone}`}>
+                        <span className="asm__smart-icon">{item.icon}</span>
+                        <div>
+                          <small>{item.title}</small>
+                          <b>{item.value}</b>
+                          <span>{item.meta}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Collapsible>
 
               {/* پنل Auto-Resolver — اقدامات هوشمند */}
               {result.resolution && (result.resolution.actions.length > 0 || result.resolution.suggestions.length > 0) && (
+                <Collapsible title="اقدامات هوشمند (Auto-Resolver)" icon={<SparkIcon />}>
                 <div className="asm__resolver-panel">
                   <div className="asm__resolver-head">
                     <span className="asm__resolver-icon"><SparkIcon /></span>
@@ -1691,15 +1759,18 @@ export default function AssembleWizard() {
                     </div>
                   )}
                 </div>
+                </Collapsible>
               )}
 
               {/* پنل سازگاری v3 */}
               {showCompat && result.compatibilityMatrix && (
-                <CompatibilityPanelV3
-                  matrix={result.compatibilityMatrix}
-                  unavailableMessages={result.unavailableMessages}
-                  parts={parts}
-                />
+                <Collapsible title="بررسی سازگاری قطعات" icon={<ShieldIcon />} defaultOpen>
+                  <CompatibilityPanelV3
+                    matrix={result.compatibilityMatrix}
+                    unavailableMessages={result.unavailableMessages}
+                    parts={parts}
+                  />
+                </Collapsible>
               )}
 
               {showFps && useCase === 'gaming' && estimatedFps && (
@@ -1711,7 +1782,12 @@ export default function AssembleWizard() {
                   </div>
                 </div>
               )}
+              </>
+              )}
 
+              {/* تب قطعات — پیشنهادها + کارت‌های قطعات */}
+              {resultTab === 'parts' && (
+              <>
               {smartSuggestions.length > 0 && (
                 <div className="asm__public-suggestions">
                   <div className="asm__public-suggestions-head">
@@ -1808,12 +1884,15 @@ export default function AssembleWizard() {
                   </div>
                 )}
               </div>
+              </>
+
+              )}
 
               {/* حذف توضیحات تکنیکال طولانی - AI توضیح می‌ده */}
 
 
-              {/* ═══════ پنل تحلیل AI ═══════ */}
-              {(aiAnalysis.loading || aiAnalysis.text) && (
+              {/* ═══════ پنل تحلیل AI (تب نمای کلی) ═══════ */}
+              {resultTab === 'overview' && (aiAnalysis.loading || aiAnalysis.text) && (
                 <div className="asm__ai-panel">
                   <div className="asm__ai-head">
                     <span className="asm__ai-icon">
@@ -1825,10 +1904,10 @@ export default function AssembleWizard() {
                     </span>
                     <div className="asm__ai-info">
                       <div className="asm__ai-title">
-                        تحلیل هوشمند سیستم
+                        {aiAnalysis.name ? `تحلیل توسط ${aiAnalysis.name}` : 'تحلیل هوشمند سیستم'}
                       </div>
                       <div className="asm__ai-subtitle">
-                        {aiAnalysis.loading ? 'در حال بررسی هماهنگی قطعات...' : 'تحلیل سیستم آماده است'}
+                        {aiAnalysis.loading ? 'در حال بررسی هماهنگی قطعات...' : (aiAnalysis.tagline || 'تحلیل سیستم آماده است')}
                       </div>
                     </div>
                   </div>

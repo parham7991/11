@@ -145,3 +145,59 @@ export function isAiChatPublicEnabled(): boolean {
   if (v === undefined || v === '') return true;
   return v === '1' || v.toLowerCase() === 'true';
 }
+
+/**
+ * هویت نمایشی دستیار هوشمند — نامی که در UI به کاربر نشان داده می‌شود.
+ * وقتی سرویس OpenRouter (با مدل رایگان) انتخاب شده باشد، دستیار نام
+ * «فیری» می‌گیرد؛ در غیر این صورت نام متناسب با سرویس برگردانده می‌شود.
+ * اطلاعات این تابع غیرمحرمانه است (فقط نام/برند نمایشی) و بی‌خطر برای
+ * ارسال به کلاینت است.
+ */
+export type AiIdentity = {
+  /** نام نمایشی دستیار (مثلاً «فیری») */
+  name: string;
+  /** جملهٔ توضیح کوتاه زیر نام */
+  tagline: string;
+  /** نشان/ایموجی برند */
+  emoji: string;
+  /** رنگ برند برای UI */
+  color: string;
+  /** شناسهٔ سرویس (مثل openrouter) */
+  providerId: string;
+  /** نام سرویس */
+  providerName: string;
+  /** نام مدل انتخابی */
+  model: string;
+  /** آیا از مدل رایگان استفاده می‌شود؟ */
+  free: boolean;
+};
+
+const AI_IDENTITY_BY_PROVIDER: Record<string, { name: string; tagline: string; emoji: string }> = {
+  openrouter: { name: 'فیری', tagline: 'دستیار رایگان آفلند', emoji: '🔀' },
+  groq: { name: 'گروک‌یار', tagline: 'دستیار سریع آفلند', emoji: '⚡' },
+  gemini: { name: 'جمینی', tagline: 'دستیار هوشمند آفلند', emoji: '✨' },
+  avalai: { name: 'آوال', tagline: 'دستیار ایرانی آفلند', emoji: '🇮🇷' },
+  liara: { name: 'لیارا', tagline: 'دستیار ابری آفلند', emoji: '🇮🇷' },
+  openai: { name: 'اوپن', tagline: 'دستیار رسمی آفلند', emoji: '🤖' },
+  deepseek: { name: 'دیپ‌سیک', tagline: 'دستیار اقتصادی آفلند', emoji: '🐋' },
+  mistral: { name: 'میسترال', tagline: 'دستیار اروپایی آفلند', emoji: '🌬️' },
+  together: { name: 'توگدر', tagline: 'دستیار متن‌باز آفلند', emoji: '🧩' },
+  cerebras: { name: 'سرِبراس', tagline: 'دستیار فوق‌سریع آفلند', emoji: '🚀' },
+};
+
+export function getAiIdentity(): AiIdentity {
+  const config = getAiChatConfig();
+  const provider = config.providerId;
+  const meta = AI_IDENTITY_BY_PROVIDER[provider] || { name: 'دستیار آفلند', tagline: 'مشاور هوشمند آفلند', emoji: '🤖' };
+  const isFree = /:free$/.test(config.model) || Boolean(findProvider(provider)?.free && /free/i.test(config.model));
+  return {
+    name: meta.name,
+    tagline: isFree ? `${meta.tagline} (رایگان)` : meta.tagline,
+    emoji: meta.emoji,
+    color: findProvider(provider)?.color || '#6566f1',
+    providerId: provider,
+    providerName: config.providerName,
+    model: config.model,
+    free: isFree,
+  };
+}

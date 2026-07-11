@@ -14,7 +14,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getAiChatConfig } from '@/lib/ai-chat/config';
+import { getAiChatConfig, getAiIdentity } from '@/lib/ai-chat/config';
 import { getProxyFetch } from '@/lib/ai-chat/proxy-fetch';
 import { buildFullTelemetry, type TelemetryPart } from '@/lib/ai-chat/telemetry';
 
@@ -50,6 +50,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json({
         ok: false,
         enabled: false,
+        ai: getAiIdentity(),
         message: 'تحلیل آنلاین AI فعال نیست؛ تحلیل تخصصی داخلی نمایش داده شد.',
         fallback: buildFallbackAnalysis(body),
         telemetry,
@@ -103,6 +104,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         return NextResponse.json({
           ok: false,
           enabled: true,
+          ai: getAiIdentity(),
           message: `خطا در تحلیل AI (${aiRes.status})`,
           fallback: buildFallbackAnalysis(body),
           telemetry,
@@ -117,6 +119,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         enabled: true,
         provider: config.providerId,
         model: config.model,
+        ai: getAiIdentity(),
         analysis: text,
         telemetry,
       });
@@ -125,6 +128,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json({
         ok: false,
         enabled: true,
+        ai: getAiIdentity(),
         message: `خطا در تحلیل AI: ${aiErr?.message || 'unknown'}`,
         fallback: buildFallbackAnalysis(body),
         telemetry,

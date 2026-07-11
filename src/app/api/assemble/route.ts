@@ -13,6 +13,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { getAiIdentity } from '@/lib/ai-chat/config';
 import {
   gatherCandidates,
   summarize,
@@ -174,6 +175,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     useCase: customDesc ? 'custom' : useCaseKey,
     useCaseLabel: customDesc || useCase.label,
     budget,
+    ai: getAiIdentity(),
     parts,
     summary,
     tier,
@@ -406,12 +408,13 @@ async function selectPartsWithAi(
       ? rankedCandidates.find(c => String(c.id) === String(aiPick[0].id)) || aiPick[0]
       : undefined;
 
-    // اگه AI قطعه‌ای بالاتر از بودجهٔ باقی‌مانده انتخاب کرد، از rule-based fallback استفاده کن
-    if (!best || best.finalPrice > maxPrice) {
+    // AI اولویت دارد؛ فقط وقتی انتخابش ناموجود باشد یا از بودجهٔ باقی‌مانده تجاوز کند،
+    // به rule-based (با رعایت سقف بودجه) برمی‌گردیم — نه صرفاً به‌خاطر یک پنجرهٔ تخمینی.
+    if (!best || !best.inStock || best.finalPrice > remainingBudget * 0.95) {
       const sorted = rankedCandidates
-        .filter(c => c.finalPrice >= budgetWindow.min * 0.70 && c.finalPrice <= maxPrice)
+        .filter(c => c.inStock !== false && c.finalPrice >= budgetWindow.min * 0.70 && c.finalPrice <= Math.min(maxPrice, remainingBudget * 0.95))
         .sort((a, b) => smartCandidateScore(b, catKey, useCase, budget, budgetWindow) - smartCandidateScore(a, catKey, useCase, budget, budgetWindow));
-      best = sorted[0] || rankedCandidates[0] || candidatesForPick.sort((a, b) => a.finalPrice - b.finalPrice)[0];
+      best = sorted[0] || rankedCandidates.find(c => c.inStock !== false) || candidatesForPick.sort((a, b) => a.finalPrice - b.finalPrice)[0];
     }
 
     if (best) {
@@ -522,9 +525,9 @@ async function selectPartsWithAi(
     let best = aiPick[0]
       ? validCandidates.find(c => String(c.id) === String(aiPick[0].id)) || aiPick[0]
       : undefined;
-    if (!best || best.finalPrice > maxPrice) {
+    if (!best || !best.inStock || best.finalPrice > Math.max(maxPrice, remainingBudget * 0.95)) {
       const sorted = validCandidates
-        .filter(c => c.finalPrice <= maxPrice || (catKey === 'cooler' && cpuNeedsCooler(selectedParts.find(p => p.category === 'cpu'), useCase, budget)))
+        .filter(c => c.inStock !== false && (c.finalPrice <= maxPrice || (catKey === 'cooler' && cpuNeedsCooler(selectedParts.find(p => p.category === 'cpu'), useCase, budget))))
         .sort((a, b) => smartCandidateScore(b, catKey, useCase, budget, budgetWindow) - smartCandidateScore(a, catKey, useCase, budget, budgetWindow));
       best = sorted[0];
     }

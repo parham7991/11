@@ -78,7 +78,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   // ═══════ ۲) بررسی real-time موجودی ═══════
   if (verifyStock) {
-    const allIds = categories.flatMap(c => c.candidates.slice(0, 5).map(p => p.id));
+    // بررسی موجودی برای کاندیداهایی که موتور انتخاب واقعاً بررسی می‌کند
+    // (پنجرهٔ انتخاب حداکثر ۲۸ عدد است)؛ فراتر از آن هرگز انتخاب نمی‌شوند.
+    const allIds = categories.flatMap(c => c.candidates.slice(0, 30).map(p => p.id));
     if (allIds.length > 0) {
       try {
         const verifications = await verifyProducts(allIds);

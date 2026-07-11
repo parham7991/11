@@ -168,6 +168,27 @@ function motherboardRamSlots(mb: AssemblyPart | undefined): number {
   return ff.includes('mini') ? 2 : 4;
 }
 
+/**
+ * نرمال‌سازی سوکت: مقدار "unknown" یا خالی را نادیده می‌گیرد
+ * و مقادیر چندگانه مثل "AM5/AM4" را به لیست تکه‌بندی می‌کند.
+ */
+function normalizeSocket(s?: string): string[] {
+  if (!s || s.trim().toLowerCase() === 'unknown') return [];
+  return s.split('/').map(x => x.trim()).filter(Boolean);
+}
+
+/**
+ * تطبیق سوکت با پشتیبانی حالت چندگانه ("AM5/AM4" با AM5 یا AM4 یکی است).
+ * وقتی سوکت یکی از طرفین نامشخص (unknown/خالی) باشد، مسدودسازی انجام نمی‌شود
+ * تا ناسازگاری کاذب ایجاد نشود.
+ */
+function socketsMatch(a?: string, b?: string): boolean {
+  const sa = normalizeSocket(a);
+  const sb = normalizeSocket(b);
+  if (sa.length === 0 || sb.length === 0) return true; // ناشناخته → مسدود نکن
+  return sa.some(x => sb.includes(x));
+}
+
 // ════════════════════════════════════════════════════════════════
 // 🎯 بررسی سازگاری کامل و دقیق
 // ════════════════════════════════════════════════════════════════
@@ -196,7 +217,7 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
   // ════════════════════════════════════════════════════════════════
   if (cpu && mb) {
     if (cpu.specs?.socket && mb.specs?.socket) {
-      if (cpu.specs.socket !== mb.specs.socket) {
+      if (!socketsMatch(cpu.specs.socket, mb.specs.socket)) {
         errors.push({
           severity: 'error',
           category: 'cpu',
@@ -221,7 +242,12 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
   // ════════════════════════════════════════════════════════════════
   if (mb && ram) {
     if (mb.specs?.ramType && ram.specs?.ramType) {
-      if (mb.specs.ramType !== ram.specs.ramType) {
+      const rtMb = mb.specs.ramType;
+      const rtRam = ram.specs.ramType;
+      if (rtMb === 'unknown' || rtRam === 'unknown') {
+        // نوع حافظه نامشخص → بررسی را رد می‌کنیم تا ناسازگاری کاذب نداشته باشیم
+        ruleResults.ramType = { passed: true, severity: 'info', detail: 'نوع حافظه نامشخص' };
+      } else if (rtMb !== rtRam) {
         errors.push({
           severity: 'error',
           category: 'ram',

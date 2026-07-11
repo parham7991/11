@@ -132,12 +132,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           messages: [
             {
               role: 'system',
-              content: 'تو یک کارشناس سخت‌افزار کامپیوتر و اسمبل حرفه‌ای هستی. قبل از انتخاب، سازگاری، بودجه، ارزش خرید، اسلات‌های RAM/M.2/SATA، توان پاور و نیاز کاربری را دقیق تحلیل کن؛ اما در خروجی فقط ID قطعه را برگردان.',
+              content: 'تو یک کارشناس ارشد سخت‌افزار و اسمبل حرفه‌ای آفلند هستی. قبل از هر انتخاب، موارد زیر را با دقت تحلیل کن: (۱) کاربری دقیق و اولویت‌های آن (گیمینگ/اداری/رندر/استریم)، (۲) سازگاری کامل با قطعات قبلاً انتخاب‌شده (سوکت CPU/مادربرد، نوع RAM، فرم‌فکتور کیس، توان پاور، اسلات‌های RAM/M.2/SATA)، (۳) بودجه و سهم این دسته، (۴) ارزش خرید واقعی با توجه به مشخصات فنی کالاها. انتخاب باید دقیقاً متناسب با همان کاربری باشد — نه یک انتخاب یکسان برای همه. تحلیل را در ذهن انجام بده و در خروجی فقط فرمت PICK را برگردان.',
             },
             { role: 'user', content: prompt },
           ],
           temperature: 0.1, // کم — برای ثبات
-          max_tokens: 200,
+          max_tokens: 250,
           stream: false,
         }),
         signal: controller.signal,
@@ -201,19 +201,69 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 }
 
 /**
- * ساخت پرامپت برای AI
+ * پروفایل دقیق هر کاربری — انتخاب باید «منحصر‌به‌فرد» و متناسب با همین
+ * صفحه باشد، نه یک انتخاب یکسان برای همه.
+ */
+const USE_CASE_PROFILE: Record<string, { label: string; priorities: string[]; targets: string; avoid: string }> = {
+  gaming: {
+    label: 'گیمینگ (بازی‌های سنگین، FPS بالا)',
+    priorities: ['قدرت GPU (VRAM بالا)', 'قدرت CPU متعادل (گلوگاه نشود)', 'سرعت RAM (DDR5 ترجیحی)', 'SSD سریع NVMe'],
+    targets: 'بیشترین اولویت با کارت گرافیک (حدود ۳۵-۴۵٪ بودجه)؛ CPU متناسب که گلوگاه نشود؛ رم حداقل ۱۶GB (ترجیحاً ۳۲GB)؛ کولر مناسب TDP پردازنده.',
+    avoid: 'کارت گرافیک ضعیف، رم کمتر از ۱۶GB، کیس بدون airflow، پاور کم‌توان که GPU را محدود کند.',
+  },
+  office: {
+    label: 'اداری / روزمره',
+    priorities: ['بازدهی مصرف و iGPU', 'سکوت و حرارت پایین', 'قیمت مناسب', 'رم کافی برای چند برنامه'],
+    targets: 'پردازنده با گرافیک یکپارچه (iGPU)؛ رم ۸-۱۶GB؛ SSD برای سرعت بوت؛ کیس جمع‌وجور و بی‌صدا؛ پاور استاندارد.',
+    avoid: 'کارت گرافیک گران‌قیمت، کولر آبی بزرگ، قطعات گیمینگ پرقدرت که بودجه را هدر می‌دهند.',
+  },
+  editing: {
+    label: 'ادیت / رندر / طراحی',
+    priorities: ['هسته/رشتهٔ CPU بالا', 'رم زیاد (۳۲GB+ ترجیحی)', 'GPU با VRAM بالا', 'SSD خیلی سریع و پرظرفیت'],
+    targets: 'CPU چندهسته‌ای قوی (۱۲+ هسته)؛ رم ۳۲GB یا بیشتر؛ GPU با ۱۲GB+ VRAM؛ اسلات M.2 فراوان و مادربرد حرفه‌ای؛ کولر قوی.',
+    avoid: 'رم کمتر از ۱۶GB، SSD کند/کم‌ظرفیت، مادربرد با اسلات کم که ارتقا را ببندد.',
+  },
+  streaming: {
+    label: 'استریم / تولید محتوا',
+    priorities: ['CPU چندهسته برای انکد همزمان', 'GPU برای بازی + انکد', 'رم ۱۶-۳۲GB', 'فضای ذخیرهٔ سریع'],
+    targets: 'تعادل CPU قوی چندهسته‌ای + GPU مناسب؛ رم ۱۶-۳۲GB؛ SSD سریع برای ضبط؛ کولر قوی برای پایداری طولانی‌مدت.',
+    avoid: 'پردازندهٔ ضعیف تک‌هسته، رم کم، خنک‌سازی ناکافی که باعث افت کلاک شود.',
+  },
+  custom: {
+    label: 'دلخواه (توضیح کاربر ملاک است)',
+    priorities: ['تطابق با توضیح کاربر', 'سازگاری قطعات', 'ارزش خرید'],
+    targets: 'بر اساس توضیحات کاربر پیش برو؛ در صورت ابهام میانه‌رو و سازگار انتخاب کن.',
+    avoid: 'فرض‌های بی‌مورد؛ بدون توضیح کاربر، گزینهٔ متعادل را برگزین.',
+  },
+};
+
+/** خلاصهٔ مشخصات فنی هر کاندیدا برای پرامپت قوی‌تر */
+function specLine(c: PartCandidate): string {
+  const s = c.specs || {};
+  const p: string[] = [];
+  if (c.category === 'cpu') p.push(`socket:${s.socket || '?'}`, `cores:${s.cores || '?'}`, `threads:${s.threads || '?'}`, `tdp:${s.tdp || '?'}W`, `igpu:${s.integratedGraphics ? 'yes' : 'no'}`);
+  else if (c.category === 'gpu') p.push(`vram:${s.vram || '?'}GB`, `tdp:${s.tdp || '?'}W`, `len:${s.length || '?'}mm`);
+  else if (c.category === 'ram') p.push(`cap:${s.capacity || '?'}GB`, `type:${s.ramType || '?'}`, `freq:${s.frequency || '?'}`, `mods:${s.moduleCount || '?'}`);
+  else if (c.category === 'storage') p.push(`size:${s.size || '?'}GB`, `nvme:${s.isNVMe ? 'yes' : 'no'}`, `pcie:${s.pcie || '?'}`, `ff:${s.formFactor || '?'}`);
+  else if (c.category === 'motherboard') p.push(`socket:${s.socket || '?'}`, `ram:${s.ramType || '?'}`, `ramSlots:${s.ramSlots || '?'}`, `m2:${s.m2Slots || '?'}`, `wifi:${s.wifi ? 'yes' : 'no'}`, `ff:${s.formFactor || '?'}`);
+  else if (c.category === 'psu') p.push(`watt:${s.wattage || '?'}`, `cert:${s.rating || '?'}`);
+  else if (c.category === 'case') p.push(`ff:${s.formFactor || '?'}`, `gpuMax:${s.gpuMaxLength || '?'}mm`, `airflow:${s.airflow ? 'yes' : 'no'}`);
+  else if (c.category === 'cooler') p.push(`tdp:${s.tdpRating || '?'}W`, `type:${s.type || '?'}`);
+  return p.length ? ` [${p.join(' ')}]` : '';
+}
+
+/**
+ * ساخت پرامپت برای AI — با تمرکز بالا روی کاربری و مشخصات واقعی کالاها
  */
 function buildPickPrompt(body: PickRequest): string {
-  const useCaseFa: Record<string, string> = {
-    gaming: 'گیمینگ', office: 'اداری', editing: 'ادیت و رندر', streaming: 'استریم', custom: 'دلخواه',
-  };
+  const profile = USE_CASE_PROFILE[body.useCase] || USE_CASE_PROFILE.custom;
 
   const pickedText = body.pickedParts.map(p =>
     `- ${p.category}: ${p.name} (${p.shortSpec || '—'}) | قیمت: ${p.finalPrice.toLocaleString('fa-IR')}`
   ).join('\n');
 
   const candidatesText = body.candidates.map((c, idx) =>
-    `${idx + 1}. [ID=${c.id}] ${c.name} | ${c.shortSpec || '—'} | قیمت: ${c.finalPrice.toLocaleString('fa-IR')} | رتبه: ${c.confidence || 0}%`
+    `${idx + 1}. [ID=${c.id}] ${c.name}${specLine(c)} | قیمت: ${c.finalPrice.toLocaleString('fa-IR')} | رتبه: ${c.confidence || 0}%${c.inStock === false ? ' | ناموجود' : ''}`
   ).join('\n');
 
   const smartHint = body.category === 'ram'
@@ -230,9 +280,14 @@ function buildPickPrompt(body: PickRequest): string {
               ? 'برای PSU توان واقعی CPU+GPU با حاشیه امن، گواهی 80Plus و آینده‌نگری ارتقا را حساب کن.'
               : 'انتخاب را بر اساس کارایی واقعی، سازگاری و ارزش خرید انجام بده.';
 
-  return `کاربری: "${useCaseFa[body.useCase] || body.useCase}" | بودجهٔ باقی‌مانده: ${body.remainingBudget.toLocaleString('fa-IR')} تومان (از ${body.budget.toLocaleString('fa-IR')} کل)
+  return `کاربری دقیق: "${profile.label}"
+اولویت‌های این کاربری: ${profile.priorities.join(' / ')}
+هدف از این سیستم: ${profile.targets}
+چیزهایی که باید از آن پرهیز کرد: ${profile.avoid}
 
-قطعات انتخاب‌شده قبلی:
+بودجهٔ باقی‌مانده: ${body.remainingBudget.toLocaleString('fa-IR')} تومان (از ${body.budget.toLocaleString('fa-IR')} کل)
+
+قطعات انتخاب‌شده قبلی (با این‌ها باید سازگار باشد):
 ${pickedText || '(هنوز قطعه‌ای انتخاب نشده)'}
 
 الان باید "${body.categoryLabel}" انتخاب کنی.
@@ -240,10 +295,15 @@ ${pickedText || '(هنوز قطعه‌ای انتخاب نشده)'}
 بازه دقیق همین دسته: ${(body.priceRange?.min || 0).toLocaleString('fa-IR')} تا ${(body.priceRange?.max || body.remainingBudget).toLocaleString('fa-IR')} تومان؛ ایده‌آل: ${(body.priceRange?.ideal || body.budgetShare).toLocaleString('fa-IR')} تومان
 ${body.priceRange?.note ? `یادداشت بازه: ${body.priceRange.note}` : ''}
 
-قانون مهم: انتخاب باید مثل تصمیم نهایی یک متخصص AI باشد. فقط قطعه‌ای را انتخاب کن که داخل بازه دقیق باشد، با قطعات قبلی سازگار باشد، موجود باشد، و نسبت کارایی/قیمت بهتری بدهد. از انتخاب قطعه خیلی ارزانِ ضعیف یا خیلی گرانِ خارج از سهم خودداری کن.
+قانون مهم: انتخاب باید مثل تصمیم نهایی یک متخصص اسمبل باشد که دقیقاً می‌داند کاربر برای «${profile.label}» می‌خواهد. فقط قطعه‌ای را انتخاب کن که:
+۱) داخل بازهٔ دقیق همین دسته باشد،
+۲) با قطعات قبلی سازگار باشد (سوکت/رم/فرم‌فکتور/توان)،
+۳) موجود باشد،
+۴) با اولویت‌های همین کاربری هم‌راستا باشد و نسبت کارایی/قیمت بهتری بدهد.
+از انتخاب قطعهٔ خیلی ارزانِ ضعیف یا خیلی گرانِ خارج از سهم خودداری کن.
 قانون تخصصی همین دسته: ${smartHint}
 
-گزینه‌های موجود:
+گزینه‌های موجود (با مشخصات فنی):
 ${candidatesText}
 
 فقط ID بهترین گزینه را برگردان (${body.maxPick} عدد). فقط در یک خط، به فرمت دقیق:

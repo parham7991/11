@@ -74,6 +74,7 @@ export const AI_PROVIDERS: AiProvider[] = [
     defaultModel: 'meta-llama/llama-3.3-70b-instruct:free',
     models: [
       'meta-llama/llama-3.3-70b-instruct:free',
+      'tencent/hy3:free',
       'google/gemini-2.0-flash-exp:free',
       'deepseek/deepseek-chat',
       'openai/gpt-4o-mini',

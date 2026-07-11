@@ -687,11 +687,18 @@ const PartCard = ({
 const CompatibilityPanelV3 = ({
   matrix,
   unavailableMessages,
+  parts,
 }: {
   matrix: CompatibilityMatrix;
   unavailableMessages?: string[];
+  parts?: Part[];
 }) => {
   const meta = STATUS_META[matrix.status] || STATUS_META.warning;
+  const nameById = useMemo(() => {
+    const m = new Map<string, string>();
+    (parts || []).forEach(p => m.set(String(p.id), p.name));
+    return m;
+  }, [parts]);
 
   return (
     <div className="asm__compat-panel-v3">
@@ -746,6 +753,13 @@ const CompatibilityPanelV3 = ({
                   راه‌حل: {cleanPublicText(issue.solution)}
                 </div>
               )}
+              {issue.affectedParts && issue.affectedParts.length > 0 && (
+                <div className="asm__compat-v3-row-affected">
+                  {issue.affectedParts.map(id => (
+                    <span key={id} className="asm__compat-v3-chip">{cleanPublicText(nameById.get(String(id)) || String(id))}</span>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -768,6 +782,13 @@ const CompatibilityPanelV3 = ({
               )}
               {issue.solution && (
                 <div className="asm__compat-v3-row-solution">{cleanPublicText(issue.solution)}</div>
+              )}
+              {issue.affectedParts && issue.affectedParts.length > 0 && (
+                <div className="asm__compat-v3-row-affected">
+                  {issue.affectedParts.map(id => (
+                    <span key={id} className="asm__compat-v3-chip">{cleanPublicText(nameById.get(String(id)) || String(id))}</span>
+                  ))}
+                </div>
               )}
             </div>
           ))}
@@ -1677,6 +1698,7 @@ export default function AssembleWizard() {
                 <CompatibilityPanelV3
                   matrix={result.compatibilityMatrix}
                   unavailableMessages={result.unavailableMessages}
+                  parts={parts}
                 />
               )}
 

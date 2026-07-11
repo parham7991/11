@@ -7,7 +7,6 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
@@ -17,13 +16,8 @@ type ResolvedTheme = 'light' | 'dark';
 type ThemeContextValue = {
   mode: ThemeMode;
   resolvedTheme: ResolvedTheme;
-  setMode: (mode: ThemeMode, origin?: { x: number; y: number }) => void;
-  toggleTheme: (origin?: { x: number; y: number }) => void;
-};
-
-type ToggleOrigin = { x: number; y: number };
-type ViewTransitionDocument = Document & {
-  startViewTransition?: (callback: () => void) => { ready: Promise<void>; finished: Promise<void> };
+  setMode: (mode: ThemeMode) => void;
+  toggleTheme: () => void;
 };
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -67,62 +61,33 @@ const applyTheme = (mode: ThemeMode, resolvedTheme: ResolvedTheme) => {
   updateThemeColorMeta(resolvedTheme);
 };
 
-// عکسِ لحظه‌ای از صفحه می‌گیرد، تغییر را اعمال می‌کند و با کارت گرافیک
-// بین دو اسنپ‌شات cross-fade می‌کند → تعویض بدون لگ و با انیمیشن.
-const setToggleOrigin = (origin?: ToggleOrigin) => {
-  if (typeof document === 'undefined') return;
-  const root = document.documentElement;
-  if (origin && Number.isFinite(origin.x) && Number.isFinite(origin.y)) {
-    root.style.setProperty('--theme-toggle-x', `${origin.x}px`);
-    root.style.setProperty('--theme-toggle-y', `${origin.y}px`);
-  }
-};
-
-const runThemeUpdate = (update: () => void, origin?: ToggleOrigin) => {
-  setToggleOrigin(origin);
-  const doc = typeof document !== 'undefined' ? (document as ViewTransitionDocument) : undefined;
-  if (doc && typeof doc.startViewTransition === 'function') {
-    doc.startViewTransition(() => {
-      update();
-    });
-  } else {
-    update();
-  }
-};
-
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [mode, setModeState] = useState<ThemeMode>('system');
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light');
-  const [, setMounted] = useState(false);
-  const resolvedThemeRef = useRef<ResolvedTheme>('light');
+  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    resolvedThemeRef.current = resolvedTheme;
-  }, [resolvedTheme]);
-
-  const setMode = useCallback((nextMode: ThemeMode, origin?: ToggleOrigin) => {
+  const setMode = useCallback((nextMode: ThemeMode) => {
+    setModeState(nextMode);
+    try {
+      window.localStorage.setItem(STORAGE_KEY, nextMode);
+    } catch {}
     const nextResolvedTheme = nextMode === 'system' ? getSystemTheme() : nextMode;
-    runThemeUpdate(() => {
-      setModeState(nextMode);
-      try {
-        window.localStorage.setItem(STORAGE_KEY, nextMode);
-      } catch {}
-      setResolvedTheme(nextResolvedTheme);
-      applyTheme(nextMode, nextResolvedTheme);
-    }, origin);
+    setResolvedTheme(nextResolvedTheme);
+    applyTheme(nextMode, nextResolvedTheme);
   }, []);
 
-  const toggleTheme = useCallback((origin?: ToggleOrigin) => {
-    // Simple toggle: light ↔ dark (skip system for quick toggle)
-    const nextMode: ThemeMode = resolvedThemeRef.current === 'dark' ? 'light' : 'dark';
-    runThemeUpdate(() => {
-      setModeState(nextMode);
+  const toggleTheme = useCallback(() => {
+    setModeState((currentMode) => {
+      // Simple toggle: light ↔ dark (skip system for quick toggle)
+      const nextMode = currentMode === 'dark' ? 'light' : 'dark';
       try {
         window.localStorage.setItem(STORAGE_KEY, nextMode);
       } catch {}
-      setResolvedTheme(nextMode);
-      applyTheme(nextMode, nextMode);
-    }, origin);
+      const nextResolvedTheme: ResolvedTheme = nextMode;
+      setResolvedTheme(nextResolvedTheme);
+      applyTheme(nextMode, nextResolvedTheme);
+      return nextMode;
+    });
   }, []);
 
   useEffect(() => {

@@ -484,7 +484,7 @@ export function detectMotherboard(name: string): PartDetection {
       matchedModel: 'Motherboard',
       specs: {
         socket: socket || 'unknown',
-        ramType: ramType || 'DDR5',
+        ramType: ramType || undefined,
         formFactor,
         wifi: hasWifi,
         ramSlots: ramSlotsMatch ? Number(ramSlotsMatch[1]) : inferredRamSlots,

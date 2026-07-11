@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import './assemble.css';
 import {
@@ -31,6 +31,9 @@ import TelemetryDashboard from './TelemetryDashboard';
 import InvoiceModal from './InvoiceModal';
 import ThemeSelector, { type AssembleTheme } from './ThemeSelector';
 import BuildIdentityCard from './BuildIdentityCard';
+import RadialGauge from './RadialGauge';
+import SpecRadar from './SpecRadar';
+import PcBuildVisual from './PcBuildVisual';
 
 // ════════════════════════════════════════════════════════════════
 // 📋 نوع‌ها
@@ -254,6 +257,26 @@ const partQty = (part?: Part) => Math.max(1, Number(part?.quantity || 1));
 const ramModuleCount = (part?: Part) => Math.max(1, Number(part?.specs?.moduleCount || (String(part?.specs?.channel || '').toLowerCase() === 'dual' ? 2 : 1)));
 const storageSizeGb = (part?: Part) => Number(part?.specs?.size || 0) || Number(part?.specs?.sizeTB || 0) * 1000 || 0;
 const cleanPublicText = (text?: string) => String(text || '').replace(/[✅❌⚠️💡⏳🎮⭐📦🚫ℹ️💾⚡🔌🔥🚀🧠🏷️📐📡🌈💧🌪️🏅🔧🗑️💰❄️✨🌬️🏢🎬📹🎨🏆📌]/gu, '').replace(/\s+/g, ' ').trim();
+
+// ════════════════════════════════════════════════════════════════
+// 💾 ذخیره‌سازی محلی ساخت (جلوگیری از از دست رفتن با رفرش)
+// ════════════════════════════════════════════════════════════════
+const ASSEMBLE_STORAGE_KEY = 'assemble_build_v1';
+const loadSavedBuild = (): any => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(ASSEMBLE_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+};
+const saveSavedBuild = (data: any) => {
+  if (typeof window === 'undefined') return;
+  try { window.localStorage.setItem(ASSEMBLE_STORAGE_KEY, JSON.stringify(data)); } catch { /* ظرفیت پر یا غیرقابل سریال */ }
+};
+const clearSavedBuild = () => {
+  if (typeof window === 'undefined') return;
+  try { window.localStorage.removeItem(ASSEMBLE_STORAGE_KEY); } catch {}
+};
 
 type SmartSuggestion = {
   id: string;
@@ -818,6 +841,48 @@ export default function AssembleWizard() {
 
   const { mutate: addBulk, isPending: buying } = useAddBulkCart();
 
+  // ═════ وضعیت ساخت ذخیره‌شده (localStorage) ═════
+  const [savedBuild, setSavedBuild] = useState<any>(null);
+
+  useEffect(() => {
+    setSavedBuild(loadSavedBuild());
+  }, []);
+
+  // ذخیرهٔ خودکار ساخت هنگام تغییر در نتایج (فقط در مرحلهٔ سیستم)
+  const persistBuild = useCallback(() => {
+    if (step !== 3 || !parts.length || !result) return;
+    saveSavedBuild({
+      savedAt: Date.now(),
+      useCase, budget, includeOptional,
+      parts,
+      result: { ...result, parts: [] }, // جلوگیری از تکرار آرایهٔ parts
+      blocked: Array.from(blockedPartIds),
+      unavailable: Array.from(unavailablePartIds),
+    });
+  }, [step, parts, result, blockedPartIds, unavailablePartIds, useCase, budget, includeOptional]);
+
+  useEffect(() => { persistBuild(); }, [persistBuild]);
+
+  const restoreBuild = () => {
+    const b = savedBuild;
+    if (!b) return;
+    setResult(b.result || null);
+    setParts(b.parts || []);
+    setBlockedPartIds(new Set(b.blocked || []));
+    setUnavailablePartIds(new Set(b.unavailable || []));
+    setUseCase(b.useCase || 'gaming');
+    setBudget(b.budget || 0);
+    setIncludeOptional(b.includeOptional ?? true);
+    setExpandedParts(new Set());
+    setAiAnalysis({ enabled: false, text: '', loading: false });
+    setStep(3);
+  };
+
+  const discardSaved = () => {
+    clearSavedBuild();
+    setSavedBuild(null);
+  };
+
   useEffect(() => {
     if (!loading) return;
     setLoadStep(0);
@@ -946,17 +1011,43 @@ export default function AssembleWizard() {
     });
   };
 
-  const selectAlternative = (partId: string, alt: Part) => {
-    setParts(prev => prev.map(p => {
-      if (String(p.id) === String(partId)) {
-        return { ...alt, alternatives: p.alternatives, isOptional: p.isOptional };
+  // ═════ بررسی مجدد سازگاری بعد از هر ویرایش (رفع باگ دکمهٔ خرید گیر‌کرده) ═════
+  const compatReqId = useRef(0);
+  const recomputeCompatibility = useCallback(async (nextParts: Part[]) => {
+    const reqId = ++compatReqId.current;
+    try {
+      const res = await fetch('/api/assemble/compatibility', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          parts: nextParts.map(p => ({ category: p.category, id: p.id, specs: p.specs })),
+        }),
+      });
+      const data = await res.json();
+      if (reqId !== compatReqId.current) return; // پاسخ قدیمی را نادیده بگیر
+      if (data?.matrix) {
+        setBlockedPartIds(new Set(data.matrix.blockedPartIds || []));
+        setUnavailablePartIds(new Set(data.matrix.unavailablePartIds || []));
       }
-      return p;
-    }));
+    } catch {
+      // در صورت خطا، set های قبلی حفظ می‌شوند
+    }
+  }, []);
+
+  const commitParts = (next: Part[]) => {
+    setParts(next);
+    void recomputeCompatibility(next);
+  };
+
+  const selectAlternative = (partId: string, alt: Part) => {
+    const next = parts.map(p => String(p.id) === String(partId)
+      ? { ...alt, alternatives: p.alternatives, isOptional: p.isOptional }
+      : p);
+    commitParts(next);
     setExpandedParts(prev => {
-      const next = new Set(prev);
-      next.delete(partId);
-      return next;
+      const n = new Set(prev);
+      n.delete(partId);
+      return n;
     });
   };
 
@@ -964,78 +1055,88 @@ export default function AssembleWizard() {
     const suggested = suggestion.suggested;
     if (!isRealPart(suggested)) return;
 
-    setParts(prev => {
-      const currentId = suggestion.current?.id;
-      if (suggestion.mode === 'quantity' && currentId !== undefined) {
-        return prev.map(p => {
-          if (String(p.id) !== String(currentId)) return p;
-          const nextQty = partQty(p) + Math.max(1, Number(suggestion.quantityDelta || 1));
-          const nextSpecs = { ...p.specs };
-          if (p.category === 'ram') {
-            const modules = ramModuleCount(p);
-            const slots = Number(p.specs?.ramSlots || p.specs?.usedRamSlots || 4);
-            nextSpecs.totalModules = Math.min(slots, modules * nextQty);
-            nextSpecs.usedRamSlots = nextSpecs.totalModules;
-          }
-          return {
-            ...p,
-            quantity: nextQty,
-            specs: nextSpecs,
-            quantityLabel: p.category === 'ram'
-              ? `${nextQty.toLocaleString('fa-IR')} کیت RAM · مجموع ${Number(p.specs?.capacity || 0) * nextQty}GB`
-              : `${nextQty.toLocaleString('fa-IR')} عدد برای ظرفیت بیشتر`,
-          };
-        });
-      }
+    const currentId = suggestion.current?.id;
+    let next: Part[];
 
-      if (suggestion.mode === 'add') {
-        if (prev.some(p => String(p.id) === String(suggested.id))) {
-          return prev.map(p => String(p.id) === String(suggested.id) ? { ...p, quantity: partQty(p) + 1 } : p);
+    if (suggestion.mode === 'quantity' && currentId !== undefined) {
+      next = parts.map(p => {
+        if (String(p.id) !== String(currentId)) return p;
+        const nextQty = partQty(p) + Math.max(1, Number(suggestion.quantityDelta || 1));
+        const nextSpecs = { ...p.specs };
+        if (p.category === 'ram') {
+          const modules = ramModuleCount(p);
+          const slots = Number(p.specs?.ramSlots || 4); // تعداد اسلات واقعی (نه usedRamSlots)
+          nextSpecs.totalModules = Math.min(slots, modules * nextQty);
+          nextSpecs.usedRamSlots = nextSpecs.totalModules;
         }
-        return [...prev, { ...suggested, alternatives: suggested.alternatives || [], isOptional: suggested.isOptional ?? true, quantity: suggested.quantity || 1 }];
+        return {
+          ...p,
+          quantity: nextQty,
+          specs: nextSpecs,
+          quantityLabel: p.category === 'ram'
+            ? `${nextQty.toLocaleString('fa-IR')} کیت RAM · مجموع ${Number(p.specs?.capacity || 0) * nextQty}GB`
+            : `${nextQty.toLocaleString('fa-IR')} عدد برای ظرفیت بیشتر`,
+        };
+      });
+    } else if (suggestion.mode === 'add') {
+      if (parts.some(p => String(p.id) === String(suggested.id))) {
+        next = parts.map(p => String(p.id) === String(suggested.id) ? { ...p, quantity: partQty(p) + 1 } : p);
+      } else {
+        next = [...parts, { ...suggested, alternatives: suggested.alternatives || [], isOptional: suggested.isOptional ?? true, quantity: suggested.quantity || 1 }];
       }
-
-      if (prev.some(p => String(p.id) === String(suggested.id))) return prev;
-      return prev.map(p => String(p.id) === String(currentId)
-        ? { ...suggested, alternatives: p.alternatives || suggested.alternatives || [], isOptional: p.isOptional, quantity: suggested.quantity || 1 }
-        : p
-      );
-    });
+    } else {
+      if (parts.some(p => String(p.id) === String(suggested.id))) {
+        next = parts;
+      } else {
+        next = parts.map(p => String(p.id) === String(currentId)
+          ? { ...suggested, alternatives: p.alternatives || suggested.alternatives || [], isOptional: p.isOptional, quantity: suggested.quantity || 1 }
+          : p
+        );
+      }
+    }
+    commitParts(next);
   };
 
   const addSuggestedAction = (action: ResolutionAction) => {
     const suggested = action.suggested;
     if (!isRealPart(suggested)) return;
 
-    setParts(prev => {
-      const exists = prev.some(p => String(p.id) === String(suggested.id));
-      if (exists) return prev;
+    const currentId = action.current?.id;
+    let next: Part[];
 
-      const currentId = action.current?.id;
-      if (currentId !== undefined && prev.some(p => String(p.id) === String(currentId))) {
-        return prev.map(p => String(p.id) === String(currentId)
-          ? { ...suggested, alternatives: p.alternatives || suggested.alternatives || [], isOptional: p.isOptional }
-          : p
-        );
-      }
-
-      const sameCategoryIndex = prev.findIndex(p => p.category === suggested.category);
+    const exists = parts.some(p => String(p.id) === String(suggested.id));
+    if (exists) {
+      next = parts;
+    } else if (currentId !== undefined && parts.some(p => String(p.id) === String(currentId))) {
+      next = parts.map(p => String(p.id) === String(currentId)
+        ? { ...suggested, alternatives: p.alternatives || suggested.alternatives || [], isOptional: p.isOptional }
+        : p
+      );
+    } else {
+      const sameCategoryIndex = parts.findIndex(p => p.category === suggested.category);
       if (sameCategoryIndex >= 0) {
-        return prev.map((p, idx) => idx === sameCategoryIndex
+        next = parts.map((p, idx) => idx === sameCategoryIndex
           ? { ...suggested, alternatives: p.alternatives || suggested.alternatives || [], isOptional: p.isOptional }
           : p
         );
+      } else {
+        next = [...parts, { ...suggested, alternatives: suggested.alternatives || [], isOptional: suggested.isOptional || false }];
       }
-
-      return [...prev, { ...suggested, alternatives: suggested.alternatives || [], isOptional: suggested.isOptional || false }];
-    });
+    }
+    commitParts(next);
   };
 
   const removeOptional = (partId: string) => {
-    setParts(prev => prev.filter(p => p.id !== partId));
+    commitParts(parts.filter(p => String(p.id) !== String(partId)));
   };
 
   const tierInfo = result?.tier ? TIER_LABELS[result.tier] || TIER_LABELS.medium : TIER_LABELS.medium;
+  const scoreColor =
+    (result?.compatibilityScore || 0) >= 85
+      ? 'var(--asm-green)'
+      : (result?.compatibilityScore || 0) >= 60
+        ? 'var(--asm-primary)'
+        : 'var(--aw-warn)';
 
   const estimatedFps = useMemo(() => {
     if (!parts.length || useCase !== 'gaming') return null;
@@ -1053,6 +1154,7 @@ export default function AssembleWizard() {
 
   const currentSummary = useMemo(() => makeSummary(parts), [parts]);
   const displaySummary = parts.length ? currentSummary : result?.summary;
+  const radarAxes = useMemo(() => buildRadarAxes(parts, budget, result?.compatibilityScore || 0), [parts, budget, result]);
   const insights = useMemo(() => buildInsights(parts, budget, useCase), [parts, budget, useCase]);
   const smartSuggestions = useMemo(() => buildSmartSuggestions(parts, budget), [parts, budget]);
   const quickRamSuggestion = smartSuggestions.find(s => s.mode === 'quantity' && s.suggested.category === 'ram');
@@ -1062,66 +1164,99 @@ export default function AssembleWizard() {
   const hasUnavailable = unavailablePartIds.size > 0;
 
   return (
-    <div className="asm">
+    <div className="asm aw">
       {/* هیرو */}
-      <div className="asm__hero">
-        <span className="asm__hero-icon"><CpuIcon /></span>
-        <h1>اسمبل آنلاین هوشمند</h1>
-        <p>کاربری و بودجه‌ات رو بگو تا سیستم با تصمیم‌گیری چنداسلاتی RAM/SSD، بررسی لحظه‌ای قیمت و تحلیل دقیق سازگاری برات چیده بشه.</p>
-        <div className="asm__hero-stats">
-          <span className="asm__hero-stat"><b>RAM Slots</b> چند کیت دقیق</span>
-          <span className="asm__hero-stat"><b>M.2/SATA</b> چند SSD</span>
-          <span className="asm__hero-stat"><b>Real-time</b> موجودی و قیمت</span>
-          <span className="asm__hero-stat"><b>AI</b> تحلیل ارزش خرید</span>
+      <header className="aw-hero">
+        <div className="aw-hero__bg" aria-hidden="true">
+          <span className="aw-hero__orb aw-hero__orb--1" />
+          <span className="aw-hero__orb aw-hero__orb--2" />
+          <span className="aw-hero__grid" />
+          <span className="aw-hero__scan" />
         </div>
-      </div>
+        <div className="aw-hero__content">
+          <span className="aw-hero__badge"><SparkIcon /> اسمبلر هوشمند آفلند</span>
+          <h1 className="aw-hero__title">
+            سیستم رو<span className="aw-hero__title-grad"> با هوش مصنوعی</span> برات می‌چینم
+          </h1>
+          <p className="aw-hero__sub">
+            کاربری و بودجه‌ت رو بگو؛ من با بررسی لحظه‌ای موجودی، محاسبهٔ سازگاری فنی و اولویت‌بندی هوشمند، بهینه‌ترین ترکیب رو با قیمت دقیق برات می‌سازم.
+          </p>
+          <div className="aw-hero__stats">
+            <span className="aw-hero__stat"><b>چندکیت</b>RAM/M.2</span>
+            <span className="aw-hero__stat"><b>Real-time</b>قیمت و موجودی</span>
+            <span className="aw-hero__stat"><b>AI</b>تحلیل ارزش</span>
+            <span className="aw-hero__stat"><b>ترمال</b>شبیه‌ساز دما</span>
+          </div>
+        </div>
+      </header>
 
-      <div className="asm__steps">
-        <Step n={1} label="انتخاب کاربری" active={step === 1} done={step > 1} />
-        <Step n={2} label="بودجه و تنظیمات" active={step === 2} done={step > 2} />
-        <Step n={3} label="سیستم پیشنهادی" active={step === 3} done={false} />
-      </div>
+      <nav className="aw-steps" aria-label="مراحل اسمبل">
+        <span className="aw-steps__track">
+          <span className="aw-steps__fill" style={{ width: step >= 3 ? '100%' : step >= 2 ? '50%' : '0%' }} />
+        </span>
+        <Step n={1} label="کاربری" active={step === 1} done={step > 1} />
+        <Step n={2} label="بودجه" active={step === 2} done={step > 2} />
+        <Step n={3} label="سیستم" active={step === 3} done={false} />
+      </nav>
 
       {step === 1 && (
-        <div className="asm__panel">
-          <h2>سیستم رو برای چه کاری می‌خوای؟</h2>
-          <p className="asm__sub">با انتخاب کاربری، قطعات مناسب و وزن هر دسته متناسب با نیازت تنظیم می‌شه.</p>
+        <div className="aw-panel aw-rise">
+          <div className="aw-panel__head">
+            <h2 className="aw-panel__title">سیستم رو برای چه کاری می‌خوای؟</h2>
+            <p className="aw-panel__sub">با انتخاب کاربری، قطعات مناسب و وزن هر دسته متناسب با نیازت تنظیم می‌شه.</p>
+          </div>
 
-          <div className="asm__usecases">
+          {savedBuild?.parts?.length > 0 && (
+            <div className="aw-restore-banner">
+              <div className="aw-restore-banner__info">
+                <b>ساخت قبلی ذخیره شده</b>
+                <span>{savedBuild.parts.length} قطعه · {savedBuild.result?.useCaseLabel || ''}{savedBuild.budget ? ` · ${toman(savedBuild.budget)}` : ''}</span>
+              </div>
+              <div className="aw-actions">
+                <button type="button" className="aw-cta" onClick={restoreBuild}>ادامه ساخت</button>
+                <button type="button" className="aw-ghost" onClick={discardSaved}>شروع جدید</button>
+              </div>
+            </div>
+          )}
+
+          <div className="aw-usecases">
             {USE_CASES.map(u => {
               const Icon = USECASE_ICONS[u.key] || CpuIcon;
+              const active = useCase === u.key;
               return (
                 <button
                   key={u.key}
                   type="button"
-                  className={`asm__usecase${useCase === u.key ? ' asm__usecase--active' : ''}`}
+                  className={`aw-usecase${active ? ' aw-usecase--active' : ''}`}
                   onClick={() => setUseCase(u.key)}
                 >
-                  <span className="asm__usecase-check"><CheckIcon /></span>
-                  <span className="asm__usecase-icon"><Icon /></span>
-                  <div className="asm__usecase-label">{u.label}</div>
-                  <div className="asm__usecase-desc">{u.desc}</div>
+                  <span className="aw-usecase__glow" aria-hidden="true" />
+                  <span className="aw-usecase__check"><CheckIcon /></span>
+                  <span className="aw-usecase__icon"><Icon /></span>
+                  <span className="aw-usecase__label">{u.label}</span>
+                  <span className="aw-usecase__desc">{u.desc}</span>
                 </button>
               );
             })}
           </div>
 
           {useCase === 'custom' && (
-            <div className="asm__custom-box">
-              <label className="asm__custom-label"><CustomIcon /> توضیح بده چه کاری می‌خوای بکنی:</label>
+            <div className="aw-custom">
+              <label className="aw-custom__label"><CustomIcon /> توضیح بده چه کاری می‌خوای بکنی:</label>
               <textarea
-                className="asm__note"
+                className="aw-custom__input"
                 value={customDesc}
                 onChange={e => setCustomDesc(e.target.value)}
                 placeholder="مثلاً: هم گیمینگ سنگین، هم ادیت ویدیو ۴K، هم استریم همزمان"
                 maxLength={300}
               />
+              <span className="aw-custom__count">{customDesc.length}/300</span>
             </div>
           )}
 
           <button
-            className="asm__cta"
-            style={{ marginTop: 20 }}
+            className="aw-cta"
+            style={{ marginTop: 22 }}
             onClick={() => setStep(2)}
             disabled={useCase === 'custom' && customDesc.trim().length < 3}
           >
@@ -1131,121 +1266,132 @@ export default function AssembleWizard() {
       )}
 
       {step === 2 && (
-        <div className="asm__panel">
-          <h2>بودجه‌ات چقدره؟</h2>
-          <p className="asm__sub">
-            {rangeLoading ? (
-              <span className="asm__sub-loading">
-                <span className="asm__sub-spinner" /> در حال بررسی قیمت‌های واقعی فروشگاه…
-              </span>
-            ) : range ? (
-              <span className="asm__sub-range">
-                <span className="asm__sub-range-icon">📊</span>
-                بازهٔ واقعی: <b>{shortToman(range.min)}</b> تا <b>{shortToman(range.max)}</b>
-                {range.recommended && (
-                  <span className="asm__sub-range-rec">پیشنهادی: <b>{shortToman(range.recommended)}</b></span>
-                )}
-              </span>
-            ) : (
-              'با اسلایدر تنظیم کن.'
-            )}
-          </p>
+        <div className="aw-panel aw-rise">
+          <div className="aw-panel__head">
+            <h2 className="aw-panel__title">بودجه‌ات چقدره؟</h2>
+            <p className="aw-panel__sub">
+              {rangeLoading ? (
+                <span className="aw-budget__loading-inline">
+                  <span className="aw-spin aw-spin--sm" /> در حال بررسی قیمت‌های واقعی فروشگاه…
+                </span>
+              ) : range ? (
+                <span className="aw-budget__rangeinfo">
+                  <span className="aw-budget__rangeinfo-ico">📊</span>
+                  بازهٔ واقعی: <b>{shortToman(range.min)}</b> تا <b>{shortToman(range.max)}</b>
+                  {range.recommended && (
+                    <span className="aw-budget__rangeinfo-rec">پیشنهادی: <b>{shortToman(range.recommended)}</b></span>
+                  )}
+                </span>
+              ) : (
+                'با اسلایدر تنظیم کن.'
+              )}
+            </p>
+          </div>
 
           {rangeLoading || !range ? (
             // ═══════ لودینگ حرفه‌ای اسلایدر ═══════
-            <div className="asm__budget-loading">
-              <div className="asm__budget-loading-skeleton">
-                <div className="asm__skeleton-bar asm__skeleton-bar--value" />
-                <div className="asm__skeleton-bar asm__skeleton-bar--range" />
-                <div className="asm__skeleton-bar asm__skeleton-bar--labels" />
-                <div className="asm__skeleton-presets">
+            <div className="aw-budget-loading">
+              <div className="aw-budget-loading__skeleton">
+                <div className="aw-skeleton aw-skeleton--value" />
+                <div className="aw-skeleton aw-skeleton--range" />
+                <div className="aw-skeleton aw-skeleton--labels" />
+                <div className="aw-skeleton__presets">
                   {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                    <div key={i} className="asm__skeleton-preset" />
+                    <div key={i} className="aw-skeleton__preset" />
                   ))}
                 </div>
               </div>
-              <div className="asm__budget-loading-message">
-                <span className="asm__budget-loading-spinner" />
+              <div className="aw-budget-loading__message">
+                <span className="aw-spin" />
                 در حال جستجوی کمترین و بیشترین قیمت قطعات در فروشگاه…
               </div>
             </div>
           ) : (
             // ═══════ اسلایدر با داده واقعی ═══════
             <>
-              <div className="asm__budget-val">
-                {budget.toLocaleString('fa-IR')} <span>تومان</span>
-              </div>
+              <div className="aw-budget">
+                <div className="aw-budget__val">
+                  {budget.toLocaleString('fa-IR')} <span>تومان</span>
+                </div>
 
-              <input
-                className="asm__range"
-                type="range"
-                min={range.min}
-                max={range.max}
-                step={Math.max(1_000_000, Math.round((range.max - range.min) / 100))}
-                value={budget}
-                onChange={e => setBudget(Number(e.target.value))}
-              />
+                <div className="aw-range">
+                  <input
+                    className="aw-range__input"
+                    type="range"
+                    min={range.min}
+                    max={range.max}
+                    step={Math.max(1_000_000, Math.round((range.max - range.min) / 100))}
+                    value={budget}
+                    onChange={e => setBudget(Number(e.target.value))}
+                    style={{
+                      background: `linear-gradient(90deg, var(--aw-accent-b) 0%, var(--asm-cyan) ${((budget - range.min) / (range.max - range.min)) * 100}%, var(--asm-track) ${((budget - range.min) / (range.max - range.min)) * 100}%)`,
+                    }}
+                  />
+                </div>
 
-              <div className="asm__range-labels">
-                <span>{shortToman(range.min)}</span>
-                {range && (
-                  <span className="asm__range-rec" onClick={() => setBudget(range.recommended)}>
+                <div className="aw-range__labels">
+                  <span>{shortToman(range.min)}</span>
+                  <span className="aw-range__rec" onClick={() => setBudget(range.recommended)}>
                     پیشنهادی: {shortToman(range.recommended)}
                   </span>
-                )}
-                <span>{shortToman(range.max)}</span>
-              </div>
+                  <span>{shortToman(range.max)}</span>
+                </div>
 
-              {/* پریست‌ها — فقط نمایش داده می‌شن اگه در بازه باشن */}
-              <div className="asm__presets">
-                {BUDGET_PRESETS
-                  .filter(p => p.value >= range.min && p.value <= range.max * 1.15)
-                  .map(p => (
-                    <button
-                      key={p.value}
-                      type="button"
-                      className={`asm__preset${budget === p.value ? ' asm__preset--active' : ''}`}
-                      onClick={() => setBudget(p.value)}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
+                {/* پریست‌ها */}
+                <div className="aw-presets">
+                  {BUDGET_PRESETS
+                    .filter(p => p.value >= range.min && p.value <= range.max * 1.15)
+                    .map(p => (
+                      <button
+                        key={p.value}
+                        type="button"
+                        className={`aw-preset${budget === p.value ? ' aw-preset--active' : ''}`}
+                        onClick={() => setBudget(p.value)}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
+                  {BUDGET_PRESETS.filter(p => p.value >= range.min && p.value <= range.max * 1.15).length === 0 && (
+                    <span className="aw-presets__empty">برای این کاربری پریستی در بازه نیست — اسلایدر رو تنظیم کن.</span>
+                  )}
+                </div>
+                <p className="aw-presets__hint">
+                  حداقل قیمت ممکن: {shortToman(range.min)} — کمتر از این نمی‌تونیم سیستم سازگار بسازیم
+                </p>
               </div>
-              <p className="asm__presets-hint">
-                حداقل قیمت ممکن: {shortToman(range.min)} — کمتر از این نمی‌تونیم سیستم سازگار بسازیم
-              </p>
             </>
           )}
 
-          <div className="asm__options-section">
-            <h3>⚙️ تنظیمات اضافی</h3>
-            <label className="asm__checkbox-row">
+          <div className="aw-options">
+            <h3 className="aw-options__title">⚙️ تنظیمات اضافی</h3>
+            <label className="aw-check">
               <input
                 type="checkbox"
                 checked={includeOptional}
                 onChange={e => setIncludeOptional(e.target.checked)}
               />
+              <span className="aw-check__box"><CheckIcon /></span>
               <span>شامل قطعات اختیاری (کولر، فن RGB، نوار نور)</span>
             </label>
-            <p className="asm__options-hint">
+            <p className="aw-options__hint">
               قطعات <b>اجباری</b> (CPU، GPU، مادربرد، رم، SSD، پاور، کیس) همیشه انتخاب می‌شن.
               سیستم به‌طور real-time موجودی و سازگاری رو چک می‌کنه و قطعات ناسازگار یا ناموجود رو <b>غیرفعال</b> نشون می‌ده.
             </p>
           </div>
 
-          <div className="asm__sum-actions" style={{ marginTop: 20 }}>
-            <button className="asm__btn-ghost" onClick={() => setStep(1)}>
+          <div className="aw-actions" style={{ marginTop: 22 }}>
+            <button className="aw-ghost" onClick={() => setStep(1)}>
               <ArrowIcon /> بازگشت
             </button>
             <button
-              className="asm__cta"
+              className="aw-cta"
               style={{ flex: 2 }}
               onClick={build}
               disabled={!range || rangeLoading}
             >
               {rangeLoading ? (
                 <>
-                  <span className="asm__buy-spin" /> در حال بارگذاری…
+                  <span className="aw-spin" /> در حال بارگذاری…
                 </>
               ) : (
                 <>
@@ -1260,13 +1406,16 @@ export default function AssembleWizard() {
       {step === 3 && (
         <div className="asm__panel">
           {loading && (
-            <div className="asm__loading">
-              <div className="asm__spinner" />
-              <div className="asm__loading-title">در حال چیدن سیستم…</div>
-              <div className="asm__loading-steps">
+            <div className="aw-loading">
+              <div className="aw-loading__cores">
+                <span className="aw-loading__core" /><span className="aw-loading__core" /><span className="aw-loading__core" />
+              </div>
+              <div className="aw-loading__title">در حال چیدن سیستم…</div>
+              <div className="aw-loading__bar"><span /></div>
+              <div className="aw-loading__steps">
                 {LOADING_STEPS.map((s, i) => (
-                  <div key={i} className={`asm__loading-step${i <= loadStep ? ' asm__loading-step--on' : ''}`}>
-                    <span className="asm__ls-dot" />{s}
+                  <div key={i} className={`aw-loading__step${i <= loadStep ? ' aw-loading__step--on' : ''}`}>
+                    <span className="aw-loading__dot" />{s}
                   </div>
                 ))}
               </div>
@@ -1274,9 +1423,10 @@ export default function AssembleWizard() {
           )}
 
           {!loading && result?.error && (
-            <div className="asm__error">
-              {result.error}
-              <button className="asm__btn-ghost" style={{ marginTop: 16 }} onClick={restart}>
+            <div className="aw-error">
+              <span className="aw-error__ico"><WarningIcon /></span>
+              <p>{result.error}</p>
+              <button className="aw-ghost" style={{ marginTop: 16 }} onClick={restart}>
                 <SparkIcon /> شروع دوباره
               </button>
             </div>
@@ -1284,40 +1434,93 @@ export default function AssembleWizard() {
 
           {!loading && result?.ok && (
             <>
-              <div className="asm__result-head">
-                <span className="asm__usecase-icon" style={{ width: 38, height: 38 }}>
-                  {React.createElement(USECASE_ICONS[useCase] || CpuIcon)}
-                </span>
-                <h2 className="asm__black">سیستم {result.useCaseLabel}</h2>
-                <span className="asm__badge-tier" style={{ backgroundColor: tierInfo.bg, color: tierInfo.color }}>
-                  {tierInfo.label}
-                </span>
-                <span className="asm__badge-count">
-                  {displaySummary?.mandatoryCount || 0} اصلی
-                  {(displaySummary?.optionalCount || 0) > 0 && ` + ${displaySummary?.optionalCount || 0} اختیاری`}
-                </span>
+              <div className="aw-result-head">
+                <div className="aw-result-head__main">
+                  <span className="aw-result-head__icon">
+                    {React.createElement(USECASE_ICONS[useCase] || CpuIcon)}
+                  </span>
+                  <div className="aw-result-head__text">
+                    <span className="aw-result-head__eyebrow">سیستم پیشنهادی</span>
+                    <h2 className="aw-result-head__title">اسمبل {result.useCaseLabel}</h2>
+                  </div>
+                </div>
+                <div className="aw-result-head__gauges">
+                  <RadialGauge
+                    value={result.compatibilityScore || 0}
+                    label={`${result.compatibilityScore || 0}`}
+                    sublabel="سازگاری"
+                    color={scoreColor}
+                    size={108}
+                  />
+                  <div className="aw-result-head__chips">
+                    <span className="aw-chip aw-chip--tier" style={{ backgroundColor: tierInfo.bg, color: tierInfo.color }}>{tierInfo.label}</span>
+                    <span className="aw-chip">
+                      <b>{displaySummary?.mandatoryCount || 0}</b> اصلی
+                      {(displaySummary?.optionalCount || 0) > 0 && <> + <b>{displaySummary?.optionalCount || 0}</b> اختیاری</>}
+                    </span>
+                    <span className="aw-chip aw-chip--ok">{displaySummary?.itemCount || parts.length} قطعه</span>
+                  </div>
+                </div>
               </div>
 
               {/* ═════ تِم ظاهری + حالت نمایش + پیش‌فاکتور ═════ */}
-              <div className={`asm__toolbar asm__toolbar--${assembleTheme}`}>
+              <div className={`aw-toolbar asm__toolbar--${assembleTheme}`}>
                 <ThemeSelector value={assembleTheme} onChange={setAssembleTheme} />
-                <div className="asm__toolbar-right">
+                <div className="aw-toolbar__right">
+                  <div className="aw-segment">
+                    <button
+                      className={`aw-segment__btn${viewMode === 'wizard' ? ' aw-segment__btn--active' : ''}`}
+                      onClick={() => setViewMode('wizard')}
+                      type="button"
+                    >گام‌به‌گام</button>
+                    <button
+                      className={`aw-segment__btn${viewMode === 'progrid' ? ' aw-segment__btn--active' : ''}`}
+                      onClick={() => setViewMode('progrid')}
+                      type="button"
+                    >نمای Pro</button>
+                  </div>
                   <button
-                    className={`asm__mode-btn${viewMode === 'wizard' ? ' asm__mode-btn--active' : ''}`}
-                    onClick={() => setViewMode('wizard')}
-                    type="button"
-                  >گام‌به‌گام</button>
-                  <button
-                    className={`asm__mode-btn${viewMode === 'progrid' ? ' asm__mode-btn--active' : ''}`}
-                    onClick={() => setViewMode('progrid')}
-                    type="button"
-                  >نمای Pro</button>
-                  <button
-                    className="asm__invoice-btn"
+                    className="aw-invoice-btn"
                     onClick={() => setInvoiceOpen(true)}
                     type="button"
                     title="مشاهده و پرینت پیش‌فاکتور رسمی"
                   >🧾 پیش‌فاکتور</button>
+                </div>
+              </div>
+
+              {/* ═════ شوی کیس + رادار + امتیاز ═════ */}
+              <div className="aw-showcase">
+                <div className="aw-showcase__visual">
+                  <PcBuildVisual
+                    parts={parts as any}
+                    theme={assembleTheme}
+                    blockedIds={blockedPartIds}
+                    unavailableIds={unavailablePartIds}
+                  />
+                </div>
+                <div className="aw-showcase__side">
+                  <div className="aw-scorecard">
+                    <div className="aw-scorecard__row">
+                      <span>قیمت نهایی</span>
+                      <b>{shortToman(displaySummary?.totalAfter || 0)}</b>
+                    </div>
+                    <div className="aw-scorecard__row">
+                      <span>صرفه‌جویی</span>
+                      <b className="aw-scorecard__save">−{shortToman(displaySummary?.totalSaving || 0)}</b>
+                    </div>
+                    <div className="aw-scorecard__row">
+                      <span>توان کل</span>
+                      <b>{currentSummary.totalTdp}W</b>
+                    </div>
+                    <div className="aw-scorecard__row">
+                      <span>تعداد قطعات</span>
+                      <b>{displaySummary?.itemCount || parts.length}</b>
+                    </div>
+                  </div>
+                  <div className="aw-radar-card">
+                    <div className="aw-radar-card__head">نقشهٔ توانمندی سیستم</div>
+                    <SpecRadar axes={radarAxes} size={236} />
+                  </div>
                 </div>
               </div>
 
@@ -1690,11 +1893,46 @@ export default function AssembleWizard() {
   );
 }
 
+const buildRadarAxes = (items: Part[], budget: number, score: number): Array<{ label: string; value: number }> => {
+  const cpu = items.find(p => p.category === 'cpu');
+  const gpu = items.find(p => p.category === 'gpu');
+  const ram = items.find(p => p.category === 'ram');
+  const storages = items.filter(p => p.category === 'storage');
+  const psu = items.find(p => p.category === 'psu');
+  const cooler = items.find(p => p.category === 'cooler');
+
+  const cpuScore = cpu
+    ? Math.min(10, ((Number(cpu.specs?.cores || 0) * 1.4 + Number(cpu.specs?.threads || 0) * 0.5) / 4.4))
+    : 0;
+  const gpuScore = gpu
+    ? Math.min(10, (Number(gpu.specs?.vram || 0) / 2.4) + (gpu.specs?.tier === 'ultra' ? 2.5 : gpu.specs?.tier === 'high' ? 1.4 : 0))
+    : 0;
+  const ramScore = ram ? Math.min(10, (Number(ram.specs?.capacity || 0) * partQty(ram)) / 12.8) : 0;
+  const storageScore = storages.length
+    ? Math.min(10, storages.reduce((s, x) => s + storageSizeGb(x) * partQty(x), 0) / 800)
+    : 0;
+  const totalStorageTB = storages.reduce((s, x) => s + storageSizeGb(x) * partQty(x), 0) / 1000;
+  const psuHeadroom = psu?.specs?.wattage
+    ? Math.max(0, Math.min(1, ((Number(psu.specs.wattage) - (Number(cpu?.specs?.tdp || 95) + Number(gpu?.specs?.tdp || 150) + 100)) / (Number(cpu?.specs?.tdp || 95) + Number(gpu?.specs?.tdp || 150) + 100))))
+    : 0;
+  const coolingScore = Math.min(10, (cooler ? 6 : 2) + psuHeadroom * 4 + (totalStorageTB > 2 ? 1 : 0));
+  const valueScore = Math.min(10, (score / 10) * 0.6 + (budget > 0 ? Math.min(1, makeSummary(items).totalAfter / budget) * 4 : 2));
+
+  return [
+    { label: 'پردازش', value: Math.round(cpuScore * 10) / 10 },
+    { label: 'گرافیک', value: Math.round(gpuScore * 10) / 10 },
+    { label: 'حافظه', value: Math.round(ramScore * 10) / 10 },
+    { label: 'ذخیره', value: Math.round(storageScore * 10) / 10 },
+    { label: 'خنک‌سازی', value: Math.round(coolingScore * 10) / 10 },
+    { label: 'ارزش', value: Math.round(valueScore * 10) / 10 },
+  ];
+};
+
 function Step({ n, label, active, done }: { n: number; label: string; active: boolean; done: boolean }) {
   return (
-    <div className={`asm__step${active ? ' asm__step--active' : ''}${done ? ' asm__step--done' : ''}`}>
-      <span className="asm__step-num">{done ? <CheckIcon /> : n}</span>
-      {label}
+    <div className={`aw-step${active ? ' aw-step--active' : ''}${done ? ' aw-step--done' : ''}`}>
+      <span className="aw-step__num">{done ? <CheckIcon /> : n}</span>
+      <span className="aw-step__label">{label}</span>
     </div>
   );
 }

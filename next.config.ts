@@ -38,6 +38,12 @@ const nextConfig: NextConfig = {
         destination: '/',
         permanent: true,
       },
+
+      {
+        source: '/reules',
+        destination: '/privacy',
+        permanent: true,
+      },
     ];
   },
   async headers() {

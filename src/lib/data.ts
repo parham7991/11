@@ -63,7 +63,7 @@ export const footer = [
       },
       {
         name: 'حفظ حریم خصوصی',
-        link: '/reules',
+        link: '/privacy',
       },
       {
         name: 'گارانتی محصولات',

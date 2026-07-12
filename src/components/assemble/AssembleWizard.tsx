@@ -13,7 +13,6 @@ import {
   GpuIcon,
   CustomIcon,
   CartIcon,
-  SparkIcon,
   ArrowIcon,
   RefreshIcon,
   EditIcon,
@@ -27,7 +26,6 @@ import {
 } from './PartIcons';
 import AssembleProductCard from './AssembleProductCard';
 import { useAddBulkCart } from '@/hooks/cart/useAddBulkCart';
-import TelemetryDashboard from './TelemetryDashboard';
 import InvoiceModal from './InvoiceModal';
 import ThemeSelector, { type AssembleTheme } from './ThemeSelector';
 import BuildIdentityCard from './BuildIdentityCard';
@@ -874,8 +872,7 @@ export default function AssembleWizard() {
   // ═════ استیت‌های جدید نسخهٔ Ultimate AI Master ═════
   const [assembleTheme, setAssembleTheme] = useState<AssembleTheme>('stealth');
   const [invoiceOpen, setInvoiceOpen] = useState<boolean>(false);
-  const [viewMode, setViewMode] = useState<'wizard' | 'progrid'>('wizard');
-  const [resultTab, setResultTab] = useState<'overview' | 'parts' | 'analysis' | 'layout'>('overview');
+  const [resultTab, setResultTab] = useState<'parts' | 'analysis'>('parts');
 
   const { mutate: addBulk, isPending: buying } = useAddBulkCart();
 
@@ -1216,18 +1213,18 @@ export default function AssembleWizard() {
           <span className="aw-hero__scan" />
         </div>
         <div className="aw-hero__content">
-          <span className="aw-hero__badge"><SparkIcon /> اسمبلر هوشمند آفلند</span>
+          <span className="aw-hero__badge"><CpuIcon /> اسمبلر آفلند</span>
           <h1 className="aw-hero__title">
-            سیستم رو<span className="aw-hero__title-grad"> با هوش مصنوعی</span> برات می‌چینم
+            سیستم رو<span className="aw-hero__title-grad"> دقیق و به‌صرفه</span> برات می‌چینم
           </h1>
           <p className="aw-hero__sub">
-            کاربری و بودجه‌ت رو بگو؛ من با بررسی لحظه‌ای موجودی، محاسبهٔ سازگاری فنی و اولویت‌بندی هوشمند، بهینه‌ترین ترکیب رو با قیمت دقیق برات می‌سازم.
+            کاربری و بودجه‌ت رو بگو؛ من با بررسی لحظه‌ای موجودی، محاسبهٔ سازگاری فنی و اولویت‌بندی قطعات، بهینه‌ترین ترکیب رو با قیمت دقیق برات می‌سازم.
           </p>
           <div className="aw-hero__stats">
-            <span className="aw-hero__stat"><b>چندکیت</b>RAM/M.2</span>
-            <span className="aw-hero__stat"><b>Real-time</b>قیمت و موجودی</span>
-            <span className="aw-hero__stat"><b>AI</b>تحلیل ارزش</span>
-            <span className="aw-hero__stat"><b>ترمال</b>شبیه‌ساز دما</span>
+            <span className="aw-hero__stat"><b>چندکیت</b> RAM/M.2</span>
+            <span className="aw-hero__stat"><b>لحظه‌ای</b> قیمت و موجودی</span>
+            <span className="aw-hero__stat"><b>بهینه‌سازی</b> بودجه</span>
+            <span className="aw-hero__stat"><b>بررسی</b> سازگاری و دما</span>
           </div>
         </div>
       </header>
@@ -1437,7 +1434,7 @@ export default function AssembleWizard() {
                 </>
               ) : (
                 <>
-                  <SparkIcon /> بچین برام!
+                  <CpuIcon /> سیستم رو بچین
                 </>
               )}
             </button>
@@ -1469,7 +1466,7 @@ export default function AssembleWizard() {
               <span className="aw-error__ico"><WarningIcon /></span>
               <p>{result.error}</p>
               <button className="aw-ghost" style={{ marginTop: 16 }} onClick={restart}>
-                <SparkIcon /> شروع دوباره
+                <RefreshIcon /> شروع دوباره
               </button>
             </div>
           )}
@@ -1484,13 +1481,6 @@ export default function AssembleWizard() {
                   <div className="aw-result-head__text">
                     <span className="aw-result-head__eyebrow">سیستم پیشنهادی</span>
                     <h2 className="aw-result-head__title">اسمبل {result.useCaseLabel}</h2>
-                    {result?.ai && (
-                      <span className="aw-ai-badge" style={{ ['--ai' as any]: result.ai.color }}>
-                        <span className="aw-ai-badge__ic">{result.ai.emoji}</span>
-                        <span className="aw-ai-badge__name">{result.ai.name}</span>
-                        <span className="aw-ai-badge__prov">{result.ai.providerName}{result.ai.free ? ' · رایگان' : ''}</span>
-                      </span>
-                    )}
                   </div>
                 </div>
                 <div className="aw-result-head__gauges">
@@ -1516,18 +1506,6 @@ export default function AssembleWizard() {
               <div className={`aw-toolbar asm__toolbar--${assembleTheme}`}>
                 <ThemeSelector value={assembleTheme} onChange={setAssembleTheme} />
                 <div className="aw-toolbar__right">
-                  <div className="aw-segment">
-                    <button
-                      className={`aw-segment__btn${viewMode === 'wizard' ? ' aw-segment__btn--active' : ''}`}
-                      onClick={() => setViewMode('wizard')}
-                      type="button"
-                    >گام‌به‌گام</button>
-                    <button
-                      className={`aw-segment__btn${viewMode === 'progrid' ? ' aw-segment__btn--active' : ''}`}
-                      onClick={() => setViewMode('progrid')}
-                      type="button"
-                    >نمای Pro</button>
-                  </div>
                   <button
                     className="aw-invoice-btn"
                     onClick={() => setInvoiceOpen(true)}
@@ -1539,7 +1517,7 @@ export default function AssembleWizard() {
 
               {/* تب‌های نتایج — کاهش شلوغی صفحه */}
               <div className="aw-result-tabs" role="tablist">
-                {(['overview', 'parts', 'analysis', 'layout'] as const).map((t) => (
+                {(['parts', 'analysis'] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
@@ -1548,13 +1526,13 @@ export default function AssembleWizard() {
                     className={`aw-result-tab${resultTab === t ? ' aw-result-tab--active' : ''}`}
                     onClick={() => setResultTab(t)}
                   >
-                    {t === 'overview' ? 'نمای کلی' : t === 'parts' ? 'قطعات' : t === 'analysis' ? 'تحلیل و سازگاری' : 'چیدمان و هویت'}
+                    {t === 'parts' ? 'قطعات' : 'تحلیل و سازگاری'}
                   </button>
                 ))}
               </div>
 
               {/* ═════ شوی کیس + رادار + امتیاز ═════ */}
-              {resultTab === 'overview' && (
+              {resultTab === 'analysis' && (
               <div className="aw-showcase">
                 <div className="aw-showcase__visual">
                   <PcBuildVisual
@@ -1594,23 +1572,8 @@ export default function AssembleWizard() {
               )}
 
               {/* ═════ داشبورد تله‌متری زندهٔ Ultimate AI Master ═════ */}
-              {resultTab === 'analysis' && (
-              <TelemetryDashboard
-                parts={parts as any}
-                onAutoBalance={(target) => {
-                  // Auto-Balance: پیشنهاد جایگزینی هوشمند برای target
-                  // فعلاً یک rebuild سریع با همان بودجه انجام می‌دهیم
-                  // تا الگوریتم انتخاب، قطعهٔ نامتعادل را اصلاح کند.
-                  if (target) {
-                    // rerun build
-                    build();
-                  }
-                }}
-              />
-              )}
-
               {/* ═════ شناسنامه گرافیکی سیستم + QR ═════ */}
-              {resultTab === 'layout' && (
+              {resultTab === 'analysis' && (
               <BuildIdentityCard
                 parts={parts as any}
                 useCaseLabel={result?.useCaseLabel}
@@ -1619,7 +1582,7 @@ export default function AssembleWizard() {
               />
               )}
 
-              {resultTab === 'layout' && (
+              {resultTab === 'analysis' && (
               <div className="aw-layout-visual">
                 <PcBuildVisual
                   parts={parts as any}
@@ -1632,11 +1595,11 @@ export default function AssembleWizard() {
 
               {resultTab === 'analysis' && (
               <>
-              <Collapsible title="داشبورد تصمیم‌گیری هوشمند" icon={<SparkIcon />} defaultOpen>
+              <Collapsible title="داشبورد تصمیم‌گیری" icon={<InfoIcon />} defaultOpen>
                 <div className="asm__smart-dashboard">
                   <div className="asm__smart-dashboard-head">
                     <div>
-                      <strong>داشبورد تصمیم‌گیری هوشمند</strong>
+                      <strong>داشبورد تصمیم‌گیری</strong>
                       <span>جزئیات استفاده از اسلات‌ها، ظرفیت و توازن سیستم</span>
                     </div>
                     <em>{result.compatibilityScore || 0}% سازگاری</em>
@@ -1658,10 +1621,10 @@ export default function AssembleWizard() {
 
               {/* پنل Auto-Resolver — اقدامات هوشمند */}
               {result.resolution && (result.resolution.actions.length > 0 || result.resolution.suggestions.length > 0) && (
-                <Collapsible title="اقدامات هوشمند (Auto-Resolver)" icon={<SparkIcon />}>
+                <Collapsible title="اقدامات اصلاح سازگاری" icon={<InfoIcon />}>
                 <div className="asm__resolver-panel">
                   <div className="asm__resolver-head">
-                    <span className="asm__resolver-icon"><SparkIcon /></span>
+                    <span className="asm__resolver-icon"><InfoIcon /></span>
                     <div>
                       <div className="asm__resolver-title">
                         {result.resolution.resolved ? 'سیستم با موفقیت سازگار شد' : 'برخی قطعات نیاز به جایگزین دارند'}
@@ -1791,7 +1754,7 @@ export default function AssembleWizard() {
               {smartSuggestions.length > 0 && (
                 <div className="asm__public-suggestions">
                   <div className="asm__public-suggestions-head">
-                    <span className="asm__public-suggestions-icon"><SparkIcon /></span>
+                    <span className="asm__public-suggestions-icon"><InfoIcon /></span>
                     <div>
                       <strong>پیشنهادهای هماهنگ با این سیستم</strong>
                       <small>ارتقاهای سازگار و قابل اعمال</small>
@@ -1892,19 +1855,13 @@ export default function AssembleWizard() {
 
 
               {/* ═══════ پنل تحلیل AI (تب نمای کلی) ═══════ */}
-              {resultTab === 'overview' && (aiAnalysis.loading || aiAnalysis.text) && (
+              {resultTab === 'analysis' && (aiAnalysis.loading || aiAnalysis.text) && (
                 <div className="asm__ai-panel">
                   <div className="asm__ai-head">
-                    <span className="asm__ai-icon">
-                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2L9.5 8.5L3 11L9.5 13.5L12 20L14.5 13.5L21 11L14.5 8.5L12 2Z" fill="currentColor" opacity="0.2" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                        <circle cx="18" cy="18" r="2" fill="currentColor" opacity="0.4" />
-                        <circle cx="6" cy="6" r="1.5" fill="currentColor" opacity="0.4" />
-                      </svg>
-                    </span>
+                    <span className="asm__ai-icon"><CheckIcon /></span>
                     <div className="asm__ai-info">
                       <div className="asm__ai-title">
-                        {aiAnalysis.name ? `تحلیل توسط ${aiAnalysis.name}` : 'تحلیل هوشمند سیستم'}
+                        بررسی سیستم
                       </div>
                       <div className="asm__ai-subtitle">
                         {aiAnalysis.loading ? 'در حال بررسی هماهنگی قطعات...' : (aiAnalysis.tagline || 'تحلیل سیستم آماده است')}
@@ -1974,7 +1931,7 @@ export default function AssembleWizard() {
                 <div className="asm__sum-actions">
                   <button className="asm__btn-ghost" onClick={() => setStep(2)}><EditIcon /> تغییر بودجه</button>
                   <button className="asm__btn-ghost" onClick={build}><RefreshIcon /> پیشنهاد دیگر</button>
-                  <button className="asm__btn-ghost" onClick={restart}><SparkIcon /> شروع دوباره</button>
+                  <button className="asm__btn-ghost" onClick={restart}><RefreshIcon /> شروع دوباره</button>
                 </div>
               </div>
             </>

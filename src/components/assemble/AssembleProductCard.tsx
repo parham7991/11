@@ -9,7 +9,6 @@ import {
   RefreshIcon,
   CheckIcon,
   ShieldIcon,
-  SparkIcon,
   WarningIcon,
   ExpandIcon,
   CollapseIcon,
@@ -197,7 +196,7 @@ export default function AssembleProductCard({
           {/* دلیل انتخاب */}
           {part.pickReason && !isDisabled && (
             <div className="asm-pcard__pickreason">
-              <SparkIcon />
+              <CheckIcon />
               <span>{part.pickReason}</span>
             </div>
           )}
@@ -275,6 +274,19 @@ export default function AssembleProductCard({
   );
 }
 
+// امتیازِ تطابق برای مرتب‌سازی جایگزین‌ها (بدون نمایش درصد — فقط برای رتبه‌بندی دقیق‌تر)
+function scoreAlt(a: Part): number {
+  const s = a.specs || {};
+  let score = Number(a.confidence || 50);
+  if (a.category === 'ram') score += Number(s.capacity || 0) * 2 + (Number(s.frequency || 0) / 1000);
+  if (a.category === 'storage') score += (Number(s.size || 0) || Number(s.sizeTB || 0) * 1000) / 120 + (s.isNVMe ? 18 : 0);
+  if (a.category === 'gpu') score += Number(s.vram || 0) * 7 + (s.tier === 'ultra' ? 35 : s.tier === 'high' ? 22 : 0);
+  if (a.category === 'cpu') score += Number(s.cores || 0) * 6 + Number(s.threads || 0) * 2;
+  if (a.category === 'motherboard') score += Number(s.ramSlots || 4) * 4 + Number(s.m2Slots || 2) * 5;
+  if (a.category === 'psu') score += Number(s.wattage || 0) / 30;
+  return score;
+}
+
 // ═══════════════════════════════════════════════════════════════════
 // 🗂️ کشوی جایگزین‌ها با فیلتر سریع Air/Liquid برای cooler (v5.0)
 // ═══════════════════════════════════════════════════════════════════
@@ -304,7 +316,8 @@ function AlternativesDrawer({
     if (isCoolerCat && filter === 'liquid') list = list.filter(a => isLiquid(a.name || ''));
     const q = query.trim().toLowerCase();
     if (q) list = list.filter(a => (a.name || '').toLowerCase().includes(q));
-    return list;
+    // مرتب‌سازی بر اساس تطابق (دقیق‌ترین جایگزین اول) — بدون نمایش درصد
+    return [...list].sort((a, b) => scoreAlt(b) - scoreAlt(a));
   }, [alternatives, filter, query, isCoolerCat]);
 
   const airCount = React.useMemo(

@@ -2349,8 +2349,8 @@ html.dark .asm__ai-provider-badge {
 .asm__parts-cards-grid {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-top: 12px;
+  gap: 16px;
+  margin-top: 14px;
 }
 
 .asm-pcard {
@@ -4411,12 +4411,12 @@ html.dark .asm {
 .aw-hero__orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(40px);
-  opacity: 0.55;
-  animation: aw-float 9s ease-in-out infinite;
+  filter: blur(60px);
+  opacity: 0.28;
+  animation: aw-float 12s ease-in-out infinite;
 }
-.aw-hero__orb--1 { width: 240px; height: 240px; background: radial-gradient(circle, #22d3ee, transparent 70%); top: -70px; left: -40px; }
-.aw-hero__orb--2 { width: 280px; height: 280px; background: radial-gradient(circle, #a855f7, transparent 70%); bottom: -90px; right: -30px; animation-delay: 1.5s; }
+.aw-hero__orb--1 { width: 240px; height: 240px; background: radial-gradient(circle, #386bf9, transparent 70%); top: -70px; left: -40px; }
+.aw-hero__orb--2 { width: 280px; height: 280px; background: radial-gradient(circle, #6f3cf5, transparent 70%); bottom: -90px; right: -30px; animation-delay: 1.5s; }
 .aw-hero__grid {
   position: absolute; inset: 0;
   background-image: linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
@@ -4425,9 +4425,7 @@ html.dark .asm {
   mask-image: radial-gradient(circle at 30% 30%, #000, transparent 75%);
 }
 .aw-hero__scan {
-  position: absolute; left: 0; right: 0; top: 0; height: 40%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent);
-  animation: aw-scan 6s ease-in-out infinite;
+  display: none;
 }
 .aw-hero__content { position: relative; z-index: 1; }
 .aw-hero__badge {
@@ -4448,7 +4446,7 @@ html.dark .asm {
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.3);
 }
 .aw-hero__title-grad {
-  background: linear-gradient(90deg, #7df9ff, #b9a3ff);
+  background: linear-gradient(90deg, #a9c6ff, #d6c9ff);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 .aw-hero__sub { font-size: 14px; line-height: 2; opacity: 0.94; max-width: 620px; margin: 0 0 18px; }

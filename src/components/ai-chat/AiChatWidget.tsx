@@ -346,14 +346,27 @@ export default function AiChatWidget({
                   )}
                   {msg.sources && msg.sources.length > 0 && (
                     <div className="aic-sources">
-                      {msg.sources.map((s, si) => (
+                      {msg.sources.map((s, si) => {
+                        const rel =
+                          s.relevance != null
+                            ? Math.max(0, Math.min(1, s.relevance / 100))
+                            : null;
+                        const topMatch = rel !== null && rel >= 0.7;
+                        return (
                         <a
                           key={si}
                           href={s.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`aic-card${s.inStock === false ? ' aic-card--out' : ''}`}
+                          className={`aic-card${s.inStock === false ? ' aic-card--out' : ''}${topMatch ? ' aic-card--match' : ''}`}
+                          style={
+                            rel != null
+                              ? ({ ['--rel' as string]: rel, animationDelay: `${si * 55}ms` } as React.CSSProperties)
+                              : ({ animationDelay: `${si * 55}ms` } as React.CSSProperties)
+                          }
                         >
+                          {/* نوار مرتبط‌بودن (طولش با امتیاز relevance) */}
+                          {rel != null && <span className="aic-card__bar" aria-hidden="true" />}
                           {/* تصویر + بج تخفیف */}
                           <span className="aic-card__media">
                             {s.image ? (
@@ -374,6 +387,11 @@ export default function AiChatWidget({
                             ) : null}
                             {s.inStock === false && (
                               <span className="aic-card__out">ناموجود</span>
+                            )}
+                            {topMatch && (
+                              <span className="aic-card__match" aria-hidden="true">
+                                <CheckIcon /> مرتبط
+                              </span>
                             )}
                           </span>
 
@@ -430,7 +448,8 @@ export default function AiChatWidget({
                             </svg>
                           </span>
                         </a>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                   {/* دکمه‌های پویا (پیشنهادهای بعدی بر اساس پاسخ) */}
@@ -520,6 +539,7 @@ export default function AiChatWidget({
       >
         {open ? <CloseIcon /> : <ChatIcon />}
         {!open && <span className="aic-fab__badge" aria-hidden="true" />}
+        {!open && <span className="aic-fab__label">{title}</span>}
       </button>
     </div>
   );
@@ -532,6 +552,18 @@ const BoxIcon = () => (
       d="M21 8l-9-5-9 5v8l9 5 9-5V8z M3 8l9 5 9-5 M12 13v8"
       stroke="currentColor"
       strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M20 6L9 17l-5-5"
+      stroke="currentColor"
+      strokeWidth="3"
       strokeLinecap="round"
       strokeLinejoin="round"
     />

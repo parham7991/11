@@ -19,7 +19,7 @@ export type ChatSource = {
   price?: string | null;
   /** قیمت اصلی قبل از تخفیف (برای خط‌خوردگی) */
   oldPrice?: string | null;
-  /** درصد تخفیف (مثلاً 7) */
+  /** درصد تخفیف (مثلاً ۷) */
   discountPercent?: number | null;
   /** آدرس عکس محصول */
   image?: string | null;
@@ -33,6 +33,8 @@ export type ChatSource = {
   rating?: number | null;
   /** تعداد نظرات */
   reviewCount?: number | null;
+  /** امتیاز مرتبط‌بودن با سؤال کاربر (۰-۱۰۰) — خروجیِ لایهٔ RAG */
+  relevance?: number | null;
 };
 
 /** بدنهٔ درخواست کلاینت به API */

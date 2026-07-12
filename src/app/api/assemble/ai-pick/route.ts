@@ -174,7 +174,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         const r = validatePartCategory(workingBody.category, {
           title: p.name, name: p.name, price: p.price, finalPrice: p.finalPrice, specs: p.specs || {},
         });
-        return r.passed;
+        if (!r.passed) return false;
+        // چک سازگاری با قطعات قبلی (مثلاً سوکت/فرم‌فکتور/توان) — حتی
+        // اگر AI قطعه‌ای ناسازگار برگرداند، حذف می‌شود و به fallback می‌رود.
+        return compatibilityInfo(p as PartCandidate, workingBody).compatible;
       });
 
       return NextResponse.json({
@@ -343,6 +346,92 @@ function buildConstraints(body: PickRequest): string {
 }
 
 /**
+ * بررسی سازگاری یک کاندیدا با قطعات قبلاً انتخاب‌شده.
+ * قرینهٔ سمت‌سرور از محدودیت‌هایی است که در پرامپت AI (buildConstraints)
+ * می‌روند؛ تفاوت اینجاست که این تابع روی **خروجی نهایی** اجرا می‌شود تا
+ * هم انتخاب AI و هم انتخاب rule-based هر دو سازگار بمانند.
+ *
+ *   compatible = آیا ناسازگاری سخت (مثلاً سوکت متفاوت) وجود دارد؟
+ *   bonus      = امتیاز مکمل برای رتبه‌بندیِ fallback
+ *                (مثبت = سازگار/حاشیهٔ ایمن، منفی = ریسک/کمبود)
+ *
+ * هر جا specs خالی باشد، آن بخش نادیده گرفته می‌شود (بی‌خطر).
+ */
+function compatibilityInfo(
+  c: PartCandidate,
+  body: PickRequest
+): { compatible: boolean; bonus: number } {
+  const picked = body.pickedParts || [];
+  const cat = body.category;
+  const s = c.specs || {};
+
+  if (cat === 'motherboard') {
+    const cpu = picked.find(p => p.category === 'cpu');
+    if (cpu?.specs?.socket && s.socket && cpu.specs.socket !== s.socket) {
+      return { compatible: false, bonus: -1000 };
+    }
+    const ram = picked.find(p => p.category === 'ram');
+    if (ram?.specs?.ramType && s.ramType && ram.specs.ramType !== s.ramType) {
+      return { compatible: false, bonus: -1000 };
+    }
+  }
+
+  if (cat === 'ram') {
+    const mb = picked.find(p => p.category === 'motherboard');
+    if (mb?.specs?.ramType && s.ramType && mb.specs.ramType !== s.ramType) {
+      return { compatible: false, bonus: -1000 };
+    }
+  }
+
+  if (cat === 'psu') {
+    const cpu = picked.find(p => p.category === 'cpu');
+    const gpu = picked.find(p => p.category === 'gpu');
+    const cpuTdp = Number(cpu?.specs?.tdp || 95);
+    const gpuTdp = Number(gpu?.specs?.tdp || 150);
+    const need = Math.round((cpuTdp + gpuTdp + 100) * 1.3);
+    const w = Number(s.wattage || 0);
+    if (w && w < need) {
+      return { compatible: false, bonus: -Math.min(1000, need - w) };
+    }
+    if (w) {
+      const headroom = w - need;
+      if (headroom > 0) return { compatible: true, bonus: Math.min(20, Math.round(headroom / 50)) };
+    }
+  }
+
+  if (cat === 'case') {
+    const mb = picked.find(p => p.category === 'motherboard');
+    if (mb?.specs?.formFactor && s.formFactor) {
+      const rank: Record<string, number> = {
+        'mini itx': 1, 'miniitx': 1, 'micro atx': 2, 'microatx': 2,
+        'atx': 3, 'e-atx': 4, 'eatx': 4,
+      };
+      const norm = (v: string) => String(v).toLowerCase().replace(/\s+/g, '');
+      const mbR = rank[norm(String(mb.specs.formFactor))] || 0;
+      const cR = rank[norm(String(s.formFactor))] || 0;
+      if (mbR && cR && cR < mbR) return { compatible: false, bonus: -1000 };
+      const gpu = picked.find(p => p.category === 'gpu');
+      if (gpu?.specs?.length && s.gpuMaxLength && Number(s.gpuMaxLength) < Number(gpu.specs.length)) {
+        return { compatible: false, bonus: -1000 };
+      }
+    }
+  }
+
+  if (cat === 'cooler') {
+    const cpu = picked.find(p => p.category === 'cpu');
+    if (cpu?.specs?.tdp && s.tdpRating) {
+      const cpuTdp = Number(cpu.specs.tdp);
+      const rated = Number(s.tdpRating);
+      if (rated < cpuTdp) return { compatible: false, bonus: -Math.min(500, cpuTdp - rated) };
+      const headroom = rated - cpuTdp;
+      if (headroom > 0) return { compatible: true, bonus: Math.min(20, Math.round(headroom / 20)) };
+    }
+  }
+
+  return { compatible: true, bonus: 0 };
+}
+
+/**
  * ساخت پرامپت برای AI — با تمرکز بالا روی کاربری، مشخصات واقعی کالاها
  * و محدودیت‌های سخت‌گیرانهٔ سازگاری (برای دقت انتخابِ بالا)
  */
@@ -483,6 +572,10 @@ function candidateSmartScore(c: PartCandidate, body: PickRequest, targetPrice: n
     if (c.specs?.type === 'aio' && body.useCase !== 'office') score += 6;
   }
 
+  // سازگاری با قطعات قبلی (سوکت/فرم‌فکتور/توان/طول GPU) — برای دقت
+  // بالاترِ مسیر fallback وقتی AI خاموش یا خطا داده است.
+  score += compatibilityInfo(c, body).bonus;
+
   return score;
 }
 
@@ -491,12 +584,13 @@ function ruleBasedPick(body: PickRequest): PartCandidate[] {
   const minPrice = Math.max(0, (body.priceRange?.min || 0) * 0.75);
   const maxPrice = Math.min(body.remainingBudget * 1.05, body.priceRange?.max || body.remainingBudget * 1.05);
 
-  // فیلتر: قطعات در بازهٔ دقیق همین دسته
+  // فیلتر: قطعات در بازهٔ دقیق همین دسته + سازگار با قطعات قبلی
   const valid = body.candidates.filter(c =>
     c.inStock !== false &&
     c.finalPrice > 0 &&
     c.finalPrice >= minPrice &&
-    c.finalPrice <= maxPrice
+    c.finalPrice <= maxPrice &&
+    compatibilityInfo(c, body).compatible
   );
 
   if (valid.length === 0) {

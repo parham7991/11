@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import LegalPage, { LegalSection, LegalList, LegalTable, SITE_URL } from '@/components/common/LegalPage';
 
-// ── آخرین به‌روزرسانی: برای تغییر تاریخ، فقط این رشته را ویرایش کن ──
-const LAST_UPDATED = '۱۴۰۵/۰۴/۲۱';
 
 export const metadata: Metadata = {
   title: 'حریم خصوصی | آفلند',
@@ -48,7 +46,6 @@ export default function PrivacyPage() {
       title="سیاست‌نامهٔ حریم خصوصی"
       description="در آفلند، حریم خصوصی و امنیت اطلاعات شما جدی گرفته می‌شود. این صفحه دقیقاً توضیح می‌دهد چه داده‌هایی جمع‌آوری می‌شود، چطور استفاده و چگونه محافظت می‌گردد — از جمله داده‌های پردازش‌شده توسط دستیار هوشمند و جادوگر اسمبل."
       breadcrumb="حریم خصوصی"
-      lastUpdated={LAST_UPDATED}
       jsonLd={jsonLd}
     >
       <LegalSection title="مقدمه">
@@ -286,8 +283,7 @@ export default function PrivacyPage() {
       <LegalSection title="تغییرات سیاست‌نامه">
         <p>
           این سیاست‌نامه ممکن است به‌روزرسانی شود. نسخهٔ جدید پس از انتشار در همین صفحه
-          اعمال می‌شود و «آخرین به‌روزرسانی» در پایین درج می‌گردد. در تغییرات مهم، از
-          طریق کانال‌های اطلاع‌رسانی اطلاع‌رسانی می‌شود.
+          اعمال می‌شود. در تغییرات مهم، از طریق کانال‌های اطلاع‌رسانی اطلاع‌رسانی می‌شود.
         </p>
       </LegalSection>
 

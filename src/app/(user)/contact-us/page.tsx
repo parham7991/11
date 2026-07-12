@@ -3,12 +3,6 @@ import Link from 'next/link';
 import LegalPage, { LegalSection, LegalCard, LegalList, SITE_URL } from '@/components/common/LegalPage';
 import ContactForm from '@/components/common/ContactForm';
 
-// ── آخرین به‌روزرسانی: برای تغییر تاریخ، فقط این رشته را ویرایش کن ──
-const LAST_UPDATED = '۱۴۰۵/۰۴/۲۱';
-
-// TODO: replace with real value — نشانی دقیق دفتر/انبار آفلند
-const PLACEHOLDER_ADDRESS = 'تهران — [نشانی دقیق پس از تکمیل پروفایل حقوقی]';
-
 export const metadata: Metadata = {
   title: 'تماس با ما | پشتیبانی و مشاوره آفلند',
   description:
@@ -97,22 +91,6 @@ const CONTACT_CARDS = [
     ),
   },
   {
-    title: 'آدرس',
-    value: PLACEHOLDER_ADDRESS,
-    desc: 'تحویل حضوری فعلاً غیرفعال است',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path
-          d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.5" />
-      </svg>
-    ),
-  },
-  {
     title: 'ساعات پاسخگویی',
     value: '۹ تا ۲۱ — شنبه تا پنج‌شنبه',
     desc: 'پنج‌شنبه تا ۱۴',
@@ -154,7 +132,6 @@ export default function ContactUsPage() {
       title="تماس با ما"
       description="راه‌های ارتباط با آفلند برای پشتیبانی، مشاورهٔ خرید و پیگیری سفارش. ما اینجاییم تا خریدت روان انجام شود."
       breadcrumb="تماس با ما"
-      lastUpdated={LAST_UPDATED}
       jsonLd={jsonLd}
     >
       <LegalSection title="چطور می‌توانیم کمک کنیم؟">
@@ -164,7 +141,7 @@ export default function ContactUsPage() {
         </p>
       </LegalSection>
 
-      <section aria-label="راه‌های ارتباطی" className="grid gap-4 md:grid-cols-2">
+      <section aria-label="راه‌های ارتباطی" className="grid gap-4 md:grid-cols-3">
         {CONTACT_CARDS.map((c) => (
           <div
             key={c.title}
@@ -237,7 +214,6 @@ export default function ContactUsPage() {
           items={[
             <>تلفن پشتیبانی: ۰۲۱-۴۳۰۰۰۲۴۰</>,
             <>ایمیل: support@offl.ir</>,
-            <>آدرس: {PLACEHOLDER_ADDRESS}</>,
           ]}
         />
         <p className="!mt-3 text-[14px]">

@@ -8,8 +8,6 @@ import LegalPage, {
   SITE_URL,
 } from '@/components/common/LegalPage';
 
-// ── آخرین به‌روزرسانی: برای تغییر تاریخ، فقط این رشته را ویرایش کن ──
-const LAST_UPDATED = '۱۴۰۵/۰۴/۲۱';
 
 export const metadata: Metadata = {
   title: 'درباره آفلند | سرزمینِ تخفیف',
@@ -90,7 +88,6 @@ export default function AboutPage() {
       title="درباره آفلند"
       description="آفلند، سرزمینِ تخفیف — فروشگاه اینترنتی تخصصی قطعات کامپیوتر، لپ‌تاپ، موبایل و لوازم دیجیتال، با دستیار هوشمند خرید و جادوگر اسمبل هوشمند."
       breadcrumb="درباره آفلند"
-      lastUpdated={LAST_UPDATED}
       jsonLd={jsonLd}
     >
       {/* هیرو */}

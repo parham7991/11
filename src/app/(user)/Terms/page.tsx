@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import LegalPage, { LegalSection, LegalList, LegalTable, SITE_URL } from '@/components/common/LegalPage';
 
-// ── آخرین به‌روزرسانی: برای تغییر تاریخ، فقط این رشته را ویرایش کن ──
-const LAST_UPDATED = '۱۴۰۵/۰۴/۲۱';
 
 export const metadata: Metadata = {
   title: 'شرایط و قوانین | آفلند',
@@ -48,7 +46,6 @@ export default function TermsPage() {
       title="شرایط و قوانین"
       description="این صفحه شرایط استفاده از فروشگاه اینترنتی آفلند را توضیح می‌دهد: از ثبت سفارش و پرداخت تا ارسال فیزیکی، گارانتی و بازگشت کالا. با ثبت سفارش، شما این شرایط را می‌پذیرید."
       breadcrumb="شرایط و قوانین"
-      lastUpdated={LAST_UPDATED}
       jsonLd={jsonLd}
     >
       <LegalSection title="۱. مقدمه و پذیرش شرایط">

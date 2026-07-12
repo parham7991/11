@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import LegalPage, { LegalSection, LegalList, LegalTable, LegalCard, SITE_URL } from '@/components/common/LegalPage';
 
-// ── آخرین به‌روزرسانی: برای تغییر تاریخ، فقط این رشته را ویرایش کن ──
-const LAST_UPDATED = '۱۴۰۵/۰۴/۲۱';
 
 /*
   شرکت‌های گارانتی‌کنندهٔ مجاز (نمونه — PLACEHOLDER):
@@ -75,7 +73,6 @@ export default function WarrantyPage() {
       title="گارانتی و ضمانت محصولات"
       description="آفلند متعهد به ارائهٔ گارانتی معتبر از شرکت‌های گارانتی‌کنندهٔ مجاز است. در این صفحه اصول، انواع، موارد تحت پوشش و ۶ مرحلهٔ دریافت خدمات پس از فروش را بخوانید."
       breadcrumb="گارانتی و ضمانت"
-      lastUpdated={LAST_UPDATED}
       jsonLd={jsonLd}
     >
       <LegalSection title="مقدمه">

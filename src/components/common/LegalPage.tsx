@@ -47,8 +47,6 @@ export type LegalPageProps = {
   description?: string;
   /** نام صفحهٔ فعلی برای breadcrumb (مثلاً «حریم خصوصی») */
   breadcrumb: string;
-  /** رشتهٔ تاریخ شمسی — با LAST_UPDATED در صفحه ست می‌شود */
-  lastUpdated?: string;
   /** یک شیء یا آرایه‌ای از اشیاء JSON-LD برای تزریق در <head> */
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   children: ReactNode;
@@ -58,7 +56,6 @@ export default function LegalPage({
   title,
   description,
   breadcrumb,
-  lastUpdated,
   jsonLd,
   children,
 }: LegalPageProps) {
@@ -75,7 +72,7 @@ export default function LegalPage({
         />
       )}
       <LegalBreadcrumb items={crumbs} />
-      <article className="overflow-hidden rounded-2xl border border-[var(--offl-border)] bg-[var(--offl-surface)] p-5 shadow_pro lg:p-10">
+      <article className="overflow-hidden rounded-2xl border border-[var(--offl-border)] bg-[var(--offl-surface)] p-5 lg:p-10">
         <header className="border-b border-[var(--offl-border)] pb-6">
           <h1 className="font-bold text-2xl leading-tight text-[var(--offl-text)] lg:text-3xl">
             {title}
@@ -87,14 +84,52 @@ export default function LegalPage({
           )}
         </header>
         <div className="mt-7 space-y-9">{children}</div>
-        {lastUpdated && (
-          <footer className="mt-10 border-t border-[var(--offl-border)] pt-5">
-            <p className="font-light text-[13px] text-[var(--offl-text-muted)]">
-              آخرین به‌روزرسانی:{' '}
-              <time dateTime={lastUpdated}>{lastUpdated}</time>
+        <footer className="mt-10 border-t border-[var(--offl-border)] pt-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-xl font-light text-[12px] leading-6 text-[var(--offl-text-muted)]">
+              ما متعهد به{' '}
+              <Link
+                href="/privacy"
+                className="font-medium text-[var(--offl-primary)] transition hover:underline"
+              >
+                حفظ حریم خصوصی
+              </Link>{' '}
+              شما هستیم؛ داده‌هایتان شفاف و طبق سیاست حریم خصوصی پردازش می‌شود.
             </p>
-          </footer>
-        )}
+            <nav
+              aria-label="پیوندهای قانونی"
+              className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px]"
+            >
+              <Link
+                href="/privacy"
+                className="text-[var(--offl-text-muted)] transition hover:text-[var(--offl-primary)]"
+              >
+                حریم خصوصی
+              </Link>
+              <Link
+                href="/Terms"
+                className="text-[var(--offl-text-muted)] transition hover:text-[var(--offl-primary)]"
+              >
+                شرایط و قوانین
+              </Link>
+              <Link
+                href="/warranty"
+                className="text-[var(--offl-text-muted)] transition hover:text-[var(--offl-primary)]"
+              >
+                گارانتی
+              </Link>
+              <Link
+                href="/contact-us"
+                className="text-[var(--offl-text-muted)] transition hover:text-[var(--offl-primary)]"
+              >
+                تماس با ما
+              </Link>
+            </nav>
+          </div>
+          <p className="mt-4 font-light text-[11px] text-[var(--offl-text-muted)]">
+            آفلند · سرزمینِ تخفیف — تمامی حقوق محفوظ است.
+          </p>
+        </footer>
       </article>
     </main>
   );

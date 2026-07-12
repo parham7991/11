@@ -11,7 +11,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getAiChatConfig } from '@/lib/ai-chat/config';
-import { buildRagContext } from '@/lib/ai-chat/rag';
+import { buildRagContext, buildContextText } from '@/lib/ai-chat/rag';
 import { getProxyFetch } from '@/lib/ai-chat/proxy-fetch';
 import type { ChatMessage, ChatRequestBody, ChatResponse } from '@/lib/ai-chat/types';
 
@@ -99,8 +99,14 @@ export async function POST(req: NextRequest): Promise<Response> {
   if (config.enableRag) {
     try {
       const rag = await buildRagContext(message, config.ragCount);
-      context = rag.context;
-      sources = rag.sources;
+      // کانتکست فشرده: فقط N محصولِ مرتبط‌تر (بالا) به مدل داده می‌شود تا
+      // تمرکز مدل بالا برود و دقت پاسخ محصول‌محور بیشتر شود. منابع ارسالی
+      // به کلاینت نیز همان زیرمجموعه است تا کارت‌ها با آنچه مدل می‌بیند
+      // هم‌راستا باشند و مدل محصولی خارج از بافت ارجاع ندهد.
+      const MODEL_CONTEXT_LIMIT = 6;
+      const modelSources = rag.sources.slice(0, MODEL_CONTEXT_LIMIT);
+      context = modelSources.length ? buildContextText(modelSources) : rag.context;
+      sources = modelSources;
     } catch {
       // در صورت خطای RAG، چت بدون بافت ادامه می‌یابد
     }

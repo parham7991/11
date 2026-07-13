@@ -570,3 +570,28 @@
 | ۴ | `AiChatWidget.tsx`, `ai-chat.css` | relevance badge/bar + stealth FAB + hover label + stagger |
 
 **نحوهٔ تست (دستی):** `npm run dev` → چت را باز کن و سؤال محصولی بپرس (مثلاً «بهترین کارت گرافیک گیمینگ»)؛ کارت‌های مرتبط‌تر باید بج «مرتبط» + نوار داشته باشند. در اسمبل، یک دسته را با AI خاموش (یا api-key اشتباه) انتخاب کن تا fallback سازگار برگردد. تست RAG دقیق‌تر: سؤالاتی با نام انگلیسی (GPU/CPU) یا برند خاص.
+
+---
+
+# 📲 Plan: PWA ro "Daghigh & Khafan" (Complete + Clean)
+
+## 🔍 Discovery — chizi ke fahan hast (va kharab bud)
+- `src/app/pwa/page.tsx` → safhe-ye moarefi PWA (eddea mikone icon/maskable/apple/splash set shode — **false**).
+- `src/app/api/pwa/share/route.ts` → Web Share Target receiver (POST formData → redirect).
+- `src/components/pwa/PWAClient.tsx` → UI-e install/offline/update banner + `sw.js` register. **Vali hichja mount nashode** (dar layout/provider nist).
+- `public/sw.js` → **vojud nadare** → `navigator.serviceWorker.register('/sw.js')` fail mishe. PWA offline nist.
+- `manifest.json` / `app/manifest.ts` → **vojud nadare** → app ghabel-e nasb (installable) nist.
+- `layout.tsx` → manifest link, theme-color, apple-touch-icon **nadare**.
+- Icon-ha: `public/icons/` faqat `logo.svg` / `logo_auth.svg` / `logout.svg` dare. PNG (192/512/maskable/apple) nadare.
+- Rasterizer (convert/sharp/rsvg) dar mohit nist → baraye PNG az `@resvg/resvg-js` (prebuilt) estefade mikonam.
+
+## 🧩 Chunk list
+1. **Icons** — generate `icon-192.png`, `icon-512.png`, `maskable-512.png`, `apple-touch-icon.png` az `logo.svg` (resvg).
+2. **Manifest** — `src/app/manifest.ts` (Next metadata route): name/short_name/rtl/fa, icons, display standalone, share_target → `/api/pwa/share`, shortcuts.
+3. **Service Worker** — `public/sw.js`: precache + offline fallback, network-first navigations, cache-first static, skip API/backend, handle `SKIP_WAITING` + `CACHE_URLS`.
+4. **Offline page** — `public/offline.html` (RTL, branded, retry/home).
+5. **Mount + Meta** — `PWAClient` ro dar layout mount kon; `metadata.manifest`, `viewport.themeColor`, `appleWebApp`, `icons.apple` ezafe kon.
+6. **Polish** — PWAClient: SW faqat dar production register she (dev cache nadarim); text-e `/pwa` page dorost.
+7. **Verify** — `next build` + check manifest route.
+
+## ✅ Chunk 1 done? (in progress)

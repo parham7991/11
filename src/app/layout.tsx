@@ -1,10 +1,11 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import GlobalContextProvider from '../components/common/GlobalContextProvider';
 import { SessionProvider } from '@/lib/auth/SessionProvider';
 import Fetcher from '@/lib/auth/Fetcher';
 import Script from 'next/script';
 import AiChatMount from '@/components/ai-chat/AiChatMount';
+import PWAClient from '@/components/pwa/PWAClient';
 import { getAiChatConfig } from '@/lib/ai-chat/config';
 
 export const metadata: Metadata = {
@@ -17,9 +18,20 @@ export const metadata: Metadata = {
   other: {
     'google-site-verification': 'phfZrGamufPWO6ljHZxPbx9sNzRm-8zR9vKVl_6FnpU',
   },
+  applicationName: 'آفلند',
   authors: [{ name: 'آفلند', url: 'https://www.offl.ir' }],
   creator: 'آفلند',
   publisher: 'آفلند',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'آفلند',
+  },
+  icons: {
+    icon: '/icons/icon-192.png',
+    apple: '/icons/apple-touch-icon.png',
+  },
   robots: {
     index: true,
     follow: true,
@@ -32,6 +44,16 @@ export const metadata: Metadata = {
     locale: 'fa_IR',
     siteName: 'آفلند',
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#386bf9' },
+    { media: '(prefers-color-scheme: dark)', color: '#0b1220' },
+  ],
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
 };
 
 export default async function RootLayout({
@@ -61,6 +83,8 @@ export default async function RootLayout({
             <Fetcher>{children}</Fetcher>
             {/* دستیار هوشمند آفلند (ویجت شناور) */}
             <AiChatMount enabled={aiChatEnabled} position="right" />
+            {/* کلاینت PWA: نصب، آفلاین، به‌روزرسانی نرم */}
+            <PWAClient />
           </GlobalContextProvider>
         </SessionProvider>
       </body>

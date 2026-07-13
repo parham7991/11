@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { usePWAStore } from '@/store/pwa-store';
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -46,6 +47,7 @@ export default function PWAClient() {
     const onBeforeInstall = (event: Event) => {
       event.preventDefault();
       setInstallPrompt(event as BeforeInstallPromptEvent);
+      usePWAStore.getState().setDeferredPrompt(event as BeforeInstallPromptEvent);
       const hideUntil = Number(localStorage.getItem('offland-pwa-install-hide-until') || 0);
       if (Date.now() > hideUntil && !isStandaloneMode()) {
         setTimeout(() => setShowInstall(true), 1600);

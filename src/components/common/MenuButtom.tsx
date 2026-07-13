@@ -6,6 +6,7 @@ import React, { useTransition, useState, useEffect } from 'react';
 import Loading from './Loading';
 import { safeRequest } from '@/lib/client';
 import { useTheme } from '@/components/common/theme/ThemeProvider';
+import InstallButton from '@/components/pwa/InstallButton';
 
 const profilePages: string[] = ['/product'];
 type Props = {
@@ -440,6 +441,11 @@ const MenuBottom = ({ isShow = false, className }: Props) => {
           </span>
           <p className="font-medium text-main">{resolvedTheme === 'dark' ? 'روشن' : 'تاریک'}</p>
         </button>
+        {/* دکمهٔ نصب اپلیکیشن */}
+        <InstallButton
+          label="نصب"
+          className="relative flex h-[44px] items-center gap-2 rounded-full px-3 text-main transition-all duration-300 active:scale-90"
+        />
       </div>
       {isPending && <Loading />}
     </>

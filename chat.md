@@ -630,3 +630,21 @@
 - Logo = OFFLAND (manifest + tamam icon-ha az `logo.svg`). ✅
 
 ## 🚀 Chunk 4 — Commit + Push (mobile UI + install popups + adaptive icon)
+
+---
+
+# 🐞 Feedback fix — logo dorost + install UX
+
+## 🔍 Discovery
+- Logo eshtebah: `icons/logo.svg` (wordmark-e sade) bud. Logo-ye asli = `public/images/logo-off-3.png` (colored, 1100×400, transparent) — HeaderCoin hamin ro migire. `images/logo.svg` hattā WEBP bud!
+- `logo-white.png` (white, transparent) baraye dark mode.
+- Windows Chrome: `beforeinstallprompt` rooye prod mishe, vali dokme-ye install hamishe ghabol nist → CTA-e hamishe-hazer ezafe shod.
+
+## ✅ Fixes
+- Icon-ha regenerate shodand ba logo-ye SAHIH (logo-off-3 colored / logo-white dark), tarh-e gradient #386bf9→#6f3cf5, rounded app-icon:
+  - `icon-192/512.png` (any), `maskable-512.png` (full-bleed), `apple-touch-icon.png` (light), `apple-touch-icon-dark.png` (white logo on #0b1220).
+- `src/store/pwa-store.ts` (zustand): deferredPrompt + install().
+- `src/components/pwa/InstallButton.tsx`: dokme-ye install + help modal (iOS: Share→Add; ghair-iOS: address-bar).
+- `PWAClient`: beforeinstallprompt ro be store set mikone.
+- `MenuButtom`: dokme-ye «نصب» tu menu-ye paeen (mobile).
+- `HeaderCenter`: dokme-ye install tu header (desktop, lg:flex) → Windows Chrome CTA.

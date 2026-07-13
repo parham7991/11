@@ -15,7 +15,6 @@ import { Skeleton } from '@heroui/react';
 import { useGetSession } from '@/hooks/auth/useGetSession';
 import { getCookieRemoveOptions } from '@/lib/cookie-options';
 import HeaderThemeToggle from '../theme/HeaderThemeToggle';
-import InstallButton from '@/components/pwa/InstallButton';
 import AssembleButton from './AssembleButton';
 
 const HeaderCenter = () => {
@@ -123,7 +122,6 @@ const HeaderCenter = () => {
         </div>
         <div className="flex flex-1 items-center justify-end gap-3 space-x-3">
           <HeaderThemeToggle />
-          <InstallButton className="hidden h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white transition-all duration-300 hover:border-blue-400 hover:bg-blue-50 active:scale-90 lg:flex dark:border-white/10 dark:bg-white/5 dark:hover:border-blue-400/50 dark:hover:bg-blue-500/10" />
           <UserInfo className="hidden md:flex" />
           <AssembleButton className="hidden xl:flex" />
           <Cart />

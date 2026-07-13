@@ -5,7 +5,6 @@ import { SessionProvider } from '@/lib/auth/SessionProvider';
 import Fetcher from '@/lib/auth/Fetcher';
 import Script from 'next/script';
 import AiChatMount from '@/components/ai-chat/AiChatMount';
-import PWAClient from '@/components/pwa/PWAClient';
 import { getAiChatConfig } from '@/lib/ai-chat/config';
 
 export const metadata: Metadata = {
@@ -22,14 +21,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'آفلند', url: 'https://www.offl.ir' }],
   creator: 'آفلند',
   publisher: 'آفلند',
-  manifest: '/manifest.webmanifest',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'default',
-    title: 'آفلند',
-  },
   icons: {
-    icon: '/icons/icon-192.png',
     apple: '/icons/apple-touch-icon.png',
   },
   robots: {
@@ -87,8 +79,6 @@ export default async function RootLayout({
             <Fetcher>{children}</Fetcher>
             {/* دستیار هوشمند آفلند (ویجت شناور) */}
             <AiChatMount enabled={aiChatEnabled} position="right" />
-            {/* کلاینت PWA: نصب، آفلاین، به‌روزرسانی نرم */}
-            <PWAClient />
           </GlobalContextProvider>
         </SessionProvider>
       </body>

@@ -648,3 +648,32 @@
 - `PWAClient`: beforeinstallprompt ro be store set mikone.
 - `MenuButtom`: dokme-ye «نصب» tu menu-ye paeen (mobile).
 - `HeaderCenter`: dokme-ye install tu header (desktop, lg:flex) → Windows Chrome CTA.
+
+---
+
+## 🗑️ حذف کامل PWA (۱۴۰۵/۰۴/۲۲)
+
+به درخواست کاربر، کل زیرساخت PWA از پروژه حذف شد.
+
+### فایل‌های حذف‌شده
+- `src/app/manifest.ts` (تولید manifest)
+- `src/app/pwa/page.tsx` (صفحهٔ راهنمای نصب)
+- `src/components/pwa/PWAClient.tsx` (کلاینت: نصب، آفلاین، به‌روزرسانی نرم)
+- `src/components/pwa/InstallButton.tsx` (دکمهٔ نصب)
+- `src/store/pwa-store.ts` (زوستند مربوط به beforeinstallprompt)
+- `src/app/api/pwa/share/route.ts` (share_target manifest)
+- `public/sw.js` (سرویس‌ورکر)
+- `public/offline.html` (صفحهٔ آفلاین)
+- `public/icons/icon-192.png`, `icon-512.png`, `maskable-512.png` (آیکون‌های اختصاصی manifest)
+
+### تغییرات در فایل‌های موجود
+- `src/app/layout.tsx`: حذف import و mount `PWAClient`، حذف `manifest` و `appleWebApp` از متادیتا، تغییر `icons` به فقط `apple` (آیکون تب از `favicon.ico` پیش‌فرض استفاده می‌کند).
+- `src/components/common/MenuButtom.tsx`: حذف import و دکمهٔ `InstallButton`.
+- `src/components/common/header/HeaderCenter.tsx`: حذف import و دکمهٔ `InstallButton`.
+
+### موارد حفظ‌شده (غیر‑PWA)
+- `public/icons/apple-touch-icon.png` و `apple-touch-icon-dark.png` (آیکون bookmark آیفون — جزو تب/فاویکون است، نه منیفست PWA)؛ اسکریپت adaptive آن در layout باقی ماند.
+
+### ریسک / پیگیری
+- هیچ ارجاع dangling باقی نماند (بررسی شد).
+- پیشنهاد: یک‌بار `next build` برای اطمینان از نبود خطای type compile.

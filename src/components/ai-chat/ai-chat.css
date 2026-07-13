@@ -745,10 +745,16 @@ html.dark .aic-card__price {
 }
 
 /* ════════════ ریسپانسیو ════════════ */
+/* موبایل و تبلت: دکمه بالاتر از منوی پایین (75px) + safe-area */
+@media (max-width: 1023px) {
+  .aic-root {
+    bottom: calc(75px + 16px + env(safe-area-inset-bottom));
+  }
+}
 /* تبلت کوچک و موبایل بزرگ */
 @media (max-width: 480px) {
   .aic-root {
-    bottom: 16px;
+    bottom: calc(75px + 12px + env(safe-area-inset-bottom));
   }
   .aic-root[data-position='left'] { left: 16px; }
   .aic-root[data-position='right'] { right: 16px; }

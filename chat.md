@@ -595,3 +595,38 @@
 7. **Verify** — `next build` + check manifest route.
 
 ## ✅ Chunk 1 done? (in progress)
+
+---
+
+# 📲 Plan 2 — Mobile UI + Install popups + adaptive iOS icon
+
+## 🔍 Discovery (mobile)
+- `MenuButtom.tsx`: منوی پایین full-width, `h-[75px]`, `z-9`, `lg:hidden`.
+- `AiChatWidget` FAB: `.aic-root` fixed, `z-9998`, bottom-left (layout `position="left"`). Roye menu miyftad → menu kharab.
+- `ThemeToggle` (floating) **mount nashode**; dark-mode faqat tu header. User khast dark-mode **tu hamin menu-ye paeen** bashad.
+
+## ✅ Chunk 1 — Mobile menu cleanup: DONE
+- `MenuButtom.tsx`: دکمهٔ تغییر تم (sun/moon + برچسب) bezane tu menu, baghal-e botre-haye dige (useTheme).
+- `ai-chat.css`: FAB rooye موبایل/تبلت (`max-width:1023px`) `bottom: calc(75px + 16px + safe-area)` → balatar az menu, menu ro kharab nemikone.
+- Note: ThemeProvider dar GlobalContextProvider wrap shode → useTheme dar menu OK.
+
+## ⏭ Next: Chunk 2 — Install popups (iOS + Android/Windows)
+- iOS: detect (Safari) → popup "Add to Home Screen: Share → Add".
+- Android/Windows: `beforeinstallprompt` (mozojod) → banner.
+- PWA banners royee mobile balatar az menu (75px) raise shavad.
+
+## ✅ Chunk 2 — Install popups: DONE
+- `PWAClient.tsx`: iOS detect (iPhone/iPad/iPadOS) → popup "Share → Add to Home Screen" (2.2s delay, dismiss 30 rooz).
+- Android/Windows: `beforeinstallprompt` → `.pwa-install` banner (ghablan mojood, hala mahfuz).
+- PWA banners (install/online/offline/update) royee mobile `bottom: calc(75px + 12px + safe-area)` → balatar az menu.
+
+## ⏭ Next: Chunk 3 — Adaptive iOS icon (dark/light)
+- generate `apple-touch-icon-dark.png` (dark bg #0b1220) kenar light (mojood).
+- script: `<link rel=apple-touch-icon>` ro bar asase theme (data-theme) avaz kone + rooye toggle.
+
+## ✅ Chunk 3 — Adaptive iOS icon: DONE
+- `apple-touch-icon-dark.png` (180×180, bg #0b1220) generate shod.
+- `layout.tsx`: script `apple-touch-icon-theme` → `<link rel=apple-touch-icon>` ro bar asase `dark`/`light` avaz mikone + rooye toggle (MutationObserver).
+- Logo = OFFLAND (manifest + tamam icon-ha az `logo.svg`). ✅
+
+## 🚀 Chunk 4 — Commit + Push (mobile UI + install popups + adaptive icon)

@@ -71,6 +71,10 @@ export default async function RootLayout({
         <Script id="theme-init" strategy="beforeInteractive" type="text/javascript">
           {`(function(){try{var key='offland-theme-mode';var mode=localStorage.getItem(key)||'system';var systemDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;var isDark=mode==='dark'||(mode==='system'&&systemDark);var root=document.documentElement;root.classList.toggle('dark',isDark);root.dataset.theme=isDark?'dark':'light';root.dataset.themeMode=mode;root.style.colorScheme=isDark?'dark':'light';}catch(e){}})();`}
         </Script>
+        {/* آیکون iOS adaptive: bar asase dark/light (logo dark/light) */}
+        <Script id="apple-touch-icon-theme" strategy="afterInteractive" type="text/javascript">
+          {`(function(){try{var light='/icons/apple-touch-icon.png',dark='/icons/apple-touch-icon-dark.png';function apply(){var d=document.documentElement.classList.contains('dark');var h=d?dark:light;var ls=document.querySelectorAll('link[rel="apple-touch-icon"]');if(!ls.length){var l=document.createElement('link');l.rel='apple-touch-icon';l.href=h;document.head.appendChild(l);}else{ls.forEach(function(e){e.href=h;});}}apply();var o=new MutationObserver(apply);o.observe(document.documentElement,{attributes:true,attributeFilter:['class','data-theme']});}catch(e){}})();`}
+        </Script>
         <Script id="gtag-init" strategy="afterInteractive" type="text/javascript">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],

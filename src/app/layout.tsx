@@ -12,7 +12,8 @@ export const metadata: Metadata = {
     default: 'فروشگاه اینترنتی آفلند | خرید لوازم آرایشی و بهداشتی اورجینال',
     template: '%s | فروشگاه آفلند',
   },
-  description: 'خرید آنلاین لوازم آرایشی، بهداشتی، عطر و ادکلن اورجینال با بهترین قیمت و ارسال سریع در فروشگاه اینترنتی آفلند',
+  description:
+    'خرید آنلاین لوازم آرایشی، بهداشتی، عطر و ادکلن اورجینال با بهترین قیمت و ارسال سریع در فروشگاه اینترنتی آفلند',
   keywords: 'فروشگاه آفلند, لوازم آرایشی, بهداشتی, عطر, ادکلن, اورجینال, خرید آنلاین',
   other: {
     'google-site-verification': 'phfZrGamufPWO6ljHZxPbx9sNzRm-8zR9vKVl_6FnpU',
@@ -20,6 +21,10 @@ export const metadata: Metadata = {
   authors: [{ name: 'آفلند', url: 'https://www.offl.ir' }],
   creator: 'آفلند',
   publisher: 'آفلند',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/icons/apple-touch-icon.png',
+  },
   robots: {
     index: true,
     follow: true,

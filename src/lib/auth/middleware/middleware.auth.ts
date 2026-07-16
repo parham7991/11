@@ -7,7 +7,8 @@ export async function handleAuthProtection(request: NextRequest): Promise<NextRe
   const cookies = request.cookies as {
     get: (name: string) => { value: string } | undefined;
   };
-  const rawSession = cookies.get(process.env.NEXT_PUBLIC_COCKIES as string)?.value;
+  const cookieName = process.env.NEXT_PUBLIC_COCKIES;
+  const rawSession = cookieName ? cookies.get(cookieName)?.value : undefined;
 
   // const allCookies = request.cookies.getAll();
   // const refreshToken = request.cookies.get('rf')?.value;
@@ -28,5 +29,5 @@ export async function handleAuthProtection(request: NextRequest): Promise<NextRe
     return redirectToSignIn(request);
   }
 
-  return null
+  return null;
 }

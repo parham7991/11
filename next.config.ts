@@ -86,14 +86,15 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'iwcs.media.ir', pathname: '/**' },
     ],
   },
+  // اجازه می‌دهد بیلد حتی در صورت وجود خطای ESLint رد شود (مثل نسخه کارکرده)
   eslint: {
-    // اگر توی CI به خاطر lint fail میشی، موقتا true کن:
     ignoreDuringBuilds: true,
   },
+  // اجازه می‌دهد بیلد حتی در صورت وجود خطای TypeScript رد شود (مثل نسخه کارکرده)
   typescript: {
-    // اگر ارور TS داری و میخوای بیلد رد بشه:
     ignoreBuildErrors: true,
   },
+  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
 };
 
 export default nextConfig;

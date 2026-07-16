@@ -85,21 +85,21 @@ export interface ResolutionResult {
 
 const PART_PRIORITY: Record<string, Record<string, number>> = {
   gaming: {
-    gpu: 100,        // GPU > CPU
+    gpu: 100, // GPU > CPU
     cpu: 90,
     motherboard: 70,
     ram: 60,
-    psu: 80,         // PSU خیلی مهم برای GPU
+    psu: 80, // PSU خیلی مهم برای GPU
     storage: 40,
     case: 30,
   },
   editing: {
-    cpu: 100,        // CPU > GPU
+    cpu: 100, // CPU > GPU
     gpu: 85,
     motherboard: 70,
-    ram: 90,         // RAM خیلی مهم
+    ram: 90, // RAM خیلی مهم
     psu: 60,
-    storage: 80,     // Storage هم مهم
+    storage: 80, // Storage هم مهم
     case: 30,
   },
   streaming: {
@@ -140,8 +140,8 @@ export function autoResolve(
   const priority = PART_PRIORITY[useCase] || PART_PRIORITY.gaming;
 
   // ═══════ قانون ۱: سوکت CPU ↔ مادربرد ═══════
-  const cpu = workingParts.find(p => p.category === 'cpu');
-  const mb = workingParts.find(p => p.category === 'motherboard');
+  const cpu = workingParts.find((p) => p.category === 'cpu');
+  const mb = workingParts.find((p) => p.category === 'motherboard');
 
   if (cpu && mb && cpu.specs?.socket && mb.specs?.socket && cpu.specs.socket !== mb.specs.socket) {
     const cpuPriority = priority.cpu || 50;
@@ -154,9 +154,11 @@ export function autoResolve(
       removedParts.push(...result.removedParts);
       suggestions.push(...result.suggestions);
       messages.push(...result.messages);
-      workingParts = workingParts.filter(p => p.id !== mb.id);
+      workingParts = workingParts.filter((p) => p.id !== mb.id);
       if (result.newPart) {
-        workingParts = workingParts.map(p => p.category === 'motherboard' ? result.newPart! : p);
+        workingParts = workingParts.map((p) =>
+          p.category === 'motherboard' ? result.newPart! : p
+        );
       }
     } else {
       // نگه‌داشتن مادربرد، جایگزینی CPU
@@ -165,52 +167,58 @@ export function autoResolve(
       removedParts.push(...result.removedParts);
       suggestions.push(...result.suggestions);
       messages.push(...result.messages);
-      workingParts = workingParts.filter(p => p.id !== cpu.id);
+      workingParts = workingParts.filter((p) => p.id !== cpu.id);
       if (result.newPart) {
-        workingParts = workingParts.map(p => p.category === 'cpu' ? result.newPart! : p);
+        workingParts = workingParts.map((p) => (p.category === 'cpu' ? result.newPart! : p));
       }
     }
   }
 
   // ═══════ قانون ۲: نوع RAM ↔ مادربرد ═══════
-  const updatedMb = workingParts.find(p => p.category === 'motherboard');
-  const ram = workingParts.find(p => p.category === 'ram');
-  if (updatedMb && ram && updatedMb.specs?.ramType && ram.specs?.ramType && updatedMb.specs.ramType !== ram.specs.ramType) {
+  const updatedMb = workingParts.find((p) => p.category === 'motherboard');
+  const ram = workingParts.find((p) => p.category === 'ram');
+  if (
+    updatedMb &&
+    ram &&
+    updatedMb.specs?.ramType &&
+    ram.specs?.ramType &&
+    updatedMb.specs.ramType !== ram.specs.ramType
+  ) {
     const result = resolveRamMismatch(updatedMb, ram, candidates.get('ram') || []);
     actions.push(...result.actions);
     removedParts.push(...result.removedParts);
     suggestions.push(...result.suggestions);
     messages.push(...result.messages);
-    workingParts = workingParts.filter(p => p.id !== ram.id);
+    workingParts = workingParts.filter((p) => p.id !== ram.id);
     if (result.newPart) {
-      workingParts = workingParts.map(p => p.category === 'ram' ? result.newPart! : p);
+      workingParts = workingParts.map((p) => (p.category === 'ram' ? result.newPart! : p));
     }
   }
 
   // ═══════ قانون ۳: توان PSU ═══════
-  const updatedCpu = workingParts.find(p => p.category === 'cpu');
-  const gpu = workingParts.find(p => p.category === 'gpu');
-  const psu = workingParts.find(p => p.category === 'psu');
+  const updatedCpu = workingParts.find((p) => p.category === 'cpu');
+  const gpu = workingParts.find((p) => p.category === 'gpu');
+  const psu = workingParts.find((p) => p.category === 'psu');
   if (psu && psu.specs?.wattage) {
     const cpuTdp = (updatedCpu?.specs?.tdp as number) || 95;
     const gpuTdp = (gpu?.specs?.tdp as number) || 150;
-    const required = Math.round((cpuTdp + gpuTdp + 100) * 1.25 / 50) * 50;
+    const required = Math.round(((cpuTdp + gpuTdp + 100) * 1.25) / 50) * 50;
     if (psu.specs.wattage < required) {
       const result = resolvePsuInsufficient(psu, updatedCpu, gpu, candidates.get('psu') || []);
       actions.push(...result.actions);
       removedParts.push(...result.removedParts);
       suggestions.push(...result.suggestions);
       messages.push(...result.messages);
-      workingParts = workingParts.filter(p => p.id !== psu.id);
+      workingParts = workingParts.filter((p) => p.id !== psu.id);
       if (result.newPart) {
-        workingParts = workingParts.map(p => p.category === 'psu' ? result.newPart! : p);
+        workingParts = workingParts.map((p) => (p.category === 'psu' ? result.newPart! : p));
       }
     }
   }
 
   // ═══════ قانون ۴: کولر ↔ CPU (TDP) ═══════
-  const cooler = workingParts.find(p => p.category === 'cooler');
-  const finalCpu = workingParts.find(p => p.category === 'cpu');
+  const cooler = workingParts.find((p) => p.category === 'cooler');
+  const finalCpu = workingParts.find((p) => p.category === 'cpu');
   if (cooler && finalCpu && cooler.specs?.tdpRating && finalCpu.specs?.tdp) {
     if (cooler.specs.tdpRating < finalCpu.specs.tdp) {
       const result = resolveCoolerInsufficient(cooler, finalCpu, candidates.get('cooler') || []);
@@ -218,9 +226,9 @@ export function autoResolve(
       removedParts.push(...result.removedParts);
       suggestions.push(...result.suggestions);
       messages.push(...result.messages);
-      workingParts = workingParts.filter(p => p.id !== cooler.id);
+      workingParts = workingParts.filter((p) => p.id !== cooler.id);
       if (result.newPart) {
-        workingParts = workingParts.map(p => p.category === 'cooler' ? result.newPart! : p);
+        workingParts = workingParts.map((p) => (p.category === 'cooler' ? result.newPart! : p));
       }
     }
   }
@@ -229,11 +237,11 @@ export function autoResolve(
   for (const part of workingParts) {
     if (!part.inStock || part.price === 0) {
       const replacement = (candidates.get(part.category) || [])
-        .filter(c => c.inStock && c.finalPrice > 0 && String(c.id) !== String(part.id))
+        .filter((c) => c.inStock && c.finalPrice > 0 && String(c.id) !== String(part.id))
         .sort((a, b) => {
           const aDist = Math.abs((a.finalPrice || 0) - (part.finalPrice || part.price || 0));
           const bDist = Math.abs((b.finalPrice || 0) - (part.finalPrice || part.price || 0));
-          return (b.confidence - a.confidence) || (aDist - bDist);
+          return b.confidence - a.confidence || aDist - bDist;
         })[0];
 
       if (replacement) {
@@ -293,7 +301,13 @@ function resolveByKeepingCpu(
   mb: AssemblyPart,
   mbCandidates: AssemblyPart[],
   useCase: string
-): { actions: ResolutionAction[]; removedParts: any[]; suggestions: SuggestedPart[]; messages: any[]; newPart?: AssemblyPart } {
+): {
+  actions: ResolutionAction[];
+  removedParts: any[];
+  suggestions: SuggestedPart[];
+  messages: any[];
+  newPart?: AssemblyPart;
+} {
   const actions: ResolutionAction[] = [];
   const removedParts: any[] = [];
   const suggestions: SuggestedPart[] = [];
@@ -303,11 +317,8 @@ function resolveByKeepingCpu(
   const cpuSocket = cpu.specs?.socket;
 
   // جستجوی مادربرد سازگار (همون سوکت)
-  const compatibleMb = mbCandidates.find(c =>
-    c.specs?.socket === cpuSocket &&
-    c.inStock &&
-    c.price > 0 &&
-    c.id !== mb.id
+  const compatibleMb = mbCandidates.find(
+    (c) => c.specs?.socket === cpuSocket && c.inStock && c.price > 0 && c.id !== mb.id
   );
 
   if (compatibleMb) {
@@ -343,10 +354,22 @@ function resolveByKeepingCpu(
     });
     suggestions.push({
       name: `مادربرد با سوکت ${cpuSocket}`,
-      model: cpuSocket === 'AM5' ? 'B650 / X670 (DDR5)' : cpuSocket === 'LGA1700' ? 'B760 / Z790' : cpuSocket === 'LGA1851' ? 'Z890 / B860' : cpuSocket,
+      model:
+        cpuSocket === 'AM5'
+          ? 'B650 / X670 (DDR5)'
+          : cpuSocket === 'LGA1700'
+            ? 'B760 / Z790'
+            : cpuSocket === 'LGA1851'
+              ? 'Z890 / B860'
+              : cpuSocket,
       reason: `برای استفاده با CPU "${cpu.name}" به مادربردی با سوکت ${cpuSocket} نیاز داریم`,
       socket: cpuSocket,
-      estimatedPrice: cpuSocket === 'AM5' ? '۱۵ تا ۳۰ میلیون' : cpuSocket === 'LGA1700' ? '۱۲ تا ۲۵ میلیون' : '۱۵ تا ۳۵ میلیون',
+      estimatedPrice:
+        cpuSocket === 'AM5'
+          ? '۱۵ تا ۳۰ میلیون'
+          : cpuSocket === 'LGA1700'
+            ? '۱۲ تا ۲۵ میلیون'
+            : '۱۵ تا ۳۵ میلیون',
       availability: 'coming_soon',
     });
     messages.push({
@@ -363,7 +386,13 @@ function resolveByKeepingMb(
   mb: AssemblyPart,
   cpuCandidates: AssemblyPart[],
   useCase: string
-): { actions: ResolutionAction[]; removedParts: any[]; suggestions: SuggestedPart[]; messages: any[]; newPart?: AssemblyPart } {
+): {
+  actions: ResolutionAction[];
+  removedParts: any[];
+  suggestions: SuggestedPart[];
+  messages: any[];
+  newPart?: AssemblyPart;
+} {
   const actions: ResolutionAction[] = [];
   const removedParts: any[] = [];
   const suggestions: SuggestedPart[] = [];
@@ -373,11 +402,8 @@ function resolveByKeepingMb(
   const mbSocket = mb.specs?.socket;
 
   // جستجوی CPU سازگار (همون سوکت)
-  const compatibleCpu = cpuCandidates.find(c =>
-    c.specs?.socket === mbSocket &&
-    c.inStock &&
-    c.price > 0 &&
-    c.id !== cpu.id
+  const compatibleCpu = cpuCandidates.find(
+    (c) => c.specs?.socket === mbSocket && c.inStock && c.price > 0 && c.id !== cpu.id
   );
 
   if (compatibleCpu) {
@@ -426,7 +452,13 @@ function resolveRamMismatch(
   mb: AssemblyPart,
   ram: AssemblyPart,
   ramCandidates: AssemblyPart[]
-): { actions: ResolutionAction[]; removedParts: any[]; suggestions: SuggestedPart[]; messages: any[]; newPart?: AssemblyPart } {
+): {
+  actions: ResolutionAction[];
+  removedParts: any[];
+  suggestions: SuggestedPart[];
+  messages: any[];
+  newPart?: AssemblyPart;
+} {
   const actions: ResolutionAction[] = [];
   const removedParts: any[] = [];
   const suggestions: SuggestedPart[] = [];
@@ -436,11 +468,8 @@ function resolveRamMismatch(
   const mbRamType = mb.specs?.ramType;
 
   // جستجوی RAM سازگار
-  const compatibleRam = ramCandidates.find(c =>
-    c.specs?.ramType === mbRamType &&
-    c.inStock &&
-    c.price > 0 &&
-    c.id !== ram.id
+  const compatibleRam = ramCandidates.find(
+    (c) => c.specs?.ramType === mbRamType && c.inStock && c.price > 0 && c.id !== ram.id
   );
 
   if (compatibleRam) {
@@ -474,7 +503,10 @@ function resolveRamMismatch(
     });
     suggestions.push({
       name: `رم ${mbRamType}`,
-      model: mbRamType === 'DDR5' ? 'Kingston Fury Beast DDR5 32GB 5600MHz' : 'Kingston Fury Beast DDR4 32GB 3200MHz',
+      model:
+        mbRamType === 'DDR5'
+          ? 'Kingston Fury Beast DDR5 32GB 5600MHz'
+          : 'Kingston Fury Beast DDR4 32GB 3200MHz',
       reason: `برای مادربرد "${mb.name}" به رم ${mbRamType} نیاز داریم`,
       ramType: mbRamType,
       estimatedPrice: mbRamType === 'DDR5' ? '۱۵ تا ۳۰ میلیون' : '۸ تا ۱۵ میلیون',
@@ -494,7 +526,13 @@ function resolvePsuInsufficient(
   cpu: AssemblyPart | undefined,
   gpu: AssemblyPart | undefined,
   psuCandidates: AssemblyPart[]
-): { actions: ResolutionAction[]; removedParts: any[]; suggestions: SuggestedPart[]; messages: any[]; newPart?: AssemblyPart } {
+): {
+  actions: ResolutionAction[];
+  removedParts: any[];
+  suggestions: SuggestedPart[];
+  messages: any[];
+  newPart?: AssemblyPart;
+} {
   const actions: ResolutionAction[] = [];
   const removedParts: any[] = [];
   const suggestions: SuggestedPart[] = [];
@@ -503,15 +541,12 @@ function resolvePsuInsufficient(
 
   const cpuTdp = (cpu?.specs?.tdp as number) || 95;
   const gpuTdp = (gpu?.specs?.tdp as number) || 150;
-  const required = Math.round((cpuTdp + gpuTdp + 100) * 1.25 / 50) * 50;
-  const recommended = Math.round((cpuTdp + gpuTdp + 100) * 1.4 / 50) * 50;
+  const required = Math.round(((cpuTdp + gpuTdp + 100) * 1.25) / 50) * 50;
+  const recommended = Math.round(((cpuTdp + gpuTdp + 100) * 1.4) / 50) * 50;
 
   // جستجوی PSU قوی‌تر
-  const compatiblePsu = psuCandidates.find(c =>
-    (c.specs?.wattage || 0) >= recommended &&
-    c.inStock &&
-    c.price > 0 &&
-    c.id !== psu.id
+  const compatiblePsu = psuCandidates.find(
+    (c) => (c.specs?.wattage || 0) >= recommended && c.inStock && c.price > 0 && c.id !== psu.id
   );
 
   if (compatiblePsu) {
@@ -545,7 +580,10 @@ function resolvePsuInsufficient(
     });
     suggestions.push({
       name: `PSU ${recommended}W 80+ Gold`,
-      model: gpuTdp >= 450 ? 'Corsair RM1000x / FSP Hydro PTM Pro' : 'Corsair RM850x / Seasonic Focus 850',
+      model:
+        gpuTdp >= 450
+          ? 'Corsair RM1000x / FSP Hydro PTM Pro'
+          : 'Corsair RM850x / Seasonic Focus 850',
       reason: `برای سیستم با GPU ${gpuTdp}W + CPU ${cpuTdp}W، PSU حداقل ${required}W نیاز است (${recommended}W پیشنهاد می‌شود)`,
       estimatedPrice: gpuTdp >= 450 ? '۳۰ تا ۵۰ میلیون' : '۱۵ تا ۳۰ میلیون',
       availability: 'coming_soon',
@@ -563,7 +601,13 @@ function resolveCoolerInsufficient(
   cooler: AssemblyPart,
   cpu: AssemblyPart,
   coolerCandidates: AssemblyPart[]
-): { actions: ResolutionAction[]; removedParts: any[]; suggestions: SuggestedPart[]; messages: any[]; newPart?: AssemblyPart } {
+): {
+  actions: ResolutionAction[];
+  removedParts: any[];
+  suggestions: SuggestedPart[];
+  messages: any[];
+  newPart?: AssemblyPart;
+} {
   const actions: ResolutionAction[] = [];
   const removedParts: any[] = [];
   const suggestions: SuggestedPart[] = [];
@@ -572,11 +616,8 @@ function resolveCoolerInsufficient(
 
   const required = Math.ceil((cpu.specs?.tdp || 95) * 1.3);
 
-  const compatibleCooler = coolerCandidates.find(c =>
-    (c.specs?.tdpRating || 0) >= required &&
-    c.inStock &&
-    c.price > 0 &&
-    c.id !== cooler.id
+  const compatibleCooler = coolerCandidates.find(
+    (c) => (c.specs?.tdpRating || 0) >= required && c.inStock && c.price > 0 && c.id !== cooler.id
   );
 
   if (compatibleCooler) {
@@ -609,8 +650,14 @@ function resolveCoolerInsufficient(
       removedPartId: cooler.id,
     });
     suggestions.push({
-      name: cpu.specs?.tdp && cpu.specs.tdp >= 150 ? 'Noctua NH-D15 / Deepcool AK620' : 'Cooler Master Hyper 212',
-      model: cpu.specs?.tdp && cpu.specs.tdp >= 150 ? 'Noctua NH-D15 (250W)' : 'Cooler Master Hyper 212 (180W)',
+      name:
+        cpu.specs?.tdp && cpu.specs.tdp >= 150
+          ? 'Noctua NH-D15 / Deepcool AK620'
+          : 'Cooler Master Hyper 212',
+      model:
+        cpu.specs?.tdp && cpu.specs.tdp >= 150
+          ? 'Noctua NH-D15 (250W)'
+          : 'Cooler Master Hyper 212 (180W)',
       reason: `برای CPU "${cpu.name}" (${cpu.specs?.tdp}W TDP) خنک‌کننده با توان ${required}W+ نیاز است`,
       estimatedPrice: cpu.specs?.tdp && cpu.specs.tdp >= 150 ? '۱۰ تا ۲۰ میلیون' : '۳ تا ۸ میلیون',
       availability: 'coming_soon',
@@ -625,7 +672,9 @@ function resolveCoolerInsufficient(
 // ════════════════════════════════════════════════════════════════
 
 function suggestCpuForSocket(socket: string): SuggestedPart {
-  const candidates = CPU_DB.filter(c => c.socket === socket).sort((a, b) => b.tier.localeCompare(a.tier));
+  const candidates = CPU_DB.filter((c) => c.socket === socket).sort((a, b) =>
+    b.tier.localeCompare(a.tier)
+  );
   const best = candidates[0];
   if (best) {
     return {
@@ -633,9 +682,14 @@ function suggestCpuForSocket(socket: string): SuggestedPart {
       model: best.model,
       reason: `این CPU با سوکت ${socket} سازگار است و برای سیستم شما مناسب است`,
       socket,
-      estimatedPrice: best.priceRange === 'premium' ? '۳۰ تا ۶۰ میلیون' :
-                      best.priceRange === 'high' ? '۲۰ تا ۴۰ میلیون' :
-                      best.priceRange === 'mid' ? '۱۰ تا ۲۵ میلیون' : '۵ تا ۱۵ میلیون',
+      estimatedPrice:
+        best.priceRange === 'premium'
+          ? '۳۰ تا ۶۰ میلیون'
+          : best.priceRange === 'high'
+            ? '۲۰ تا ۴۰ میلیون'
+            : best.priceRange === 'mid'
+              ? '۱۰ تا ۲۵ میلیون'
+              : '۵ تا ۱۵ میلیون',
       availability: 'coming_soon',
     };
   }
@@ -669,7 +723,8 @@ function suggestReplacementForUnavailable(part: AssemblyPart, useCase: string): 
       availability: 'coming_soon',
     },
     motherboard: {
-      name: part.specs?.socket === 'AM5' ? 'ASRock B650M Pro-A WiFi DDR5' : 'MSI PRO B760M-A WiFi DDR5',
+      name:
+        part.specs?.socket === 'AM5' ? 'ASRock B650M Pro-A WiFi DDR5' : 'MSI PRO B760M-A WiFi DDR5',
       model: part.specs?.socket === 'AM5' ? 'B650M Pro-A WiFi' : 'PRO B760M-A WiFi',
       reason: `پیشنهاد جایگزین: مادربرد ${part.specs?.socket === 'AM5' ? 'B650 سازگار با AM5 و DDR5' : 'B760 سازگار با LGA1700 و DDR5'}`,
       socket: part.specs?.socket,
@@ -677,7 +732,10 @@ function suggestReplacementForUnavailable(part: AssemblyPart, useCase: string): 
       availability: 'coming_soon',
     },
     ram: {
-      name: part.specs?.ramType === 'DDR5' ? 'Kingston Fury Beast DDR5 32GB 5600MHz' : 'Kingston Fury Beast DDR4 32GB 3200MHz',
+      name:
+        part.specs?.ramType === 'DDR5'
+          ? 'Kingston Fury Beast DDR5 32GB 5600MHz'
+          : 'Kingston Fury Beast DDR4 32GB 3200MHz',
       model: part.specs?.ramType === 'DDR5' ? 'KF556C40BBK2-32' : 'KF432C16BBK2-32',
       reason: `پیشنهاد جایگزین: رم ${part.specs?.ramType || 'DDR5'} 32GB با کیفیت بالا`,
       ramType: part.specs?.ramType,
@@ -692,7 +750,10 @@ function suggestReplacementForUnavailable(part: AssemblyPart, useCase: string): 
       availability: 'coming_soon',
     },
     case: {
-      name: part.specs?.formFactor === 'ATX' ? 'Lian Li Lancool II Mesh' : 'Cooler Master MasterBox Q300L',
+      name:
+        part.specs?.formFactor === 'ATX'
+          ? 'Lian Li Lancool II Mesh'
+          : 'Cooler Master MasterBox Q300L',
       model: part.specs?.formFactor === 'ATX' ? 'Lancool II Mesh' : 'MasterBox Q300L',
       reason: `پیشنهاد جایگزین: کیس ${part.specs?.formFactor || 'ATX'} با جریان هوای خوب`,
       estimatedPrice: '۸ تا ۱۵ میلیون',
@@ -707,12 +768,14 @@ function suggestReplacementForUnavailable(part: AssemblyPart, useCase: string): 
     },
   };
 
-  return suggestions[cat] || {
-    name: part.categoryLabel,
-    model: part.name,
-    reason: `پیشنهاد جایگزین برای ${part.categoryLabel} به زودی موجود می‌شود`,
-    availability: 'coming_soon',
-  };
+  return (
+    suggestions[cat] || {
+      name: part.categoryLabel,
+      model: part.name,
+      reason: `پیشنهاد جایگزین برای ${part.categoryLabel} به زودی موجود می‌شود`,
+      availability: 'coming_soon',
+    }
+  );
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -720,7 +783,9 @@ function suggestReplacementForUnavailable(part: AssemblyPart, useCase: string): 
 // ════════════════════════════════════════════════════════════════
 
 function hasRemainingIssues(parts: AssemblyPart[], messages: any[]): boolean {
-  const errors = messages.filter(m => m.severity === 'error').length;
-  const warnings = messages.filter(m => m.severity === 'warning' && m.text.includes('ناسازگار')).length;
+  const errors = messages.filter((m) => m.severity === 'error').length;
+  const warnings = messages.filter(
+    (m) => m.severity === 'warning' && m.text.includes('ناسازگار')
+  ).length;
   return errors > 0 || warnings > 0;
 }

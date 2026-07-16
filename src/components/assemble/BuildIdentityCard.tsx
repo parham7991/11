@@ -35,21 +35,26 @@ type Props = {
 
 const toman = (n: number) => `${Math.round(n).toLocaleString('fa-IR')} تومان`;
 const shortToman = (n: number) => {
-  if (n >= 1_000_000_000) return `${(n / 1_000_000_000).toLocaleString('fa-IR', { maximumFractionDigits: 1 })} میلیارد`;
+  if (n >= 1_000_000_000)
+    return `${(n / 1_000_000_000).toLocaleString('fa-IR', { maximumFractionDigits: 1 })} میلیارد`;
   if (n >= 1_000_000) return `${Math.round(n / 1_000_000).toLocaleString('fa-IR')} میلیون`;
   return n.toLocaleString('fa-IR');
 };
 
 /** خلاصه‌ی کوتاه از یک قطعه (تا 40 کاراکتر) */
 function shortName(name: string): string {
-  const clean = String(name || '').replace(/\s+/g, ' ').trim();
+  const clean = String(name || '')
+    .replace(/\s+/g, ' ')
+    .trim();
   if (clean.length <= 40) return clean;
   return clean.slice(0, 38) + '…';
 }
 
 /** ساخت رشتهٔ کوتاه هش برای URL */
 function buildHash(parts: IdCardPart[]): string {
-  const ids = parts.map(p => `${p.category}:${p.id}${p.quantity && p.quantity > 1 ? `x${p.quantity}` : ''}`).join(',');
+  const ids = parts
+    .map((p) => `${p.category}:${p.id}${p.quantity && p.quantity > 1 ? `x${p.quantity}` : ''}`)
+    .join(',');
   try {
     return typeof btoa !== 'undefined' ? btoa(unescape(encodeURIComponent(ids))) : ids;
   } catch {
@@ -77,12 +82,13 @@ export default function BuildIdentityCard({ parts, useCaseLabel, totalPrice, tit
   const shareUrl = useMemo(() => buildShareUrl(parts), [parts]);
   const qrSrc = useMemo(() => buildQrSrc(shareUrl, 220), [shareUrl]);
 
-  const cpu = parts.find(p => p.category === 'cpu');
-  const gpu = parts.find(p => p.category === 'gpu');
-  const ram = parts.find(p => p.category === 'ram');
-  const storage = parts.find(p => p.category === 'storage');
+  const cpu = parts.find((p) => p.category === 'cpu');
+  const gpu = parts.find((p) => p.category === 'gpu');
+  const ram = parts.find((p) => p.category === 'ram');
+  const storage = parts.find((p) => p.category === 'storage');
 
-  const buildTitle = title || (useCaseLabel ? `سیستم ${useCaseLabel} — آفلند` : 'کانفیگ اسمبل هوشمند آفلند');
+  const buildTitle =
+    title || (useCaseLabel ? `سیستم ${useCaseLabel} — آفلند` : 'کانفیگ اسمبل هوشمند آفلند');
 
   const shareText = [
     `🖥️ ${buildTitle}`,
@@ -93,7 +99,9 @@ export default function BuildIdentityCard({ parts, useCaseLabel, totalPrice, tit
     `💰 قیمت کل: ${toman(totalPrice)}`,
     ``,
     `🔗 مشاهده کانفیگ: ${shareUrl}`,
-  ].filter(Boolean).join('\n');
+  ]
+    .filter(Boolean)
+    .join('\n');
 
   const copyLink = async () => {
     try {
@@ -148,7 +156,10 @@ export default function BuildIdentityCard({ parts, useCaseLabel, totalPrice, tit
           </button>
         </div>
       </div>
-      <div className="asm-idcard__qr" title="این QR را با موبایل اسکن کنید تا کانفیگ در سایت باز شود.">
+      <div
+        className="asm-idcard__qr"
+        title="این QR را با موبایل اسکن کنید تا کانفیگ در سایت باز شود."
+      >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={qrSrc} alt="QR Code کانفیگ آفلند" loading="lazy" width={98} height={98} />
       </div>

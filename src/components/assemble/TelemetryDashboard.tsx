@@ -55,9 +55,13 @@ const THERMAL_LABEL: Record<ThermalStatus, string> = {
 
 function BottleneckPill({ report }: { report: BottleneckReport }) {
   const color =
-    report.severity === 'BALANCED' ? '#10b981' :
-    report.severity === 'LOW' ? '#3b82f6' :
-    report.severity === 'MEDIUM' ? '#f59e0b' : '#ef4444';
+    report.severity === 'BALANCED'
+      ? '#10b981'
+      : report.severity === 'LOW'
+        ? '#3b82f6'
+        : report.severity === 'MEDIUM'
+          ? '#f59e0b'
+          : '#ef4444';
   return (
     <div className="asm-tele__bnpill" style={{ borderColor: color }}>
       <span className="asm-tele__bnpill-res">{report.resolution}</span>
@@ -81,7 +85,7 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
     [parts, dailyHours]
   );
   const benchmarks = useMemo(
-    () => COMPLETE_BENCHMARK_LIBRARY.filter(b => b.category === activeBenchTab),
+    () => COMPLETE_BENCHMARK_LIBRARY.filter((b) => b.category === activeBenchTab),
     [activeBenchTab]
   );
 
@@ -99,17 +103,21 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
   const gpuLoad = t.thermal.estimatedGpuLoadTempC;
 
   const cpuTempClass =
-    cpuLoad >= 90 ? 'asm-tele__temp-cell asm-tele__temp-cell--danger'
-    : cpuLoad >= 78 ? 'asm-tele__temp-cell asm-tele__temp-cell--warm'
-    : 'asm-tele__temp-cell asm-tele__temp-cell--ok';
+    cpuLoad >= 90
+      ? 'asm-tele__temp-cell asm-tele__temp-cell--danger'
+      : cpuLoad >= 78
+        ? 'asm-tele__temp-cell asm-tele__temp-cell--warm'
+        : 'asm-tele__temp-cell asm-tele__temp-cell--ok';
 
   const gpuTempClass =
-    gpuLoad >= 88 ? 'asm-tele__temp-cell asm-tele__temp-cell--danger'
-    : gpuLoad >= 76 ? 'asm-tele__temp-cell asm-tele__temp-cell--warm'
-    : 'asm-tele__temp-cell asm-tele__temp-cell--ok';
+    gpuLoad >= 88
+      ? 'asm-tele__temp-cell asm-tele__temp-cell--danger'
+      : gpuLoad >= 76
+        ? 'asm-tele__temp-cell asm-tele__temp-cell--warm'
+        : 'asm-tele__temp-cell asm-tele__temp-cell--ok';
 
   return (
-    <div className={`asm-tele${compact ? ' asm-tele--compact' : ''}`}>
+    <div className={`asm-tele${compact ? 'asm-tele--compact' : ''}`}>
       <div className="asm-tele__header">
         <span className="asm-tele__title">
           <span className="asm-tele__pulse" /> داشبورد تله‌متری زنده
@@ -121,17 +129,29 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
       <div className={`asm-tele__live ${liveBadgeClass[liveCheck.status]}`}>
         <div className="asm-tele__live-head">
           <span className="asm-tele__live-ico">
-            {liveCheck.status === 'VERIFIED_PERFECT' ? '🤖✅' :
-              liveCheck.status === 'CRITICAL_ERROR' ? '🤖❌' : '🤖⚠️'}
+            {liveCheck.status === 'VERIFIED_PERFECT'
+              ? '🤖✅'
+              : liveCheck.status === 'CRITICAL_ERROR'
+                ? '🤖❌'
+                : '🤖⚠️'}
           </span>
           <span className="asm-tele__live-txt">{liveCheck.aiLiveSummaryFa}</span>
         </div>
         {liveCheck.issues.length > 0 && (
           <ul className="asm-tele__live-list">
             {liveCheck.issues.slice(0, 5).map((iss, i) => (
-              <li key={i} className={`asm-tele__live-item asm-tele__live-item--${iss.severity.toLowerCase()}`}>
-                <b>{iss.severity === 'CRITICAL' ? '⛔ بحرانی' : iss.severity === 'WARNING' ? '⚠️ هشدار' : 'ℹ️'}</b>
-                {' '}[{iss.partCategory}] {iss.message}
+              <li
+                key={i}
+                className={`asm-tele__live-item asm-tele__live-item--${iss.severity.toLowerCase()}`}
+              >
+                <b>
+                  {iss.severity === 'CRITICAL'
+                    ? '⛔ بحرانی'
+                    : iss.severity === 'WARNING'
+                      ? '⚠️ هشدار'
+                      : 'ℹ️'}
+                </b>{' '}
+                [{iss.partCategory}] {iss.message}
                 <small>💡 راهکار: {iss.suggestedFix}</small>
               </li>
             ))}
@@ -153,12 +173,22 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
                 style={{ width: `${loadPct}%`, background: psuColor.bg }}
               />
               <div className="asm-tele__gauge-marker" style={{ left: '75%' }} title="آستانه ۷۵٪" />
-              <div className="asm-tele__gauge-marker asm-tele__gauge-marker--danger" style={{ left: '90%' }} title="آستانه ۹۰٪" />
+              <div
+                className="asm-tele__gauge-marker asm-tele__gauge-marker--danger"
+                style={{ left: '90%' }}
+                title="آستانه ۹۰٪"
+              />
             </div>
             <div className="asm-tele__gauge-values">
-              <span><b>{t.power.totalTdp}W</b> مصرف کل</span>
-              <span style={{ color: psuColor.bg }}><b>{loadPct}٪</b> بار</span>
-              <span><b>{t.power.currentPsuWattage || '—'}</b>W پاور</span>
+              <span>
+                <b>{t.power.totalTdp}W</b> مصرف کل
+              </span>
+              <span style={{ color: psuColor.bg }}>
+                <b>{loadPct}٪</b> بار
+              </span>
+              <span>
+                <b>{t.power.currentPsuWattage || '—'}</b>W پاور
+              </span>
             </div>
           </div>
           <div className="asm-tele__msg" style={{ color: psuColor.bg }}>
@@ -167,7 +197,10 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
           <div className="asm-tele__hint">
             پیشنهاد حداقل: <b>{t.power.recommendedPsuWattage.toLocaleString('fa-IR')}W</b>
             {t.power.currentPsuWattage > 0 && (
-              <> | حاشیهٔ امن: <b>{t.power.headroomPercent}٪</b></>
+              <>
+                {' '}
+                | حاشیهٔ امن: <b>{t.power.headroomPercent}٪</b>
+              </>
             )}
           </div>
         </div>
@@ -183,9 +216,7 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
             <BottleneckPill report={t.bottleneck.resolution1440p} />
             <BottleneckPill report={t.bottleneck.resolution4K} />
           </div>
-          <div className="asm-tele__bnmsg">
-            {t.bottleneck.resolution1440p.description}
-          </div>
+          <div className="asm-tele__bnmsg">{t.bottleneck.resolution1440p.description}</div>
         </div>
 
         {/* ═════ کارت ۳: FPS ═════ */}
@@ -226,7 +257,9 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
           <div className="asm-tele__card-head">
             <span className="asm-tele__ico">🌡️</span>
             <span className="asm-tele__cap">شبیه‌ساز ترمودینامیک زیر بار</span>
-            <span className={`asm-tele__thermal-badge asm-tele__thermal-badge--${t.thermal.thermalStatus === 'OPTIMAL' ? 'optimal' : t.thermal.thermalStatus === 'WARM' ? 'warm' : 'danger'}`}>
+            <span
+              className={`asm-tele__thermal-badge asm-tele__thermal-badge--${t.thermal.thermalStatus === 'OPTIMAL' ? 'optimal' : t.thermal.thermalStatus === 'WARM' ? 'warm' : 'danger'}`}
+            >
               {THERMAL_LABEL[t.thermal.thermalStatus]}
             </span>
           </div>
@@ -241,13 +274,13 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
             </div>
           </div>
           {t.thermal.thermalPasteRecommendation && (
-            <div className="asm-tele__paste-tip">
-              🚨 {t.thermal.thermalPasteRecommendation}
-            </div>
+            <div className="asm-tele__paste-tip">🚨 {t.thermal.thermalPasteRecommendation}</div>
           )}
           <div className="asm-tele__airflow">
             <span>شاخص تهویه هوای کیس:</span>
-            <span><b>{t.thermal.airflowScore}</b> / ۱۰۰</span>
+            <span>
+              <b>{t.thermal.airflowScore}</b> / ۱۰۰
+            </span>
           </div>
         </div>
 
@@ -283,13 +316,14 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
               max={24}
               step={1}
               value={dailyHours}
-              onChange={e => setDailyHours(Number(e.target.value))}
+              onChange={(e) => setDailyHours(Number(e.target.value))}
               aria-label="ساعت مصرف روزانه"
             />
             <b style={{ color: 'var(--at-primary)' }}>{dailyHours.toLocaleString('fa-IR')} ساعت</b>
           </div>
           <div className="asm-tele__elec-cert">
-            گواهی پاور: <b>{electricity.psuCertification}</b> — راندمان {electricity.psuEfficiencyPercent}٪
+            گواهی پاور: <b>{electricity.psuCertification}</b> — راندمان{' '}
+            {electricity.psuEfficiencyPercent}٪
           </div>
         </div>
 
@@ -300,7 +334,10 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
             <span className="asm-tele__cap">آینده‌نگری و آکوستیک</span>
           </div>
           <div className="asm-tele__futurescore">
-            <div className="asm-tele__scoreCircle" style={{ '--score': t.futureProofing.score } as React.CSSProperties}>
+            <div
+              className="asm-tele__scoreCircle"
+              style={{ '--score': t.futureProofing.score } as React.CSSProperties}
+            >
               <span>{t.futureProofing.score}</span>
               <small>از ۱۰</small>
             </div>
@@ -315,7 +352,11 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
           </div>
           <div className="asm-tele__acoustic">
             <span className="asm-tele__ac-ico">
-              {t.acoustic.rating === 'Ultra Silent' ? '🔇' : t.acoustic.rating === 'Balanced Airflow' ? '🔉' : '🔊'}
+              {t.acoustic.rating === 'Ultra Silent'
+                ? '🔇'
+                : t.acoustic.rating === 'Balanced Airflow'
+                  ? '🔉'
+                  : '🔊'}
             </span>
             <span className="asm-tele__ac-txt">
               <b>{t.acoustic.rating}</b> — حدود <b>{t.acoustic.estimatedDB} dB</b>
@@ -346,16 +387,21 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
 
       {/* ═════ بنچمارک سفارشی ═════ */}
       <div className="asm-tele__benchmarks">
-        <div className="asm-tele__card-head" style={{ borderBottom: 0, paddingBottom: 0, marginBottom: 8 }}>
+        <div
+          className="asm-tele__card-head"
+          style={{ borderBottom: 0, paddingBottom: 0, marginBottom: 8 }}
+        >
           <span className="asm-tele__ico">📚</span>
-          <span className="asm-tele__cap">کتابخانهٔ بنچمارک زنده — {COMPLETE_BENCHMARK_LIBRARY.length}+ عنوان</span>
+          <span className="asm-tele__cap">
+            کتابخانهٔ بنچمارک زنده — {COMPLETE_BENCHMARK_LIBRARY.length}+ عنوان
+          </span>
         </div>
         <div className="asm-tele__bench-tabs">
-          {(Object.keys(BENCHMARK_CATEGORY_LABELS) as BenchmarkCategory[]).map(cat => (
+          {(Object.keys(BENCHMARK_CATEGORY_LABELS) as BenchmarkCategory[]).map((cat) => (
             <button
               key={cat}
               type="button"
-              className={`asm-tele__bench-tab${activeBenchTab === cat ? ' asm-tele__bench-tab--active' : ''}`}
+              className={`asm-tele__bench-tab${activeBenchTab === cat ? 'asm-tele__bench-tab--active' : ''}`}
               onClick={() => setActiveBenchTab(cat)}
             >
               {BENCHMARK_CATEGORY_LABELS[cat]}
@@ -363,7 +409,7 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
           ))}
         </div>
         <div className="asm-tele__bench-list">
-          {benchmarks.map(bench => {
+          {benchmarks.map((bench) => {
             const est = estimateBenchmark(bench, parts);
             return (
               <div key={bench.id} className="asm-tele__bench-item">
@@ -372,9 +418,13 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
                 <div className="asm-tele__bench-result">
                   <span className="asm-tele__bench-value">{est.formatted}</span>
                   <span className={`asm-tele__bench-ready asm-tele__bench-ready--${est.readiness}`}>
-                    {est.readiness === 'excellent' ? 'عالی'
-                      : est.readiness === 'good' ? 'مناسب'
-                      : est.readiness === 'fair' ? 'قابل‌قبول' : 'ناکافی'}
+                    {est.readiness === 'excellent'
+                      ? 'عالی'
+                      : est.readiness === 'good'
+                        ? 'مناسب'
+                        : est.readiness === 'fair'
+                          ? 'قابل‌قبول'
+                          : 'ناکافی'}
                   </span>
                 </div>
               </div>
@@ -390,12 +440,14 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
             <span>📐</span> بررسی تداخل‌های فیزیکی ({t.physicalClearances.length})
           </div>
           {t.physicalClearances.map((iss, i) => (
-            <div
-              key={i}
-              className={`asm-tele__issue asm-tele__issue--${iss.type.toLowerCase()}`}
-            >
+            <div key={i} className={`asm-tele__issue asm-tele__issue--${iss.type.toLowerCase()}`}>
               <div className="asm-tele__issue-title">
-                {iss.type === 'CRITICAL' ? '⛔ بحرانی' : iss.type === 'WARNING' ? '⚠️ هشدار' : 'ℹ️ اطلاع'} — {iss.category}
+                {iss.type === 'CRITICAL'
+                  ? '⛔ بحرانی'
+                  : iss.type === 'WARNING'
+                    ? '⚠️ هشدار'
+                    : 'ℹ️ اطلاع'}{' '}
+                — {iss.category}
               </div>
               <div className="asm-tele__issue-msg">{iss.message}</div>
               {iss.resolution && (

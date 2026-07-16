@@ -35,11 +35,11 @@ export default function ThemeSelector({ value, onChange }: Props) {
     <div className="asm-theme">
       <span className="asm-theme__label">تِم ظاهری سیستم:</span>
       <div className="asm-theme__group">
-        {THEMES.map(t => (
+        {THEMES.map((t) => (
           <button
             key={t.id}
             type="button"
-            className={`asm-theme__btn${value === t.id ? ' asm-theme__btn--active' : ''} asm-theme__btn--${t.id}`}
+            className={`asm-theme__btn${value === t.id ? 'asm-theme__btn--active' : ''} asm-theme__btn--${t.id}`}
             onClick={() => onChange(t.id)}
             title={t.desc}
           >

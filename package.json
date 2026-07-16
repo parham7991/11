@@ -2,15 +2,14 @@
   "name": "template-nextjs",
   "version": "0.1.0",
   "private": true,
-  "proxy": "",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write $(git diff --name-only --diff-filter=ACMRT | grep -E '\\.(js|ts|tsx|jsx|json|css|scss|md)$')",
-    "format:all": "prettier --write .",
-    "prepare": "husky install"
+    "format": "prettier --write .",
+    "format:staged": "prettier --write $(git diff --name-only --diff-filter=ACMRT | grep -E '\\.(js|ts|tsx|jsx|json|css|scss|md)$')",
+    "prepare": "husky"
   },
   "dependencies": {
     "@heroui/accordion": "^2.2.24",
@@ -48,6 +47,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-inner-image-zoom": "^3.0.3",
+    "@types/react-dom": "^19",
     "autoprefixer": "^10.4.21",
     "baseline-browser-mapping": "^2.9.3",
     "browserslist": "^4.26.3",

@@ -8,8 +8,8 @@ const redis = new Redis({
   host: redisHost || '127.0.0.1',
   port: Number(process.env.NEXT_PUBLIC_REDIS_PORT) || 6379,
   // password: 'در صورت نیاز'
-  lazyConnect: true,        // اتصال خودکار انجام نمیشه، فقط وقتی صدا زده بشه
-  maxRetriesPerRequest: 3,  // حداکثر ۳ بار تلاش
+  lazyConnect: true, // اتصال خودکار انجام نمیشه، فقط وقتی صدا زده بشه
+  maxRetriesPerRequest: 3, // حداکثر ۳ بار تلاش
   retryStrategy(times) {
     if (times > 3) {
       // بعد از ۳ بار تلاش، دیگه تلاش نکن

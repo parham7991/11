@@ -1,0 +1,11 @@
+{
+    "env": {
+"ANTHROPIC_BASE_URL": "https://openrouter.ai/api",
+"ANTHROPIC_AUTH_TOKEN":"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",
+"ANTHROPIC_API_KEY":"",
+"ANTHROPIC DEFAULT_SONNET_MODEL": "openai/gpt-oss-120b:free",
+"ANTHROPIC_DEFAULT_HAIKU_MODEL": "openai/gpt-oss-120b:free",
+"ANTHROPIC_DEFAULT_OPUS_MODEL": "openai/gpt-oss-120b:free"
+},
+ "theme": "dark"
+}

@@ -140,7 +140,8 @@ export async function generate_metadata_home(): Promise<Metadata> {
         },
       }
     : {
-        title: normalizePersianText('آفلند'),
+        title: default_meta_data.title,
+        description: default_meta_data.description,
         robots: {
           index: true,
           follow: true,
@@ -152,8 +153,8 @@ export async function generate_metadata_home(): Promise<Metadata> {
           canonical: `${BASEURL_SITE}/`,
         },
         openGraph: {
-          title: normalizePersianText('آفلند'),
-          description: normalizePersianText('آفلند'),
+          title: default_meta_data.openGraph.title,
+          description: default_meta_data.openGraph.description,
           type: 'website',
           url: `${BASEURL_SITE}/`,
           siteName: SITE_NAME,
@@ -166,8 +167,8 @@ export async function generate_metadata_home(): Promise<Metadata> {
           ],
         },
         twitter: {
-          title: normalizePersianText('آفلند'),
-          description: normalizePersianText('آفلند'),
+          title: default_meta_data.twitter.title,
+          description: default_meta_data.twitter.description,
         },
       };
 }

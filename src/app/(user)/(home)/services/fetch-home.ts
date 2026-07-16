@@ -2,8 +2,8 @@ import { BASEURL } from '@/lib/variable';
 
 export const fetchHome = async () => {
   const res = await fetch(`${BASEURL}/page?url_key=/`, {
-    cache: 'force-cache', // کش کامل
-    next: { tags: ['home_page'] }, // برای revalidation با API
+    // ISR: har 30 daghighe (1800s) data az API taze mishavad
+    next: { revalidate: 1800, tags: ['home_page'] },
   });
   if (!res.ok) {
     throw new Error('Failed to fetch home');

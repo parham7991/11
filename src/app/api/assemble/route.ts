@@ -52,14 +52,21 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   const rawUseCase = String(body?.useCase || 'gaming');
-  const customDesc = String(body?.customDesc || '').slice(0, 300).trim();
+  const customDesc = String(body?.customDesc || '')
+    .slice(0, 300)
+    .trim();
   const useCaseKey = rawUseCase === 'custom' ? 'gaming' : rawUseCase;
   const budget = Math.max(5_000_000, Math.min(2_000_000_000, Number(body?.budget) || 30_000_000));
   const note = String(body?.note || '').slice(0, 400);
   const includeOptional = true; // اسمبل کامل همیشه کولر/فن‌های لازم را هم بررسی می‌کند
   const verifyStock = body?.verifyStock !== false;
 
-  console.log('🚀 Assembly Request v4:', { useCase: useCaseKey, budget, includeOptional, verifyStock });
+  console.log('🚀 Assembly Request v4:', {
+    useCase: useCaseKey,
+    budget,
+    includeOptional,
+    verifyStock,
+  });
 
   // ═══════ ۱) جمع‌آوری کاندیداها ═══════
   let categories: CategoryCandidates[];
@@ -78,11 +85,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   // ═══════ ۲) بررسی real-time موجودی ═══════
   if (verifyStock) {
-    const allIds = categories.flatMap(c => c.candidates.slice(0, 5).map(p => p.id));
+    const allIds = categories.flatMap((c) => c.candidates.slice(0, 5).map((p) => p.id));
     if (allIds.length > 0) {
       try {
         const verifications = await verifyProducts(allIds);
-        const verificationById = new Map(verifications.map(v => [String(v.id), v]));
+        const verificationById = new Map(verifications.map((v) => [String(v.id), v]));
         for (const cat of categories) {
           for (const part of cat.candidates) {
             const v = verificationById.get(String(part.id));
@@ -101,17 +108,22 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
   }
 
-  const usable = categories.filter(c => c.candidates.filter(p => p.inStock && p.price > 0).length > 0);
+  const usable = categories.filter(
+    (c) => c.candidates.filter((p) => p.inStock && p.price > 0).length > 0
+  );
 
   if (usable.length === 0) {
-    return NextResponse.json({
-      ok: false,
-      error: 'هیچ قطعهٔ موجودی پیدا نشد. لطفاً بعداً دوباره تلاش کنید.',
-      debug: {
-        categoriesChecked: categories.length,
-        totalCandidates: categories.reduce((sum, c) => sum + c.candidates.length, 0),
+    return NextResponse.json(
+      {
+        ok: false,
+        error: 'هیچ قطعهٔ موجودی پیدا نشد. لطفاً بعداً دوباره تلاش کنید.',
+        debug: {
+          categoriesChecked: categories.length,
+          totalCandidates: categories.reduce((sum, c) => sum + c.candidates.length, 0),
+        },
       },
-    }, { status: 404 });
+      { status: 404 }
+    );
   }
 
   // ═══════ ۳) انتخاب هوشمند با AI (هر دسته جداگانه) ═══════
@@ -119,10 +131,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const { parts: initialParts } = await selectPartsWithAi(usable, useCaseKey, budget, customDesc);
 
   if (initialParts.length === 0) {
-    return NextResponse.json({
-      ok: false,
-      error: 'امکان ساخت سیستم وجود ندارد. لطفاً بودجه یا کاربری رو تغییر بدید.',
-    }, { status: 404 });
+    return NextResponse.json(
+      {
+        ok: false,
+        error: 'امکان ساخت سیستم وجود ندارد. لطفاً بودجه یا کاربری رو تغییر بدید.',
+      },
+      { status: 404 }
+    );
   }
 
   // ═══════ ۴) Auto-Resolver (v4 — جدید!) ═══════
@@ -132,7 +147,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   console.log(`✅ Resolver: ${resolution.actions.length} اقدام`);
   console.log(`   - حذف‌شده: ${resolution.removedParts.length}`);
-  console.log(`   - جایگزین‌شده: ${resolution.actions.filter(a => a.type === 'replace').length}`);
+  console.log(`   - جایگزین‌شده: ${resolution.actions.filter((a) => a.type === 'replace').length}`);
   console.log(`   - پیشنهاد: ${resolution.suggestions.length}`);
   console.log(`   - پیام: ${resolution.messages.length}`);
 
@@ -142,23 +157,27 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const description = generateDescription(parts, useCaseKey, tier);
   const recommendation = generateSystemRecommendation(parts, useCaseKey, tier, budget);
   const summary = summarize(parts);
-  const useCase = USE_CASES.find(u => u.key === useCaseKey) || USE_CASES[0];
+  const useCase = USE_CASES.find((u) => u.key === useCaseKey) || USE_CASES[0];
 
-  const hasCPU = parts.some(p => p.category === 'cpu' && p.inStock);
+  const hasCPU = parts.some((p) => p.category === 'cpu' && p.inStock);
   const gpuOptionalForUseCase = useCaseKey === 'office';
-  const hasGPU = gpuOptionalForUseCase || parts.some(p => p.category === 'gpu' && p.inStock);
-  const hasRAM = parts.some(p => p.category === 'ram' && p.inStock);
-  const hasMB = parts.some(p => p.category === 'motherboard' && p.inStock);
+  const hasGPU = gpuOptionalForUseCase || parts.some((p) => p.category === 'gpu' && p.inStock);
+  const hasRAM = parts.some((p) => p.category === 'ram' && p.inStock);
+  const hasMB = parts.some((p) => p.category === 'motherboard' && p.inStock);
 
   const unavailableMessages: string[] = [];
   if (!hasCPU) unavailableMessages.push('CPU سازگار الان نداریم، به زودی موجود میشه');
-  if (!hasGPU && !gpuOptionalForUseCase) unavailableMessages.push('کارت گرافیک سازگار الان نداریم، به زودی موجود میشه');
+  if (!hasGPU && !gpuOptionalForUseCase)
+    unavailableMessages.push('کارت گرافیک سازگار الان نداریم، به زودی موجود میشه');
   if (!hasRAM) unavailableMessages.push('رم سازگار الان نداریم، به زودی موجود میشه');
   if (!hasMB) unavailableMessages.push('مادربرد سازگار الان نداریم، به زودی موجود میشه');
 
   const clean = (value: any): any => {
     if (typeof value === 'string') {
-      return value.replace(/[✅❌⚠️💡⏳🎮⭐📦🚫ℹ️💾⚡🔌🔥🚀🧠🏷️📐📡🌈💧🌪️🏅🔧🗑️💰❄️✨🌬️🏢🎬📹🎨🏆📌]/gu, '').replace(/\s+/g, ' ').trim();
+      return value
+        .replace(/[✅❌⚠️💡⏳🎮⭐📦🚫ℹ️💾⚡🔌🔥🚀🧠🏷️📐📡🌈💧🌪️🏅🔧🗑️💰❄️✨🌬️🏢🎬📹🎨🏆📌]/gu, '')
+        .replace(/\s+/g, ' ')
+        .trim();
     }
     if (Array.isArray(value)) return value.map(clean);
     if (value && typeof value === 'object') {
@@ -176,14 +195,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     summary,
     tier,
     compatibilityScore: compatMatrix.score,
-    compatibilityIssues: compatMatrix.errors.map(e => ({
+    compatibilityIssues: compatMatrix.errors.map((e) => ({
       severity: e.severity,
       message: e.message,
       category: e.category,
       reason: e.reason,
       solution: e.solution,
     })),
-    compatibilityWarnings: compatMatrix.warnings.map(w => ({
+    compatibilityWarnings: compatMatrix.warnings.map((w) => ({
       severity: w.severity,
       message: w.message,
       category: w.category,
@@ -199,7 +218,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     recommendation,
     partsStatus: {
       cpu: hasCPU ? '✅' : '⏳',
-      gpu: gpuOptionalForUseCase ? 'اختیاری' : (hasGPU ? '✅' : '⏳'),
+      gpu: gpuOptionalForUseCase ? 'اختیاری' : hasGPU ? '✅' : '⏳',
       ram: hasRAM ? '✅' : '⏳',
       motherboard: hasMB ? '✅' : '⏳',
     },
@@ -211,7 +230,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       removedCount: resolution.removedParts.length,
       suggestionCount: resolution.suggestions.length,
       actions: clean(resolution.actions),
-      removedParts: resolution.removedParts.map(r => ({
+      removedParts: resolution.removedParts.map((r) => ({
         id: r.part.id,
         name: r.part.name,
         category: r.part.category,
@@ -225,7 +244,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       totalCandidates: categories.reduce((sum, c) => sum + c.candidates.length, 0),
       mandatoryParts: summary.mandatoryCount,
       optionalParts: summary.optionalCount,
-      selectedCategories: parts.map(p => p.category),
+      selectedCategories: parts.map((p) => p.category),
       compatibilityErrors: compatMatrix.errors.length,
       compatibilityWarnings: compatMatrix.warnings.length,
       stockVerified: verifyStock,
@@ -238,7 +257,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 // ════════════════════════════════════════════════════════════════
 // 🤖 انتخاب قطعات با AI — هر دسته جداگانه
 // ════════════════════════════════════════════════════════════════
-
 
 function quantile(values: number[], ratio: number): number {
   if (!values.length) return 0;
@@ -253,37 +271,46 @@ function categoryBudgetWindow(
   budget: number,
   remainingBudget: number,
   targetShare: number,
-  optional = false,
+  optional = false
 ): { min: number; max: number; ideal: number; note: string } {
   const prices = candidates
-    .filter(c => c.inStock && c.finalPrice > 0)
-    .map(c => c.finalPrice)
+    .filter((c) => c.inStock && c.finalPrice > 0)
+    .map((c) => c.finalPrice)
     .sort((a, b) => a - b);
 
   if (!prices.length) {
-    return { min: 0, max: Math.max(0, remainingBudget), ideal: targetShare, note: 'بدون دادهٔ قیمت معتبر' };
+    return {
+      min: 0,
+      max: Math.max(0, remainingBudget),
+      ideal: targetShare,
+      note: 'بدون دادهٔ قیمت معتبر',
+    };
   }
 
-  const p10 = quantile(prices, 0.10);
+  const p10 = quantile(prices, 0.1);
   const p25 = quantile(prices, 0.25);
-  const p50 = quantile(prices, 0.50);
+  const p50 = quantile(prices, 0.5);
   const p75 = quantile(prices, 0.75);
-  const p90 = quantile(prices, 0.90);
+  const p90 = quantile(prices, 0.9);
   const categoryImportance: Record<string, number> = {
     gpu: 1.65,
     cpu: 1.45,
-    motherboard: 1.30,
+    motherboard: 1.3,
     ram: 1.25,
-    storage: 1.20,
+    storage: 1.2,
     psu: 1.15,
-    case: 1.10,
-    cooler: 1.00,
+    case: 1.1,
+    cooler: 1.0,
     case_fan: 0.75,
     case_argb: 0.55,
   };
 
   const min = Math.max(1, Math.min(p25 || p10 || prices[0], Math.round(targetShare * 0.55)));
-  const maxByPercentile = Math.max(p50, p75 || p50, Math.round(targetShare * (categoryImportance[category] || 1.2)));
+  const maxByPercentile = Math.max(
+    p50,
+    p75 || p50,
+    Math.round(targetShare * (categoryImportance[category] || 1.2))
+  );
   const maxByRemaining = optional ? remainingBudget * 0.35 : remainingBudget * 0.82;
   const max = Math.max(min, Math.min(p90 || maxByPercentile, maxByPercentile, maxByRemaining));
   const ideal = Math.min(Math.max(targetShare, p25 || min), max);
@@ -297,11 +324,11 @@ function categoryBudgetWindow(
 }
 
 function isPartCompatibleWithPicked(candidate: AssemblyPart, pickedParts: AssemblyPart[]): boolean {
-  const cpu = pickedParts.find(p => p.category === 'cpu');
-  const mb = pickedParts.find(p => p.category === 'motherboard');
-  const ram = pickedParts.find(p => p.category === 'ram');
-  const psu = pickedParts.find(p => p.category === 'psu');
-  const gpu = pickedParts.find(p => p.category === 'gpu');
+  const cpu = pickedParts.find((p) => p.category === 'cpu');
+  const mb = pickedParts.find((p) => p.category === 'motherboard');
+  const ram = pickedParts.find((p) => p.category === 'ram');
+  const psu = pickedParts.find((p) => p.category === 'psu');
+  const gpu = pickedParts.find((p) => p.category === 'gpu');
 
   if (candidate.category === 'motherboard' && cpu?.specs?.socket && candidate.specs?.socket) {
     if (candidate.specs.socket !== cpu.specs.socket) return false;
@@ -318,13 +345,13 @@ function isPartCompatibleWithPicked(candidate: AssemblyPart, pickedParts: Assemb
   if (candidate.category === 'psu' && candidate.specs?.wattage) {
     const cpuTdp = Number(cpu?.specs?.tdp || 95);
     const gpuTdp = Number(gpu?.specs?.tdp || 150);
-    const required = Math.round((cpuTdp + gpuTdp + 100) * 1.35 / 50) * 50;
+    const required = Math.round(((cpuTdp + gpuTdp + 100) * 1.35) / 50) * 50;
     if (Number(candidate.specs.wattage) < required) return false;
   }
   if ((candidate.category === 'gpu' || candidate.category === 'cpu') && psu?.specs?.wattage) {
     const cpuTdp = Number((candidate.category === 'cpu' ? candidate : cpu)?.specs?.tdp || 95);
     const gpuTdp = Number((candidate.category === 'gpu' ? candidate : gpu)?.specs?.tdp || 150);
-    const required = Math.round((cpuTdp + gpuTdp + 100) * 1.35 / 50) * 50;
+    const required = Math.round(((cpuTdp + gpuTdp + 100) * 1.35) / 50) * 50;
     if (Number(psu.specs.wattage) < required) return false;
   }
   return true;
@@ -342,26 +369,40 @@ async function selectPartsWithAi(
   const details: string[] = [];
 
   // ═══════ اول قطعات اجباری (GPU, CPU, MB) به ترتیب اهمیت ═══════
-  const order: string[] = useCase === 'office'
-    ? ['cpu', 'motherboard', 'psu', 'ram', 'storage', 'case']
-    : ['gpu', 'cpu', 'motherboard', 'psu', 'ram', 'storage', 'case'];
+  const order: string[] =
+    useCase === 'office'
+      ? ['cpu', 'motherboard', 'psu', 'ram', 'storage', 'case']
+      : ['gpu', 'cpu', 'motherboard', 'psu', 'ram', 'storage', 'case'];
 
   for (const catKey of order) {
-    const cat = categories.find(c => c.category === catKey);
+    const cat = categories.find((c) => c.category === catKey);
     if (!cat || cat.candidates.length === 0) continue;
 
-    const rawValidCandidates = cat.candidates.filter(c => c.inStock && c.price > 0);
+    const rawValidCandidates = cat.candidates.filter((c) => c.inStock && c.price > 0);
     const validCandidates = rawValidCandidates
-      .filter(c => isPartCompatibleWithPicked(c, selectedParts))
-      .filter(c => catKey !== 'case' || isCaseCompatibleWithBuild(c, selectedParts, useCase));
-    const candidatesForPick = validCandidates.length ? validCandidates : rawValidCandidates.filter(c => catKey !== 'case' || isCaseCompatibleWithBuild(c, selectedParts, useCase));
+      .filter((c) => isPartCompatibleWithPicked(c, selectedParts))
+      .filter((c) => catKey !== 'case' || isCaseCompatibleWithBuild(c, selectedParts, useCase));
+    const candidatesForPick = validCandidates.length
+      ? validCandidates
+      : rawValidCandidates.filter(
+          (c) => catKey !== 'case' || isCaseCompatibleWithBuild(c, selectedParts, useCase)
+        );
     if (candidatesForPick.length === 0) continue;
 
     const targetShare = Math.round((weights[catKey] || 0.1) * budget);
-    const budgetWindow = categoryBudgetWindow(candidatesForPick, catKey, budget, remainingBudget, targetShare, false);
+    const budgetWindow = categoryBudgetWindow(
+      candidatesForPick,
+      catKey,
+      budget,
+      remainingBudget,
+      targetShare,
+      false
+    );
     const maxPrice = Math.max(budgetWindow.max, budgetWindow.min);
-    const rankedCandidates = [...candidatesForPick].sort((a, b) =>
-      smartCandidateScore(b, catKey, useCase, budget, budgetWindow) - smartCandidateScore(a, catKey, useCase, budget, budgetWindow)
+    const rankedCandidates = [...candidatesForPick].sort(
+      (a, b) =>
+        smartCandidateScore(b, catKey, useCase, budget, budgetWindow) -
+        smartCandidateScore(a, catKey, useCase, budget, budgetWindow)
     );
 
     // ═══════ فراخوانی AI برای انتخاب بهترین قطعه ═══════
@@ -371,7 +412,7 @@ async function selectPartsWithAi(
       budget,
       totalSpent: budget - remainingBudget,
       remainingBudget,
-      pickedParts: selectedParts.map(p => ({
+      pickedParts: selectedParts.map((p) => ({
         id: p.id,
         name: p.name,
         shortSpec: p.shortSpec,
@@ -386,7 +427,7 @@ async function selectPartsWithAi(
       categoryLabel: cat.label,
       budgetShare: budgetWindow.ideal,
       priceRange: budgetWindow,
-      candidates: rankedCandidates.slice(0, 28).map(c => ({
+      candidates: rankedCandidates.slice(0, 28).map((c) => ({
         id: c.id,
         name: c.name,
         shortSpec: c.shortSpec,
@@ -401,21 +442,30 @@ async function selectPartsWithAi(
     });
 
     let best = aiPick[0]
-      ? rankedCandidates.find(c => String(c.id) === String(aiPick[0].id)) || aiPick[0]
+      ? rankedCandidates.find((c) => String(c.id) === String(aiPick[0].id)) || aiPick[0]
       : undefined;
 
     // اگه AI قطعه‌ای بالاتر از بودجهٔ باقی‌مانده انتخاب کرد، از rule-based fallback استفاده کن
     if (!best || best.finalPrice > maxPrice) {
       const sorted = rankedCandidates
-        .filter(c => c.finalPrice >= budgetWindow.min * 0.70 && c.finalPrice <= maxPrice)
-        .sort((a, b) => smartCandidateScore(b, catKey, useCase, budget, budgetWindow) - smartCandidateScore(a, catKey, useCase, budget, budgetWindow));
-      best = sorted[0] || rankedCandidates[0] || candidatesForPick.sort((a, b) => a.finalPrice - b.finalPrice)[0];
+        .filter((c) => c.finalPrice >= budgetWindow.min * 0.7 && c.finalPrice <= maxPrice)
+        .sort(
+          (a, b) =>
+            smartCandidateScore(b, catKey, useCase, budget, budgetWindow) -
+            smartCandidateScore(a, catKey, useCase, budget, budgetWindow)
+        );
+      best =
+        sorted[0] ||
+        rankedCandidates[0] ||
+        candidatesForPick.sort((a, b) => a.finalPrice - b.finalPrice)[0];
     }
 
     if (best) {
       // ذخیره ۵ جایگزین (نه فقط ۳)
       const alts = rankedCandidates
-        .filter(c => c.id !== best!.id && c.finalPrice <= Math.max(maxPrice, best!.finalPrice * 1.25))
+        .filter(
+          (c) => c.id !== best!.id && c.finalPrice <= Math.max(maxPrice, best!.finalPrice * 1.25)
+        )
         .slice(0, 6);
       const picked: AssemblyPart = {
         ...best,
@@ -423,12 +473,15 @@ async function selectPartsWithAi(
         pickReason: `انتخاب دقیق · ${budgetWindow.note} · امتیاز ${best.confidence}%`,
       };
       if (catKey === 'ram') {
-        const mb = selectedParts.find(p => p.category === 'motherboard');
+        const mb = selectedParts.find((p) => p.category === 'motherboard');
         const cap = Number(picked.specs?.capacity || 0);
         const targetRam = getTargetRamGb(useCase, budget);
         const baseQty = cap > 0 ? Math.ceil(targetRam / cap) : 1;
         const slotQty = setRamQuantityWithinSlots(picked, baseQty, mb);
-        const affordableQty = Math.max(1, Math.min(slotQty, Math.floor(remainingBudget / Math.max(1, picked.finalPrice))));
+        const affordableQty = Math.max(
+          1,
+          Math.min(slotQty, Math.floor(remainingBudget / Math.max(1, picked.finalPrice)))
+        );
         const qty = setRamQuantityWithinSlots(picked, affordableQty, mb);
         if (qty > 1) {
           picked.quantity = qty;
@@ -443,15 +496,22 @@ async function selectPartsWithAi(
   }
 
   // ═══════ ۳.۵) اسمبل حرفه‌ای چندقطعه‌ای: چند SSD / چند فن / ارتقای RAM وقتی مادربرد و بودجه اجازه می‌ده ═══════
-  remainingBudget = addSmartExpandableParts(selectedParts, categories, useCase, budget, remainingBudget, details);
+  remainingBudget = addSmartExpandableParts(
+    selectedParts,
+    categories,
+    useCase,
+    budget,
+    remainingBudget,
+    details
+  );
 
   // ═══════ قطعات اختیاری ═══════
   const optionalOrder = ['cooler', 'case_fan', 'case_argb'];
   for (const catKey of optionalOrder) {
-    const cat = categories.find(c => c.category === catKey);
+    const cat = categories.find((c) => c.category === catKey);
     if (!cat || cat.candidates.length === 0) continue;
 
-    const cpuForCooler = selectedParts.find(p => p.category === 'cpu');
+    const cpuForCooler = selectedParts.find((p) => p.category === 'cpu');
 
     // ═════════════════════════════════════════════════════════════
     // 🛡️ گاردریل ویژهٔ Cooler: skip هوشمند اگر نیاز واقعی نیست
@@ -460,36 +520,63 @@ async function selectPartsWithAi(
     if (catKey === 'cooler') {
       // شرط ۱: اگر پردازنده نیاز به کولر ندارد → skip کامل
       if (!cpuNeedsCooler(cpuForCooler, useCase, budget)) {
-        details.push(`❄️ ${cat.label}: نادیده گرفته شد (پردازندهٔ ${cpuForCooler?.name || 'انتخابی'} با فن استوک کاملاً کار می‌کند).`);
+        details.push(
+          `❄️ ${cat.label}: نادیده گرفته شد (پردازندهٔ ${cpuForCooler?.name || 'انتخابی'} با فن استوک کاملاً کار می‌کند).`
+        );
         continue;
       }
 
       // شرط ۲: اگر ارزان‌ترین کولر موجود گران‌تر از ۱۵٪ کل بودجه
       // یا بیش از ۵۰٪ بودجهٔ باقی‌مانده است → skip
-      const inStockCoolers = cat.candidates.filter(c => c.inStock && c.price > 0);
+      const inStockCoolers = cat.candidates.filter((c) => c.inStock && c.price > 0);
       if (inStockCoolers.length > 0) {
-        const cheapest = Math.min(...inStockCoolers.map(c => Number(c.finalPrice || c.price || 0)));
-        const maxCoolerBudget = Math.min(budget * 0.15, remainingBudget * 0.50);
+        const cheapest = Math.min(
+          ...inStockCoolers.map((c) => Number(c.finalPrice || c.price || 0))
+        );
+        const maxCoolerBudget = Math.min(budget * 0.15, remainingBudget * 0.5);
         if (cheapest > maxCoolerBudget) {
-          details.push(`❄️ ${cat.label}: نادیده گرفته شد (ارزان‌ترین کولر موجود بیشتر از سقف منطقی این بودجه است).`);
+          details.push(
+            `❄️ ${cat.label}: نادیده گرفته شد (ارزان‌ترین کولر موجود بیشتر از سقف منطقی این بودجه است).`
+          );
           continue;
         }
       }
     }
 
     const validCandidates = cat.candidates
-      .filter(c => c.inStock && c.price > 0)
-      .filter(c => isPartCompatibleWithPicked(c, selectedParts))
-      .filter(c => catKey !== 'cooler' || Number(c.specs?.tdpRating || 180) >= Number(cpuForCooler?.specs?.tdp || 95) * 1.15)
+      .filter((c) => c.inStock && c.price > 0)
+      .filter((c) => isPartCompatibleWithPicked(c, selectedParts))
+      .filter(
+        (c) =>
+          catKey !== 'cooler' ||
+          Number(c.specs?.tdpRating || 180) >= Number(cpuForCooler?.specs?.tdp || 95) * 1.15
+      )
       // v6.0: در دستهٔ cooler، پایه لپ‌تاپ و اکسسوری‌ها را کاملاً حذف کن
-      .filter(c => catKey !== 'cooler' || isGenuineCpuCooler(c.name || ''));
+      .filter((c) => catKey !== 'cooler' || isGenuineCpuCooler(c.name || ''));
     if (validCandidates.length === 0) continue;
 
     const targetShare = Math.round((weights[catKey] || 0.02) * budget);
-    const budgetWindow = categoryBudgetWindow(validCandidates, catKey, budget, remainingBudget, targetShare, true);
-    const maxPrice = Math.min(Math.max(budgetWindow.max, targetShare * (catKey === 'cooler' ? 1.8 : 1.25)), remainingBudget * (catKey === 'cooler' ? 0.55 : 0.35));
+    const budgetWindow = categoryBudgetWindow(
+      validCandidates,
+      catKey,
+      budget,
+      remainingBudget,
+      targetShare,
+      true
+    );
+    const maxPrice = Math.min(
+      Math.max(budgetWindow.max, targetShare * (catKey === 'cooler' ? 1.8 : 1.25)),
+      remainingBudget * (catKey === 'cooler' ? 0.55 : 0.35)
+    );
     if (maxPrice < 1_000_000) {
-      if (catKey === 'cooler' && cpuNeedsCooler(selectedParts.find(p => p.category === 'cpu'), useCase, budget)) {
+      if (
+        catKey === 'cooler' &&
+        cpuNeedsCooler(
+          selectedParts.find((p) => p.category === 'cpu'),
+          useCase,
+          budget
+        )
+      ) {
         // برای سیستم‌های نیازمند کولر، تلاش را ادامه بده حتی اگر بودجهٔ باقی‌مانده کم باشد.
       } else break;
     }
@@ -500,30 +587,55 @@ async function selectPartsWithAi(
       budget,
       totalSpent: budget - remainingBudget,
       remainingBudget,
-      pickedParts: selectedParts.map(p => ({
-        id: p.id, name: p.name, shortSpec: p.shortSpec, specs: p.specs,
-        price: p.price, finalPrice: p.finalPrice, confidence: p.confidence,
-        brand: p.brand, category: p.category,
+      pickedParts: selectedParts.map((p) => ({
+        id: p.id,
+        name: p.name,
+        shortSpec: p.shortSpec,
+        specs: p.specs,
+        price: p.price,
+        finalPrice: p.finalPrice,
+        confidence: p.confidence,
+        brand: p.brand,
+        category: p.category,
       })),
       category: catKey,
       categoryLabel: cat.label,
       budgetShare: budgetWindow.ideal,
       priceRange: budgetWindow,
-      candidates: validCandidates.slice(0, 12).map(c => ({
-        id: c.id, name: c.name, shortSpec: c.shortSpec, specs: c.specs,
-        price: c.price, finalPrice: c.finalPrice, confidence: c.confidence,
-        brand: c.brand, category: c.category,
+      candidates: validCandidates.slice(0, 12).map((c) => ({
+        id: c.id,
+        name: c.name,
+        shortSpec: c.shortSpec,
+        specs: c.specs,
+        price: c.price,
+        finalPrice: c.finalPrice,
+        confidence: c.confidence,
+        brand: c.brand,
+        category: c.category,
       })),
       maxPick: 1,
     });
 
     let best = aiPick[0]
-      ? validCandidates.find(c => String(c.id) === String(aiPick[0].id)) || aiPick[0]
+      ? validCandidates.find((c) => String(c.id) === String(aiPick[0].id)) || aiPick[0]
       : undefined;
     if (!best || best.finalPrice > maxPrice) {
       const sorted = validCandidates
-        .filter(c => c.finalPrice <= maxPrice || (catKey === 'cooler' && cpuNeedsCooler(selectedParts.find(p => p.category === 'cpu'), useCase, budget)))
-        .sort((a, b) => smartCandidateScore(b, catKey, useCase, budget, budgetWindow) - smartCandidateScore(a, catKey, useCase, budget, budgetWindow));
+        .filter(
+          (c) =>
+            c.finalPrice <= maxPrice ||
+            (catKey === 'cooler' &&
+              cpuNeedsCooler(
+                selectedParts.find((p) => p.category === 'cpu'),
+                useCase,
+                budget
+              ))
+        )
+        .sort(
+          (a, b) =>
+            smartCandidateScore(b, catKey, useCase, budget, budgetWindow) -
+            smartCandidateScore(a, catKey, useCase, budget, budgetWindow)
+        );
       best = sorted[0];
     }
 
@@ -531,29 +643,40 @@ async function selectPartsWithAi(
       // v5.0: برای cooler همه گزینه‌ها، برای بقیه دسته‌ها تا 50 جایگزین
       const altsLimit = catKey === 'cooler' ? 150 : 50;
       const alts = validCandidates
-        .filter(c => c.id !== best!.id)
+        .filter((c) => c.id !== best!.id)
         .sort((a, b) => (a.finalPrice || 0) - (b.finalPrice || 0))
         .slice(0, altsLimit);
       selectedParts.push({
         ...best,
         isOptional: catKey === 'cooler' ? true : true,
         alternatives: alts,
-        pickReason: catKey === 'cooler' ? `خنک‌کننده اجباری · ${budgetWindow.note}` : `اختیاری دقیق · ${budgetWindow.note}`,
+        pickReason:
+          catKey === 'cooler'
+            ? `خنک‌کننده اجباری · ${budgetWindow.note}`
+            : `اختیاری دقیق · ${budgetWindow.note}`,
       });
       remainingBudget -= best.finalPrice;
       details.push(`${cat.label}: ${best.shortSpec || best.name} (اختیاری)`);
     }
   }
 
-  remainingBudget = finalizeThermalAndCase(selectedParts, categories, useCase, budget, remainingBudget, details);
+  remainingBudget = finalizeThermalAndCase(
+    selectedParts,
+    categories,
+    useCase,
+    budget,
+    remainingBudget,
+    details
+  );
 
-  const fan = selectedParts.find(p => p.category === 'case_fan');
+  const fan = selectedParts.find((p) => p.category === 'case_fan');
   if (fan && ['gaming', 'editing', 'streaming'].includes(useCase) && budget >= 70_000_000) {
     const desiredFans = budget >= 160_000_000 ? 6 : 3;
     if (remainingBudget >= fan.finalPrice * (desiredFans - 1)) {
       fan.quantity = desiredFans;
       fan.quantityLabel = `${desiredFans.toLocaleString('fa-IR')} عدد فن برای Airflow بهتر کیس`;
-      fan.pickReason = `${fan.pickReason || ''} · اسمبل حرفه‌ای: برای خنک‌کاری قطعات، تعداد فن‌ها به ${desiredFans} عدد افزایش داده شد.`.trim();
+      fan.pickReason =
+        `${fan.pickReason || ''} · اسمبل حرفه‌ای: برای خنک‌کاری قطعات، تعداد فن‌ها به ${desiredFans} عدد افزایش داده شد.`.trim();
       remainingBudget -= fan.finalPrice * (desiredFans - 1);
       details.push(`فن کیس چندتایی: ${desiredFans} عدد برای airflow بهتر`);
     }
@@ -571,30 +694,95 @@ async function selectPartsWithAi(
 // ════════════════════════════════════════════════════════════════
 
 const MB_M2_SLOTS_LOCAL: Record<string, number> = {
-  Z890: 4, B860: 2,
-  Z790: 4, Z690: 3, B760: 2, B760M: 2, B660: 2, H770: 2, H670: 2, H610: 1, H610M: 1,
-  X870E: 4, X870: 3, X670E: 4, X670: 3, B650E: 3, B650: 2,
-  X570: 2, B550: 2, A520: 1, X470: 2, B450: 1,
-  Z590: 2, B560: 1, H510: 1, H570: 1,
+  Z890: 4,
+  B860: 2,
+  Z790: 4,
+  Z690: 3,
+  B760: 2,
+  B760M: 2,
+  B660: 2,
+  H770: 2,
+  H670: 2,
+  H610: 1,
+  H610M: 1,
+  X870E: 4,
+  X870: 3,
+  X670E: 4,
+  X670: 3,
+  B650E: 3,
+  B650: 2,
+  X570: 2,
+  B550: 2,
+  A520: 1,
+  X470: 2,
+  B450: 1,
+  Z590: 2,
+  B560: 1,
+  H510: 1,
+  H570: 1,
 };
 
 const MB_SATA_PORTS_LOCAL: Record<string, number> = {
-  Z890: 4, B860: 4,
-  Z790: 6, Z690: 6, B760: 4, B760M: 4, B660: 4, H770: 4, H670: 4, H610: 4, H610M: 4,
-  X870E: 4, X870: 4, X670E: 6, X670: 6, B650E: 4, B650: 4,
-  X570: 8, B550: 4, A520: 4, X470: 6, B450: 4,
-  Z590: 6, B560: 6, H510: 4, H570: 6,
+  Z890: 4,
+  B860: 4,
+  Z790: 6,
+  Z690: 6,
+  B760: 4,
+  B760M: 4,
+  B660: 4,
+  H770: 4,
+  H670: 4,
+  H610: 4,
+  H610M: 4,
+  X870E: 4,
+  X870: 4,
+  X670E: 6,
+  X670: 6,
+  B650E: 4,
+  B650: 4,
+  X570: 8,
+  B550: 4,
+  A520: 4,
+  X470: 6,
+  B450: 4,
+  Z590: 6,
+  B560: 6,
+  H510: 4,
+  H570: 6,
 };
 
 function getDesiredStorageGb(useCase: string, budget: number): number {
-  if (useCase === 'editing') return budget >= 220_000_000 ? 12000 : budget >= 140_000_000 ? 8000 : budget >= 80_000_000 ? 4000 : 2000;
-  if (useCase === 'streaming') return budget >= 200_000_000 ? 10000 : budget >= 120_000_000 ? 6000 : budget >= 70_000_000 ? 4000 : 2000;
-  if (useCase === 'gaming') return budget >= 220_000_000 ? 10000 : budget >= 140_000_000 ? 8000 : budget >= 80_000_000 ? 4000 : budget >= 45_000_000 ? 2000 : 1000;
+  if (useCase === 'editing')
+    return budget >= 220_000_000
+      ? 12000
+      : budget >= 140_000_000
+        ? 8000
+        : budget >= 80_000_000
+          ? 4000
+          : 2000;
+  if (useCase === 'streaming')
+    return budget >= 200_000_000
+      ? 10000
+      : budget >= 120_000_000
+        ? 6000
+        : budget >= 70_000_000
+          ? 4000
+          : 2000;
+  if (useCase === 'gaming')
+    return budget >= 220_000_000
+      ? 10000
+      : budget >= 140_000_000
+        ? 8000
+        : budget >= 80_000_000
+          ? 4000
+          : budget >= 45_000_000
+            ? 2000
+            : 1000;
   return budget >= 100_000_000 ? 4000 : budget >= 50_000_000 ? 2000 : 1000;
 }
 
 function storageSizeGb(part: AssemblyPart): number {
-  return Number(part.specs?.size || 0) || (Number(part.specs?.sizeTB || 0) * 1000) || 0;
+  return Number(part.specs?.size || 0) || Number(part.specs?.sizeTB || 0) * 1000 || 0;
 }
 
 function partQty(part: AssemblyPart): number {
@@ -602,7 +790,13 @@ function partQty(part: AssemblyPart): number {
 }
 
 function ramModuleCount(part: AssemblyPart): number {
-  return Math.max(1, Number(part.specs?.moduleCount || (String(part.specs?.channel || '').toLowerCase() === 'dual' ? 2 : 1)));
+  return Math.max(
+    1,
+    Number(
+      part.specs?.moduleCount ||
+        (String(part.specs?.channel || '').toLowerCase() === 'dual' ? 2 : 1)
+    )
+  );
 }
 
 function getRamSlotCount(mb?: AssemblyPart): number {
@@ -627,18 +821,35 @@ function getSataPortCount(mb?: AssemblyPart): number {
 }
 
 function getTargetRamGb(useCase: string, budget: number): number {
-  if (useCase === 'editing') return budget >= 220_000_000 ? 128 : budget >= 140_000_000 ? 64 : budget >= 60_000_000 ? 32 : 16;
+  if (useCase === 'editing')
+    return budget >= 220_000_000
+      ? 128
+      : budget >= 140_000_000
+        ? 64
+        : budget >= 60_000_000
+          ? 32
+          : 16;
   if (useCase === 'streaming') return budget >= 160_000_000 ? 64 : budget >= 70_000_000 ? 32 : 16;
   if (useCase === 'gaming') return budget >= 160_000_000 ? 64 : budget >= 70_000_000 ? 32 : 16;
   return budget >= 80_000_000 ? 32 : 16;
 }
 
-function setRamQuantityWithinSlots(ram: AssemblyPart, desiredQty: number, mb?: AssemblyPart): number {
+function setRamQuantityWithinSlots(
+  ram: AssemblyPart,
+  desiredQty: number,
+  mb?: AssemblyPart
+): number {
   const slots = getRamSlotCount(mb);
   const modulesPerKit = ramModuleCount(ram);
   const maxBySlots = Math.max(1, Math.floor(slots / modulesPerKit));
   const finalQty = Math.max(1, Math.min(desiredQty, maxBySlots));
-  ram.specs = { ...ram.specs, moduleCount: modulesPerKit, totalModules: finalQty * modulesPerKit, usedRamSlots: finalQty * modulesPerKit, ramSlots: slots };
+  ram.specs = {
+    ...ram.specs,
+    moduleCount: modulesPerKit,
+    totalModules: finalQty * modulesPerKit,
+    usedRamSlots: finalQty * modulesPerKit,
+    ramSlots: slots,
+  };
   return finalQty;
 }
 
@@ -652,17 +863,27 @@ function requiredGpuLength(gpu?: AssemblyPart): number {
   return 250;
 }
 
-function isCaseCompatibleWithBuild(candidate: AssemblyPart, pickedParts: AssemblyPart[], useCase: string): boolean {
+function isCaseCompatibleWithBuild(
+  candidate: AssemblyPart,
+  pickedParts: AssemblyPart[],
+  useCase: string
+): boolean {
   if (candidate.category !== 'case') return true;
-  const mb = pickedParts.find(p => p.category === 'motherboard');
-  const gpu = pickedParts.find(p => p.category === 'gpu');
-  const ffRank: Record<string, number> = { 'Mini-ITX': 0, 'Micro-ATX': 1, 'ATX': 2, 'E-ATX': 3 };
+  const mb = pickedParts.find((p) => p.category === 'motherboard');
+  const gpu = pickedParts.find((p) => p.category === 'gpu');
+  const ffRank: Record<string, number> = { 'Mini-ITX': 0, 'Micro-ATX': 1, ATX: 2, 'E-ATX': 3 };
   const caseRank = ffRank[String(candidate.specs?.formFactor || 'ATX')] ?? 2;
   const mbRank = ffRank[String(mb?.specs?.formFactor || 'ATX')] ?? 2;
   if (caseRank < mbRank) return false;
   const maxGpu = Number(candidate.specs?.gpuMaxLength || (caseRank >= 2 ? 340 : 290));
   if (gpu && maxGpu < requiredGpuLength(gpu)) return false;
-  if (useCase !== 'office' && candidate.specs?.officeCase && !candidate.specs?.gamingCase && !candidate.specs?.airflow) return false;
+  if (
+    useCase !== 'office' &&
+    candidate.specs?.officeCase &&
+    !candidate.specs?.gamingCase &&
+    !candidate.specs?.airflow
+  )
+    return false;
   return true;
 }
 
@@ -689,7 +910,8 @@ function cpuNeedsCooler(cpu?: AssemblyPart, useCase = 'gaming', budget = 0): boo
   // برای office/میان‌رده با CPU کم‌مصرف → فن استوک کافی
   if (useCase === 'office') return false;
   if (tdp > 0 && tdp <= 95) return false;
-  if (/i3|i5-1[23]4|ryzen\s*3|ryzen\s*5\s*5600(?!x)|\br3\b|\br5\b\s*5[456]00(?!x)/.test(name)) return false;
+  if (/i3|i5-1[23]4|ryzen\s*3|ryzen\s*5\s*5600(?!x)|\br3\b|\br5\b\s*5[456]00(?!x)/.test(name))
+    return false;
 
   // برای بودجهٔ زیر ۲۵ میلیون هرگز کولر تحمیل نشود
   if (budget > 0 && budget < 25_000_000) return false;
@@ -697,11 +919,17 @@ function cpuNeedsCooler(cpu?: AssemblyPart, useCase = 'gaming', budget = 0): boo
   return false;
 }
 
-function smartCandidateScore(part: AssemblyPart, category: string, useCase: string, budget: number, priceRange: { min: number; max: number; ideal: number }): number {
+function smartCandidateScore(
+  part: AssemblyPart,
+  category: string,
+  useCase: string,
+  budget: number,
+  priceRange: { min: number; max: number; ideal: number }
+): number {
   let score = Number(part.confidence || 50);
   const price = Number(part.finalPrice || 0);
   const target = Math.max(1, priceRange.ideal || price);
-  score -= Math.min(28, Math.abs(price - target) / target * 18);
+  score -= Math.min(28, (Math.abs(price - target) / target) * 18);
   if (price >= priceRange.min && price <= priceRange.max) score += 10;
   if (part.inStock) score += 8;
 
@@ -766,7 +994,12 @@ function smartCandidateScore(part: AssemblyPart, category: string, useCase: stri
     const tdpRating = Number(part.specs?.tdpRating || 0);
     if (tdpRating >= 220) score += 18;
     else if (tdpRating >= 180) score += 12;
-    if (part.specs?.type === 'aio' && ['editing', 'streaming', 'gaming'].includes(useCase) && budget >= 90_000_000) score += 8;
+    if (
+      part.specs?.type === 'aio' &&
+      ['editing', 'streaming', 'gaming'].includes(useCase) &&
+      budget >= 90_000_000
+    )
+      score += 8;
   }
   return score;
 }
@@ -779,9 +1012,9 @@ function addSmartExpandableParts(
   remainingBudget: number,
   details: string[]
 ): number {
-  const mb = selectedParts.find(p => p.category === 'motherboard');
-  const storageCat = categories.find(c => c.category === 'storage');
-  const ram = selectedParts.find(p => p.category === 'ram');
+  const mb = selectedParts.find((p) => p.category === 'motherboard');
+  const storageCat = categories.find((c) => c.category === 'storage');
+  const ram = selectedParts.find((p) => p.category === 'ram');
 
   // ───── چند SSD / HDD بر اساس اسلات‌های مادربرد ─────
   if (mb && storageCat?.candidates?.length) {
@@ -789,22 +1022,37 @@ function addSmartExpandableParts(
     const sataPorts = getSataPortCount(mb);
     const desiredGb = getDesiredStorageGb(useCase, budget);
 
-    let currentM2 = selectedParts.filter(p => p.category === 'storage' && p.specs?.formFactor === 'M.2').reduce((s, p) => s + partQty(p), 0);
-    let currentSata = selectedParts.filter(p => p.category === 'storage' && p.specs?.formFactor !== 'M.2').reduce((s, p) => s + partQty(p), 0);
-    let currentGb = selectedParts.filter(p => p.category === 'storage').reduce((s, p) => s + storageSizeGb(p) * partQty(p), 0);
+    let currentM2 = selectedParts
+      .filter((p) => p.category === 'storage' && p.specs?.formFactor === 'M.2')
+      .reduce((s, p) => s + partQty(p), 0);
+    let currentSata = selectedParts
+      .filter((p) => p.category === 'storage' && p.specs?.formFactor !== 'M.2')
+      .reduce((s, p) => s + partQty(p), 0);
+    let currentGb = selectedParts
+      .filter((p) => p.category === 'storage')
+      .reduce((s, p) => s + storageSizeGb(p) * partQty(p), 0);
 
-    const usedIds = new Set(selectedParts.map(p => String(p.id)));
+    const usedIds = new Set(selectedParts.map((p) => String(p.id)));
     const storages = storageCat.candidates
-      .filter(p => p.inStock && p.finalPrice > 0 && !usedIds.has(String(p.id)))
+      .filter((p) => p.inStock && p.finalPrice > 0 && !usedIds.has(String(p.id)))
       .sort((a, b) => {
         const aNvme = a.specs?.formFactor === 'M.2' || a.specs?.isNVMe ? 1 : 0;
         const bNvme = b.specs?.formFactor === 'M.2' || b.specs?.isNVMe ? 1 : 0;
         const aValue = storageSizeGb(a) / Math.max(1, a.finalPrice);
         const bValue = storageSizeGb(b) / Math.max(1, b.finalPrice);
-        return (bNvme - aNvme) || (bValue - aValue) || (b.confidence - a.confidence);
+        return bNvme - aNvme || bValue - aValue || b.confidence - a.confidence;
       });
 
-    const maxExtraStorageItems = useCase === 'office' ? 1 : budget >= 220_000_000 ? 5 : budget >= 140_000_000 ? 4 : budget >= 70_000_000 ? 3 : 1;
+    const maxExtraStorageItems =
+      useCase === 'office'
+        ? 1
+        : budget >= 220_000_000
+          ? 5
+          : budget >= 140_000_000
+            ? 4
+            : budget >= 70_000_000
+              ? 3
+              : 1;
     let added = 0;
 
     for (const candidate of storages) {
@@ -822,7 +1070,7 @@ function addSmartExpandableParts(
 
       selectedParts.push({
         ...candidate,
-        alternatives: storages.filter(s => s.id !== candidate.id).slice(0, 50),
+        alternatives: storages.filter((s) => s.id !== candidate.id).slice(0, 50),
         quantity: 1,
         quantityLabel: `حافظه اضافه · ${slotText}`,
         pickReason: `اسمبل حرفه‌ای: برای رسیدن به حدود ${Math.round(desiredGb / 1000)}TB حافظه، این SSD هم اضافه شد (${slotText}).`,
@@ -838,7 +1086,9 @@ function addSmartExpandableParts(
     }
 
     // اگر مدل مناسب دیگری پیدا نشد ولی همان SSD منتخب موجود است، از quantity برای پر کردن اسلات‌های آزاد استفاده کن.
-    const primaryStorage = selectedParts.find(p => p.category === 'storage' && p.inStock && p.finalPrice > 0);
+    const primaryStorage = selectedParts.find(
+      (p) => p.category === 'storage' && p.inStock && p.finalPrice > 0
+    );
     if (primaryStorage) {
       const isM2 = primaryStorage.specs?.formFactor === 'M.2' || primaryStorage.specs?.isNVMe;
       while (
@@ -849,7 +1099,8 @@ function addSmartExpandableParts(
         primaryStorage.quantity = partQty(primaryStorage) + 1;
         const nextSlot = isM2 ? currentM2 + 1 : currentSata + 1;
         primaryStorage.quantityLabel = `${primaryStorage.quantity.toLocaleString('fa-IR')} عدد برای حافظه بیشتر · ${isM2 ? `M.2 ${nextSlot}/${m2Slots}` : `SATA ${nextSlot}/${sataPorts}`}`;
-        primaryStorage.pickReason = `${primaryStorage.pickReason || ''} · اسمبل حرفه‌ای: از اسلات آزاد مادربرد برای افزایش حافظه استفاده شد.`.trim();
+        primaryStorage.pickReason =
+          `${primaryStorage.pickReason || ''} · اسمبل حرفه‌ای: از اسلات آزاد مادربرد برای افزایش حافظه استفاده شد.`.trim();
         remainingBudget -= primaryStorage.finalPrice;
         currentGb += storageSizeGb(primaryStorage);
         if (isM2) currentM2 += 1;
@@ -860,13 +1111,14 @@ function addSmartExpandableParts(
   }
 
   // ───── فن کیس چندتایی برای گردش هوای حرفه‌ای ─────
-  const fan = selectedParts.find(p => p.category === 'case_fan');
+  const fan = selectedParts.find((p) => p.category === 'case_fan');
   if (fan && ['gaming', 'editing', 'streaming'].includes(useCase) && budget >= 70_000_000) {
     const desiredFans = budget >= 160_000_000 ? 6 : 3;
     if (remainingBudget >= fan.finalPrice * (desiredFans - 1)) {
       fan.quantity = desiredFans;
       fan.quantityLabel = `${desiredFans.toLocaleString('fa-IR')} عدد فن برای Airflow بهتر کیس`;
-      fan.pickReason = `${fan.pickReason || ''} · اسمبل حرفه‌ای: برای خنک‌کاری قطعات، تعداد فن‌ها به ${desiredFans} عدد افزایش داده شد.`.trim();
+      fan.pickReason =
+        `${fan.pickReason || ''} · اسمبل حرفه‌ای: برای خنک‌کاری قطعات، تعداد فن‌ها به ${desiredFans} عدد افزایش داده شد.`.trim();
       remainingBudget -= fan.finalPrice * (desiredFans - 1);
       details.push(`🌬️ فن کیس چندتایی: ${desiredFans} عدد برای airflow بهتر`);
     }
@@ -885,11 +1137,16 @@ function addSmartExpandableParts(
     if (extraQty > 0 && remainingBudget >= ram.finalPrice * extraQty) {
       ram.quantity = finalQty;
       ram.quantityLabel = `${finalQty.toLocaleString('fa-IR')} کیت · ${ram.specs.totalModules}/${slots} اسلات رم · مجموع ${cap * finalQty}GB`;
-      ram.pickReason = `${ram.pickReason || ''} · اسمبل حرفه‌ای: با توجه به مادربرد، ${ram.specs.totalModules} اسلات RAM استفاده شد و ظرفیت به ${cap * finalQty}GB رسید.`.trim();
+      ram.pickReason =
+        `${ram.pickReason || ''} · اسمبل حرفه‌ای: با توجه به مادربرد، ${ram.specs.totalModules} اسلات RAM استفاده شد و ظرفیت به ${cap * finalQty}GB رسید.`.trim();
       remainingBudget -= ram.finalPrice * extraQty;
-      details.push(`رم چندکیتی دقیق: ${cap}GB × ${finalQty} = ${cap * finalQty}GB (${ram.specs.totalModules}/${slots} اسلات)`);
+      details.push(
+        `رم چندکیتی دقیق: ${cap}GB × ${finalQty} = ${cap * finalQty}GB (${ram.specs.totalModules}/${slots} اسلات)`
+      );
     } else if (cap > 0) {
-      ram.quantityLabel = ram.quantityLabel || `${currentQty.toLocaleString('fa-IR')} کیت · ${ram.specs.totalModules || modulesPerKit}/${slots} اسلات رم · مجموع ${cap * currentQty}GB`;
+      ram.quantityLabel =
+        ram.quantityLabel ||
+        `${currentQty.toLocaleString('fa-IR')} کیت · ${ram.specs.totalModules || modulesPerKit}/${slots} اسلات رم · مجموع ${cap * currentQty}GB`;
     }
   }
 
@@ -902,29 +1159,60 @@ function finalizeThermalAndCase(
   useCase: string,
   budget: number,
   remainingBudget: number,
-  details: string[],
+  details: string[]
 ): number {
-  const cpu = selectedParts.find(p => p.category === 'cpu');
-  const gpu = selectedParts.find(p => p.category === 'gpu');
-  let cs = selectedParts.find(p => p.category === 'case');
-  const cooler = selectedParts.find(p => p.category === 'cooler');
+  const cpu = selectedParts.find((p) => p.category === 'cpu');
+  const gpu = selectedParts.find((p) => p.category === 'gpu');
+  let cs = selectedParts.find((p) => p.category === 'case');
+  const cooler = selectedParts.find((p) => p.category === 'cooler');
 
-  const caseCat = categories.find(c => c.category === 'case');
+  const caseCat = categories.find((c) => c.category === 'case');
   if (caseCat?.candidates?.length) {
-    const currentOk = cs ? isCaseCompatibleWithBuild(cs, selectedParts.filter(p => p.id !== cs!.id), useCase) : false;
+    const currentOk = cs
+      ? isCaseCompatibleWithBuild(
+          cs,
+          selectedParts.filter((p) => p.id !== cs!.id),
+          useCase
+        )
+      : false;
     const gpuStrong = requiredGpuLength(gpu) >= 290;
-    const currentOfficeForGaming = cs && useCase !== 'office' && (cs.specs?.officeCase || (!cs.specs?.gamingCase && !cs.specs?.airflow && gpuStrong));
+    const currentOfficeForGaming =
+      cs &&
+      useCase !== 'office' &&
+      (cs.specs?.officeCase || (!cs.specs?.gamingCase && !cs.specs?.airflow && gpuStrong));
     if (!currentOk || currentOfficeForGaming) {
       const replacement = caseCat.candidates
-        .filter(c => c.inStock && c.finalPrice > 0)
-        .filter(c => isCaseCompatibleWithBuild(c, selectedParts.filter(p => p.category !== 'case'), useCase))
-        .sort((a, b) => smartCandidateScore(b, 'case', useCase, budget, { min: 0, max: budget, ideal: Math.max(1, budget * 0.055) }) - smartCandidateScore(a, 'case', useCase, budget, { min: 0, max: budget, ideal: Math.max(1, budget * 0.055) }))[0];
+        .filter((c) => c.inStock && c.finalPrice > 0)
+        .filter((c) =>
+          isCaseCompatibleWithBuild(
+            c,
+            selectedParts.filter((p) => p.category !== 'case'),
+            useCase
+          )
+        )
+        .sort(
+          (a, b) =>
+            smartCandidateScore(b, 'case', useCase, budget, {
+              min: 0,
+              max: budget,
+              ideal: Math.max(1, budget * 0.055),
+            }) -
+            smartCandidateScore(a, 'case', useCase, budget, {
+              min: 0,
+              max: budget,
+              ideal: Math.max(1, budget * 0.055),
+            })
+        )[0];
       if (replacement && (!cs || replacement.id !== cs.id)) {
-        selectedParts.splice(selectedParts.findIndex(p => p.category === 'case'), 1, {
-          ...replacement,
-          alternatives: caseCat.candidates.filter(c => c.id !== replacement.id).slice(0, 50),
-          pickReason: 'کیس با توجه به فرم‌فکتور، طول کارت گرافیک و airflow اصلاح شد.',
-        });
+        selectedParts.splice(
+          selectedParts.findIndex((p) => p.category === 'case'),
+          1,
+          {
+            ...replacement,
+            alternatives: caseCat.candidates.filter((c) => c.id !== replacement.id).slice(0, 50),
+            pickReason: 'کیس با توجه به فرم‌فکتور، طول کارت گرافیک و airflow اصلاح شد.',
+          }
+        );
         if (cs) remainingBudget += cs.finalPrice;
         remainingBudget -= replacement.finalPrice;
         cs = replacement;
@@ -934,12 +1222,14 @@ function finalizeThermalAndCase(
   }
 
   if (!cooler && cpuNeedsCooler(cpu, useCase, budget)) {
-    const coolerCat = categories.find(c => c.category === 'cooler');
+    const coolerCat = categories.find((c) => c.category === 'cooler');
     if (coolerCat?.candidates?.length) {
       const affordable = coolerCat.candidates
-        .filter(c => c.inStock && c.finalPrice > 0)
+        .filter((c) => c.inStock && c.finalPrice > 0)
         // سقف قیمت منطقی: ۱۲٪ بودجه کل یا ۴۰٪ باقی‌مانده — هرکدام کمتر
-        .filter(c => c.finalPrice <= Math.min(budget * 0.12, Math.max(remainingBudget * 0.40, 3_000_000)));
+        .filter(
+          (c) => c.finalPrice <= Math.min(budget * 0.12, Math.max(remainingBudget * 0.4, 3_000_000))
+        );
 
       // استفاده از موتور Tier-based اقتصادی (Air/Liquid smart pick از کف قیمت)
       const bestCooler = pickBestCoolerEconomical(affordable, cpu || null);
@@ -947,17 +1237,20 @@ function finalizeThermalAndCase(
       if (bestCooler) {
         // v6.0: فیلتر قطعی پایه لپ‌تاپ + مرتب‌سازی صعودی قیمت
         const allOtherCoolers = coolerCat.candidates
-          .filter(c => c.id !== bestCooler.id && c.inStock && (c.finalPrice || c.price || 0) > 0)
-          .filter(c => isGenuineCpuCooler(c.name || '')) // ← ضد پایه لپ‌تاپ
+          .filter((c) => c.id !== bestCooler.id && c.inStock && (c.finalPrice || c.price || 0) > 0)
+          .filter((c) => isGenuineCpuCooler(c.name || '')) // ← ضد پایه لپ‌تاپ
           .sort((a, b) => (a.finalPrice || 0) - (b.finalPrice || 0));
         selectedParts.push({
           ...bestCooler,
           isOptional: true,
           alternatives: allOtherCoolers.slice(0, 150),
-          pickReason: bestCooler.pickReason || 'خنک‌کننده متناسب با TDP پردازنده از کف قیمت انتخاب شد.',
+          pickReason:
+            bestCooler.pickReason || 'خنک‌کننده متناسب با TDP پردازنده از کف قیمت انتخاب شد.',
         });
         remainingBudget -= bestCooler.finalPrice;
-        details.push(`❄️ خنک‌کننده اضافه شد: ${bestCooler.shortSpec || bestCooler.name} (${allOtherCoolers.length} جایگزین معتبر در دسترس)`);
+        details.push(
+          `❄️ خنک‌کننده اضافه شد: ${bestCooler.shortSpec || bestCooler.name} (${allOtherCoolers.length} جایگزین معتبر در دسترس)`
+        );
       } else {
         details.push(`❄️ خنک‌کننده اضافه نشد: هیچ کولر واقعی پردازنده با قیمت متناسب یافت نشد.`);
       }

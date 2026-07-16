@@ -25,23 +25,39 @@ export default function Advertising({ variant = 'full' }: AdvertisingProps) {
         <div className="absolute inset-0 opacity-[0.08] [background-image:linear-gradient(90deg,#fff_1px,transparent_1px),linear-gradient(#fff_1px,transparent_1px)] [background-size:30px_30px]" />
         <div className="relative flex flex-col gap-5">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-purple-300/25 bg-white/10 shadow-inner backdrop-blur-md">
-            <svg className="h-7 w-7 text-purple-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 3h6m-8 4h10M7 17h10M9 21h6M5 9v6m14-6v6M8 7h8v10H8V7z" />
+            <svg
+              className="h-7 w-7 text-purple-100"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 3h6m-8 4h10M7 17h10M9 21h6M5 9v6m14-6v6M8 7h8v10H8V7z"
+              />
               <path strokeLinecap="round" strokeLinejoin="round" d="M10 11h4M10 14h2" />
             </svg>
           </div>
           <div>
-            <p className="mb-2 text-[12px] font-black text-purple-200">AI PC BUILDER</p>
-            <h2 className="text-[20px] font-black leading-relaxed lg:text-[26px]">
+            <p className="mb-2 font-black text-[12px] text-purple-200">AI PC BUILDER</p>
+            <h2 className="font-black text-[20px] leading-relaxed lg:text-[26px]">
               سیستم رویایی‌ت رو با هوش مصنوعی آفلند اسمبل کن!
             </h2>
-            <p className="mt-2 text-justify text-[13px] leading-relaxed text-white/72">
+            <p className="text-white/72 mt-2 text-justify text-[13px] leading-relaxed">
               بودجه و کاربردت را بده؛ اسمبل هوشمند آفلند قطعات سازگار و بهینه را پیشنهاد می‌کند.
             </p>
           </div>
-          <span className="inline-flex w-fit items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-[13px] font-black text-slate-950 shadow-xl transition-all duration-300 group-hover:bg-purple-50">
+          <span className="inline-flex w-fit items-center justify-center gap-2 rounded-full bg-white px-5 py-3 font-black text-[13px] text-slate-950 shadow-xl transition-all duration-300 group-hover:bg-purple-50">
             شروع اسمبل هوشمند
-            <svg className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </span>
@@ -57,14 +73,26 @@ export default function Advertising({ variant = 'full' }: AdvertisingProps) {
           >
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-[11px] font-bold text-blue-600 dark:text-blue-400">{item.badge}</p>
-                <h3 className="mt-1 line-clamp-2 text-[14px] font-black leading-relaxed text-slate-950 dark:text-white">
+                <p className="font-bold text-[11px] text-blue-600 dark:text-blue-400">
+                  {item.badge}
+                </p>
+                <h3 className="mt-1 line-clamp-2 font-black text-[14px] leading-relaxed text-slate-950 dark:text-white">
                   {item.title}
                 </h3>
               </div>
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-slate-700 transition-colors duration-300 group-hover:bg-blue-600 group-hover:text-white dark:bg-slate-800 dark:text-slate-300">
-                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h18l-2 13H6L3 3zm5 18a1 1 0 100-2 1 1 0 000 2zm10 0a1 1 0 100-2 1 1 0 000 2z" />
+                <svg
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 3h18l-2 13H6L3 3zm5 18a1 1 0 100-2 1 1 0 000 2zm10 0a1 1 0 100-2 1 1 0 000 2z"
+                  />
                 </svg>
               </span>
             </div>

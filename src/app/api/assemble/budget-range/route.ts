@@ -25,9 +25,12 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         fallback: true,
       });
     }
-    return NextResponse.json({ ok: true, ...range }, {
-      headers: { 'Cache-Control': 'private, max-age=300, stale-while-revalidate=600' },
-    });
+    return NextResponse.json(
+      { ok: true, ...range },
+      {
+        headers: { 'Cache-Control': 'private, max-age=300, stale-while-revalidate=600' },
+      }
+    );
   } catch (e) {
     console.error('budget-range error:', e);
     return NextResponse.json({

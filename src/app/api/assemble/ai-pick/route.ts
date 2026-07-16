@@ -42,12 +42,12 @@ type PickRequest = {
   totalSpent: number; // هزینهٔ قطعات انتخاب‌شده قبلی
   remainingBudget: number;
   pickedParts: PartCandidate[]; // قطعاتی که قبلاً انتخاب شدن
-  category: string;          // مثلاً "cpu", "motherboard"
-  categoryLabel: string;     // مثلاً "پردازنده (CPU)"
-  budgetShare: number;       // سهم پیشنهادی بودجه
+  category: string; // مثلاً "cpu", "motherboard"
+  categoryLabel: string; // مثلاً "پردازنده (CPU)"
+  budgetShare: number; // سهم پیشنهادی بودجه
   priceRange?: { min: number; max: number; ideal: number; note?: string }; // بازه دقیق همین دسته
   candidates: PartCandidate[]; // گزینه‌های ممکن
-  maxPick: number;           // حداکثر تعداد خروجی (معمولاً ۱)
+  maxPick: number; // حداکثر تعداد خروجی (معمولاً ۱)
 };
 
 /**
@@ -57,7 +57,7 @@ type PickRequest = {
  */
 function sanitizeCandidates(body: PickRequest): PartCandidate[] {
   if (!body.candidates?.length) return [];
-  return body.candidates.filter(c => {
+  return body.candidates.filter((c) => {
     const r = validatePartCategory(body.category, {
       title: c.name,
       name: c.name,
@@ -87,10 +87,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // می‌کند و متناسب با TDP پردازندهٔ انتخابی، ساده‌ترین گزینهٔ
     // کافی را برمی‌گرداند.
     if (workingBody.category === 'cooler' && workingBody.candidates.length > 0) {
-      const selectedCpu = workingBody.pickedParts.find(p => p.category === 'cpu');
+      const selectedCpu = workingBody.pickedParts.find((p) => p.category === 'cpu');
       const economical = pickBestCoolerEconomical(
         workingBody.candidates as any,
-        selectedCpu as any,
+        selectedCpu as any
       );
       if (economical) {
         return NextResponse.json({
@@ -132,7 +132,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           messages: [
             {
               role: 'system',
-              content: 'تو یک کارشناس سخت‌افزار کامپیوتر و اسمبل حرفه‌ای هستی. قبل از انتخاب، سازگاری، بودجه، ارزش خرید، اسلات‌های RAM/M.2/SATA، توان پاور و نیاز کاربری را دقیق تحلیل کن؛ اما در خروجی فقط ID قطعه را برگردان.',
+              content:
+                'تو یک کارشناس سخت‌افزار کامپیوتر و اسمبل حرفه‌ای هستی. قبل از انتخاب، سازگاری، بودجه، ارزش خرید، اسلات‌های RAM/M.2/SATA، توان پاور و نیاز کاربری را دقیق تحلیل کن؛ اما در خروجی فقط ID قطعه را برگردان.',
             },
             { role: 'user', content: prompt },
           ],
@@ -170,9 +171,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       const aiPicks = parseAiPicks(text, workingBody.candidates, workingBody.maxPick);
 
       // ═════ گاردریل نهایی: حتی اگر AI انتخابی داد، دوباره چک کن ═════
-      const validatedPicks = aiPicks.filter(p => {
+      const validatedPicks = aiPicks.filter((p) => {
         const r = validatePartCategory(workingBody.category, {
-          title: p.name, name: p.name, price: p.price, finalPrice: p.finalPrice, specs: p.specs || {},
+          title: p.name,
+          name: p.name,
+          price: p.price,
+          finalPrice: p.finalPrice,
+          specs: p.specs || {},
         });
         return r.passed;
       });
@@ -205,30 +210,41 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
  */
 function buildPickPrompt(body: PickRequest): string {
   const useCaseFa: Record<string, string> = {
-    gaming: 'گیمینگ', office: 'اداری', editing: 'ادیت و رندر', streaming: 'استریم', custom: 'دلخواه',
+    gaming: 'گیمینگ',
+    office: 'اداری',
+    editing: 'ادیت و رندر',
+    streaming: 'استریم',
+    custom: 'دلخواه',
   };
 
-  const pickedText = body.pickedParts.map(p =>
-    `- ${p.category}: ${p.name} (${p.shortSpec || '—'}) | قیمت: ${p.finalPrice.toLocaleString('fa-IR')}`
-  ).join('\n');
+  const pickedText = body.pickedParts
+    .map(
+      (p) =>
+        `- ${p.category}: ${p.name} (${p.shortSpec || '—'}) | قیمت: ${p.finalPrice.toLocaleString('fa-IR')}`
+    )
+    .join('\n');
 
-  const candidatesText = body.candidates.map((c, idx) =>
-    `${idx + 1}. [ID=${c.id}] ${c.name} | ${c.shortSpec || '—'} | قیمت: ${c.finalPrice.toLocaleString('fa-IR')} | رتبه: ${c.confidence || 0}%`
-  ).join('\n');
+  const candidatesText = body.candidates
+    .map(
+      (c, idx) =>
+        `${idx + 1}. [ID=${c.id}] ${c.name} | ${c.shortSpec || '—'} | قیمت: ${c.finalPrice.toLocaleString('fa-IR')} | رتبه: ${c.confidence || 0}%`
+    )
+    .join('\n');
 
-  const smartHint = body.category === 'ram'
-    ? 'برای RAM فقط ظرفیت خام کافی نیست؛ تعداد ماژول/کیت و استفاده از اسلات‌ها را هم حساب کن. اگر ۴GB کم است، ۱۶GB حداقل خوب است و با مادربرد ۴ اسلات می‌توان ۲×۸ یا چند کیت سازگار گذاشت، به شرط بودجه و DDR یکسان.'
-    : body.category === 'storage'
-      ? 'برای Storage فقط یک SSD انتخاب نکن اگر بودجه/کاربری حرفه‌ای و اسلات M.2/SATA اجازه می‌دهد؛ SSDهای NVMe پرظرفیت و امکان چند SSD را در نظر بگیر.'
-      : body.category === 'motherboard'
-        ? 'برای Motherboard مدل‌هایی با RAM slots و M.2 slots بیشتر در بودجه مناسب ارزش بالاتری دارند چون ارتقا و چند SSD/RAM را ممکن می‌کنند.'
-        : body.category === 'case'
-          ? 'برای Case حتماً فرم‌فکتور مادربرد، طول کارت گرافیک، airflow/mesh و کاربری را حساب کن. برای گیمینگ کیس اداری/بسته انتخاب نکن؛ کیس گیمینگ airflow یا mesh اولویت دارد.'
-          : body.category === 'cooler'
-            ? 'برای Cooler حتماً TDP پردازنده، Tray/بدون‌باکس بودن CPU، کاربری سنگین و فضای کیس را حساب کن. اگر CPU قوی است کولر ضعیف انتخاب نکن.'
-            : body.category === 'psu'
-              ? 'برای PSU توان واقعی CPU+GPU با حاشیه امن، گواهی 80Plus و آینده‌نگری ارتقا را حساب کن.'
-              : 'انتخاب را بر اساس کارایی واقعی، سازگاری و ارزش خرید انجام بده.';
+  const smartHint =
+    body.category === 'ram'
+      ? 'برای RAM فقط ظرفیت خام کافی نیست؛ تعداد ماژول/کیت و استفاده از اسلات‌ها را هم حساب کن. اگر ۴GB کم است، ۱۶GB حداقل خوب است و با مادربرد ۴ اسلات می‌توان ۲×۸ یا چند کیت سازگار گذاشت، به شرط بودجه و DDR یکسان.'
+      : body.category === 'storage'
+        ? 'برای Storage فقط یک SSD انتخاب نکن اگر بودجه/کاربری حرفه‌ای و اسلات M.2/SATA اجازه می‌دهد؛ SSDهای NVMe پرظرفیت و امکان چند SSD را در نظر بگیر.'
+        : body.category === 'motherboard'
+          ? 'برای Motherboard مدل‌هایی با RAM slots و M.2 slots بیشتر در بودجه مناسب ارزش بالاتری دارند چون ارتقا و چند SSD/RAM را ممکن می‌کنند.'
+          : body.category === 'case'
+            ? 'برای Case حتماً فرم‌فکتور مادربرد، طول کارت گرافیک، airflow/mesh و کاربری را حساب کن. برای گیمینگ کیس اداری/بسته انتخاب نکن؛ کیس گیمینگ airflow یا mesh اولویت دارد.'
+            : body.category === 'cooler'
+              ? 'برای Cooler حتماً TDP پردازنده، Tray/بدون‌باکس بودن CPU، کاربری سنگین و فضای کیس را حساب کن. اگر CPU قوی است کولر ضعیف انتخاب نکن.'
+              : body.category === 'psu'
+                ? 'برای PSU توان واقعی CPU+GPU با حاشیه امن، گواهی 80Plus و آینده‌نگری ارتقا را حساب کن.'
+                : 'انتخاب را بر اساس کارایی واقعی، سازگاری و ارزش خرید انجام بده.';
 
   return `کاربری: "${useCaseFa[body.useCase] || body.useCase}" | بودجهٔ باقی‌مانده: ${body.remainingBudget.toLocaleString('fa-IR')} تومان (از ${body.budget.toLocaleString('fa-IR')} کل)
 
@@ -258,10 +274,13 @@ function parseAiPicks(text: string, candidates: PartCandidate[], maxPick: number
   const match = text.match(/PICK\s*:?\s*([\d,\s]+)/i);
   if (!match) return [];
 
-  const ids = match[1].split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+  const ids = match[1]
+    .split(',')
+    .map((s) => parseInt(s.trim()))
+    .filter((n) => !isNaN(n));
   const picks: PartCandidate[] = [];
   for (const id of ids) {
-    const found = candidates.find(c => Number(c.id) === id);
+    const found = candidates.find((c) => Number(c.id) === id);
     if (found && picks.length < maxPick) {
       picks.push(found);
     }
@@ -275,12 +294,15 @@ function parseAiPicks(text: string, candidates: PartCandidate[], maxPick: number
  */
 function candidateSmartScore(c: PartCandidate, body: PickRequest, targetPrice: number): number {
   let score = Number(c.confidence || 50);
-  score -= Math.min(30, Math.abs(c.finalPrice - targetPrice) / Math.max(1, targetPrice) * 20);
+  score -= Math.min(30, (Math.abs(c.finalPrice - targetPrice) / Math.max(1, targetPrice)) * 20);
 
   if (body.category === 'ram') {
     const cap = Number(c.specs?.capacity || 0);
-    const modules = Number(c.specs?.moduleCount || (String(c.specs?.channel || '').toLowerCase() === 'dual' ? 2 : 1));
-    const targetRam = body.useCase === 'editing' ? 32 : ['gaming', 'streaming'].includes(body.useCase) ? 16 : 16;
+    const modules = Number(
+      c.specs?.moduleCount || (String(c.specs?.channel || '').toLowerCase() === 'dual' ? 2 : 1)
+    );
+    const targetRam =
+      body.useCase === 'editing' ? 32 : ['gaming', 'streaming'].includes(body.useCase) ? 16 : 16;
     if (cap >= 32) score += 20;
     else if (cap >= targetRam) score += 12;
     else score -= 18;
@@ -328,30 +350,39 @@ function candidateSmartScore(c: PartCandidate, body: PickRequest, targetPrice: n
 function ruleBasedPick(body: PickRequest): PartCandidate[] {
   const targetPrice = body.priceRange?.ideal || body.budgetShare;
   const minPrice = Math.max(0, (body.priceRange?.min || 0) * 0.75);
-  const maxPrice = Math.min(body.remainingBudget * 1.05, body.priceRange?.max || body.remainingBudget * 1.05);
+  const maxPrice = Math.min(
+    body.remainingBudget * 1.05,
+    body.priceRange?.max || body.remainingBudget * 1.05
+  );
 
   // فیلتر: قطعات در بازهٔ دقیق همین دسته
-  const valid = body.candidates.filter(c =>
-    c.inStock !== false &&
-    c.finalPrice > 0 &&
-    c.finalPrice >= minPrice &&
-    c.finalPrice <= maxPrice
+  const valid = body.candidates.filter(
+    (c) =>
+      c.inStock !== false &&
+      c.finalPrice > 0 &&
+      c.finalPrice >= minPrice &&
+      c.finalPrice <= maxPrice
   );
 
   if (valid.length === 0) {
     // اگه چیزی در بازه نبود، نزدیک‌ترین گزینه به سقف مجاز/ایده‌آل را بردار نه صرفاً ارزان‌ترین
-    return [body.candidates
-      .filter(c => c.inStock !== false && c.finalPrice > 0 && c.finalPrice <= body.remainingBudget)
-      .sort((a, b) => Math.abs(a.finalPrice - targetPrice) - Math.abs(b.finalPrice - targetPrice))[0]
+    return [
+      body.candidates
+        .filter(
+          (c) => c.inStock !== false && c.finalPrice > 0 && c.finalPrice <= body.remainingBudget
+        )
+        .sort(
+          (a, b) => Math.abs(a.finalPrice - targetPrice) - Math.abs(b.finalPrice - targetPrice)
+        )[0],
     ].filter(Boolean);
   }
 
   // امتیازدهی: confidence + نزدیکی به قیمت هدف + قواعد تخصصی RAM/SSD/MB
-  const scored = valid.map(c => ({
+  const scored = valid.map((c) => ({
     part: c,
     score: candidateSmartScore(c, body, targetPrice),
   }));
 
   scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, body.maxPick).map(s => s.part);
+  return scored.slice(0, body.maxPick).map((s) => s.part);
 }

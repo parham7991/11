@@ -41,5 +41,3 @@ dev
 /Dockerfile
 /.idea
 .env.local
-
-.vercel

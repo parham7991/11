@@ -17,11 +17,7 @@
 
 import { generateToken } from '@/lib/fun';
 import { BASEURL, BASEURL_SITE, BASE_URL_IMAGE, AWS_BUCKET } from '@/lib/variable';
-import {
-  detectPart,
-  type PartCategory,
-  type PartDetection,
-} from './part-detector';
+import { detectPart, type PartCategory, type PartDetection } from './part-detector';
 import {
   CPU_DB,
   GPU_DB,
@@ -142,9 +138,23 @@ export const PART_CATEGORIES_MANDATORY = [
     required: true,
     budgetWeight: 0.22,
     queries: [
-      'cpu amd ryzen', 'cpu intel core', 'پردازنده amd', 'پردازنده intel',
-      'amd ryzen', 'intel core', 'ryzen 9', 'ryzen 7', 'ryzen 5', 'core i9', 'core i7', 'core i5',
-      'پردازنده کامپیوتر', 'cpu processor', 'boxed cpu', 'پردازنده دسکتاپ', 'پردازنده core',
+      'cpu amd ryzen',
+      'cpu intel core',
+      'پردازنده amd',
+      'پردازنده intel',
+      'amd ryzen',
+      'intel core',
+      'ryzen 9',
+      'ryzen 7',
+      'ryzen 5',
+      'core i9',
+      'core i7',
+      'core i5',
+      'پردازنده کامپیوتر',
+      'cpu processor',
+      'boxed cpu',
+      'پردازنده دسکتاپ',
+      'پردازنده core',
     ],
   },
   {
@@ -155,9 +165,18 @@ export const PART_CATEGORIES_MANDATORY = [
     required: true,
     budgetWeight: 0.35,
     queries: [
-      'rtx', 'geforce rtx', 'radeon rx', 'rx 7', 'rx 6',
-      'کارت گرافیک', 'کارت گرافیک rtx', 'کارت گرافیک amd', 'کارت گرافیک انویدیا',
-      'graphics card', 'gpu gaming', 'کارت گرافیک گیمینگ',
+      'rtx',
+      'geforce rtx',
+      'radeon rx',
+      'rx 7',
+      'rx 6',
+      'کارت گرافیک',
+      'کارت گرافیک rtx',
+      'کارت گرافیک amd',
+      'کارت گرافیک انویدیا',
+      'graphics card',
+      'gpu gaming',
+      'کارت گرافیک گیمینگ',
     ],
   },
   {
@@ -168,9 +187,17 @@ export const PART_CATEGORIES_MANDATORY = [
     required: true,
     budgetWeight: 0.14,
     queries: [
-      'مادربرد', 'motherboard', 'mainboard', 'برد اصلی',
-      'مادربرد ddr5', 'مادربرد ddr4', 'مادربرد گیمینگ',
-      'asus', 'msi', 'gigabyte', 'asrock',
+      'مادربرد',
+      'motherboard',
+      'mainboard',
+      'برد اصلی',
+      'مادربرد ddr5',
+      'مادربرد ddr4',
+      'مادربرد گیمینگ',
+      'asus',
+      'msi',
+      'gigabyte',
+      'asrock',
     ],
   },
   {
@@ -179,11 +206,21 @@ export const PART_CATEGORIES_MANDATORY = [
     labelEn: 'Memory',
     emoji: '💾',
     required: true,
-    budgetWeight: 0.10,
+    budgetWeight: 0.1,
     queries: [
-      'رم', 'ram', 'memory', 'ddr5', 'ddr4',
-      'رم ddr5', 'رم ddr4', 'kingston fury', 'corsair vengeance',
-      'gskill trident', 'teamgroup', 'رم کامپیوتر', 'memory kit',
+      'رم',
+      'ram',
+      'memory',
+      'ddr5',
+      'ddr4',
+      'رم ddr5',
+      'رم ddr4',
+      'kingston fury',
+      'corsair vengeance',
+      'gskill trident',
+      'teamgroup',
+      'رم کامپیوتر',
+      'memory kit',
     ],
   },
   {
@@ -194,9 +231,18 @@ export const PART_CATEGORIES_MANDATORY = [
     required: true,
     budgetWeight: 0.08,
     queries: [
-      'ssd', 'nvme', 'اس اس دی', 'm2', 'm.2',
-      'samsung 990', 'wd black', 'crucial', 'kingston',
-      'ssd nvme', 'ssd sata', 'حافظه ssd',
+      'ssd',
+      'nvme',
+      'اس اس دی',
+      'm2',
+      'm.2',
+      'samsung 990',
+      'wd black',
+      'crucial',
+      'kingston',
+      'ssd nvme',
+      'ssd sata',
+      'حافظه ssd',
     ],
   },
   {
@@ -207,9 +253,17 @@ export const PART_CATEGORIES_MANDATORY = [
     required: true,
     budgetWeight: 0.07,
     queries: [
-      'پاور', 'psu', 'power supply', 'منبع تغذیه',
-      'corsair', 'seasonic', 'be quiet', 'coolermaster',
-      'پاور گیمینگ', 'پاور ماژولار', 'پاور 80',
+      'پاور',
+      'psu',
+      'power supply',
+      'منبع تغذیه',
+      'corsair',
+      'seasonic',
+      'be quiet',
+      'coolermaster',
+      'پاور گیمینگ',
+      'پاور ماژولار',
+      'پاور 80',
     ],
   },
   {
@@ -220,9 +274,23 @@ export const PART_CATEGORIES_MANDATORY = [
     required: true,
     budgetWeight: 0.04,
     queries: [
-      'کیس گیمینگ', 'کیس airflow', 'کیس mesh', 'کیس argb', 'کیس atx گیمینگ',
-      'کیس', 'case', 'gaming case', 'airflow case', 'mesh case', 'کیس کامپیوتر',
-      'lian li', 'fractal', 'nzxt', 'corsair case', 'deepcool case', 'coolermaster case',
+      'کیس گیمینگ',
+      'کیس airflow',
+      'کیس mesh',
+      'کیس argb',
+      'کیس atx گیمینگ',
+      'کیس',
+      'case',
+      'gaming case',
+      'airflow case',
+      'mesh case',
+      'کیس کامپیوتر',
+      'lian li',
+      'fractal',
+      'nzxt',
+      'corsair case',
+      'deepcool case',
+      'coolermaster case',
     ],
   },
 ];
@@ -236,9 +304,20 @@ export const PART_CATEGORIES_OPTIONAL = [
     required: false,
     budgetWeight: 0.05,
     queries: [
-      'کولر', 'خنک کننده', 'cooler', 'cpu cooler',
-      'noctua', 'deepcool', 'arctic', 'be quiet cooler', 'corsair h',
-      'کولر پردازنده', 'کولر بادی', 'کولر آبی', 'aio', 'فن پردازنده',
+      'کولر',
+      'خنک کننده',
+      'cooler',
+      'cpu cooler',
+      'noctua',
+      'deepcool',
+      'arctic',
+      'be quiet cooler',
+      'corsair h',
+      'کولر پردازنده',
+      'کولر بادی',
+      'کولر آبی',
+      'aio',
+      'فن پردازنده',
     ],
   },
   {
@@ -249,9 +328,17 @@ export const PART_CATEGORIES_OPTIONAL = [
     required: false,
     budgetWeight: 0.015,
     queries: [
-      'فن کیس', 'case fan', 'فن rgb', 'rgb fan',
-      'lian li unifan', 'corsair ql', 'corsair af', 'deepcool fc',
-      'fan rgb 120', 'فن گیمینگ rgb', 'فن ۱۲۰',
+      'فن کیس',
+      'case fan',
+      'فن rgb',
+      'rgb fan',
+      'lian li unifan',
+      'corsair ql',
+      'corsair af',
+      'deepcool fc',
+      'fan rgb 120',
+      'فن گیمینگ rgb',
+      'فن ۱۲۰',
     ],
   },
   {
@@ -261,10 +348,7 @@ export const PART_CATEGORIES_OPTIONAL = [
     emoji: '✨',
     required: false,
     budgetWeight: 0.01,
-    queries: [
-      'نوار rgb', 'argb strip', 'rgb led strip',
-      'rgb kit', 'نوار نور rgb', 'استریپ rgb',
-    ],
+    queries: ['نوار rgb', 'argb strip', 'rgb led strip', 'rgb kit', 'نوار نور rgb', 'استریپ rgb'],
   },
 ];
 
@@ -275,10 +359,10 @@ export const PART_CATEGORIES = [...PART_CATEGORIES_MANDATORY, ...PART_CATEGORIES
 // ════════════════════════════════════════════════════════════════
 
 export const USE_CASES = [
-  { key: 'gaming',    label: 'گیمینگ',       emoji: '🎮', desc: 'اجرای روان بازی‌های سنگین' },
-  { key: 'office',    label: 'اداری',         emoji: '🏢', desc: 'کارهای روزمره اداری' },
-  { key: 'editing',   label: 'ادیت و رندر',   emoji: '🎬', desc: 'ادیت ویدیو و طراحی' },
-  { key: 'streaming', label: 'استریم',        emoji: '📹', desc: 'استریم و تولید محتوا' },
+  { key: 'gaming', label: 'گیمینگ', emoji: '🎮', desc: 'اجرای روان بازی‌های سنگین' },
+  { key: 'office', label: 'اداری', emoji: '🏢', desc: 'کارهای روزمره اداری' },
+  { key: 'editing', label: 'ادیت و رندر', emoji: '🎬', desc: 'ادیت ویدیو و طراحی' },
+  { key: 'streaming', label: 'استریم', emoji: '📹', desc: 'استریم و تولید محتوا' },
 ];
 
 export const USE_CASE_INFO: Record<string, any> = {
@@ -286,15 +370,43 @@ export const USE_CASE_INFO: Record<string, any> = {
     title: '🎮 عملکرد گیمینگ',
     description: 'سیستم مناسب برای بازی‌های کامپیوتری',
     tierDescriptions: {
-      ultra: { label: 'رده‌بالا - 4K', res: '4K (2160p)', fps: '60-120 FPS', settings: 'Ultra / Extreme', vram: '12GB+', minBudget: 150_000_000 },
-      high:  { label: 'قوی - 1440p', res: '1440p (2K)', fps: '60-144 FPS', settings: 'High / Very High', vram: '8-12GB', minBudget: 80_000_000 },
-      medium:{ label: 'متعادل - 1080p', res: '1080p (Full HD)', fps: '60-100 FPS', settings: 'Medium / High', vram: '6-8GB', minBudget: 45_000_000 },
-      entry:  { label: 'ابتدایی - 1080p', res: '1080p (Full HD)', fps: '30-60 FPS', settings: 'Low / Medium', vram: '4-6GB', minBudget: 25_000_000 },
+      ultra: {
+        label: 'رده‌بالا - 4K',
+        res: '4K (2160p)',
+        fps: '60-120 FPS',
+        settings: 'Ultra / Extreme',
+        vram: '12GB+',
+        minBudget: 150_000_000,
+      },
+      high: {
+        label: 'قوی - 1440p',
+        res: '1440p (2K)',
+        fps: '60-144 FPS',
+        settings: 'High / Very High',
+        vram: '8-12GB',
+        minBudget: 80_000_000,
+      },
+      medium: {
+        label: 'متعادل - 1080p',
+        res: '1080p (Full HD)',
+        fps: '60-100 FPS',
+        settings: 'Medium / High',
+        vram: '6-8GB',
+        minBudget: 45_000_000,
+      },
+      entry: {
+        label: 'ابتدایی - 1080p',
+        res: '1080p (Full HD)',
+        fps: '30-60 FPS',
+        settings: 'Low / Medium',
+        vram: '4-6GB',
+        minBudget: 25_000_000,
+      },
     },
     games: {
       ultra: ['Cyberpunk 2077', 'Elden Ring', 'Hogwarts Legacy', 'Starfield'],
-      high:  ['GTA V', 'Red Dead 2', 'Apex Legends', 'Fortnite'],
-      medium:['Valorant', 'CS2', 'League of Legends', 'Minecraft'],
+      high: ['GTA V', 'Red Dead 2', 'Apex Legends', 'Fortnite'],
+      medium: ['Valorant', 'CS2', 'League of Legends', 'Minecraft'],
       entry: ['Valorant', 'Minecraft', 'GTA V', 'Fortnite'],
     },
   },
@@ -302,30 +414,98 @@ export const USE_CASE_INFO: Record<string, any> = {
     title: '🎬 عملکرد ادیت و رندر',
     description: 'سیستم مناسب برای ادیت ویدیو و طراحی',
     tierDescriptions: {
-      ultra: { label: 'رده‌بالا - پرو', software: ['Premiere Pro', 'DaVinci Resolve', 'After Effects', 'Blender'], renderTime: '2-5 دقیقه', cores: '16+', ram: '64GB+', minBudget: 200_000_000 },
-      high:  { label: 'قوی - نیمه‌حرفه‌ای', software: ['Premiere Pro', 'DaVinci Resolve', 'Photoshop'], renderTime: '5-10 دقیقه', cores: '12-16', ram: '32GB', minBudget: 100_000_000 },
-      medium:{ label: 'متعادل - مبتدی', software: ['DaVinci Resolve', 'Premiere Rush'], renderTime: '10-20 دقیقه', cores: '8-12', ram: '16-32GB', minBudget: 50_000_000 },
-      entry:  { label: 'ابتدایی', software: ['CapCut', 'Canva'], renderTime: '15-30 دقیقه', cores: '4-6', ram: '8-16GB', minBudget: 30_000_000 },
+      ultra: {
+        label: 'رده‌بالا - پرو',
+        software: ['Premiere Pro', 'DaVinci Resolve', 'After Effects', 'Blender'],
+        renderTime: '2-5 دقیقه',
+        cores: '16+',
+        ram: '64GB+',
+        minBudget: 200_000_000,
+      },
+      high: {
+        label: 'قوی - نیمه‌حرفه‌ای',
+        software: ['Premiere Pro', 'DaVinci Resolve', 'Photoshop'],
+        renderTime: '5-10 دقیقه',
+        cores: '12-16',
+        ram: '32GB',
+        minBudget: 100_000_000,
+      },
+      medium: {
+        label: 'متعادل - مبتدی',
+        software: ['DaVinci Resolve', 'Premiere Rush'],
+        renderTime: '10-20 دقیقه',
+        cores: '8-12',
+        ram: '16-32GB',
+        minBudget: 50_000_000,
+      },
+      entry: {
+        label: 'ابتدایی',
+        software: ['CapCut', 'Canva'],
+        renderTime: '15-30 دقیقه',
+        cores: '4-6',
+        ram: '8-16GB',
+        minBudget: 30_000_000,
+      },
     },
   },
   streaming: {
     title: '📹 عملکرد استریم',
     description: 'سیستم مناسب برای استریم و تولید محتوا',
     tierDescriptions: {
-      ultra: { label: 'رده‌بالا - 4K', platforms: ['Twitch 4K/60fps', 'YouTube 4K'], quality: '4K بدون افت', minBudget: 200_000_000 },
-      high:  { label: 'قوی - 1080p/60fps', platforms: ['Twitch 1080p/60fps', 'YouTube 1080p'], quality: '1080p با کیفیت بالا', minBudget: 100_000_000 },
-      medium:{ label: 'متعادل - 1080p/30fps', platforms: ['Twitch 1080p/30fps', 'YouTube 720p'], quality: '720p/1080p', minBudget: 60_000_000 },
-      entry:  { label: 'ابتدایی', platforms: ['Twitch 720p', 'Zoom'], quality: '720p', minBudget: 35_000_000 },
+      ultra: {
+        label: 'رده‌بالا - 4K',
+        platforms: ['Twitch 4K/60fps', 'YouTube 4K'],
+        quality: '4K بدون افت',
+        minBudget: 200_000_000,
+      },
+      high: {
+        label: 'قوی - 1080p/60fps',
+        platforms: ['Twitch 1080p/60fps', 'YouTube 1080p'],
+        quality: '1080p با کیفیت بالا',
+        minBudget: 100_000_000,
+      },
+      medium: {
+        label: 'متعادل - 1080p/30fps',
+        platforms: ['Twitch 1080p/30fps', 'YouTube 720p'],
+        quality: '720p/1080p',
+        minBudget: 60_000_000,
+      },
+      entry: {
+        label: 'ابتدایی',
+        platforms: ['Twitch 720p', 'Zoom'],
+        quality: '720p',
+        minBudget: 35_000_000,
+      },
     },
   },
   office: {
     title: '🏢 عملکرد اداری',
     description: 'سیستم مناسب برای کارهای اداری',
     tierDescriptions: {
-      ultra: { label: 'رده‌بالا - حرفه‌ای', tasks: ['Excel سنگین', 'ماشین مجازی', 'چند مانیتور'], monitors: '2-4', minBudget: 80_000_000 },
-      high:  { label: 'قوی - متوسط', tasks: ['Excel/PowerPoint', 'چت ویدیویی', 'چند مانیتور'], monitors: '2', minBudget: 45_000_000 },
-      medium:{ label: 'متعادل', tasks: ['Word/Excel', 'Outlook', 'Chrome'], monitors: '1-2', minBudget: 25_000_000 },
-      entry:  { label: 'ابتدایی', tasks: ['مرورگر', 'ایمیل', 'Word'], monitors: '1', minBudget: 15_000_000 },
+      ultra: {
+        label: 'رده‌بالا - حرفه‌ای',
+        tasks: ['Excel سنگین', 'ماشین مجازی', 'چند مانیتور'],
+        monitors: '2-4',
+        minBudget: 80_000_000,
+      },
+      high: {
+        label: 'قوی - متوسط',
+        tasks: ['Excel/PowerPoint', 'چت ویدیویی', 'چند مانیتور'],
+        monitors: '2',
+        minBudget: 45_000_000,
+      },
+      medium: {
+        label: 'متعادل',
+        tasks: ['Word/Excel', 'Outlook', 'Chrome'],
+        monitors: '1-2',
+        minBudget: 25_000_000,
+      },
+      entry: {
+        label: 'ابتدایی',
+        tasks: ['مرورگر', 'ایمیل', 'Word'],
+        monitors: '1',
+        minBudget: 15_000_000,
+      },
     },
   },
 };
@@ -336,24 +516,52 @@ export const USE_CASE_INFO: Record<string, any> = {
 
 export const USE_CASE_BUDGET_WEIGHTS: Record<string, Record<string, number>> = {
   gaming: {
-    cpu: 0.19, gpu: 0.40, motherboard: 0.12, ram: 0.09,
-    storage: 0.07, psu: 0.075, case: 0.055,
-    cooler: 0.045, case_fan: 0.015, case_argb: 0.005,
+    cpu: 0.19,
+    gpu: 0.4,
+    motherboard: 0.12,
+    ram: 0.09,
+    storage: 0.07,
+    psu: 0.075,
+    case: 0.055,
+    cooler: 0.045,
+    case_fan: 0.015,
+    case_argb: 0.005,
   },
   editing: {
-    cpu: 0.32, gpu: 0.19, motherboard: 0.13, ram: 0.13,
-    storage: 0.09, psu: 0.065, case: 0.05,
-    cooler: 0.055, case_fan: 0.01, case_argb: 0.005,
+    cpu: 0.32,
+    gpu: 0.19,
+    motherboard: 0.13,
+    ram: 0.13,
+    storage: 0.09,
+    psu: 0.065,
+    case: 0.05,
+    cooler: 0.055,
+    case_fan: 0.01,
+    case_argb: 0.005,
   },
   streaming: {
-    cpu: 0.28, gpu: 0.22, motherboard: 0.13, ram: 0.12,
-    storage: 0.08, psu: 0.075, case: 0.05,
-    cooler: 0.05, case_fan: 0.015, case_argb: 0.005,
+    cpu: 0.28,
+    gpu: 0.22,
+    motherboard: 0.13,
+    ram: 0.12,
+    storage: 0.08,
+    psu: 0.075,
+    case: 0.05,
+    cooler: 0.05,
+    case_fan: 0.015,
+    case_argb: 0.005,
   },
   office: {
-    cpu: 0.30, gpu: 0.05, motherboard: 0.16, ram: 0.14,
-    storage: 0.13, psu: 0.08, case: 0.06,
-    cooler: 0.025, case_fan: 0.005, case_argb: 0.002,
+    cpu: 0.3,
+    gpu: 0.05,
+    motherboard: 0.16,
+    ram: 0.14,
+    storage: 0.13,
+    psu: 0.08,
+    case: 0.06,
+    cooler: 0.025,
+    case_fan: 0.005,
+    case_argb: 0.002,
   },
 };
 
@@ -374,7 +582,13 @@ type RawProduct = {
   brand?: { title?: string; name?: string } | string;
   warranty?: string;
   image?: string | { path?: string; src?: string; url?: string; link?: string };
-  images?: Array<{ content?: { path?: string; base_image?: number; link?: string }; path?: string; src?: string; url?: string; link?: string }>;
+  images?: Array<{
+    content?: { path?: string; base_image?: number; link?: string };
+    path?: string;
+    src?: string;
+    url?: string;
+    link?: string;
+  }>;
   thumbnail?: string | { path?: string; src?: string; url?: string; link?: string };
   media_gallery?: Array<{ url?: string; file?: string }>;
 };
@@ -422,13 +636,19 @@ function pickImage(p: RawProduct): string | null {
 
   // اولویت ۳: thumbnail (ممکنه object یا string باشه)
   if (p.thumbnail) {
-    const t = typeof p.thumbnail === 'string' ? p.thumbnail : (p.thumbnail.path || p.thumbnail.url || p.thumbnail.src);
+    const t =
+      typeof p.thumbnail === 'string'
+        ? p.thumbnail
+        : p.thumbnail.path || p.thumbnail.url || p.thumbnail.src;
     if (t) return buildImageUrl(t);
   }
 
   // اولویت ۴: image (ممکنه object یا string باشه)
   if (p.image) {
-    const i = typeof p.image === 'string' ? p.image : (p.image.path || p.image.url || p.image.src || p.image.link);
+    const i =
+      typeof p.image === 'string'
+        ? p.image
+        : p.image.path || p.image.url || p.image.src || p.image.link;
     if (i) return buildImageUrl(i);
   }
 
@@ -445,8 +665,15 @@ function extractProducts(res: unknown): RawProduct[] {
   if (!res || typeof res !== 'object') return [];
   const r = res as Record<string, unknown>;
   const candidates: unknown[] = [
-    r.products, r.data, r.items, r.result, r.hits, r.results,
-    (r.products as any)?.items, (r.data as any)?.products, (r.data as any)?.items,
+    r.products,
+    r.data,
+    r.items,
+    r.result,
+    r.hits,
+    r.results,
+    (r.products as any)?.items,
+    (r.data as any)?.products,
+    (r.data as any)?.items,
   ];
   for (const c of candidates) if (Array.isArray(c)) return c as RawProduct[];
   return [];
@@ -472,14 +699,13 @@ async function searchCategory(query: string, perPage: number): Promise<RawProduc
   }
 }
 
-
 function toNumberPrice(value: unknown): number {
   if (value === null || value === undefined || value === '') return 0;
   if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
   if (typeof value === 'string') {
     const normalized = value
-      .replace(/[۰-۹]/g, d => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)))
-      .replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
+      .replace(/[۰-۹]/g, (d) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)))
+      .replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
       .replace(/[,٬\s]/g, '');
     const n = Number(normalized);
     return Number.isFinite(n) ? n : 0;
@@ -496,10 +722,16 @@ function firstPositive(...values: unknown[]): number {
 }
 
 function priceObj(value: unknown): Record<string, any> {
-  return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, any> : {};
+  return value && typeof value === 'object' && !Array.isArray(value)
+    ? (value as Record<string, any>)
+    : {};
 }
 
-function extractProductPrices(p: RawProduct): { price: number; finalPrice: number; discountPercent: number } {
+function extractProductPrices(p: RawProduct): {
+  price: number;
+  finalPrice: number;
+  discountPercent: number;
+} {
   const price = priceObj(p.price);
   const productPrice = priceObj((p as any).product_price);
   const original = firstPositive(
@@ -517,35 +749,43 @@ function extractProductPrices(p: RawProduct): { price: number; finalPrice: numbe
     price.price,
     productPrice.price
   );
-  const finalPrice = firstPositive(
-    p.special_price,
-    (p as any).discount_price,
-    (p as any).final_price,
-    (p as any).sale_price,
-    price.special_price,
-    price.discount_price,
-    price.final_price,
-    price.sale_price,
-    price.price,
-    productPrice.special_price,
-    productPrice.discount_price,
-    productPrice.final_price,
-    productPrice.sale_price,
-    productPrice.price,
-    typeof p.price === 'object' ? undefined : p.price,
-    typeof (p as any).product_price === 'object' ? undefined : (p as any).product_price
-  ) || original;
+  const finalPrice =
+    firstPositive(
+      p.special_price,
+      (p as any).discount_price,
+      (p as any).final_price,
+      (p as any).sale_price,
+      price.special_price,
+      price.discount_price,
+      price.final_price,
+      price.sale_price,
+      price.price,
+      productPrice.special_price,
+      productPrice.discount_price,
+      productPrice.final_price,
+      productPrice.sale_price,
+      productPrice.price,
+      typeof p.price === 'object' ? undefined : p.price,
+      typeof (p as any).product_price === 'object' ? undefined : (p as any).product_price
+    ) || original;
   const base = original || finalPrice;
-  const discountPercent = base > 0 && finalPrice > 0 && finalPrice < base
-    ? Math.round(((base - finalPrice) / base) * 100)
-    : 0;
+  const discountPercent =
+    base > 0 && finalPrice > 0 && finalPrice < base
+      ? Math.round(((base - finalPrice) / base) * 100)
+      : 0;
   return { price: base, finalPrice, discountPercent };
 }
 
 function isProductInStock(p: RawProduct, finalPrice: number): boolean {
-  const stockValue = (p as any).is_in_stock ?? (p as any).in_stock ?? (p as any).stock ?? (p as any).available ?? (p as any).availability;
+  const stockValue =
+    (p as any).is_in_stock ??
+    (p as any).in_stock ??
+    (p as any).stock ??
+    (p as any).available ??
+    (p as any).availability;
   if (stockValue === 0 || stockValue === false || stockValue === '0') return false;
-  if (typeof stockValue === 'string' && /ناموجود|out\s*of\s*stock|unavailable/i.test(stockValue)) return false;
+  if (typeof stockValue === 'string' && /ناموجود|out\s*of\s*stock|unavailable/i.test(stockValue))
+    return false;
   // اگر بک‌اند وضعیت موجودی را نداده ولی قیمت معتبر داریم، محصول را قابل انتخاب فرض کن؛
   // این باعث می‌شود اسمبلر بی‌جهت اکثر کالاها را ناموجود نکند.
   return finalPrice > 0;
@@ -554,14 +794,18 @@ function isProductInStock(p: RawProduct, finalPrice: number): boolean {
 /**
  * ساخت AssemblyPart از محصول خام با استفاده از part-detector
  */
-function createPart(p: RawProduct, targetCategory: PartCategory, isOptional: boolean): AssemblyPart | null {
+function createPart(
+  p: RawProduct,
+  targetCategory: PartCategory,
+  isOptional: boolean
+): AssemblyPart | null {
   const name = String(p.name || p.title || '').trim();
   const id = p.id ?? p.url_key ?? p.slug;
   if (!name || !id) return null;
 
   const { price: basePrice, finalPrice, discountPercent } = extractProductPrices(p);
 
-  const catDef = PART_CATEGORIES.find(c => c.key === targetCategory);
+  const catDef = PART_CATEGORIES.find((c) => c.key === targetCategory);
 
   // استفاده از part-detector جدید
   const detection = detectPart(targetCategory, name);
@@ -622,166 +866,182 @@ export async function gatherCandidates(
 
   const weights = USE_CASE_BUDGET_WEIGHTS[useCaseKey] || USE_CASE_BUDGET_WEIGHTS.gaming;
 
-  return Promise.all(allCats.map(async (cat) => {
-    const weight = weights[cat.key] ?? cat.budgetWeight;
-    const budgetShare = Math.round(weight * totalBudget);
+  return Promise.all(
+    allCats.map(async (cat) => {
+      const weight = weights[cat.key] ?? cat.budgetWeight;
+      const budgetShare = Math.round(weight * totalBudget);
 
-    const all: RawProduct[] = [];
-    const seen = new Set<string>();
+      const all: RawProduct[] = [];
+      const seen = new Set<string>();
 
-    // جستجو با کوئری‌های متنوع
-    for (const q of cat.queries) {
-      try {
-        const found = await searchCategory(q, Math.max(8, Math.ceil(perCategory / cat.queries.length)));
-        for (const item of found) {
-          const key = String(item.id ?? item.url_key ?? item.slug);
-          if (seen.has(key)) continue;
-          seen.add(key);
-          all.push(item);
+      // جستجو با کوئری‌های متنوع
+      for (const q of cat.queries) {
+        try {
+          const found = await searchCategory(
+            q,
+            Math.max(8, Math.ceil(perCategory / cat.queries.length))
+          );
+          for (const item of found) {
+            const key = String(item.id ?? item.url_key ?? item.slug);
+            if (seen.has(key)) continue;
+            seen.add(key);
+            all.push(item);
+          }
+          if (all.length >= perCategory * 3) break;
+        } catch (e) {
+          // ignore individual query errors
         }
-        if (all.length >= perCategory * 3) break;
-      } catch (e) {
-        // ignore individual query errors
       }
-    }
 
-    // تبدیل به Parts با part-detector
-    const parts: AssemblyPart[] = [];
-    for (const raw of all) {
-      const part = createPart(raw, cat.key, cat.required === false);
-      if (part && part.inStock && part.finalPrice > 0) {
-        parts.push(part);
+      // تبدیل به Parts با part-detector
+      const parts: AssemblyPart[] = [];
+      for (const raw of all) {
+        const part = createPart(raw, cat.key, cat.required === false);
+        if (part && part.inStock && part.finalPrice > 0) {
+          parts.push(part);
+        }
       }
-    }
 
-    // v5.1: ادغام همیشگی با پایگاه دانش محلی (Reclassified Catalog)
-    // برای دستهٔ cooler و case_fan که API خیلی کم برمی‌گرداند، حیاتی است.
-    // برای بقیه هم گزینه‌های بیشتری در اختیار کاربر می‌گذارد.
-    if (hasOfflineCatalog()) {
-      const offlineItems = getOfflineCatalogByCategory(cat.key);
-      const seenIds = new Set(parts.map(p => String(p.id)));
-      for (const item of offlineItems) {
-        if (seenIds.has(String(item.id))) continue;
-        // اعمال گاردریل روی داده‌های offline هم (dual-check)
-        const guardCheck = validatePartCategory(cat.key, {
-          title: item.name,
-          name: item.name,
-          price: item.price,
-          finalPrice: item.finalPrice,
-          specs: item.specs || {},
-        });
-        if (!guardCheck.passed) continue;
+      // v5.1: ادغام همیشگی با پایگاه دانش محلی (Reclassified Catalog)
+      // برای دستهٔ cooler و case_fan که API خیلی کم برمی‌گرداند، حیاتی است.
+      // برای بقیه هم گزینه‌های بیشتری در اختیار کاربر می‌گذارد.
+      if (hasOfflineCatalog()) {
+        const offlineItems = getOfflineCatalogByCategory(cat.key);
+        const seenIds = new Set(parts.map((p) => String(p.id)));
+        for (const item of offlineItems) {
+          if (seenIds.has(String(item.id))) continue;
+          // اعمال گاردریل روی داده‌های offline هم (dual-check)
+          const guardCheck = validatePartCategory(cat.key, {
+            title: item.name,
+            name: item.name,
+            price: item.price,
+            finalPrice: item.finalPrice,
+            specs: item.specs || {},
+          });
+          if (!guardCheck.passed) continue;
 
-        const supp: AssemblyPart = {
-          category: cat.key,
-          categoryLabel: cat.label,
-          emoji: cat.emoji,
-          id: item.id,
-          name: item.name,
-          url: item.url || `${BASEURL_SITE}/product/${encodeURIComponent(String(item.id))}`,
-          image: item.image || null,
-          price: Number(item.price || 0),
-          finalPrice: Number(item.finalPrice || item.price || 0),
-          discountPercent: Number(item.discountPercent || 0),
-          inStock: Boolean(item.inStock),
-          brand: item.brand || null,
-          warranty: item.warranty || null,
-          shortSpec: item.shortSpec || '',
-          specs: item.specs || {},
-          confidence: 70, // offline data has medium confidence
-          isOptional: cat.required === false,
-          alternatives: [],
-        };
-        if (supp.finalPrice > 0 && supp.inStock) parts.push(supp);
+          const supp: AssemblyPart = {
+            category: cat.key,
+            categoryLabel: cat.label,
+            emoji: cat.emoji,
+            id: item.id,
+            name: item.name,
+            url: item.url || `${BASEURL_SITE}/product/${encodeURIComponent(String(item.id))}`,
+            image: item.image || null,
+            price: Number(item.price || 0),
+            finalPrice: Number(item.finalPrice || item.price || 0),
+            discountPercent: Number(item.discountPercent || 0),
+            inStock: Boolean(item.inStock),
+            brand: item.brand || null,
+            warranty: item.warranty || null,
+            shortSpec: item.shortSpec || '',
+            specs: item.specs || {},
+            confidence: 70, // offline data has medium confidence
+            isOptional: cat.required === false,
+            alternatives: [],
+          };
+          if (supp.finalPrice > 0 && supp.inStock) parts.push(supp);
+        }
       }
-    }
 
-    // مرتب‌سازی: confidence + تطابق با بودجهٔ هدف
-    parts.sort((a, b) => {
-      // اولویت ۱: confidence بالاتر
-      const confDiff = b.confidence - a.confidence;
-      if (Math.abs(confDiff) > 5) return confDiff;
-      // اولویت ۲: نزدیکی به بودجهٔ هدف
-      const aDist = Math.abs(a.finalPrice - budgetShare);
-      const bDist = Math.abs(b.finalPrice - budgetShare);
-      return aDist - bDist;
-    });
+      // مرتب‌سازی: confidence + تطابق با بودجهٔ هدف
+      parts.sort((a, b) => {
+        // اولویت ۱: confidence بالاتر
+        const confDiff = b.confidence - a.confidence;
+        if (Math.abs(confDiff) > 5) return confDiff;
+        // اولویت ۲: نزدیکی به بودجهٔ هدف
+        const aDist = Math.abs(a.finalPrice - budgetShare);
+        const bDist = Math.abs(b.finalPrice - budgetShare);
+        return aDist - bDist;
+      });
 
-    return {
-      category: cat.key,
-      label: cat.label,
-      emoji: cat.emoji,
-      budgetShare,
-      isOptional: cat.required === false,
-      required: cat.required !== false,
-      key: cat.key,
-      candidates: parts.slice(0, perCategory),
-    };
-  }));
+      return {
+        category: cat.key,
+        label: cat.label,
+        emoji: cat.emoji,
+        budgetShare,
+        isOptional: cat.required === false,
+        required: cat.required !== false,
+        key: cat.key,
+        candidates: parts.slice(0, perCategory),
+      };
+    })
+  );
 }
 
 // ════════════════════════════════════════════════════════════════
 // 💰 محاسبهٔ بازهٔ بودجه
 // ════════════════════════════════════════════════════════════════
 
-export async function getBudgetRange(useCaseKey: string, includeOptional = true): Promise<BudgetRange> {
+export async function getBudgetRange(
+  useCaseKey: string,
+  includeOptional = true
+): Promise<BudgetRange> {
   const weights = USE_CASE_BUDGET_WEIGHTS[useCaseKey] || USE_CASE_BUDGET_WEIGHTS.gaming;
 
-  const baseCategoriesToCheck = includeOptional
-    ? PART_CATEGORIES
-    : PART_CATEGORIES_MANDATORY;
-  const categoriesToCheck = useCaseKey === 'office'
-    ? baseCategoriesToCheck.filter(cat => cat.key !== 'gpu')
-    : baseCategoriesToCheck;
+  const baseCategoriesToCheck = includeOptional ? PART_CATEGORIES : PART_CATEGORIES_MANDATORY;
+  const categoriesToCheck =
+    useCaseKey === 'office'
+      ? baseCategoriesToCheck.filter((cat) => cat.key !== 'gpu')
+      : baseCategoriesToCheck;
 
-  const results = await Promise.all(categoriesToCheck.map(async (cat) => {
-    const isOptional = cat.required === false;
-    const all: RawProduct[] = [];
-    const seen = new Set<string>();
-    for (const q of cat.queries.slice(0, 5)) {
-      try {
-        const found = await searchCategory(q, 8);
-        for (const item of found) {
-          const key = String(item.id ?? item.url_key ?? item.slug);
-          if (seen.has(key)) continue;
-          seen.add(key);
-          all.push(item);
-        }
-      } catch {}
-    }
-    const prices: number[] = [];
-    for (const raw of all) {
-      const part = createPart(raw, cat.key, isOptional);
-      if (part && part.inStock && part.finalPrice > 0) prices.push(part.finalPrice);
-    }
-    prices.sort((a, b) => a - b);
-    const pick = (ratio: number) => prices.length ? prices[Math.min(prices.length - 1, Math.max(0, Math.floor((prices.length - 1) * ratio)))] : 0;
-    // به‌جای ارزان‌ترین/گران‌ترین مطلق، از percentile استفاده می‌کنیم تا بازه تخمینی واقعی‌تر شود
-    // و یک محصول خیلی ارزان/خیلی گران اسلایدر بودجه را خراب نکند.
-    const catMin = pick(0.15);
-    const catTypical = pick(0.45);
-    const catMax = pick(0.85) || prices[prices.length - 1] || 0;
-    // استفاده از وزن کاربری برای سهم
-    const weight = weights[cat.key] ?? cat.budgetWeight;
-    return {
-      category: cat.key,
-      min: catMin,
-      typical: catTypical,
-      max: catMax,
-      isOptional,
-      weight,
-    };
-  }));
+  const results = await Promise.all(
+    categoriesToCheck.map(async (cat) => {
+      const isOptional = cat.required === false;
+      const all: RawProduct[] = [];
+      const seen = new Set<string>();
+      for (const q of cat.queries.slice(0, 5)) {
+        try {
+          const found = await searchCategory(q, 8);
+          for (const item of found) {
+            const key = String(item.id ?? item.url_key ?? item.slug);
+            if (seen.has(key)) continue;
+            seen.add(key);
+            all.push(item);
+          }
+        } catch {}
+      }
+      const prices: number[] = [];
+      for (const raw of all) {
+        const part = createPart(raw, cat.key, isOptional);
+        if (part && part.inStock && part.finalPrice > 0) prices.push(part.finalPrice);
+      }
+      prices.sort((a, b) => a - b);
+      const pick = (ratio: number) =>
+        prices.length
+          ? prices[
+              Math.min(prices.length - 1, Math.max(0, Math.floor((prices.length - 1) * ratio)))
+            ]
+          : 0;
+      // به‌جای ارزان‌ترین/گران‌ترین مطلق، از percentile استفاده می‌کنیم تا بازه تخمینی واقعی‌تر شود
+      // و یک محصول خیلی ارزان/خیلی گران اسلایدر بودجه را خراب نکند.
+      const catMin = pick(0.15);
+      const catTypical = pick(0.45);
+      const catMax = pick(0.85) || prices[prices.length - 1] || 0;
+      // استفاده از وزن کاربری برای سهم
+      const weight = weights[cat.key] ?? cat.budgetWeight;
+      return {
+        category: cat.key,
+        min: catMin,
+        typical: catTypical,
+        max: catMax,
+        isOptional,
+        weight,
+      };
+    })
+  );
 
   // محاسبهٔ min/max کل
-  const mandatoryResults = results.filter(r => !r.isOptional);
-  const optionalResults = results.filter(r => r.isOptional);
+  const mandatoryResults = results.filter((r) => !r.isOptional);
+  const optionalResults = results.filter((r) => r.isOptional);
 
   const hardMin = mandatoryResults.reduce((s, c) => s + c.min, 0);
-  const typical = mandatoryResults.reduce((s, c) => s + (c.typical || c.min), 0) +
-                  optionalResults.reduce((s, c) => s + (c.typical || 0) * 0.55, 0);
-  const realisticMax = mandatoryResults.reduce((s, c) => s + c.max, 0) +
-                       optionalResults.reduce((s, c) => s + c.max * 0.75, 0);
+  const typical =
+    mandatoryResults.reduce((s, c) => s + (c.typical || c.min), 0) +
+    optionalResults.reduce((s, c) => s + (c.typical || 0) * 0.55, 0);
+  const realisticMax =
+    mandatoryResults.reduce((s, c) => s + c.max, 0) +
+    optionalResults.reduce((s, c) => s + c.max * 0.75, 0);
 
   const fallbackByUseCase: Record<string, { min: number; recommended: number; max: number }> = {
     office: { min: 18_000_000, recommended: 30_000_000, max: 120_000_000 },
@@ -802,16 +1062,28 @@ export async function getBudgetRange(useCaseKey: string, includeOptional = true)
     editing: 550_000_000,
     streaming: 550_000_000,
   };
-  const min = hardMin > 0 ? Math.max(useCaseFloor[useCaseKey] || 25_000_000, Math.round(hardMin * (useCaseKey === 'office' ? 0.95 : 1.08))) : fallback.min;
-  const recommended = typical > 0 ? Math.max(min, Math.round(typical * (useCaseKey === 'office' ? 1.0 : 1.12))) : fallback.recommended;
-  const maxRaw = realisticMax > min ? Math.round(realisticMax * (useCaseKey === 'office' ? 1.0 : 1.18)) : fallback.max;
+  const min =
+    hardMin > 0
+      ? Math.max(
+          useCaseFloor[useCaseKey] || 25_000_000,
+          Math.round(hardMin * (useCaseKey === 'office' ? 0.95 : 1.08))
+        )
+      : fallback.min;
+  const recommended =
+    typical > 0
+      ? Math.max(min, Math.round(typical * (useCaseKey === 'office' ? 1.0 : 1.12)))
+      : fallback.recommended;
+  const maxRaw =
+    realisticMax > min
+      ? Math.round(realisticMax * (useCaseKey === 'office' ? 1.0 : 1.18))
+      : fallback.max;
   const max = Math.max(maxRaw, useCaseCeil[useCaseKey] || fallback.max);
 
   return {
     min,
     max: Math.max(max, recommended, min + (useCaseKey === 'office' ? 40_000_000 : 120_000_000)),
     recommended: Math.min(Math.max(recommended, min), Math.max(max, recommended)),
-    perCategory: results.map(r => ({ category: r.category, min: r.min, max: r.max })),
+    perCategory: results.map((r) => ({ category: r.category, min: r.min, max: r.max })),
   };
 }
 
@@ -931,8 +1203,8 @@ export function selectPartsForBuild(
   const weights = USE_CASE_BUDGET_WEIGHTS[useCase] || USE_CASE_BUDGET_WEIGHTS.gaming;
 
   // ۱) ابتدا قطعات اجباری (mandatory)
-  const mandatoryCategories = categories.filter(c => !c.isOptional);
-  const optionalCategories = categories.filter(c => c.isOptional);
+  const mandatoryCategories = categories.filter((c) => !c.isOptional);
+  const optionalCategories = categories.filter((c) => c.isOptional);
 
   for (const cat of mandatoryCategories) {
     if (cat.candidates.length === 0) continue;
@@ -944,8 +1216,11 @@ export function selectPartsForBuild(
 
     // امتیازدهی همهٔ کاندیداها
     const scored = cat.candidates
-      .filter(c => c.finalPrice <= maxForThis)
-      .map(c => ({ part: c, score: scorePartForUseCase(c, useCase, remaining, budget, targetShare) }))
+      .filter((c) => c.finalPrice <= maxForThis)
+      .map((c) => ({
+        part: c,
+        score: scorePartForUseCase(c, useCase, remaining, budget, targetShare),
+      }))
       .sort((a, b) => b.score - a.score);
 
     let best: AssemblyPart | null = null;
@@ -959,7 +1234,7 @@ export function selectPartsForBuild(
     if (best) {
       // v5.0: جایگزین‌های فراوان — تا 50 برای هر دستهٔ اجباری
       const alts = cat.candidates
-        .filter(c => c.id !== best!.id && !c.isOptional)
+        .filter((c) => c.id !== best!.id && !c.isOptional)
         .sort((a, b) => (a.finalPrice || 0) - (b.finalPrice || 0))
         .slice(0, 50);
 
@@ -975,8 +1250,8 @@ export function selectPartsForBuild(
   }
 
   // ۲) قطعات اختیاری (با هوش: اگه بودجهٔ مناسب داریم و کاربری نیاز داره)
-  const includeOptionals = ['gaming', 'streaming', 'editing'].includes(useCase) ||
-    currentTotal < budget * 0.92;
+  const includeOptionals =
+    ['gaming', 'streaming', 'editing'].includes(useCase) || currentTotal < budget * 0.92;
   const remainingForOptional = budget - currentTotal;
 
   for (const cat of optionalCategories) {
@@ -986,25 +1261,31 @@ export function selectPartsForBuild(
     // 🛡️ گاردریل ویژهٔ Cooler: جلوگیری از تحمیل AIO گران به سیستم ضعیف
     // ═════════════════════════════════════════════════════════════
     if (cat.category === 'cooler') {
-      const cpuPart = selected.find(p => p.category === 'cpu');
+      const cpuPart = selected.find((p) => p.category === 'cpu');
       const cpuTdp = estimateCpuTdpFromName(cpuPart);
       const remaining = budget - currentTotal;
 
       // v6.0: فیلتر قاطع پایه لپ‌تاپ قبل از هر محاسبه
-      const genuineCoolers = cat.candidates.filter(c => isGenuineCpuCooler(c.name || ''));
+      const genuineCoolers = cat.candidates.filter((c) => isGenuineCpuCooler(c.name || ''));
       const cheapestCoolerPrice = genuineCoolers.length
-        ? Math.min(...genuineCoolers.map(c => Number(c.finalPrice || c.price || 0)).filter(n => n > 0))
+        ? Math.min(
+            ...genuineCoolers.map((c) => Number(c.finalPrice || c.price || 0)).filter((n) => n > 0)
+          )
         : Infinity;
 
       // شرط ۱: کاربری اداری با CPU کم‌مصرف → کاملاً بی‌نیاز
       if (useCase === 'office' && cpuTdp <= 95) {
-        details.push(`❄️ ${cat.label}: صرف‌نظر شد (پردازندهٔ اداری ${cpuTdp}W نیاز به کولر جانبی ندارد؛ فن استوک کافی است).`);
+        details.push(
+          `❄️ ${cat.label}: صرف‌نظر شد (پردازندهٔ اداری ${cpuTdp}W نیاز به کولر جانبی ندارد؛ فن استوک کافی است).`
+        );
         continue;
       }
 
       // شرط ۲: اگر ارزان‌ترین cooler معتبر بیش از حد گران بود → skip
-      if (cheapestCoolerPrice > budget * 0.15 || cheapestCoolerPrice > remaining * 0.40) {
-        details.push(`❄️ ${cat.label}: صرف‌نظر شد (ارزان‌ترین کولر معتبر ${shortToman(cheapestCoolerPrice)} با بودجه متناسب نیست).`);
+      if (cheapestCoolerPrice > budget * 0.15 || cheapestCoolerPrice > remaining * 0.4) {
+        details.push(
+          `❄️ ${cat.label}: صرف‌نظر شد (ارزان‌ترین کولر معتبر ${shortToman(cheapestCoolerPrice)} با بودجه متناسب نیست).`
+        );
         continue;
       }
 
@@ -1013,12 +1294,14 @@ export function selectPartsForBuild(
       if (economical && Number(economical.finalPrice || 0) <= remaining * 0.5) {
         // ارسال کل ~74 کولر معتبر (پس از فیلتر) به فرانت
         const alts = genuineCoolers
-          .filter(c => c.id !== economical.id)
+          .filter((c) => c.id !== economical.id)
           .sort((a, b) => (a.finalPrice || 0) - (b.finalPrice || 0))
           .slice(0, 150);
         selected.push({ ...economical, alternatives: alts });
         currentTotal += Number(economical.finalPrice || 0);
-        details.push(`❄️ ${cat.label}: ${economical.shortSpec || economical.name} ${economical.pickReason ? '— ' + economical.pickReason : ''}`);
+        details.push(
+          `❄️ ${cat.label}: ${economical.shortSpec || economical.name} ${economical.pickReason ? '— ' + economical.pickReason : ''}`
+        );
         continue;
       }
       // اگر Tier engine چیزی نداد یا خیلی گران بود، ادامه به منطق عادی
@@ -1035,8 +1318,11 @@ export function selectPartsForBuild(
     const maxForThis = Math.min(targetShare * 1.4, remaining * 0.15);
 
     const scored = cat.candidates
-      .filter(c => c.finalPrice <= maxForThis)
-      .map(c => ({ part: c, score: scorePartForUseCase(c, useCase, remaining, budget, targetShare) }))
+      .filter((c) => c.finalPrice <= maxForThis)
+      .map((c) => ({
+        part: c,
+        score: scorePartForUseCase(c, useCase, remaining, budget, targetShare),
+      }))
       .sort((a, b) => b.score - a.score);
 
     let best: AssemblyPart | null = null;
@@ -1049,7 +1335,7 @@ export function selectPartsForBuild(
       // v5.0: برای cooler تا 150، برای بقیه اختیاری‌ها تا 40
       const altsLimit = cat.category === 'cooler' ? 150 : 40;
       const alts = cat.candidates
-        .filter(c => c.id !== best!.id)
+        .filter((c) => c.id !== best!.id)
         .sort((a, b) => (a.finalPrice || 0) - (b.finalPrice || 0))
         .slice(0, altsLimit);
       selected.push({
@@ -1078,14 +1364,14 @@ export function checkCompatibility(parts: AssemblyPart[]): CompatibilityResult {
   const warnings: CompatibilityIssue[] = [];
   let score = 100;
 
-  const cpu = parts.find(p => p.category === 'cpu');
-  const gpu = parts.find(p => p.category === 'gpu');
-  const mb = parts.find(p => p.category === 'motherboard');
-  const ram = parts.find(p => p.category === 'ram');
-  const psu = parts.find(p => p.category === 'psu');
-  const cs = parts.find(p => p.category === 'case');
-  const storage = parts.find(p => p.category === 'storage');
-  const cooler = parts.find(p => p.category === 'cooler');
+  const cpu = parts.find((p) => p.category === 'cpu');
+  const gpu = parts.find((p) => p.category === 'gpu');
+  const mb = parts.find((p) => p.category === 'motherboard');
+  const ram = parts.find((p) => p.category === 'ram');
+  const psu = parts.find((p) => p.category === 'psu');
+  const cs = parts.find((p) => p.category === 'case');
+  const storage = parts.find((p) => p.category === 'storage');
+  const cooler = parts.find((p) => p.category === 'cooler');
 
   // ═══════ بررسی ۱: سوکت CPU با مادربرد ═══════
   let socketMatch = true;
@@ -1106,7 +1392,11 @@ export function checkCompatibility(parts: AssemblyPart[]): CompatibilityResult {
       message: `⚠️ سوکت AM5 فقط با رم DDR5 سازگار است`,
     });
     score -= 25;
-  } else if (cpu?.specs?.socket === 'LGA1700' && mb?.specs?.socket && mb.specs.socket !== 'LGA1700') {
+  } else if (
+    cpu?.specs?.socket === 'LGA1700' &&
+    mb?.specs?.socket &&
+    mb.specs.socket !== 'LGA1700'
+  ) {
     issues.push({
       severity: 'error',
       category: 'motherboard',
@@ -1130,7 +1420,7 @@ export function checkCompatibility(parts: AssemblyPart[]): CompatibilityResult {
 
   // ═══════ بررسی ۳: توان PSU بر اساس GPU + CPU ═══════
   const cpuTdp = (cpu?.specs?.tdp as number) || 95;
-  const gpuTdp = gpu ? ((gpu.specs?.tdp as number) || 150) : 0;
+  const gpuTdp = gpu ? (gpu.specs?.tdp as number) || 150 : 0;
   const requiredPsu = calculateMinPsuWattage(cpuTdp, gpuTdp);
   const recommendedPsu = recommendPsuWattage(cpuTdp, gpuTdp);
   let psuSufficient = true;
@@ -1246,7 +1536,10 @@ export function checkCompatibility(parts: AssemblyPart[]): CompatibilityResult {
   }
 
   // ═══════ بررسی ۸: GPU TDP با PSU (اضافی، برای ultra GPU) ═══════
-  if (gpu?.specs?.tier === 'ultra' && (!psu?.specs?.wattage || psu.specs.wattage < recommendedPsu)) {
+  if (
+    gpu?.specs?.tier === 'ultra' &&
+    (!psu?.specs?.wattage || psu.specs.wattage < recommendedPsu)
+  ) {
     warnings.push({
       severity: 'warning',
       category: 'gpu',
@@ -1278,9 +1571,9 @@ export function checkCompatibility(parts: AssemblyPart[]): CompatibilityResult {
 export function determineTier(parts: AssemblyPart[], budget: number): string {
   let score = 0;
 
-  const cpu = parts.find(p => p.category === 'cpu');
-  const gpu = parts.find(p => p.category === 'gpu');
-  const ram = parts.find(p => p.category === 'ram');
+  const cpu = parts.find((p) => p.category === 'cpu');
+  const gpu = parts.find((p) => p.category === 'gpu');
+  const ram = parts.find((p) => p.category === 'ram');
 
   if (cpu?.specs?.cores) {
     score += cpu.specs.cores * 2.5;
@@ -1321,14 +1614,14 @@ export function generateDescription(parts: AssemblyPart[], useCase: string, tier
   const tierInfo = info.tierDescriptions[tier];
   if (!tierInfo) return '';
 
-  const cpu = parts.find(p => p.category === 'cpu');
-  const gpu = parts.find(p => p.category === 'gpu');
-  const ram = parts.find(p => p.category === 'ram');
-  const storage = parts.find(p => p.category === 'storage');
-  const psu = parts.find(p => p.category === 'psu');
-  const mb = parts.find(p => p.category === 'motherboard');
-  const casePart = parts.find(p => p.category === 'case');
-  const cooler = parts.find(p => p.category === 'cooler');
+  const cpu = parts.find((p) => p.category === 'cpu');
+  const gpu = parts.find((p) => p.category === 'gpu');
+  const ram = parts.find((p) => p.category === 'ram');
+  const storage = parts.find((p) => p.category === 'storage');
+  const psu = parts.find((p) => p.category === 'psu');
+  const mb = parts.find((p) => p.category === 'motherboard');
+  const casePart = parts.find((p) => p.category === 'case');
+  const cooler = parts.find((p) => p.category === 'cooler');
 
   let desc = `${info.title}\n`;
   desc += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
@@ -1342,13 +1635,17 @@ export function generateDescription(parts: AssemblyPart[], useCase: string, tier
     const games = info.games?.[tier];
     if (games?.length) {
       desc += `\n🎮 بازی‌های قابل اجرا:\n`;
-      games.forEach((g: string) => { desc += `   ▪ ${g}\n`; });
+      games.forEach((g: string) => {
+        desc += `   ▪ ${g}\n`;
+      });
     }
   }
 
   if (useCase === 'editing' && tierInfo) {
     desc += `🖥️ نرم‌افزارها:\n`;
-    tierInfo.software?.forEach((s: string) => { desc += `   ▪ ${s}\n`; });
+    tierInfo.software?.forEach((s: string) => {
+      desc += `   ▪ ${s}\n`;
+    });
     desc += `\n⏱️ زمان رندر (۴K): ${tierInfo.renderTime}\n`;
     desc += `🔧 هسته‌های CPU: ${tierInfo.cores}\n`;
     if (tierInfo.ram) desc += `💾 رم: ${tierInfo.ram}\n`;
@@ -1356,14 +1653,19 @@ export function generateDescription(parts: AssemblyPart[], useCase: string, tier
 
   if (useCase === 'streaming' && tierInfo) {
     desc += `📡 پلتفرم‌ها:\n`;
-    tierInfo.platforms?.forEach((p: string) => { desc += `   ▪ ${p}\n`; });
+    tierInfo.platforms?.forEach((p: string) => {
+      desc += `   ▪ ${p}\n`;
+    });
     desc += `\n🎬 کیفیت: ${tierInfo.quality}\n`;
   }
 
   if (useCase === 'office' && tierInfo) {
     desc += `📋 وظایف:\n`;
     if (typeof tierInfo.tasks === 'string') desc += `   ▪ ${tierInfo.tasks}\n`;
-    else tierInfo.tasks?.forEach((t: string) => { desc += `   ▪ ${t}\n`; });
+    else
+      tierInfo.tasks?.forEach((t: string) => {
+        desc += `   ▪ ${t}\n`;
+      });
     desc += `🖥️ تعداد مانیتور: ${tierInfo.monitors}\n`;
   }
 
@@ -1388,11 +1690,11 @@ export function generateDescription(parts: AssemblyPart[], useCase: string, tier
 export function generateUpgrades(parts: AssemblyPart[], useCase: string): string[] {
   const suggestions: string[] = [];
 
-  const gpu = parts.find(p => p.category === 'gpu');
-  const ram = parts.find(p => p.category === 'ram');
-  const psu = parts.find(p => p.category === 'psu');
-  const storage = parts.find(p => p.category === 'storage');
-  const cpu = parts.find(p => p.category === 'cpu');
+  const gpu = parts.find((p) => p.category === 'gpu');
+  const ram = parts.find((p) => p.category === 'ram');
+  const psu = parts.find((p) => p.category === 'psu');
+  const storage = parts.find((p) => p.category === 'storage');
+  const cpu = parts.find((p) => p.category === 'cpu');
 
   if (useCase === 'gaming') {
     if (gpu?.specs?.vram && gpu.specs.vram < 12) {
@@ -1456,10 +1758,13 @@ export function generateUpgrades(parts: AssemblyPart[], useCase: string): string
 // 🎯 تخمین FPS برای گیمینگ
 // ════════════════════════════════════════════════════════════════
 
-export function estimateGamingFps(parts: AssemblyPart[], resolution: '720p' | '1080p' | '1440p' | '4K'): Record<string, string> {
-  const gpu = parts.find(p => p.category === 'gpu');
-  const cpu = parts.find(p => p.category === 'cpu');
-  const ram = parts.find(p => p.category === 'ram');
+export function estimateGamingFps(
+  parts: AssemblyPart[],
+  resolution: '720p' | '1080p' | '1440p' | '4K'
+): Record<string, string> {
+  const gpu = parts.find((p) => p.category === 'gpu');
+  const cpu = parts.find((p) => p.category === 'cpu');
+  const ram = parts.find((p) => p.category === 'ram');
 
   // ضریب توان GPU بر اساس VRAM و tier
   let gpuScore = 0;
@@ -1480,16 +1785,26 @@ export function estimateGamingFps(parts: AssemblyPart[], resolution: '720p' | '1
   const totalScore = gpuScore + cpuScore + ramPenalty;
 
   // ضریب رزولوشن
-  const resMult = resolution === '4K' ? 0.55 : resolution === '1440p' ? 0.78 : resolution === '1080p' ? 1.0 : 1.25;
+  const resMult =
+    resolution === '4K'
+      ? 0.55
+      : resolution === '1440p'
+        ? 0.78
+        : resolution === '1080p'
+          ? 1.0
+          : 1.25;
 
   const estimates: Record<string, string> = {};
   const games = ['Cyberpunk 2077', 'Elden Ring', 'GTA V', 'Valorant', 'CS2'];
   for (const game of games) {
     // بازی‌های مختلف intensity متفاوتی دارن
-    const intensity = game.includes('Cyberpunk') ? 1.0 :
-                      game.includes('Elden') ? 0.95 :
-                      game.includes('GTA') ? 0.85 :
-                      1.4; // Valorant/CS2 سبک‌ترن
+    const intensity = game.includes('Cyberpunk')
+      ? 1.0
+      : game.includes('Elden')
+        ? 0.95
+        : game.includes('GTA')
+          ? 0.85
+          : 1.4; // Valorant/CS2 سبک‌ترن
     const baseFps = Math.round(totalScore * intensity * resMult);
     estimates[game] = `${Math.max(30, baseFps)} FPS`;
   }
@@ -1561,8 +1876,8 @@ export function generateSystemRecommendation(
 // ════════════════════════════════════════════════════════════════
 
 export function summarize(parts: AssemblyPart[]): BuildSummary {
-  const mandatory = parts.filter(p => !p.isOptional);
-  const optional = parts.filter(p => p.isOptional);
+  const mandatory = parts.filter((p) => !p.isOptional);
+  const optional = parts.filter((p) => p.isOptional);
 
   const qty = (p: AssemblyPart) => Math.max(1, Number(p.quantity || 1));
   const totalBefore = parts.reduce((s, p) => s + (p.price || 0) * qty(p), 0);
@@ -1596,8 +1911,10 @@ export function summarize(parts: AssemblyPart[]): BuildSummary {
 function shortToman(n: number): string {
   // گرد کردن به نزدیک‌ترین عدد خوانا
   const rounded = Math.round(n / 1000) * 1000;
-  if (rounded >= 1_000_000_000) return `${(rounded / 1_000_000_000).toLocaleString('fa-IR', { maximumFractionDigits: 1 })} میلیارد`;
-  if (rounded >= 1_000_000) return `${Math.round(rounded / 1_000_000).toLocaleString('fa-IR')} میلیون`;
+  if (rounded >= 1_000_000_000)
+    return `${(rounded / 1_000_000_000).toLocaleString('fa-IR', { maximumFractionDigits: 1 })} میلیارد`;
+  if (rounded >= 1_000_000)
+    return `${Math.round(rounded / 1_000_000).toLocaleString('fa-IR')} میلیون`;
   return `${rounded.toLocaleString('fa-IR')}`;
 }
 
@@ -1639,7 +1956,8 @@ export const COOLER_TIER_RULES: CoolerTierRule[] = [
     maxPriceToman: 2_500_000,
     allowLiquid: false,
     requireLiquid: false,
-    reasonTemplate: 'انتخاب خنک‌کنندهٔ بادی اقتصادی از کف قیمت انبار متناسب با پردازندهٔ کم‌مصرف ({tdp}W)؛ صرفه‌جویی چند میلیون تومانی در بودجه.',
+    reasonTemplate:
+      'انتخاب خنک‌کنندهٔ بادی اقتصادی از کف قیمت انبار متناسب با پردازندهٔ کم‌مصرف ({tdp}W)؛ صرفه‌جویی چند میلیون تومانی در بودجه.',
   },
   {
     tier: 'MIDRANGE',
@@ -1648,7 +1966,8 @@ export const COOLER_TIER_RULES: CoolerTierRule[] = [
     maxPriceToman: 4_000_000,
     allowLiquid: false,
     requireLiquid: false,
-    reasonTemplate: 'انتخاب خنک‌کنندهٔ بادی حرفه‌ای ۴-۶ هیت‌پایپ متناسب با پردازندهٔ میان‌رده ({tdp}W)؛ کاملاً کافی برای گیمینگ سنگین.',
+    reasonTemplate:
+      'انتخاب خنک‌کنندهٔ بادی حرفه‌ای ۴-۶ هیت‌پایپ متناسب با پردازندهٔ میان‌رده ({tdp}W)؛ کاملاً کافی برای گیمینگ سنگین.',
   },
   {
     tier: 'PERFORMANCE',
@@ -1658,7 +1977,8 @@ export const COOLER_TIER_RULES: CoolerTierRule[] = [
     allowLiquid: true,
     requireLiquid: false,
     requireRadiatorSize: 240,
-    reasonTemplate: 'انتخاب خنک‌کنندهٔ مایع ۲۴۰ میلی‌متری یا بادی دوبرجه جهت حفظ دمای زیر ۷۰ درجه در رندرینگ و گیمینگ طولانی‌مدت پردازندهٔ پرقدرت ({tdp}W).',
+    reasonTemplate:
+      'انتخاب خنک‌کنندهٔ مایع ۲۴۰ میلی‌متری یا بادی دوبرجه جهت حفظ دمای زیر ۷۰ درجه در رندرینگ و گیمینگ طولانی‌مدت پردازندهٔ پرقدرت ({tdp}W).',
   },
   {
     tier: 'FLAGSHIP',
@@ -1668,7 +1988,8 @@ export const COOLER_TIER_RULES: CoolerTierRule[] = [
     allowLiquid: true,
     requireLiquid: true,
     requireRadiatorSize: 360,
-    reasonTemplate: 'انتخاب حیاتی خنک‌کنندهٔ مایع ۳۶۰ میلی‌متری جهت مهار توان حرارتی فوق‌العادهٔ پردازندهٔ پرچم‌دار ({tdp}W) و جلوگیری از افت فرکانس حرارتی.',
+    reasonTemplate:
+      'انتخاب حیاتی خنک‌کنندهٔ مایع ۳۶۰ میلی‌متری جهت مهار توان حرارتی فوق‌العادهٔ پردازندهٔ پرچم‌دار ({tdp}W) و جلوگیری از افت فرکانس حرارتی.',
   },
 ];
 
@@ -1740,9 +2061,9 @@ export function pickBestCoolerEconomical(
 
   // v6.0: فیلتر قاطع پایه لپ‌تاپ + مرتب‌سازی صعودی قیمت (از کف قیمت)
   const sorted = [...coolersInStock]
-    .filter(c => c.inStock !== false && (c.finalPrice > 0 || c.price > 0))
-    .filter(c => isGenuineCpuCooler(c.name || (c as any).title || '')) // ← لایهٔ ضد پایه لپ‌تاپ
-    .sort((a, b) => (Number(a.finalPrice || a.price || 0)) - (Number(b.finalPrice || b.price || 0)));
+    .filter((c) => c.inStock !== false && (c.finalPrice > 0 || c.price > 0))
+    .filter((c) => isGenuineCpuCooler(c.name || (c as any).title || '')) // ← لایهٔ ضد پایه لپ‌تاپ
+    .sort((a, b) => Number(a.finalPrice || a.price || 0) - Number(b.finalPrice || b.price || 0));
 
   for (const cooler of sorted) {
     const price = Number(cooler.finalPrice || cooler.price || 0);
@@ -1752,7 +2073,12 @@ export function pickBestCoolerEconomical(
     if (price < rule.minPriceToman || price > rule.maxPriceToman) continue;
     if (rule.requireLiquid && !info.isLiquid) continue;
     if (!rule.allowLiquid && info.isLiquid) continue;
-    if (rule.requireRadiatorSize && info.radiatorSize && info.radiatorSize < rule.requireRadiatorSize) continue;
+    if (
+      rule.requireRadiatorSize &&
+      info.radiatorSize &&
+      info.radiatorSize < rule.requireRadiatorSize
+    )
+      continue;
     // برای Flagship اگر radiator size شناسایی نشد، رد کن (احتمالاً بادی است)
     if (rule.tier === 'FLAGSHIP' && !info.isLiquid) continue;
 

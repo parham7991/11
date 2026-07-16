@@ -41,8 +41,11 @@ const toman = (n: number) => `${Math.round(n).toLocaleString('fa-IR')} توما�
 function todayFa(): string {
   try {
     return new Intl.DateTimeFormat('fa-IR', {
-      year: 'numeric', month: 'long', day: 'numeric',
-      hour: '2-digit', minute: '2-digit',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     }).format(new Date());
   } catch {
     return new Date().toLocaleString();
@@ -52,7 +55,9 @@ function todayFa(): string {
 /** تولید لینک اشتراک‌گذاری کوتاه با هش کانفیگ */
 function buildShareUrl(parts: InvoicePart[]): string {
   if (typeof window === 'undefined') return '';
-  const ids = parts.map(p => `${p.category}:${p.id}${p.quantity && p.quantity > 1 ? `x${p.quantity}` : ''}`).join(',');
+  const ids = parts
+    .map((p) => `${p.category}:${p.id}${p.quantity && p.quantity > 1 ? `x${p.quantity}` : ''}`)
+    .join(',');
   try {
     const hash = typeof btoa !== 'undefined' ? btoa(unescape(encodeURIComponent(ids))) : ids;
     return `${window.location.origin}${window.location.pathname}?build=${encodeURIComponent(hash)}`;
@@ -91,7 +96,7 @@ export default function InvoiceModal({ open, onClose, parts, useCaseLabel, budge
 
   return (
     <div className="asm-inv__backdrop no-print" onClick={onClose}>
-      <div className="asm-inv__container" onClick={e => e.stopPropagation()}>
+      <div className="asm-inv__container" onClick={(e) => e.stopPropagation()}>
         {/* Actions */}
         <div className="asm-inv__actions no-print">
           <button className="asm-inv__btn asm-inv__btn--primary" onClick={handlePrint}>
@@ -113,9 +118,15 @@ export default function InvoiceModal({ open, onClose, parts, useCaseLabel, budge
               <div className="asm-inv__slogan">آفلند — سرزمینِ تخفیف</div>
             </div>
             <div className="asm-inv__meta">
-              <div><b>پیش‌فاکتور اسمبل هوشمند</b></div>
+              <div>
+                <b>پیش‌فاکتور اسمبل هوشمند</b>
+              </div>
               <div className="asm-inv__date">{todayFa()}</div>
-              {useCaseLabel && <div>کاربری: <b>{useCaseLabel}</b></div>}
+              {useCaseLabel && (
+                <div>
+                  کاربری: <b>{useCaseLabel}</b>
+                </div>
+              )}
               {budget && <div>بودجه انتخابی: {toman(budget)}</div>}
             </div>
           </div>
@@ -136,7 +147,8 @@ export default function InvoiceModal({ open, onClose, parts, useCaseLabel, budge
               {parts.map((p, i) => {
                 const q = Math.max(1, Number(p.quantity || 1));
                 const line = (Number(p.finalPrice) || 0) * q;
-                const saving = Math.max(0, (Number(p.price) || 0) - (Number(p.finalPrice) || 0)) * q;
+                const saving =
+                  Math.max(0, (Number(p.price) || 0) - (Number(p.finalPrice) || 0)) * q;
                 return (
                   <tr key={String(p.id) + '-' + i}>
                     <td>{(i + 1).toLocaleString('fa-IR')}</td>
@@ -148,22 +160,30 @@ export default function InvoiceModal({ open, onClose, parts, useCaseLabel, budge
                     <td>{q.toLocaleString('fa-IR')}</td>
                     <td>{toman(Number(p.finalPrice) || 0)}</td>
                     <td className="asm-inv__saving">{saving > 0 ? `- ${toman(saving)}` : '—'}</td>
-                    <td><b>{toman(line)}</b></td>
+                    <td>
+                      <b>{toman(line)}</b>
+                    </td>
                   </tr>
                 );
               })}
             </tbody>
             <tfoot>
               <tr>
-                <td colSpan={6} className="asm-inv__ftlabel">جمع قبل از تخفیف</td>
+                <td colSpan={6} className="asm-inv__ftlabel">
+                  جمع قبل از تخفیف
+                </td>
                 <td>{toman(totals.totalBefore)}</td>
               </tr>
               <tr className="asm-inv__savingRow">
-                <td colSpan={6} className="asm-inv__ftlabel">مجموع سود شما از تخفیف‌ها ({totals.savingPercent}٪)</td>
+                <td colSpan={6} className="asm-inv__ftlabel">
+                  مجموع سود شما از تخفیف‌ها ({totals.savingPercent}٪)
+                </td>
                 <td>- {toman(totals.totalSaving)}</td>
               </tr>
               <tr className="asm-inv__totalRow">
-                <td colSpan={6} className="asm-inv__ftlabel">مبلغ قابل پرداخت</td>
+                <td colSpan={6} className="asm-inv__ftlabel">
+                  مبلغ قابل پرداخت
+                </td>
                 <td>{toman(totals.totalAfter)}</td>
               </tr>
             </tfoot>
@@ -171,8 +191,8 @@ export default function InvoiceModal({ open, onClose, parts, useCaseLabel, budge
 
           <div className="asm-inv__footer">
             <div className="asm-inv__note">
-              این پیش‌فاکتور صرفاً جهت بررسی کارشناسی است و اعتبار مالی رسمی ندارد.
-              قیمت‌ها در لحظهٔ خرید نهایی از سایت آفلند تأیید می‌شوند.
+              این پیش‌فاکتور صرفاً جهت بررسی کارشناسی است و اعتبار مالی رسمی ندارد. قیمت‌ها در لحظهٔ
+              خرید نهایی از سایت آفلند تأیید می‌شوند.
             </div>
             <div className="asm-inv__contact">
               وب‌سایت: offl.ir | پشتیبانی و مشاورهٔ اسمبل: از طریق چت آنلاین در سایت

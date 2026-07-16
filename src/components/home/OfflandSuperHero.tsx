@@ -24,8 +24,8 @@ export default function OfflandSuperHero() {
           </h1>
 
           <p className="offl-super-hero__lead">
-            آفلند فقط یک فروشگاه نیست؛ یک دستیار خرید تخصصی برای انتخاب قطعات سازگار،
-            مقایسه بهتر، خرید مطمئن و ساخت سیستم کامل بر اساس بودجه و کاربرد توست.
+            آفلند فقط یک فروشگاه نیست؛ یک دستیار خرید تخصصی برای انتخاب قطعات سازگار، مقایسه بهتر،
+            خرید مطمئن و ساخت سیستم کامل بر اساس بودجه و کاربرد توست.
           </p>
 
           <div className="offl-super-hero__actions">
@@ -42,7 +42,11 @@ export default function OfflandSuperHero() {
           <div className="offl-super-hero__quick">
             <span>شروع سریع با بودجه:</span>
             {quickBudgets.map((item) => (
-              <Link key={item} href={`/assemble-online?budget=${encodeURIComponent(item)}`} prefetch={false}>
+              <Link
+                key={item}
+                href={`/assemble-online?budget=${encodeURIComponent(item)}`}
+                prefetch={false}
+              >
                 {item}
               </Link>
             ))}
@@ -64,7 +68,9 @@ export default function OfflandSuperHero() {
               <span>سازگاری قطعات</span>
               <strong>۹۶٪</strong>
             </div>
-            <div className="offl-progress"><i style={{ width: '96%' }} /></div>
+            <div className="offl-progress">
+              <i style={{ width: '96%' }} />
+            </div>
             <div className="offl-mini-specs">
               <span>GPU Ready</span>
               <span>DDR5</span>
@@ -74,11 +80,17 @@ export default function OfflandSuperHero() {
 
           <div className="offl-floating-card offl-floating-card--a">
             <FiZap />
-            <div><b>ارزش خرید بالا</b><span>انتخاب بر اساس قیمت و موجودی</span></div>
+            <div>
+              <b>ارزش خرید بالا</b>
+              <span>انتخاب بر اساس قیمت و موجودی</span>
+            </div>
           </div>
           <div className="offl-floating-card offl-floating-card--b">
             <FiShield />
-            <div><b>خرید مطمئن</b><span>گارانتی، اصالت و پشتیبانی تخصصی</span></div>
+            <div>
+              <b>خرید مطمئن</b>
+              <span>گارانتی، اصالت و پشتیبانی تخصصی</span>
+            </div>
           </div>
         </div>
       </div>

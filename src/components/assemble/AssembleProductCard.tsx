@@ -69,7 +69,8 @@ type Part = {
 
 const toman = (n: number) => `${Math.round(n).toLocaleString('fa-IR')} تومان`;
 const shortToman = (n: number) => {
-  if (n >= 1_000_000_000) return `${(n / 1_000_000_000).toLocaleString('fa-IR', { maximumFractionDigits: 1 })} میلیارد`;
+  if (n >= 1_000_000_000)
+    return `${(n / 1_000_000_000).toLocaleString('fa-IR', { maximumFractionDigits: 1 })} میلیارد`;
   if (n >= 1_000_000) return `${Math.round(n / 1_000_000).toLocaleString('fa-IR')} میلیون`;
   return `${n.toLocaleString('fa-IR')}`;
 };
@@ -116,7 +117,9 @@ export default function AssembleProductCard({
       {/* ────── بنرهای وضعیت ────── */}
       {blocked && (
         <div className="asm-pcard__status-banner asm-pcard__status-banner--blocked">
-          <span><WarningIcon /></span>
+          <span>
+            <WarningIcon />
+          </span>
           <div>
             <strong>این قطعه با بقیهٔ سیستم سازگار نیست</strong>
             <span>انتخاب غیرفعال شده</span>
@@ -125,7 +128,9 @@ export default function AssembleProductCard({
       )}
       {unavailable && (
         <div className="asm-pcard__status-banner asm-pcard__status-banner--unavailable">
-          <span><WarningIcon /></span>
+          <span>
+            <WarningIcon />
+          </span>
           <div>
             <strong>الان موجود نیست</strong>
             <span>به زودی موجود می‌کنیم</span>
@@ -170,7 +175,9 @@ export default function AssembleProductCard({
           {/* دسته + اجباری/اختیاری */}
           <div className="asm-pcard__cat-row">
             <div className="asm-pcard__cat">
-              <span className="asm-pcard__cat-icon"><Icon /></span>
+              <span className="asm-pcard__cat-icon">
+                <Icon />
+              </span>
               <span className="asm-pcard__cat-label">{part.categoryLabel}</span>
             </div>
             {part.isOptional ? (
@@ -178,7 +185,11 @@ export default function AssembleProductCard({
             ) : (
               <span className="asm-pcard__tag asm-pcard__tag--mandatory">اجباری</span>
             )}
-            {qty > 1 && <span className="asm-pcard__tag asm-pcard__tag--mandatory">×{qty.toLocaleString('fa-IR')}</span>}
+            {qty > 1 && (
+              <span className="asm-pcard__tag asm-pcard__tag--mandatory">
+                ×{qty.toLocaleString('fa-IR')}
+              </span>
+            )}
           </div>
 
           {/* برند */}
@@ -203,11 +214,7 @@ export default function AssembleProductCard({
           )}
 
           {/* پیام مسدودیت */}
-          {blockingReason && (
-            <div className="asm-pcard__block-reason">
-              {blockingReason}
-            </div>
-          )}
+          {blockingReason && <div className="asm-pcard__block-reason">{blockingReason}</div>}
         </div>
 
         {/* ────── قیمت + اکشن ────── */}
@@ -300,19 +307,19 @@ function AlternativesDrawer({
 
   const filtered = React.useMemo(() => {
     let list = alternatives;
-    if (isCoolerCat && filter === 'air') list = list.filter(a => !isLiquid(a.name || ''));
-    if (isCoolerCat && filter === 'liquid') list = list.filter(a => isLiquid(a.name || ''));
+    if (isCoolerCat && filter === 'air') list = list.filter((a) => !isLiquid(a.name || ''));
+    if (isCoolerCat && filter === 'liquid') list = list.filter((a) => isLiquid(a.name || ''));
     const q = query.trim().toLowerCase();
-    if (q) list = list.filter(a => (a.name || '').toLowerCase().includes(q));
+    if (q) list = list.filter((a) => (a.name || '').toLowerCase().includes(q));
     return list;
   }, [alternatives, filter, query, isCoolerCat]);
 
   const airCount = React.useMemo(
-    () => (isCoolerCat ? alternatives.filter(a => !isLiquid(a.name || '')).length : 0),
+    () => (isCoolerCat ? alternatives.filter((a) => !isLiquid(a.name || '')).length : 0),
     [alternatives, isCoolerCat]
   );
   const liquidCount = React.useMemo(
-    () => (isCoolerCat ? alternatives.filter(a => isLiquid(a.name || '')).length : 0),
+    () => (isCoolerCat ? alternatives.filter((a) => isLiquid(a.name || '')).length : 0),
     [alternatives, isCoolerCat]
   );
 
@@ -320,8 +327,7 @@ function AlternativesDrawer({
     <div className="asm-pcard__alts">
       <div className="asm-pcard__alts-title">
         {alternatives.length} جایگزین سازگار
-        {isCoolerCat && ` (${airCount} بادی، ${liquidCount} آبی)`}
-        — کلیک کن تا عوض بشه:
+        {isCoolerCat && ` (${airCount} بادی، ${liquidCount} آبی)`}— کلیک کن تا عوض بشه:
       </div>
 
       {/* فیلترها: فقط برای cooler و اگر بیش از 4 گزینه است */}
@@ -331,21 +337,21 @@ function AlternativesDrawer({
             <div className="asm-pcard__filter-group">
               <button
                 type="button"
-                className={`asm-pcard__filter-btn${filter === 'all' ? ' asm-pcard__filter-btn--active' : ''}`}
+                className={`asm-pcard__filter-btn${filter === 'all' ? 'asm-pcard__filter-btn--active' : ''}`}
                 onClick={() => setFilter('all')}
               >
                 🔎 همه ({alternatives.length})
               </button>
               <button
                 type="button"
-                className={`asm-pcard__filter-btn${filter === 'air' ? ' asm-pcard__filter-btn--active' : ''}`}
+                className={`asm-pcard__filter-btn${filter === 'air' ? 'asm-pcard__filter-btn--active' : ''}`}
                 onClick={() => setFilter('air')}
               >
                 ❄️ بادی ({airCount})
               </button>
               <button
                 type="button"
-                className={`asm-pcard__filter-btn${filter === 'liquid' ? ' asm-pcard__filter-btn--active' : ''}`}
+                className={`asm-pcard__filter-btn${filter === 'liquid' ? 'asm-pcard__filter-btn--active' : ''}`}
                 onClick={() => setFilter('liquid')}
               >
                 💧 مایع/AIO ({liquidCount})
@@ -357,7 +363,7 @@ function AlternativesDrawer({
             className="asm-pcard__filter-search"
             placeholder="جستجو در جایگزین‌ها..."
             value={query}
-            onChange={e => setQuery(e.target.value)}
+            onChange={(e) => setQuery(e.target.value)}
           />
         </div>
       )}
@@ -399,7 +405,9 @@ function AlternativesDrawer({
                 <div className="asm-pcard__alt-spec">{alt.shortSpec || '—'}</div>
               </div>
               <div className="asm-pcard__alt-price">{shortToman(alt.finalPrice)}</div>
-              <div className="asm-pcard__alt-select"><CheckIcon /> انتخاب</div>
+              <div className="asm-pcard__alt-select">
+                <CheckIcon /> انتخاب
+              </div>
             </button>
           );
         })}
@@ -440,37 +448,58 @@ function SpecBadges({ part }: { part: Part }) {
     if (specs.tdp) list.push({ icon: 'psu', label: 'توان', value: `${specs.tdp}W` });
     if (specs.frequency) list.push({ icon: 'info', label: 'بوست', value: `${specs.frequency}GHz` });
   } else if (part.category === 'gpu') {
-    if (specs.vram) list.push({ icon: 'gpu', label: 'VRAM', value: `${specs.vram}GB`, color: '#386bf9' });
+    if (specs.vram)
+      list.push({ icon: 'gpu', label: 'VRAM', value: `${specs.vram}GB`, color: '#386bf9' });
     if (specs.tdp) list.push({ icon: 'psu', label: 'توان', value: `${specs.tdp}W` });
     if (specs.brand) list.push({ icon: 'info', label: 'برند', value: specs.brand });
   } else if (part.category === 'motherboard') {
     if (specs.socket) list.push({ icon: 'cpu', label: 'سوکت', value: specs.socket });
     if (specs.chipset) list.push({ icon: 'info', label: 'چیپ‌ست', value: specs.chipset });
-    if (specs.ramType) list.push({ icon: 'ram', label: 'رم', value: specs.ramType, color: specs.ramType === 'DDR5' ? '#059669' : '#6b7790' });
-    if (specs.ramSlots) list.push({ icon: 'ram', label: 'اسلات RAM', value: `${specs.ramSlots} اسلات` });
-    if (specs.m2Slots) list.push({ icon: 'storage', label: 'M.2', value: `${specs.m2Slots} اسلات` });
+    if (specs.ramType)
+      list.push({
+        icon: 'ram',
+        label: 'رم',
+        value: specs.ramType,
+        color: specs.ramType === 'DDR5' ? '#059669' : '#6b7790',
+      });
+    if (specs.ramSlots)
+      list.push({ icon: 'ram', label: 'اسلات RAM', value: `${specs.ramSlots} اسلات` });
+    if (specs.m2Slots)
+      list.push({ icon: 'storage', label: 'M.2', value: `${specs.m2Slots} اسلات` });
     if (specs.formFactor) list.push({ icon: 'info', label: 'فرم', value: specs.formFactor });
     if (specs.wifi) list.push({ icon: 'ok', label: 'WiFi', value: 'دارد' });
   } else if (part.category === 'ram') {
-    if (specs.capacity) list.push({ icon: 'ram', label: 'ظرفیت', value: `${specs.capacity}GB`, color: '#386bf9' });
-    if (specs.totalModules && specs.ramSlots) list.push({ icon: 'ram', label: 'اسلات', value: `${specs.totalModules}/${specs.ramSlots}` });
-    else if (specs.moduleCount) list.push({ icon: 'ram', label: 'ماژول', value: `${specs.moduleCount} ماژول` });
+    if (specs.capacity)
+      list.push({ icon: 'ram', label: 'ظرفیت', value: `${specs.capacity}GB`, color: '#386bf9' });
+    if (specs.totalModules && specs.ramSlots)
+      list.push({ icon: 'ram', label: 'اسلات', value: `${specs.totalModules}/${specs.ramSlots}` });
+    else if (specs.moduleCount)
+      list.push({ icon: 'ram', label: 'ماژول', value: `${specs.moduleCount} ماژول` });
     if (specs.ramType) list.push({ icon: 'ram', label: 'نوع', value: specs.ramType });
-    if (specs.frequency) list.push({ icon: 'info', label: 'فرکانس', value: `${specs.frequency}MHz` });
+    if (specs.frequency)
+      list.push({ icon: 'info', label: 'فرکانس', value: `${specs.frequency}MHz` });
     if (specs.rgb) list.push({ icon: 'ok', label: 'RGB', value: 'دارد' });
   } else if (part.category === 'storage') {
-    if (specs.size) list.push({ icon: 'storage', label: 'ظرفیت', value: specs.sizeTB ? `${specs.sizeTB}TB` : `${specs.size}GB`, color: '#059669' });
+    if (specs.size)
+      list.push({
+        icon: 'storage',
+        label: 'ظرفیت',
+        value: specs.sizeTB ? `${specs.sizeTB}TB` : `${specs.size}GB`,
+        color: '#059669',
+      });
     if (specs.isNVMe) list.push({ icon: 'storage', label: 'NVMe', value: 'دارد' });
     if (specs.pcie) list.push({ icon: 'info', label: 'PCIe', value: specs.pcie });
   } else if (part.category === 'psu') {
-    if (specs.wattage) list.push({ icon: 'psu', label: 'توان', value: `${specs.wattage}W`, color: '#dc2626' });
+    if (specs.wattage)
+      list.push({ icon: 'psu', label: 'توان', value: `${specs.wattage}W`, color: '#dc2626' });
     if (specs.rating) list.push({ icon: 'ok', label: 'گواهی', value: specs.rating });
     if (specs.modular) list.push({ icon: 'info', label: 'ماژولار', value: specs.modular });
   } else if (part.category === 'case') {
     if (specs.formFactor) list.push({ icon: 'info', label: 'فرم', value: specs.formFactor });
     if (specs.rgb) list.push({ icon: 'ok', label: 'RGB', value: 'دارد' });
   } else if (part.category === 'cooler') {
-    if (specs.type === 'aio') list.push({ icon: 'info', label: 'AIO', value: `${specs.size}mm`, color: '#386bf9' });
+    if (specs.type === 'aio')
+      list.push({ icon: 'info', label: 'AIO', value: `${specs.size}mm`, color: '#386bf9' });
     else list.push({ icon: 'info', label: 'Air', value: 'Cooler' });
     if (specs.tdpRating) list.push({ icon: 'psu', label: 'تا', value: `${specs.tdpRating}W` });
   } else if (part.category === 'case_fan') {
@@ -487,9 +516,15 @@ function SpecBadges({ part }: { part: Part }) {
           key={i}
           className="asm-pcard__spec"
           title={spec.label}
-          style={spec.color ? { color: spec.color, borderColor: spec.color + '40', background: spec.color + '10' } : undefined}
+          style={
+            spec.color
+              ? { color: spec.color, borderColor: spec.color + '40', background: spec.color + '10' }
+              : undefined
+          }
         >
-          <span className="asm-pcard__spec-icon"><SpecMiniIcon type={spec.icon} /></span>
+          <span className="asm-pcard__spec-icon">
+            <SpecMiniIcon type={spec.icon} />
+          </span>
           {spec.value}
         </span>
       ))}

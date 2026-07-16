@@ -99,7 +99,8 @@ const CATEGORY_PATTERNS: Array<{ category: string; regex: RegExp; negative?: Reg
   // پردازنده
   {
     category: 'cpu',
-    regex: /پردازنده\s*(?:اینتل|amd|ای\s*ام\s*دی|مرکزی|core|ryzen)|intel\s*core|ryzen|core\s*i[3579]|core2/i,
+    regex:
+      /پردازنده\s*(?:اینتل|amd|ای\s*ام\s*دی|مرکزی|core|ryzen)|intel\s*core|ryzen|core\s*i[3579]|core2/i,
     negative: /خنک\s*کننده|کولر|فن\s*استوک|جاکلیدی|شابلون/i,
   },
   // کارت گرافیک
@@ -111,7 +112,8 @@ const CATEGORY_PATTERNS: Array<{ category: string; regex: RegExp; negative?: Reg
   // مادربرد
   {
     category: 'motherboard',
-    regex: /مادر\s*برد|مادربورد|motherboard|mainboard|\bz[6-9]\d0|\bb[6-9]\d0|\bh[6-9]\d0|\bx[67]\d0/i,
+    regex:
+      /مادر\s*برد|مادربورد|motherboard|mainboard|\bz[6-9]\d0|\bb[6-9]\d0|\bh[6-9]\d0|\bx[67]\d0/i,
   },
   // رم دسکتاپ (نه لپ‌تاپ)
   {
@@ -122,7 +124,8 @@ const CATEGORY_PATTERNS: Array<{ category: string; regex: RegExp; negative?: Reg
   // حافظه SSD/HDD
   {
     category: 'storage',
-    regex: /\bssd\b|اس\s*اس\s*دی|nvme|m\.?2|\bhdd\b|هارد\s*(?:دیسک|اینترنال|داخلی)|حافظه\s*(?:جامد|داخلی)/i,
+    regex:
+      /\bssd\b|اس\s*اس\s*دی|nvme|m\.?2|\bhdd\b|هارد\s*(?:دیسک|اینترنال|داخلی)|حافظه\s*(?:جامد|داخلی)/i,
     negative: /باکس|قاب|کیف\s*هارد|داک\s*هارد/i,
   },
   // منبع تغذیه
@@ -134,7 +137,8 @@ const CATEGORY_PATTERNS: Array<{ category: string; regex: RegExp; negative?: Reg
   // کیس
   {
     category: 'case',
-    regex: /کیس\s*کامپیوتر|کیس\s*گیمینگ|\bcase\b|chassis|mid[\s-]*tower|full[\s-]*tower|mini[\s-]*itx/i,
+    regex:
+      /کیس\s*کامپیوتر|کیس\s*گیمینگ|\bcase\b|chassis|mid[\s-]*tower|full[\s-]*tower|mini[\s-]*itx/i,
     negative: /فن\s*کیس|فیلتر\s*(?:گرد|کیس)|پایه|رایزر|قاب\s*کیس/i,
   },
   // نمایشگر
@@ -196,8 +200,16 @@ const rawGrouped = rawCatalog as unknown as Record<string, RawItem[]>;
  * می‌مانند.
  */
 const RECLASSIFIED: Record<string, OfflineProduct[]> = {
-  cpu: [], gpu: [], motherboard: [], ram: [], storage: [],
-  psu: [], case: [], cooler: [], case_fan: [], monitor: [],
+  cpu: [],
+  gpu: [],
+  motherboard: [],
+  ram: [],
+  storage: [],
+  psu: [],
+  case: [],
+  cooler: [],
+  case_fan: [],
+  monitor: [],
 };
 
 const _stats = { total: 0, moved: 0, kept: 0 };
@@ -263,9 +275,7 @@ export const OFFLINE_CATALOG_STATS = {
   keptOriginal: _stats.kept,
   droppedCount: _dropped.length,
   droppedSamples: _dropped.slice(0, 20), // نمونهٔ ۲۰ آیتم رد‌شده برای debug
-  byCategory: Object.fromEntries(
-    Object.entries(RECLASSIFIED).map(([k, v]) => [k, v.length])
-  ),
+  byCategory: Object.fromEntries(Object.entries(RECLASSIFIED).map(([k, v]) => [k, v.length])),
 };
 
 // ─────────────────────────────────────────────────────────────────
@@ -299,7 +309,7 @@ export function mergeWithOfflineCatalog<T extends { id: string | number }>(
   const offline = getOfflineCatalogByCategory(category);
   if (offline.length === 0) return apiResults;
   if (apiResults.length === 0) return offline as unknown as T[];
-  const seenIds = new Set(apiResults.map(p => String(p.id)));
-  const supplemental = (offline as unknown as T[]).filter(p => !seenIds.has(String(p.id)));
+  const seenIds = new Set(apiResults.map((p) => String(p.id)));
+  const supplemental = (offline as unknown as T[]).filter((p) => !seenIds.has(String(p.id)));
   return [...apiResults, ...supplemental];
 }

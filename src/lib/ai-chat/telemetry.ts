@@ -125,10 +125,10 @@ export interface PhysicalClearanceIssue {
 // ─────────────────────────────────────────────────────────────────
 
 function partByCat(parts: TelemetryPart[], category: string): TelemetryPart | undefined {
-  return parts.find(p => p.category === category);
+  return parts.find((p) => p.category === category);
 }
 function partsByCat(parts: TelemetryPart[], category: string): TelemetryPart[] {
-  return parts.filter(p => p.category === category);
+  return parts.filter((p) => p.category === category);
 }
 function qty(p?: TelemetryPart): number {
   return Math.max(1, Number(p?.quantity || 1));
@@ -248,10 +248,7 @@ export function calculatePowerTelemetry(parts: TelemetryPart[]): PowerTelemetry 
   const baseSystem = 90; // مادربرد ~50 + رم ~15 + storage/fans ~25
 
   const totalTdp = cpuTdp + gpuTgp + baseSystem;
-  const recommendedPsuWattage = Math.max(
-    450,
-    Math.ceil((totalTdp * 1.3) / 50) * 50
-  );
+  const recommendedPsuWattage = Math.max(450, Math.ceil((totalTdp * 1.3) / 50) * 50);
 
   const currentPsuWattage = Number(psu?.specs?.wattage || 0);
 
@@ -325,11 +322,12 @@ export function calculateBottleneck(
   }
 
   // وزن‌ها بر اساس رزولوشن
-  const w = resolution === '1080p'
-    ? { cpu: 0.6, gpu: 0.4 }
-    : resolution === '1440p'
-      ? { cpu: 0.5, gpu: 0.5 }
-      : { cpu: 0.3, gpu: 0.7 };
+  const w =
+    resolution === '1080p'
+      ? { cpu: 0.6, gpu: 0.4 }
+      : resolution === '1440p'
+        ? { cpu: 0.5, gpu: 0.5 }
+        : { cpu: 0.3, gpu: 0.7 };
 
   const effectiveCpu = cpuScore * w.cpu;
   const effectiveGpu = gpuScore * w.gpu;
@@ -341,9 +339,7 @@ export function calculateBottleneck(
     percentage < 5 ? 'BALANCED' : effectiveCpu < effectiveGpu ? 'CPU' : 'GPU';
 
   const severity: BottleneckSeverity =
-    percentage < 5 ? 'BALANCED' :
-    percentage < 10 ? 'LOW' :
-    percentage < 18 ? 'MEDIUM' : 'HIGH';
+    percentage < 5 ? 'BALANCED' : percentage < 10 ? 'LOW' : percentage < 18 ? 'MEDIUM' : 'HIGH';
 
   let description = '';
   if (severity === 'BALANCED') {
@@ -420,9 +416,9 @@ export function renderScore(parts: TelemetryPart[]): number {
   const gScore = gpuPerformanceScore(gpu);
 
   let score = 0;
-  score += Math.min(4, cores * 0.25);          // تا 4 امتیاز از CPU cores
-  score += Math.min(3, ramCap / 22);           // تا ~3 امتیاز از RAM (64GB=full)
-  score += (gScore / 100) * 2.5;               // تا 2.5 از GPU
+  score += Math.min(4, cores * 0.25); // تا 4 امتیاز از CPU cores
+  score += Math.min(3, ramCap / 22); // تا ~3 امتیاز از RAM (64GB=full)
+  score += (gScore / 100) * 2.5; // تا 2.5 از GPU
   score += isNvme ? 0.5 : 0.2;
   return Math.max(1, Math.min(10, Number(score.toFixed(1))));
 }
@@ -438,33 +434,59 @@ export function futureProofingScore(parts: TelemetryPart[]): { score: number; re
   const cpu = partByCat(parts, 'cpu');
 
   const ramType = String(ram?.specs?.ramType || mb?.specs?.ramType || '');
-  if (ramType.includes('DDR5')) { s += 1.5; reasons.push('پشتیبانی از DDR5'); }
+  if (ramType.includes('DDR5')) {
+    s += 1.5;
+    reasons.push('پشتیبانی از DDR5');
+  }
 
   const chipset = String(mb?.specs?.chipset || '').toUpperCase();
   if (/Z890|Z790|X870|X670E|B860|B850/.test(chipset)) {
-    s += 1.2; reasons.push(`چیپست مدرن ${chipset} با پشتیبانی PCIe 5.0`);
+    s += 1.2;
+    reasons.push(`چیپست مدرن ${chipset} با پشتیبانی PCIe 5.0`);
   }
 
   const socket = String(cpu?.specs?.socket || '').toUpperCase();
-  if (socket === 'AM5') { s += 1; reasons.push('سوکت AM5 با پشتیبانی رسمی تا سال ۲۰۲۷+'); }
-  if (socket === 'LGA1851') { s += 1; reasons.push('سوکت LGA1851 نسل جدید Intel'); }
+  if (socket === 'AM5') {
+    s += 1;
+    reasons.push('سوکت AM5 با پشتیبانی رسمی تا سال ۲۰۲۷+');
+  }
+  if (socket === 'LGA1851') {
+    s += 1;
+    reasons.push('سوکت LGA1851 نسل جدید Intel');
+  }
 
   const ramSlots = Number(mb?.specs?.ramSlots || 4);
   const modules = Number(ram?.specs?.moduleCount || 2);
-  if (ramSlots - modules >= 2) { s += 0.8; reasons.push(`${ramSlots - modules} اسلات RAM آزاد برای ارتقا`); }
+  if (ramSlots - modules >= 2) {
+    s += 0.8;
+    reasons.push(`${ramSlots - modules} اسلات RAM آزاد برای ارتقا`);
+  }
 
   const m2Slots = Number(mb?.specs?.m2Slots || 2);
-  if (m2Slots >= 3) { s += 0.6; reasons.push(`${m2Slots} اسلات M.2 برای SSD اضافه`); }
+  if (m2Slots >= 3) {
+    s += 0.6;
+    reasons.push(`${m2Slots} اسلات M.2 برای SSD اضافه`);
+  }
 
   const pcie = String(storage?.specs?.pcie || '');
-  if (pcie === '5.0') { s += 0.6; reasons.push('SSD نسل PCIe 5.0'); }
-  else if (pcie === '4.0') { s += 0.3; }
+  if (pcie === '5.0') {
+    s += 0.6;
+    reasons.push('SSD نسل PCIe 5.0');
+  } else if (pcie === '4.0') {
+    s += 0.3;
+  }
 
   const psuW = Number(psu?.specs?.wattage || 0);
-  if (psuW >= 850) { s += 0.7; reasons.push(`پاور ${psuW}W با حاشیهٔ کافی برای نسل بعدی GPU`); }
+  if (psuW >= 850) {
+    s += 0.7;
+    reasons.push(`پاور ${psuW}W با حاشیهٔ کافی برای نسل بعدی GPU`);
+  }
 
   const cert = String(psu?.specs?.certification || psu?.specs?.rating || '').toLowerCase();
-  if (/platinum|titanium/.test(cert)) { s += 0.4; reasons.push('گواهی 80Plus Platinum/Titanium'); }
+  if (/platinum|titanium/.test(cert)) {
+    s += 0.4;
+    reasons.push('گواهی 80Plus Platinum/Titanium');
+  }
 
   s = Math.max(1, Math.min(10, Number(s.toFixed(1))));
   return { score: s, reasons };
@@ -485,9 +507,12 @@ export function verifyPhysicalClearances(parts: TelemetryPart[]): PhysicalCleara
   if (casePart && gpu) {
     const maxGpu = Number(
       casePart.specs?.maxGpuLength ||
-      casePart.specs?.maxGpuLengthMM ||
-      (casePart.specs?.formFactor === 'Mini-ITX' ? 320 :
-        casePart.specs?.formFactor === 'Micro-ATX' ? 360 : 400)
+        casePart.specs?.maxGpuLengthMM ||
+        (casePart.specs?.formFactor === 'Mini-ITX'
+          ? 320
+          : casePart.specs?.formFactor === 'Micro-ATX'
+            ? 360
+            : 400)
     );
     const gpuLen = Number(gpu.specs?.length || gpu.specs?.lengthMM || 0);
     if (gpuLen > 0 && gpuLen > maxGpu) {
@@ -495,7 +520,8 @@ export function verifyPhysicalClearances(parts: TelemetryPart[]): PhysicalCleara
         type: 'CRITICAL',
         category: 'gpu-case-clearance',
         message: `تداخل فیزیکی: طول کارت گرافیک (${gpuLen}mm) بیشتر از فضای پشتیبانی‌شدهٔ کیس (${maxGpu}mm) است. کارت داخل کیس جای نمی‌گیرد.`,
-        resolution: 'کیس بزرگ‌تر (Full-Tower) انتخاب کنید یا کارت گرافیک با طول کمتر (نسخهٔ Dual-Fan).',
+        resolution:
+          'کیس بزرگ‌تر (Full-Tower) انتخاب کنید یا کارت گرافیک با طول کمتر (نسخهٔ Dual-Fan).',
       });
     }
   }
@@ -506,9 +532,12 @@ export function verifyPhysicalClearances(parts: TelemetryPart[]): PhysicalCleara
     if (coolerType.includes('air') || coolerType === '' || coolerType.includes('بادی')) {
       const maxCoolerH = Number(
         casePart.specs?.maxCoolerHeight ||
-        casePart.specs?.maxCoolerHeightMM ||
-        (casePart.specs?.formFactor === 'Mini-ITX' ? 100 :
-          casePart.specs?.formFactor === 'Micro-ATX' ? 155 : 175)
+          casePart.specs?.maxCoolerHeightMM ||
+          (casePart.specs?.formFactor === 'Mini-ITX'
+            ? 100
+            : casePart.specs?.formFactor === 'Micro-ATX'
+              ? 155
+              : 175)
       );
       const coolerH = Number(cooler.specs?.coolerHeight || 0);
       if (coolerH > 0 && coolerH > maxCoolerH) {
@@ -532,7 +561,8 @@ export function verifyPhysicalClearances(parts: TelemetryPart[]): PhysicalCleara
       issues.push({
         type: 'WARNING',
         category: 'cooler-ram-clearance',
-        message: 'خنک‌کنندهٔ دوبرجه انتخابی ممکن است با ارتفاع هیت‌سینک رم‌های ARGB تداخل داشته باشد.',
+        message:
+          'خنک‌کنندهٔ دوبرجه انتخابی ممکن است با ارتفاع هیت‌سینک رم‌های ARGB تداخل داشته باشد.',
         resolution: 'خنک‌کنندهٔ آبی (AIO) یا رم با پروفایل کوتاه (Low-Profile) انتخاب کنید.',
       });
     }
@@ -549,7 +579,8 @@ export function verifyPhysicalClearances(parts: TelemetryPart[]): PhysicalCleara
         type: 'WARNING',
         category: 'psu-connector',
         message: `کارت گرافیک انتخابی (${tgp}W) به کابل 12VHPWR ATX 3.0 نیاز دارد اما پاور استاندارد قدیمی است.`,
-        resolution: 'پاور با استاندارد ATX 3.0 و کابل 12VHPWR انتخاب کنید یا از آداپتور ۳ به ۱ درون جعبهٔ گرافیک استفاده کنید.',
+        resolution:
+          'پاور با استاندارد ATX 3.0 و کابل 12VHPWR انتخاب کنید یا از آداپتور ۳ به ۱ درون جعبهٔ گرافیک استفاده کنید.',
       });
     }
   }
@@ -572,7 +603,11 @@ export function estimateAcoustic(parts: TelemetryPart[]): {
   const nc = nameLower(cooler);
   const nm = nameLower(casePart);
 
-  const isAIO = /aio|water|liquid|آبی|نویس/.test(nc) || String(cooler?.specs?.coolerType || '').toLowerCase().includes('aio');
+  const isAIO =
+    /aio|water|liquid|آبی|نویس/.test(nc) ||
+    String(cooler?.specs?.coolerType || '')
+      .toLowerCase()
+      .includes('aio');
   const isSilentBrand = /noctua|be quiet|bequiet|arctic/.test(nc);
   const isMesh = /mesh|airflow/.test(nm) || Boolean(casePart?.specs?.airflow);
   const gpuTgp = estimateGpuTgp(gpu);
@@ -674,7 +709,7 @@ export function simulateThermal(parts: TelemetryPart[]): ThermalTelemetry {
   if (isAIO && is360) rCooler = 0.13;
   else if (isAIO && is240) rCooler = 0.17;
   else if (isDualTower) rCooler = 0.18;
-  else if (isBudgetAir) rCooler = 0.30;
+  else if (isBudgetAir) rCooler = 0.3;
   else if (isAIO) rCooler = 0.19;
   else if (cooler) rCooler = 0.25;
   else rCooler = 0.55; // بدون خنک‌کننده انتخابی → فن استوک ضعیف
@@ -683,14 +718,12 @@ export function simulateThermal(parts: TelemetryPart[]): ThermalTelemetry {
   const isMesh = /mesh|airflow/.test(nameLower(casePart)) || Boolean(casePart?.specs?.airflow);
   const airflowBonus = isMesh ? -3 : casePart ? 0 : +2;
 
-  const estimatedCpuIdleTempC = Math.round(ambient + 8 + (cpuTdp * rCooler * 0.15));
+  const estimatedCpuIdleTempC = Math.round(ambient + 8 + cpuTdp * rCooler * 0.15);
   const estimatedCpuLoadTempC = Math.round(ambient + cpuTdp * rCooler + airflowBonus);
 
   // GPU: منحنی خودگردان (فن‌های خودش کار می‌کنند)
   const estimatedGpuIdleTempC = Math.round(ambient + 12);
-  const estimatedGpuLoadTempC = Math.round(
-    ambient + (gpuTgp * 0.14) + (isMesh ? -4 : 2)
-  );
+  const estimatedGpuLoadTempC = Math.round(ambient + gpuTgp * 0.14 + (isMesh ? -4 : 2));
 
   // Airflow score
   let airflowScore = 55;
@@ -707,7 +740,8 @@ export function simulateThermal(parts: TelemetryPart[]): ThermalTelemetry {
   if (worstTemp >= 90) {
     thermalStatus = 'THROTTLING_DANGER';
     message = `دمای کاری زیر بار (${worstTemp}°C) بحرانی است؛ خطر افت فرکانس حرارتی وجود دارد.`;
-    thermalPasteRecommendation = 'استفاده از خمیر سیلیکون حرفه‌ای Thermal Grizzly Kryonaut و ارتقای خنک‌کننده الزامی است.';
+    thermalPasteRecommendation =
+      'استفاده از خمیر سیلیکون حرفه‌ای Thermal Grizzly Kryonaut و ارتقای خنک‌کننده الزامی است.';
   } else if (worstTemp >= 83) {
     thermalStatus = 'WARM';
     message = `دمای زیر بار (${worstTemp}°C) بالاست اما در حاشیهٔ ایمنی است.`;
@@ -766,11 +800,22 @@ export function estimateMonthlyElectricity(
 
   let effPercent = 82; // 80Plus White/Bronze پیش‌فرض
   let certLabel = 'استاندارد';
-  if (cert.includes('titanium')) { effPercent = 94; certLabel = '80Plus Titanium'; }
-  else if (cert.includes('platinum')) { effPercent = 92; certLabel = '80Plus Platinum'; }
-  else if (cert.includes('gold')) { effPercent = 90; certLabel = '80Plus Gold'; }
-  else if (cert.includes('silver')) { effPercent = 87; certLabel = '80Plus Silver'; }
-  else if (cert.includes('bronze')) { effPercent = 85; certLabel = '80Plus Bronze'; }
+  if (cert.includes('titanium')) {
+    effPercent = 94;
+    certLabel = '80Plus Titanium';
+  } else if (cert.includes('platinum')) {
+    effPercent = 92;
+    certLabel = '80Plus Platinum';
+  } else if (cert.includes('gold')) {
+    effPercent = 90;
+    certLabel = '80Plus Gold';
+  } else if (cert.includes('silver')) {
+    effPercent = 87;
+    certLabel = '80Plus Silver';
+  } else if (cert.includes('bronze')) {
+    effPercent = 85;
+    certLabel = '80Plus Bronze';
+  }
 
   // بار کاربردی معمولاً 40-60٪ TDP نهایی است
   const averageLoadWatts = Math.round(power.totalTdp * 0.55);
@@ -864,7 +909,9 @@ export function calculateDetailedBottleneck(parts: TelemetryPart[]): DetailedBot
   const gpu = partByCat(parts, 'gpu');
   if (!cpu || !gpu) {
     return {
-      bottleneck1080p: 0, bottleneck1440p: 0, bottleneck4k: 0,
+      bottleneck1080p: 0,
+      bottleneck1440p: 0,
+      bottleneck4k: 0,
       primaryCulprit: 'BALANCED',
       recommendationFa: 'جهت محاسبه دقیق گلوگاه، CPU و GPU باید انتخاب شوند.',
       suggestedCategoryToUpgrade: null,
@@ -874,7 +921,9 @@ export function calculateDetailedBottleneck(parts: TelemetryPart[]): DetailedBot
   const gScore = gpuPerformanceScore(gpu);
   const ratio = cScore / Math.max(1, gScore);
 
-  let b1080 = 0, b1440 = 0, b4k = 0;
+  let b1080 = 0,
+    b1440 = 0,
+    b4k = 0;
   let culprit: 'CPU' | 'GPU' | 'BALANCED' = 'BALANCED';
   let rec = 'توازن بسیار عالی میان پردازنده و کارت گرافیک برقرار است.';
   let suggestedCategoryToUpgrade: 'cpu' | 'gpu' | null = null;
@@ -1009,8 +1058,12 @@ export function performLiveAiValidation(parts: TelemetryPart[]): LiveAiCheckResu
 
   // ═════ لایه ۱: سوکت CPU / Motherboard ═════
   if (cpu && mb) {
-    const cs = String(cpu.specs?.socket || '').toUpperCase().trim();
-    const ms = String(mb.specs?.socket || '').toUpperCase().trim();
+    const cs = String(cpu.specs?.socket || '')
+      .toUpperCase()
+      .trim();
+    const ms = String(mb.specs?.socket || '')
+      .toUpperCase()
+      .trim();
     if (cs && ms && cs !== ms && !ms.includes(cs) && !cs.includes(ms)) {
       issues.push({
         severity: 'CRITICAL',
@@ -1052,9 +1105,12 @@ export function performLiveAiValidation(parts: TelemetryPart[]): LiveAiCheckResu
     const gpuLen = Number(gpu.specs?.length || gpu.specs?.lengthMM || 0);
     const caseMax = Number(
       casePart.specs?.maxGpuLength ||
-      casePart.specs?.maxGpuLengthMM ||
-      (casePart.specs?.formFactor === 'Mini-ITX' ? 320 :
-        casePart.specs?.formFactor === 'Micro-ATX' ? 360 : 400)
+        casePart.specs?.maxGpuLengthMM ||
+        (casePart.specs?.formFactor === 'Mini-ITX'
+          ? 320
+          : casePart.specs?.formFactor === 'Micro-ATX'
+            ? 360
+            : 400)
     );
     if (gpuLen > 0 && gpuLen > caseMax) {
       issues.push({
@@ -1109,7 +1165,7 @@ export function performLiveAiValidation(parts: TelemetryPart[]): LiveAiCheckResu
     }
   }
 
-  const hasCritical = issues.some(i => i.severity === 'CRITICAL');
+  const hasCritical = issues.some((i) => i.severity === 'CRITICAL');
   const status: LiveAiStatus = hasCritical
     ? 'CRITICAL_ERROR'
     : issues.length > 0
@@ -1120,7 +1176,7 @@ export function performLiveAiValidation(parts: TelemetryPart[]): LiveAiCheckResu
     status === 'VERIFIED_PERFECT'
       ? '✅ بررسی زندهٔ هوش مصنوعی: تمام قطعات ۱۰۰٪ سازگار و بدون خطا هستند.'
       : status === 'CRITICAL_ERROR'
-        ? `❌ بررسی زندهٔ هوش مصنوعی: ${issues.filter(i => i.severity === 'CRITICAL').length} خطای بحرانی در کانفیگ وجود دارد!`
+        ? `❌ بررسی زندهٔ هوش مصنوعی: ${issues.filter((i) => i.severity === 'CRITICAL').length} خطای بحرانی در کانفیگ وجود دارد!`
         : `⚠️ بررسی زندهٔ هوش مصنوعی: سیستم سازگار است اما ${issues.length} نکتهٔ بهینه‌سازی دارد.`;
 
   return { status, aiLiveSummaryFa, issues, checkedAt: Date.now() };

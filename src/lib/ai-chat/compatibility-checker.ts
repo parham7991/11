@@ -65,11 +65,14 @@ export interface CompatibilityMatrix {
   /** قطعاتی که موجود نیستن */
   unavailablePartIds: Set<string>;
   /** جزئیات هر قانون */
-  ruleResults: Record<string, {
-    passed: boolean;
-    severity: CompatibilitySeverity;
-    detail: string;
-  }>;
+  ruleResults: Record<
+    string,
+    {
+      passed: boolean;
+      severity: CompatibilitySeverity;
+      detail: string;
+    }
+  >;
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -79,37 +82,37 @@ export interface CompatibilityMatrix {
 // حداکثر سرعت RAM بر اساس چیپ‌ست
 const MB_MAX_RAM_SPEED: Record<string, { type: 'DDR5' | 'DDR4'; maxSpeed: number }> = {
   // Intel LGA1851
-  'Z890': { type: 'DDR5', maxSpeed: 9200 },
-  'B860': { type: 'DDR5', maxSpeed: 8000 },
+  Z890: { type: 'DDR5', maxSpeed: 9200 },
+  B860: { type: 'DDR5', maxSpeed: 8000 },
   // Intel LGA1700
-  'Z790': { type: 'DDR5', maxSpeed: 8200 },
-  'Z690': { type: 'DDR5', maxSpeed: 6400 },
-  'B760': { type: 'DDR5', maxSpeed: 7600 },
-  'B660': { type: 'DDR5', maxSpeed: 5600 },
-  'H770': { type: 'DDR5', maxSpeed: 5600 },
+  Z790: { type: 'DDR5', maxSpeed: 8200 },
+  Z690: { type: 'DDR5', maxSpeed: 6400 },
+  B760: { type: 'DDR5', maxSpeed: 7600 },
+  B660: { type: 'DDR5', maxSpeed: 5600 },
+  H770: { type: 'DDR5', maxSpeed: 5600 },
   'Z790-D4': { type: 'DDR4', maxSpeed: 5333 },
   // AMD AM5
-  'X870E': { type: 'DDR5', maxSpeed: 8200 },
-  'X870': { type: 'DDR5', maxSpeed: 8200 },
-  'X670E': { type: 'DDR5', maxSpeed: 6400 },
-  'X670': { type: 'DDR5', maxSpeed: 6400 },
-  'B650E': { type: 'DDR5', maxSpeed: 6400 },
-  'B650': { type: 'DDR5', maxSpeed: 6400 },
+  X870E: { type: 'DDR5', maxSpeed: 8200 },
+  X870: { type: 'DDR5', maxSpeed: 8200 },
+  X670E: { type: 'DDR5', maxSpeed: 6400 },
+  X670: { type: 'DDR5', maxSpeed: 6400 },
+  B650E: { type: 'DDR5', maxSpeed: 6400 },
+  B650: { type: 'DDR5', maxSpeed: 6400 },
   // AMD AM4
-  'X570': { type: 'DDR4', maxSpeed: 4400 },
-  'B550': { type: 'DDR4', maxSpeed: 4733 },
-  'A520': { type: 'DDR4', maxSpeed: 4733 },
+  X570: { type: 'DDR4', maxSpeed: 4400 },
+  B550: { type: 'DDR4', maxSpeed: 4733 },
+  A520: { type: 'DDR4', maxSpeed: 4733 },
   // Intel LGA1200
-  'Z590': { type: 'DDR4', maxSpeed: 5333 },
-  'B560': { type: 'DDR4', maxSpeed: 5333 },
-  'H510': { type: 'DDR4', maxSpeed: 3200 },
+  Z590: { type: 'DDR4', maxSpeed: 5333 },
+  B560: { type: 'DDR4', maxSpeed: 5333 },
+  H510: { type: 'DDR4', maxSpeed: 3200 },
 };
 
 // حداکثر ارتفاع کولر در کیس (بر اساس فرم‌فکتور)
 const CASE_CPU_COOLER_MAX_HEIGHT: Record<string, number> = {
   'Mini-ITX': 70,
   'Micro-ATX': 165,
-  'ATX': 175,
+  ATX: 175,
   'E-ATX': 185,
 };
 
@@ -117,31 +120,60 @@ const CASE_CPU_COOLER_MAX_HEIGHT: Record<string, number> = {
 const CASE_GPU_MAX_LENGTH: Record<string, number> = {
   'Mini-ITX': 320,
   'Micro-ATX': 360,
-  'ATX': 400,
+  ATX: 400,
   'E-ATX': 450,
 };
 
 // تعداد اسلات M.2 بر اساس چیپ‌ست
 const MB_M2_SLOTS: Record<string, number> = {
   // Intel LGA1851
-  'Z890': 4, 'B860': 2,
+  Z890: 4,
+  B860: 2,
   // Intel LGA1700
-  'Z790': 4, 'Z690': 3, 'B760': 2, 'B660': 2, 'H770': 2,
+  Z790: 4,
+  Z690: 3,
+  B760: 2,
+  B660: 2,
+  H770: 2,
   // AMD AM5
-  'X870E': 4, 'X870': 3, 'X670E': 4, 'X670': 3, 'B650E': 3, 'B650': 2,
+  X870E: 4,
+  X870: 3,
+  X670E: 4,
+  X670: 3,
+  B650E: 3,
+  B650: 2,
   // AMD AM4
-  'X570': 2, 'B550': 2, 'A520': 1, 'X470': 2, 'B450': 1,
+  X570: 2,
+  B550: 2,
+  A520: 1,
+  X470: 2,
+  B450: 1,
   // Intel LGA1200
-  'Z590': 2, 'B560': 1, 'H510': 1,
+  Z590: 2,
+  B560: 1,
+  H510: 1,
 };
 
 // تعداد SATA port
 const MB_SATA_PORTS: Record<string, number> = {
-  'Z890': 4, 'B860': 4,
-  'Z790': 6, 'B760': 4, 'Z690': 6, 'B660': 4,
-  'X870E': 4, 'X870': 4, 'X670E': 6, 'X670': 6, 'B650E': 4, 'B650': 4,
-  'X570': 8, 'B550': 4, 'A520': 4,
-  'Z590': 6, 'B560': 6, 'H510': 4,
+  Z890: 4,
+  B860: 4,
+  Z790: 6,
+  B760: 4,
+  Z690: 6,
+  B660: 4,
+  X870E: 4,
+  X870: 4,
+  X670E: 6,
+  X670: 6,
+  B650E: 4,
+  B650: 4,
+  X570: 8,
+  B550: 4,
+  A520: 4,
+  Z590: 6,
+  B560: 6,
+  H510: 4,
 };
 
 // ════════════════════════════════════════════════════════════════
@@ -149,7 +181,7 @@ const MB_SATA_PORTS: Record<string, number> = {
 // ════════════════════════════════════════════════════════════════
 
 function partByCategory(parts: AssemblyPart[], category: string): AssemblyPart | undefined {
-  return parts.find(p => p.category === category);
+  return parts.find((p) => p.category === category);
 }
 
 function partQty(part: AssemblyPart | undefined): number {
@@ -158,7 +190,13 @@ function partQty(part: AssemblyPart | undefined): number {
 
 function ramModuleCount(part: AssemblyPart | undefined): number {
   if (!part) return 1;
-  return Math.max(1, Number(part.specs?.moduleCount || (String(part.specs?.channel || '').toLowerCase() === 'dual' ? 2 : 1)));
+  return Math.max(
+    1,
+    Number(
+      part.specs?.moduleCount ||
+        (String(part.specs?.channel || '').toLowerCase() === 'dual' ? 2 : 1)
+    )
+  );
 }
 
 function motherboardRamSlots(mb: AssemblyPart | undefined): number {
@@ -187,7 +225,7 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
   const gpu = partByCategory(parts, 'gpu');
   const psu = partByCategory(parts, 'psu');
   const cs = partByCategory(parts, 'case');
-  const storages = parts.filter(p => p.category === 'storage');
+  const storages = parts.filter((p) => p.category === 'storage');
   const storage = storages[0];
   const cooler = partByCategory(parts, 'cooler');
 
@@ -209,9 +247,17 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
         blockedPartIds.add(String(cpu.id));
         blockedPartIds.add(String(mb.id));
         score -= 40;
-        ruleResults.socket = { passed: false, severity: 'error', detail: `${cpu.specs.socket} ≠ ${mb.specs.socket}` };
+        ruleResults.socket = {
+          passed: false,
+          severity: 'error',
+          detail: `${cpu.specs.socket} ≠ ${mb.specs.socket}`,
+        };
       } else {
-        ruleResults.socket = { passed: true, severity: 'success', detail: `${cpu.specs.socket} ↔ ${mb.specs.socket}` };
+        ruleResults.socket = {
+          passed: true,
+          severity: 'success',
+          detail: `${cpu.specs.socket} ↔ ${mb.specs.socket}`,
+        };
       }
     }
   }
@@ -234,9 +280,17 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
         blockedPartIds.add(String(ram.id));
         blockedPartIds.add(String(mb.id));
         score -= 30;
-        ruleResults.ramType = { passed: false, severity: 'error', detail: `${mb.specs.ramType} ≠ ${ram.specs.ramType}` };
+        ruleResults.ramType = {
+          passed: false,
+          severity: 'error',
+          detail: `${mb.specs.ramType} ≠ ${ram.specs.ramType}`,
+        };
       } else {
-        ruleResults.ramType = { passed: true, severity: 'success', detail: `${mb.specs.ramType} ✓` };
+        ruleResults.ramType = {
+          passed: true,
+          severity: 'success',
+          detail: `${mb.specs.ramType} ✓`,
+        };
       }
     }
   }
@@ -246,7 +300,11 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
   // ════════════════════════════════════════════════════════════════
   if (mb && ram && mb.specs?.chipset && ram.specs?.frequency) {
     const chipsetLimit = MB_MAX_RAM_SPEED[mb.specs.chipset];
-    if (chipsetLimit && chipsetLimit.type === mb.specs.ramType && ram.specs.frequency > chipsetLimit.maxSpeed) {
+    if (
+      chipsetLimit &&
+      chipsetLimit.type === mb.specs.ramType &&
+      ram.specs.frequency > chipsetLimit.maxSpeed
+    ) {
       warnings.push({
         severity: 'warning',
         category: 'ram',
@@ -256,9 +314,17 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
         solution: `رم با سرعت ${chipsetLimit.maxSpeed}MHz یا کمتر انتخاب کنید، یا مادربرد ارتقاء دهید`,
       });
       score -= 10;
-      ruleResults.ramSpeed = { passed: false, severity: 'warning', detail: `${ram.specs.frequency} > ${chipsetLimit.maxSpeed}` };
+      ruleResults.ramSpeed = {
+        passed: false,
+        severity: 'warning',
+        detail: `${ram.specs.frequency} > ${chipsetLimit.maxSpeed}`,
+      };
     } else {
-      ruleResults.ramSpeed = { passed: true, severity: 'success', detail: `${ram.specs.frequency}MHz OK` };
+      ruleResults.ramSpeed = {
+        passed: true,
+        severity: 'success',
+        detail: `${ram.specs.frequency}MHz OK`,
+      };
     }
   }
 
@@ -266,7 +332,7 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
   // قانون ۴: فرم‌فکتور کیس ≥ مادربرد
   // ════════════════════════════════════════════════════════════════
   if (cs && mb && cs.specs?.formFactor && mb.specs?.formFactor) {
-    const caseRank: Record<string, number> = { 'Mini-ITX': 0, 'Micro-ATX': 1, 'ATX': 2, 'E-ATX': 3 };
+    const caseRank: Record<string, number> = { 'Mini-ITX': 0, 'Micro-ATX': 1, ATX: 2, 'E-ATX': 3 };
     const cr = caseRank[cs.specs.formFactor] ?? 1;
     const mr = caseRank[mb.specs.formFactor] ?? 1;
     if (cr < mr) {
@@ -282,9 +348,17 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
       blockedPartIds.add(String(cs.id));
       blockedPartIds.add(String(mb.id));
       score -= 20;
-      ruleResults.formFactor = { passed: false, severity: 'error', detail: `${cs.specs.formFactor} < ${mb.specs.formFactor}` };
+      ruleResults.formFactor = {
+        passed: false,
+        severity: 'error',
+        detail: `${cs.specs.formFactor} < ${mb.specs.formFactor}`,
+      };
     } else {
-      ruleResults.formFactor = { passed: true, severity: 'success', detail: `${cs.specs.formFactor} ≥ ${mb.specs.formFactor}` };
+      ruleResults.formFactor = {
+        passed: true,
+        severity: 'success',
+        detail: `${cs.specs.formFactor} ≥ ${mb.specs.formFactor}`,
+      };
     }
   }
 
@@ -293,10 +367,10 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
   // ════════════════════════════════════════════════════════════════
   if (psu) {
     const cpuTdp = (cpu?.specs?.tdp as number) || 95;
-    const gpuTdp = gpu ? ((gpu.specs?.tdp as number) || 150) : 0;
+    const gpuTdp = gpu ? (gpu.specs?.tdp as number) || 150 : 0;
     const totalTdp = cpuTdp + gpuTdp + 100;
-    const required = Math.round(totalTdp * 1.25 / 50) * 50;
-    const recommended = Math.round(totalTdp * 1.4 / 50) * 50;
+    const required = Math.round((totalTdp * 1.25) / 50) * 50;
+    const recommended = Math.round((totalTdp * 1.4) / 50) * 50;
 
     if (psu.specs?.wattage) {
       const w = psu.specs.wattage;
@@ -312,7 +386,11 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
         });
         blockedPartIds.add(String(psu.id));
         score -= 25;
-        ruleResults.psuWattage = { passed: false, severity: 'error', detail: `${w}W < ${required}W` };
+        ruleResults.psuWattage = {
+          passed: false,
+          severity: 'error',
+          detail: `${w}W < ${required}W`,
+        };
       } else if (w < recommended) {
         warnings.push({
           severity: 'warning',
@@ -323,9 +401,17 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
           solution: `PSU با توان ${recommended}W انتخاب کنید`,
         });
         score -= 5;
-        ruleResults.psuWattage = { passed: false, severity: 'warning', detail: `${w}W < ${recommended}W (recommended)` };
+        ruleResults.psuWattage = {
+          passed: false,
+          severity: 'warning',
+          detail: `${w}W < ${recommended}W (recommended)`,
+        };
       } else {
-        ruleResults.psuWattage = { passed: true, severity: 'success', detail: `${w}W ≥ ${recommended}W` };
+        ruleResults.psuWattage = {
+          passed: true,
+          severity: 'success',
+          detail: `${w}W ≥ ${recommended}W`,
+        };
       }
     }
   }
@@ -337,7 +423,12 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
     const gpuTdp = gpu.specs?.tdp || 0;
     const gpuTier = gpu.specs?.tier;
     // GPUهای رده‌بالا معمولاً نیاز به کانکتور ۱۲VHPWR دارن
-    if (gpuTdp >= 450 && !psu.specs?.modular && psu.specs?.rating && !psu.specs.rating.includes('Platinum')) {
+    if (
+      gpuTdp >= 450 &&
+      !psu.specs?.modular &&
+      psu.specs?.rating &&
+      !psu.specs.rating.includes('Platinum')
+    ) {
       warnings.push({
         severity: 'warning',
         category: 'psu',
@@ -356,7 +447,7 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
     const chipset = mb.specs?.chipset;
     const m2Slots = Number(mb.specs?.m2Slots || 0) || (chipset ? MB_M2_SLOTS[chipset] || 2 : 2);
     const m2Count = storages
-      .filter(s => s.specs?.formFactor === 'M.2' || s.specs?.isNVMe)
+      .filter((s) => s.specs?.formFactor === 'M.2' || s.specs?.isNVMe)
       .reduce((sum, s) => sum + partQty(s), 0);
 
     if (m2Count > m2Slots) {
@@ -364,18 +455,28 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
         severity: 'error',
         category: 'storage',
         blocking: true,
-        affectedParts: storages.filter(s => s.specs?.formFactor === 'M.2' || s.specs?.isNVMe).map(s => String(s.id)),
+        affectedParts: storages
+          .filter((s) => s.specs?.formFactor === 'M.2' || s.specs?.isNVMe)
+          .map((s) => String(s.id)),
         message: `❌ تعداد SSDهای M.2 بیشتر از ظرفیت مادربرد است (${m2Count} عدد، ظرفیت ${m2Slots} عدد)`,
         reason: `مادربرد ${chipset || ''} فقط ${m2Slots} اسلات M.2 دارد و نمی‌توان SSD M.2 بیشتری نصب کرد`,
         solution: `تعداد SSDهای M.2 را کم کنید یا مادربرد با اسلات بیشتر انتخاب کنید؛ برای حافظه اضافه از SATA هم می‌شود استفاده کرد`,
       });
-      storages.forEach(s => {
+      storages.forEach((s) => {
         if (s.specs?.formFactor === 'M.2' || s.specs?.isNVMe) blockedPartIds.add(String(s.id));
       });
       score -= 25;
-      ruleResults.m2Slots = { passed: false, severity: 'error', detail: `${m2Count} M.2 > ${m2Slots} slots` };
+      ruleResults.m2Slots = {
+        passed: false,
+        severity: 'error',
+        detail: `${m2Count} M.2 > ${m2Slots} slots`,
+      };
     } else {
-      ruleResults.m2Slots = { passed: true, severity: 'success', detail: `${m2Count}/${m2Slots} M.2 slots used` };
+      ruleResults.m2Slots = {
+        passed: true,
+        severity: 'success',
+        detail: `${m2Count}/${m2Slots} M.2 slots used`,
+      };
     }
   }
 
@@ -407,14 +508,22 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
       blockedPartIds.add(String(cooler.id));
       blockedPartIds.add(String(cs.id));
       score -= 15;
-      ruleResults.coolerHeight = { passed: false, severity: 'error', detail: `${coolerHeight}mm > ${caseMax}mm` };
+      ruleResults.coolerHeight = {
+        passed: false,
+        severity: 'error',
+        detail: `${coolerHeight}mm > ${caseMax}mm`,
+      };
     } else if (coolerType === 'air') {
       info.push({
         severity: 'info',
         category: 'cooler',
         message: `✓ ارتفاع کولر (${coolerHeight}mm) در کیس ${cs.specs.formFactor} جا می‌شود`,
       });
-      ruleResults.coolerHeight = { passed: true, severity: 'success', detail: `${coolerHeight}mm ≤ ${caseMax}mm` };
+      ruleResults.coolerHeight = {
+        passed: true,
+        severity: 'success',
+        detail: `${coolerHeight}mm ≤ ${caseMax}mm`,
+      };
     }
   }
 
@@ -440,9 +549,17 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
         solution: `کیس بزرگ‌تر انتخاب کنید یا GPU با طول کمتر`,
       });
       score -= 5;
-      ruleResults.gpuLength = { passed: false, severity: 'warning', detail: `${gpuLength}mm may exceed ${caseMax}mm` };
+      ruleResults.gpuLength = {
+        passed: false,
+        severity: 'warning',
+        detail: `${gpuLength}mm may exceed ${caseMax}mm`,
+      };
     } else {
-      ruleResults.gpuLength = { passed: true, severity: 'success', detail: `GPU fits in ${cs.specs.formFactor}` };
+      ruleResults.gpuLength = {
+        passed: true,
+        severity: 'success',
+        detail: `GPU fits in ${cs.specs.formFactor}`,
+      };
     }
   }
 
@@ -465,9 +582,17 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
       blockedPartIds.add(String(ram.id));
       blockedPartIds.add(String(mb.id));
       score -= 25;
-      ruleResults.ramSlots = { passed: false, severity: 'error', detail: `${usedSlots}/${slots} RAM slots` };
+      ruleResults.ramSlots = {
+        passed: false,
+        severity: 'error',
+        detail: `${usedSlots}/${slots} RAM slots`,
+      };
     } else {
-      ruleResults.ramSlots = { passed: true, severity: 'success', detail: `${usedSlots}/${slots} RAM slots used` };
+      ruleResults.ramSlots = {
+        passed: true,
+        severity: 'success',
+        detail: `${usedSlots}/${slots} RAM slots used`,
+      };
       info.push({
         severity: 'success',
         category: 'ram',
@@ -499,10 +624,18 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
       if (obviousOffice) {
         blockedPartIds.add(String(cs.id));
         score -= 20;
-        ruleResults.caseAirflow = { passed: false, severity: 'error', detail: 'office case with gaming gpu' };
+        ruleResults.caseAirflow = {
+          passed: false,
+          severity: 'error',
+          detail: 'office case with gaming gpu',
+        };
       } else {
         score -= 8;
-        ruleResults.caseAirflow = { passed: false, severity: 'warning', detail: 'gaming airflow recommended' };
+        ruleResults.caseAirflow = {
+          passed: false,
+          severity: 'warning',
+          detail: 'gaming airflow recommended',
+        };
       }
     }
   }
@@ -552,7 +685,11 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
       });
       blockedPartIds.add(String(cooler.id));
       score -= 15;
-      ruleResults.coolerTDP = { passed: false, severity: 'error', detail: `${coolerTdp}W < ${cpuTdp}W` };
+      ruleResults.coolerTDP = {
+        passed: false,
+        severity: 'error',
+        detail: `${coolerTdp}W < ${cpuTdp}W`,
+      };
     } else if (coolerTdp && coolerTdp < cpuTdp * 1.3) {
       info.push({
         severity: 'info',
@@ -561,7 +698,11 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
       });
       score -= 3;
     } else if (coolerTdp) {
-      ruleResults.coolerTDP = { passed: true, severity: 'success', detail: `${coolerTdp}W ≥ ${cpuTdp}W ✓` };
+      ruleResults.coolerTDP = {
+        passed: true,
+        severity: 'success',
+        detail: `${coolerTdp}W ≥ ${cpuTdp}W ✓`,
+      };
     }
   }
 
@@ -592,22 +733,32 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
   if (mb && storages.length > 0 && mb.specs?.chipset) {
     const sataPorts = MB_SATA_PORTS[mb.specs.chipset] || 4;
     const sataCount = storages
-      .filter(s => s.specs?.formFactor === '2.5"' || s.specs?.formFactor === '3.5"')
+      .filter((s) => s.specs?.formFactor === '2.5"' || s.specs?.formFactor === '3.5"')
       .reduce((sum, s) => sum + partQty(s), 0);
     if (sataCount > sataPorts) {
       errors.push({
         severity: 'error',
         category: 'storage',
         blocking: true,
-        affectedParts: storages.filter(s => s.specs?.formFactor === '2.5"' || s.specs?.formFactor === '3.5"').map(s => String(s.id)),
+        affectedParts: storages
+          .filter((s) => s.specs?.formFactor === '2.5"' || s.specs?.formFactor === '3.5"')
+          .map((s) => String(s.id)),
         message: `❌ تعداد درایوهای SATA بیشتر از پورت‌های مادربرد است (${sataCount} عدد، ظرفیت ${sataPorts} عدد)`,
         reason: `مادربرد ${mb.specs.chipset} فقط ${sataPorts} پورت SATA دارد`,
         solution: `تعداد درایو SATA را کم کنید یا مادربرد با پورت بیشتر انتخاب کنید`,
       });
       score -= 20;
-      ruleResults.sataPorts = { passed: false, severity: 'error', detail: `${sataCount} SATA > ${sataPorts} ports` };
+      ruleResults.sataPorts = {
+        passed: false,
+        severity: 'error',
+        detail: `${sataCount} SATA > ${sataPorts} ports`,
+      };
     } else {
-      ruleResults.sataPorts = { passed: true, severity: 'success', detail: `${sataCount}/${sataPorts} SATA ports used` };
+      ruleResults.sataPorts = {
+        passed: true,
+        severity: 'success',
+        detail: `${sataCount}/${sataPorts} SATA ports used`,
+      };
     }
   }
 
@@ -641,12 +792,12 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
   else if (parts.length > 0) status = 'compatible';
 
   // بررسی قطعات اصلی موجود بودن
-  const mandatoryParts = parts.filter(p => !p.isOptional);
-  const availableMandatory = mandatoryParts.filter(p => p.inStock && p.price > 0);
+  const mandatoryParts = parts.filter((p) => !p.isOptional);
+  const availableMandatory = mandatoryParts.filter((p) => p.inStock && p.price > 0);
   if (mandatoryParts.length > 0 && availableMandatory.length < mandatoryParts.length) {
     const missingCategories = mandatoryParts
-      .filter(p => !availableMandatory.find(am => am.category === p.category))
-      .map(p => p.categoryLabel);
+      .filter((p) => !availableMandatory.find((am) => am.category === p.category))
+      .map((p) => p.categoryLabel);
     if (missingCategories.length > 0) {
       warnings.push({
         severity: 'warning',
@@ -680,7 +831,10 @@ export function checkFullCompatibility(parts: AssemblyPart[]): CompatibilityMatr
 // 🎯 پیام‌های آماده برای UI
 // ════════════════════════════════════════════════════════════════
 
-export const STATUS_MESSAGES: Record<string, { label: string; emoji: string; color: string; description: string }> = {
+export const STATUS_MESSAGES: Record<
+  string,
+  { label: string; emoji: string; color: string; description: string }
+> = {
   compatible: {
     label: 'سازگار ✅',
     emoji: '✅',

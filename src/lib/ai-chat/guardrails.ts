@@ -64,13 +64,33 @@ export const COMPLETE_OFFL_GUARDRAILS: Record<string, CategoryGuardrail> = {
     minPriceToman: 3_000_000,
     maxPriceToman: 250_000_000,
     forbiddenKeywords: [
-      'فن استوک', 'باکس خالی', 'جاکلیدی', 'شابلون', 'خمیر سیلیکون',
-      'باکس پردازنده', 'پایه پردازنده', 'درب پردازنده', 'براکت سوکت',
-      'خمیر حرارتی', 'کاور پردازنده', 'استیکر cpu',
+      'فن استوک',
+      'باکس خالی',
+      'جاکلیدی',
+      'شابلون',
+      'خمیر سیلیکون',
+      'باکس پردازنده',
+      'پایه پردازنده',
+      'درب پردازنده',
+      'براکت سوکت',
+      'خمیر حرارتی',
+      'کاور پردازنده',
+      'استیکر cpu',
     ],
     positiveKeywords: [
-      'پردازنده', 'سی پی یو', 'cpu', 'intel core', 'ryzen',
-      'i3', 'i5', 'i7', 'i9', 'r5', 'r7', 'r9', 'core ultra',
+      'پردازنده',
+      'سی پی یو',
+      'cpu',
+      'intel core',
+      'ryzen',
+      'i3',
+      'i5',
+      'i7',
+      'i9',
+      'r5',
+      'r7',
+      'r9',
+      'core ultra',
     ],
     requiredSpecKeys: ['socket'],
     compatibilityDependencies: ['motherboard'],
@@ -81,13 +101,34 @@ export const COMPLETE_OFFL_GUARDRAILS: Record<string, CategoryGuardrail> = {
     minPriceToman: 2_800_000,
     maxPriceToman: 150_000_000,
     forbiddenKeywords: [
-      'شیلد پنل', 'کارت تشخیصی', 'دیباگر', 'بازر اسپیکر', 'پیچ مادربرد',
-      'کابل تبدیل usb', 'کارت توسعه pci', 'رایزر', 'تستر مادربرد',
-      'پنل پشت مادربرد', 'باتری سکه‌ای بایوس', 'باتری بایوس',
+      'شیلد پنل',
+      'کارت تشخیصی',
+      'دیباگر',
+      'بازر اسپیکر',
+      'پیچ مادربرد',
+      'کابل تبدیل usb',
+      'کارت توسعه pci',
+      'رایزر',
+      'تستر مادربرد',
+      'پنل پشت مادربرد',
+      'باتری سکه‌ای بایوس',
+      'باتری بایوس',
     ],
     positiveKeywords: [
-      'مادربرد', 'مادربورد', 'motherboard', 'mainboard',
-      'z790', 'z890', 'b760', 'b860', 'b650', 'b850', 'x670', 'x870', 'h610', 'h770',
+      'مادربرد',
+      'مادربورد',
+      'motherboard',
+      'mainboard',
+      'z790',
+      'z890',
+      'b760',
+      'b860',
+      'b650',
+      'b850',
+      'x670',
+      'x870',
+      'h610',
+      'h770',
     ],
     requiredSpecKeys: ['socket'],
     compatibilityDependencies: ['cpu', 'ram', 'case', 'storage'],
@@ -98,13 +139,29 @@ export const COMPLETE_OFFL_GUARDRAILS: Record<string, CategoryGuardrail> = {
     minPriceToman: 900_000,
     maxPriceToman: 70_000_000,
     forbiddenKeywords: [
-      'هیت سینک رم', 'روکش رم', 'رم ریدر', 'so-dimm', 'sodimm',
-      'رم لپ‌تاپ', 'رم لپتاپ', 'آداپتور رم', 'تستر رم',
-      'نوار نورپردازی رم', 'قاب خنک‌کننده رم', 'فن رم',
+      'هیت سینک رم',
+      'روکش رم',
+      'رم ریدر',
+      'so-dimm',
+      'sodimm',
+      'رم لپ‌تاپ',
+      'رم لپتاپ',
+      'آداپتور رم',
+      'تستر رم',
+      'نوار نورپردازی رم',
+      'قاب خنک‌کننده رم',
+      'فن رم',
     ],
     positiveKeywords: [
-      'حافظه رم', 'رم دسکتاپ', 'رم کامپیوتر',
-      'ram', 'ddr4', 'ddr5', 'dimm', 'ماژول حافظه', 'memory kit',
+      'حافظه رم',
+      'رم دسکتاپ',
+      'رم کامپیوتر',
+      'ram',
+      'ddr4',
+      'ddr5',
+      'dimm',
+      'ماژول حافظه',
+      'memory kit',
     ],
     requiredSpecKeys: ['ramType'],
     compatibilityDependencies: ['motherboard', 'cpu', 'cooler'],
@@ -115,14 +172,30 @@ export const COMPLETE_OFFL_GUARDRAILS: Record<string, CategoryGuardrail> = {
     minPriceToman: 5_000_000,
     maxPriceToman: 400_000_000,
     forbiddenKeywords: [
-      'پایه نگهدارنده کارت گرافیک', 'هولدر کارت گرافیک', 'گرافیک هولدر',
-      'کابل برق 16 پین', 'کابل 12vhpwr', 'رایزر کارت گرافیک',
-      'باکس اکسترنال egpu', 'پل sli', 'فن یدکی گرافیک',
-      'پیچ گرافیک', 'براکت عمودی گرافیک', 'water block',
+      'پایه نگهدارنده کارت گرافیک',
+      'هولدر کارت گرافیک',
+      'گرافیک هولدر',
+      'کابل برق 16 پین',
+      'کابل 12vhpwr',
+      'رایزر کارت گرافیک',
+      'باکس اکسترنال egpu',
+      'پل sli',
+      'فن یدکی گرافیک',
+      'پیچ گرافیک',
+      'براکت عمودی گرافیک',
+      'water block',
     ],
     positiveKeywords: [
-      'کارت گرافیک', 'گرافیک', 'gpu', 'vga',
-      'rtx', 'gtx', 'rx ', 'geforce', 'radeon', 'arc',
+      'کارت گرافیک',
+      'گرافیک',
+      'gpu',
+      'vga',
+      'rtx',
+      'gtx',
+      'rx ',
+      'geforce',
+      'radeon',
+      'arc',
     ],
     requiredSpecKeys: ['vram'],
     compatibilityDependencies: ['case', 'psu', 'motherboard'],
@@ -133,13 +206,27 @@ export const COMPLETE_OFFL_GUARDRAILS: Record<string, CategoryGuardrail> = {
     minPriceToman: 800_000,
     maxPriceToman: 80_000_000,
     forbiddenKeywords: [
-      'باکس هارد', 'قاب هارد', 'کابل ساتا', 'هیت‌سینک m.2',
-      'پیچ m.2', 'تبدیل هارد لپ‌تاپ', 'داک هارد',
-      'کیف هارد اکسترنال', 'آداپتور nvme', 'خنک کننده ssd',
+      'باکس هارد',
+      'قاب هارد',
+      'کابل ساتا',
+      'هیت‌سینک m.2',
+      'پیچ m.2',
+      'تبدیل هارد لپ‌تاپ',
+      'داک هارد',
+      'کیف هارد اکسترنال',
+      'آداپتور nvme',
+      'خنک کننده ssd',
     ],
     positiveKeywords: [
-      'ssd', 'حافظه ssd', 'اس اس دی', 'nvme', 'm.2', 'sata',
-      'هارد اینترنال', 'hdd', 'هارد دیسک',
+      'ssd',
+      'حافظه ssd',
+      'اس اس دی',
+      'nvme',
+      'm.2',
+      'sata',
+      'هارد اینترنال',
+      'hdd',
+      'هارد دیسک',
     ],
     requiredSpecKeys: [],
     compatibilityDependencies: ['motherboard'],
@@ -150,14 +237,31 @@ export const COMPLETE_OFFL_GUARDRAILS: Record<string, CategoryGuardrail> = {
     minPriceToman: 1_800_000,
     maxPriceToman: 90_000_000,
     forbiddenKeywords: [
-      'کابل اسلیو', 'کابل سلیو', 'کابل برق کتری', 'تستر پاور',
-      'آداپتور برق', 'مبدل برق 8 پین', 'پاور بانک',
-      'منبع تغذیه سوئیچینگ دست دوم', 'سوکت برق', 'بست کابل پاور',
-      'سیم کشی پاور', 'اکستنشن پاور',
+      'کابل اسلیو',
+      'کابل سلیو',
+      'کابل برق کتری',
+      'تستر پاور',
+      'آداپتور برق',
+      'مبدل برق 8 پین',
+      'پاور بانک',
+      'منبع تغذیه سوئیچینگ دست دوم',
+      'سوکت برق',
+      'بست کابل پاور',
+      'سیم کشی پاور',
+      'اکستنشن پاور',
     ],
     positiveKeywords: [
-      'منبع تغذیه', 'پاور', 'psu', 'power supply',
-      'atx 3.0', '80 plus', 'گواهی پلاتینیوم', 'گواهی گلد', 'gold', 'platinum', 'bronze',
+      'منبع تغذیه',
+      'پاور',
+      'psu',
+      'power supply',
+      'atx 3.0',
+      '80 plus',
+      'گواهی پلاتینیوم',
+      'گواهی گلد',
+      'gold',
+      'platinum',
+      'bronze',
     ],
     requiredSpecKeys: ['wattage'],
     compatibilityDependencies: ['case', 'gpu', 'motherboard'],
@@ -168,14 +272,34 @@ export const COMPLETE_OFFL_GUARDRAILS: Record<string, CategoryGuardrail> = {
     minPriceToman: 1_500_000,
     maxPriceToman: 150_000_000,
     forbiddenKeywords: [
-      'فن کیس', 'فن دیپ کول', 'کنترلر فن', 'پایه نگهدارنده', 'هولدر کیس',
-      'رایزر', 'پیچ کیس', 'نوار led', 'نوار ار جی بی', 'کابل argb',
-      'براکت', 'فیلتر گرد و غبار', 'قاب کیس', 'پنل شیشه‌ای یدکی',
-      'پایه مانیتور', 'کابل مدیریت', 'استند کیس',
+      'فن کیس',
+      'فن دیپ کول',
+      'کنترلر فن',
+      'پایه نگهدارنده',
+      'هولدر کیس',
+      'رایزر',
+      'پیچ کیس',
+      'نوار led',
+      'نوار ار جی بی',
+      'کابل argb',
+      'براکت',
+      'فیلتر گرد و غبار',
+      'قاب کیس',
+      'پنل شیشه‌ای یدکی',
+      'پایه مانیتور',
+      'کابل مدیریت',
+      'استند کیس',
     ],
     positiveKeywords: [
-      'کیس', 'case', 'chassis', 'mid-tower', 'full-tower',
-      'mini-itx', 'micro-atx', 'تاور', 'tower',
+      'کیس',
+      'case',
+      'chassis',
+      'mid-tower',
+      'full-tower',
+      'mini-itx',
+      'micro-atx',
+      'تاور',
+      'tower',
     ],
     requiredSpecKeys: ['formFactor'],
     compatibilityDependencies: ['motherboard', 'gpu', 'cooler', 'psu'],
@@ -187,23 +311,49 @@ export const COMPLETE_OFFL_GUARDRAILS: Record<string, CategoryGuardrail> = {
     maxPriceToman: 50_000_000,
     forbiddenKeywords: [
       // ═════ v6.0: لیست جامع ضدِ پایه لپ‌تاپ و اکسسوری ═════
-      'پایه خنک کننده لپ تاپ', 'پایه خنک‌کننده لپ‌تاپ',
-      'پایه لپ تاپ', 'پایه لپ‌تاپ', 'پایه لپتاپ',
-      'کولپد', 'coolpad', 'cool pad',
-      'laptop cooler', 'laptop stand', 'laptop pad',
-      'استند خنک کننده', 'استند لپ تاپ', 'استند لپ‌تاپ',
-      'فن کیس', 'خمیر سیلیکون', 'خمیر حرارتی', 'پد حرارتی',
-      'براکت تبدیل سوکت', 'پیچ خنک‌کننده',
-      'مایع کولانت', 'مخزن واترکولینگ یدکی',
-      'thermal paste', 'thermal grease',
-      'خنک کننده لپ تاپ', 'خنک‌کننده لپ‌تاپ', 'خنک کننده لپتاپ',
-      'کولر لپ تاپ', 'کولر لپ‌تاپ',
-      'میز لپ تاپ', 'میز لپ‌تاپ',
+      'پایه خنک کننده لپ تاپ',
+      'پایه خنک‌کننده لپ‌تاپ',
+      'پایه لپ تاپ',
+      'پایه لپ‌تاپ',
+      'پایه لپتاپ',
+      'کولپد',
+      'coolpad',
+      'cool pad',
+      'laptop cooler',
+      'laptop stand',
+      'laptop pad',
+      'استند خنک کننده',
+      'استند لپ تاپ',
+      'استند لپ‌تاپ',
+      'فن کیس',
+      'خمیر سیلیکون',
+      'خمیر حرارتی',
+      'پد حرارتی',
+      'براکت تبدیل سوکت',
+      'پیچ خنک‌کننده',
+      'مایع کولانت',
+      'مخزن واترکولینگ یدکی',
+      'thermal paste',
+      'thermal grease',
+      'خنک کننده لپ تاپ',
+      'خنک‌کننده لپ‌تاپ',
+      'خنک کننده لپتاپ',
+      'کولر لپ تاپ',
+      'کولر لپ‌تاپ',
+      'میز لپ تاپ',
+      'میز لپ‌تاپ',
     ],
     positiveKeywords: [
-      'خنک‌کننده', 'خنک کننده', 'کولر پردازنده', 'کولر cpu',
-      'cooler', 'air cooler', 'liquid cooler', 'واترکولینگ',
-      'aio', 'خنک کننده مایع',
+      'خنک‌کننده',
+      'خنک کننده',
+      'کولر پردازنده',
+      'کولر cpu',
+      'cooler',
+      'air cooler',
+      'liquid cooler',
+      'واترکولینگ',
+      'aio',
+      'خنک کننده مایع',
     ],
     requiredSpecKeys: [],
     compatibilityDependencies: ['cpu', 'case', 'ram'],
@@ -214,12 +364,22 @@ export const COMPLETE_OFFL_GUARDRAILS: Record<string, CategoryGuardrail> = {
     minPriceToman: 150_000,
     maxPriceToman: 10_000_000,
     forbiddenKeywords: [
-      'خنک‌کننده پردازنده', 'کولر پردازنده', 'aio',
-      'کیس کامل', 'واترکولینگ', 'رادیاتور',
+      'خنک‌کننده پردازنده',
+      'کولر پردازنده',
+      'aio',
+      'کیس کامل',
+      'واترکولینگ',
+      'رادیاتور',
     ],
     positiveKeywords: [
-      'فن کیس', 'case fan', 'فن rgb', 'rgb fan',
-      'فن 120', 'فن 140', 'fan 120', 'fan 140',
+      'فن کیس',
+      'case fan',
+      'فن rgb',
+      'rgb fan',
+      'فن 120',
+      'فن 140',
+      'fan 120',
+      'fan 140',
     ],
     requiredSpecKeys: [],
     compatibilityDependencies: ['case', 'motherboard'],
@@ -230,14 +390,15 @@ export const COMPLETE_OFFL_GUARDRAILS: Record<string, CategoryGuardrail> = {
     minPriceToman: 3_500_000,
     maxPriceToman: 200_000_000,
     forbiddenKeywords: [
-      'پایه رومیزی مانیتور', 'کابل hdmi', 'کابل displayport',
-      'آداپتور مانیتور', 'محافظ صفحه نمایش',
-      'اسپری تمیزکننده', 'براکت مانیتور',
+      'پایه رومیزی مانیتور',
+      'کابل hdmi',
+      'کابل displayport',
+      'آداپتور مانیتور',
+      'محافظ صفحه نمایش',
+      'اسپری تمیزکننده',
+      'براکت مانیتور',
     ],
-    positiveKeywords: [
-      'مانیتور', 'monitor', 'display',
-      'ips', 'va', 'oled', 'gaming monitor',
-    ],
+    positiveKeywords: ['مانیتور', 'monitor', 'display', 'ips', 'va', 'oled', 'gaming monitor'],
     requiredSpecKeys: [],
     compatibilityDependencies: ['gpu'],
   },
@@ -254,8 +415,8 @@ export function normalizeText(input: string | null | undefined): string {
     .toLowerCase()
     .replace(/[ك]/g, 'ک')
     .replace(/[ي]/g, 'ی')
-    .replace(/[۰-۹]/g, d => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)))
-    .replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
+    .replace(/[۰-۹]/g, (d) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)))
+    .replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -303,7 +464,7 @@ export function validatePartCategory(
 
   // ═════ لایه ۱.۵: حداقل یک کلمه مثبت باید وجود داشته باشد ═════
   if (rule.positiveKeywords && rule.positiveKeywords.length > 0) {
-    const hasPositive = rule.positiveKeywords.some(kw => title.includes(normalizeText(kw)));
+    const hasPositive = rule.positiveKeywords.some((kw) => title.includes(normalizeText(kw)));
     if (!hasPositive) {
       return {
         passed: false,
@@ -341,7 +502,10 @@ export function validatePartCategory(
       if (v === undefined || v === null || v === '' || v === 0) missing.push(k);
     }
     // فقط برای CPU/Motherboard/RAM/PSU که کلید حیاتی است ⇒ رد کن
-    if (missing.length === rule.requiredSpecKeys.length && ['cpu', 'motherboard', 'ram', 'psu'].includes(category)) {
+    if (
+      missing.length === rule.requiredSpecKeys.length &&
+      ['cpu', 'motherboard', 'ram', 'psu'].includes(category)
+    ) {
       // اجازهٔ عبور — اما با علامت‌گذاری برای امتیازدهی کمتر
       // (به جای رد قاطع، در selection score جریمه می‌شود)
     }
@@ -354,13 +518,18 @@ export function validatePartCategory(
  * فیلتر انبوه لیستی از قطعات با guardrails.
  * ورودی می‌تواند هر شکلی داشته باشد؛ فقط title/finalPrice/specs مهم است.
  */
-export function sanitizeAndFilterParts<T extends {
-  title?: string;
-  name?: string;
-  price?: number;
-  finalPrice?: number;
-  specs?: Record<string, any>;
-}>(category: string, parts: T[]): { valid: T[]; rejected: Array<{ part: T; result: GuardrailResult }> } {
+export function sanitizeAndFilterParts<
+  T extends {
+    title?: string;
+    name?: string;
+    price?: number;
+    finalPrice?: number;
+    specs?: Record<string, any>;
+  },
+>(
+  category: string,
+  parts: T[]
+): { valid: T[]; rejected: Array<{ part: T; result: GuardrailResult }> } {
   const valid: T[] = [];
   const rejected: Array<{ part: T; result: GuardrailResult }> = [];
   for (const p of parts) {
@@ -399,16 +568,32 @@ export function getGuardrailRule(category: string): CategoryGuardrail | null {
 
 /** لیست کلمات منفی برای تشخیص قاطع پایه لپ‌تاپ / کولپد / اکسسوری */
 export const COOLER_FORBIDDEN_KEYWORDS = [
-  'پایه خنک کننده لپ تاپ', 'پایه خنک‌کننده لپ‌تاپ',
-  'پایه لپ تاپ', 'پایه لپ‌تاپ', 'پایه لپتاپ',
-  'کولپد', 'coolpad', 'cool pad',
-  'laptop cooler', 'laptop stand', 'laptop pad',
-  'استند خنک کننده', 'استند لپ تاپ',
-  'خنک کننده لپ تاپ', 'خنک‌کننده لپ‌تاپ', 'خنک کننده لپتاپ',
-  'کولر لپ تاپ', 'کولر لپ‌تاپ',
-  'فن کیس', 'خمیر سیلیکون', 'خمیر حرارتی', 'پد حرارتی',
-  'براکت تبدیل سوکت', 'پیچ خنک‌کننده',
-  'thermal paste', 'thermal grease',
+  'پایه خنک کننده لپ تاپ',
+  'پایه خنک‌کننده لپ‌تاپ',
+  'پایه لپ تاپ',
+  'پایه لپ‌تاپ',
+  'پایه لپتاپ',
+  'کولپد',
+  'coolpad',
+  'cool pad',
+  'laptop cooler',
+  'laptop stand',
+  'laptop pad',
+  'استند خنک کننده',
+  'استند لپ تاپ',
+  'خنک کننده لپ تاپ',
+  'خنک‌کننده لپ‌تاپ',
+  'خنک کننده لپتاپ',
+  'کولر لپ تاپ',
+  'کولر لپ‌تاپ',
+  'فن کیس',
+  'خمیر سیلیکون',
+  'خمیر حرارتی',
+  'پد حرارتی',
+  'براکت تبدیل سوکت',
+  'پیچ خنک‌کننده',
+  'thermal paste',
+  'thermal grease',
 ];
 
 /**
@@ -441,7 +626,12 @@ export function isGenuineCpuCooler(partName: string | null | undefined): boolean
   // «پایه» + هر چیز + «لپ» یا «کیس» → رد
   if (/پایه\s+\S{0,20}(لپ|کیس|نگهدارنده)/i.test(normalized)) return false;
   // اگر شروع نام «کیس» یا «فن کیس» یا «کارت گرافیک» است → قطعاً کولر نیست
-  if (/^(?:کیس|فن\s*کیس|کارت\s*گرافیک|مانیتور|رم|پاور|منبع\s*تغذیه|مادر\s*برد|هارد|ssd)\b/i.test(normalized)) return false;
+  if (
+    /^(?:کیس|فن\s*کیس|کارت\s*گرافیک|مانیتور|رم|پاور|منبع\s*تغذیه|مادر\s*برد|هارد|ssd)\b/i.test(
+      normalized
+    )
+  )
+    return false;
 
   // ═════ مرحلهٔ ۲: باید حداقل یک الگوی مثبت regex مطابقت کند ═════
   const positiveRegex = [

@@ -122,7 +122,7 @@ type Summary = {
   totalTdp: number;
 };
 
-  type ResolutionAction = {
+type ResolutionAction = {
   type: 'replace' | 'remove' | 'keep' | 'suggest';
   current?: Part;
   suggested?: any;
@@ -133,7 +133,7 @@ type Summary = {
   newPartId?: string | number;
 };
 
-  type SuggestedPart = {
+type SuggestedPart = {
   name: string;
   model: string;
   reason: string;
@@ -143,7 +143,7 @@ type Summary = {
   availability: 'in_stock' | 'coming_soon' | 'check_website';
 };
 
-  type Resolution = {
+type Resolution = {
   resolved: boolean;
   actionsCount: number;
   removedCount: number;
@@ -163,7 +163,7 @@ type Summary = {
   }>;
 };
 
-  type Result = {
+type Result = {
   ok: boolean;
   useCaseLabel: string;
   budget: number;
@@ -222,7 +222,8 @@ const BUDGET_PRESETS = [
 
 const toman = (n: number) => `${Math.round(n).toLocaleString('fa-IR')} تومان`;
 const shortToman = (n: number) => {
-  if (n >= 1_000_000_000) return `${(n / 1_000_000_000).toLocaleString('fa-IR', { maximumFractionDigits: 1 })} میلیارد`;
+  if (n >= 1_000_000_000)
+    return `${(n / 1_000_000_000).toLocaleString('fa-IR', { maximumFractionDigits: 1 })} میلیارد`;
   if (n >= 1_000_000) return `${Math.round(n / 1_000_000).toLocaleString('fa-IR')} میلیون`;
   return `${n.toLocaleString('fa-IR')}`;
 };
@@ -232,8 +233,8 @@ const makeSummary = (items: Part[]): Summary => {
   const totalBefore = items.reduce((sum, p) => sum + (Number(p.price) || 0) * qty(p), 0);
   const totalAfter = items.reduce((sum, p) => sum + (Number(p.finalPrice) || 0) * qty(p), 0);
   const totalSaving = Math.max(0, totalBefore - totalAfter);
-  const mandatory = items.filter(p => !p.isOptional);
-  const optional = items.filter(p => p.isOptional);
+  const mandatory = items.filter((p) => !p.isOptional);
+  const optional = items.filter((p) => p.isOptional);
 
   return {
     totalBefore,
@@ -243,17 +244,40 @@ const makeSummary = (items: Part[]): Summary => {
     itemCount: items.reduce((sum, p) => sum + qty(p), 0),
     mandatoryCount: mandatory.reduce((sum, p) => sum + qty(p), 0),
     optionalCount: optional.reduce((sum, p) => sum + qty(p), 0),
-    totalTdp: items.reduce((sum, p) => sum + (['cpu', 'gpu'].includes(p.category) ? Number(p.specs?.tdp || 0) * qty(p) : 0), 0),
+    totalTdp: items.reduce(
+      (sum, p) =>
+        sum + (['cpu', 'gpu'].includes(p.category) ? Number(p.specs?.tdp || 0) * qty(p) : 0),
+      0
+    ),
   };
 };
 
 const isRealPart = (value: any): value is Part =>
-  Boolean(value && typeof value === 'object' && value.id !== undefined && value.name && value.category && Number(value.finalPrice) > 0);
+  Boolean(
+    value &&
+      typeof value === 'object' &&
+      value.id !== undefined &&
+      value.name &&
+      value.category &&
+      Number(value.finalPrice) > 0
+  );
 
 const partQty = (part?: Part) => Math.max(1, Number(part?.quantity || 1));
-const ramModuleCount = (part?: Part) => Math.max(1, Number(part?.specs?.moduleCount || (String(part?.specs?.channel || '').toLowerCase() === 'dual' ? 2 : 1)));
-const storageSizeGb = (part?: Part) => Number(part?.specs?.size || 0) || Number(part?.specs?.sizeTB || 0) * 1000 || 0;
-const cleanPublicText = (text?: string) => String(text || '').replace(/[✅❌⚠️💡⏳🎮⭐📦🚫ℹ️💾⚡🔌🔥🚀🧠🏷️📐📡🌈💧🌪️🏅🔧🗑️💰❄️✨🌬️🏢🎬📹🎨🏆📌]/gu, '').replace(/\s+/g, ' ').trim();
+const ramModuleCount = (part?: Part) =>
+  Math.max(
+    1,
+    Number(
+      part?.specs?.moduleCount ||
+        (String(part?.specs?.channel || '').toLowerCase() === 'dual' ? 2 : 1)
+    )
+  );
+const storageSizeGb = (part?: Part) =>
+  Number(part?.specs?.size || 0) || Number(part?.specs?.sizeTB || 0) * 1000 || 0;
+const cleanPublicText = (text?: string) =>
+  String(text || '')
+    .replace(/[✅❌⚠️💡⏳🎮⭐📦🚫ℹ️💾⚡🔌🔥🚀🧠🏷️📐📡🌈💧🌪️🏅🔧🗑️💰❄️✨🌬️🏢🎬📹🎨🏆📌]/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 
 type SmartSuggestion = {
   id: string;
@@ -268,11 +292,21 @@ type SmartSuggestion = {
 const partPowerScore = (part: Part) => {
   const s = part.specs || {};
   let score = Number(part.confidence || 50);
-  if (part.category === 'ram') score += Number(s.capacity || 0) * 2 + (Number(s.frequency || 0) / 1000) + (s.ramType === 'DDR5' ? 8 : 0);
-  if (part.category === 'storage') score += storageSizeGb(part) / 120 + (s.isNVMe ? 18 : 0) + (s.pcie === '5.0' ? 8 : s.pcie === '4.0' ? 5 : 0);
-  if (part.category === 'gpu') score += Number(s.vram || 0) * 7 + (s.tier === 'ultra' ? 35 : s.tier === 'high' ? 22 : 0);
+  if (part.category === 'ram')
+    score +=
+      Number(s.capacity || 0) * 2 +
+      Number(s.frequency || 0) / 1000 +
+      (s.ramType === 'DDR5' ? 8 : 0);
+  if (part.category === 'storage')
+    score +=
+      storageSizeGb(part) / 120 +
+      (s.isNVMe ? 18 : 0) +
+      (s.pcie === '5.0' ? 8 : s.pcie === '4.0' ? 5 : 0);
+  if (part.category === 'gpu')
+    score += Number(s.vram || 0) * 7 + (s.tier === 'ultra' ? 35 : s.tier === 'high' ? 22 : 0);
   if (part.category === 'cpu') score += Number(s.cores || 0) * 6 + Number(s.threads || 0) * 2;
-  if (part.category === 'motherboard') score += Number(s.ramSlots || 4) * 4 + Number(s.m2Slots || 2) * 5;
+  if (part.category === 'motherboard')
+    score += Number(s.ramSlots || 4) * 4 + Number(s.m2Slots || 2) * 5;
   if (part.category === 'psu') score += Number(s.wattage || 0) / 30;
   return score;
 };
@@ -282,16 +316,23 @@ const buildSmartSuggestions = (items: Part[], budget: number): SmartSuggestion[]
   const remaining = Math.max(0, budget - currentTotal);
   const suggestions: SmartSuggestion[] = [];
   const seen = new Set<string>();
-  const mb = items.find(p => p.category === 'motherboard');
-  const ram = items.find(p => p.category === 'ram');
-  const storages = items.filter(p => p.category === 'storage');
+  const mb = items.find((p) => p.category === 'motherboard');
+  const ram = items.find((p) => p.category === 'ram');
+  const storages = items.filter((p) => p.category === 'storage');
 
-  const ramSlots = Number(mb?.specs?.ramSlots || (String(mb?.specs?.formFactor || '').toLowerCase().includes('mini') ? 2 : 4));
+  const ramSlots = Number(
+    mb?.specs?.ramSlots ||
+      (String(mb?.specs?.formFactor || '')
+        .toLowerCase()
+        .includes('mini')
+        ? 2
+        : 4)
+  );
   const usedRamSlots = ram ? ramModuleCount(ram) * partQty(ram) : 0;
   const ramGb = ram ? Number(ram.specs?.capacity || 0) * partQty(ram) : 0;
   const targetRam = budget >= 160_000_000 ? 64 : budget >= 70_000_000 ? 32 : 16;
 
-  if (ram && usedRamSlots < ramSlots && ram.finalPrice <= Math.max(remaining, budget * 0.30)) {
+  if (ram && usedRamSlots < ramSlots && ram.finalPrice <= Math.max(remaining, budget * 0.3)) {
     const nextQty = partQty(ram) + 1;
     const nextGb = Number(ram.specs?.capacity || 0) * nextQty;
     if (nextGb > ramGb && (ramGb < targetRam || remaining >= ram.finalPrice)) {
@@ -308,10 +349,23 @@ const buildSmartSuggestions = (items: Part[], budget: number): SmartSuggestion[]
     }
   }
 
-  const m2Slots = Number(mb?.specs?.m2Slots || 0) || (['Z790', 'Z890', 'X670E', 'X870E'].includes(String(mb?.specs?.chipset || '').toUpperCase()) ? 4 : 2);
-  const usedM2 = storages.filter(s => s.specs?.formFactor === 'M.2' || s.specs?.isNVMe).reduce((sum, s) => sum + partQty(s), 0);
-  const primaryStorage = storages.find(s => (s.specs?.formFactor === 'M.2' || s.specs?.isNVMe) && s.inStock && s.finalPrice > 0) || storages[0];
-  if (primaryStorage && usedM2 < m2Slots && primaryStorage.finalPrice <= Math.max(remaining, budget * 0.30)) {
+  const m2Slots =
+    Number(mb?.specs?.m2Slots || 0) ||
+    (['Z790', 'Z890', 'X670E', 'X870E'].includes(String(mb?.specs?.chipset || '').toUpperCase())
+      ? 4
+      : 2);
+  const usedM2 = storages
+    .filter((s) => s.specs?.formFactor === 'M.2' || s.specs?.isNVMe)
+    .reduce((sum, s) => sum + partQty(s), 0);
+  const primaryStorage =
+    storages.find(
+      (s) => (s.specs?.formFactor === 'M.2' || s.specs?.isNVMe) && s.inStock && s.finalPrice > 0
+    ) || storages[0];
+  if (
+    primaryStorage &&
+    usedM2 < m2Slots &&
+    primaryStorage.finalPrice <= Math.max(remaining, budget * 0.3)
+  ) {
     suggestions.push({
       id: `qty-storage-${primaryStorage.id}`,
       mode: 'quantity',
@@ -326,16 +380,24 @@ const buildSmartSuggestions = (items: Part[], budget: number): SmartSuggestion[]
 
   for (const part of items) {
     const alts = (part.alternatives || [])
-      .filter(alt => alt?.inStock !== false && Number(alt.finalPrice || 0) > 0)
-      .filter(alt => !items.some(p => String(p.id) === String(alt.id)))
-      .map(alt => ({ alt, delta: Number(alt.finalPrice || 0) - Number(part.finalPrice || 0), gain: partPowerScore(alt) - partPowerScore(part) }))
-      .filter(x => x.gain > 4 || ['ram', 'storage', 'motherboard', 'psu'].includes(part.category))
-      .filter(x => x.delta <= Math.max(remaining, budget * 0.18))
-      .sort((a, b) => (b.gain - a.gain) || (a.delta - b.delta));
+      .filter((alt) => alt?.inStock !== false && Number(alt.finalPrice || 0) > 0)
+      .filter((alt) => !items.some((p) => String(p.id) === String(alt.id)))
+      .map((alt) => ({
+        alt,
+        delta: Number(alt.finalPrice || 0) - Number(part.finalPrice || 0),
+        gain: partPowerScore(alt) - partPowerScore(part),
+      }))
+      .filter((x) => x.gain > 4 || ['ram', 'storage', 'motherboard', 'psu'].includes(part.category))
+      .filter((x) => x.delta <= Math.max(remaining, budget * 0.18))
+      .sort((a, b) => b.gain - a.gain || a.delta - b.delta);
 
     const best = alts[0];
     if (!best) continue;
-    const mode: 'replace' | 'add' = ['storage', 'case_fan'].includes(part.category) && best.alt.finalPrice <= Math.max(remaining, budget * 0.12) ? 'add' : 'replace';
+    const mode: 'replace' | 'add' =
+      ['storage', 'case_fan'].includes(part.category) &&
+      best.alt.finalPrice <= Math.max(remaining, budget * 0.12)
+        ? 'add'
+        : 'replace';
     const key = `${mode}-${part.id}-${best.alt.id}`;
     if (seen.has(key)) continue;
     seen.add(key);
@@ -345,9 +407,10 @@ const buildSmartSuggestions = (items: Part[], budget: number): SmartSuggestion[]
       current: part,
       suggested: best.alt,
       title: mode === 'add' ? `افزودن ${best.alt.categoryLabel}` : `ارتقای ${part.categoryLabel}`,
-      reason: mode === 'add'
-        ? `با سیستم فعلی هماهنگ است و ظرفیت یا کارایی را بدون حذف قطعه افزایش می‌دهد.`
-        : `گزینه هماهنگ‌تر با همین سیستم است و امتیاز فنی بهتری دارد.`,
+      reason:
+        mode === 'add'
+          ? `با سیستم فعلی هماهنگ است و ظرفیت یا کارایی را بدون حذف قطعه افزایش می‌دهد.`
+          : `گزینه هماهنگ‌تر با همین سیستم است و امتیاز فنی بهتری دارد.`,
     });
     if (suggestions.length >= 5) break;
   }
@@ -356,28 +419,78 @@ const buildSmartSuggestions = (items: Part[], budget: number): SmartSuggestion[]
 };
 
 const buildInsights = (items: Part[], budget: number, useCase: string) => {
-  const mb = items.find(p => p.category === 'motherboard');
-  const ram = items.find(p => p.category === 'ram');
-  const storages = items.filter(p => p.category === 'storage');
-  const gpu = items.find(p => p.category === 'gpu');
-  const cpu = items.find(p => p.category === 'cpu');
-  const psu = items.find(p => p.category === 'psu');
+  const mb = items.find((p) => p.category === 'motherboard');
+  const ram = items.find((p) => p.category === 'ram');
+  const storages = items.filter((p) => p.category === 'storage');
+  const gpu = items.find((p) => p.category === 'gpu');
+  const cpu = items.find((p) => p.category === 'cpu');
+  const psu = items.find((p) => p.category === 'psu');
 
-  const ramSlots = Number(mb?.specs?.ramSlots || (String(mb?.specs?.formFactor || '').toLowerCase().includes('mini') ? 2 : 4));
+  const ramSlots = Number(
+    mb?.specs?.ramSlots ||
+      (String(mb?.specs?.formFactor || '')
+        .toLowerCase()
+        .includes('mini')
+        ? 2
+        : 4)
+  );
   const usedRamSlots = ram ? ramModuleCount(ram) * partQty(ram) : 0;
   const ramGb = ram ? Number(ram.specs?.capacity || 0) * partQty(ram) : 0;
-  const targetRam = useCase === 'editing' ? (budget >= 140_000_000 ? 64 : 32) : ['gaming', 'streaming'].includes(useCase) ? (budget >= 70_000_000 ? 32 : 16) : 16;
-  const m2Slots = Number(mb?.specs?.m2Slots || 0) || (['Z790', 'Z890', 'X670E', 'X870E'].includes(String(mb?.specs?.chipset || '').toUpperCase()) ? 4 : 2);
-  const usedM2 = storages.filter(s => s.specs?.formFactor === 'M.2' || s.specs?.isNVMe).reduce((sum, s) => sum + partQty(s), 0);
+  const targetRam =
+    useCase === 'editing'
+      ? budget >= 140_000_000
+        ? 64
+        : 32
+      : ['gaming', 'streaming'].includes(useCase)
+        ? budget >= 70_000_000
+          ? 32
+          : 16
+        : 16;
+  const m2Slots =
+    Number(mb?.specs?.m2Slots || 0) ||
+    (['Z790', 'Z890', 'X670E', 'X870E'].includes(String(mb?.specs?.chipset || '').toUpperCase())
+      ? 4
+      : 2);
+  const usedM2 = storages
+    .filter((s) => s.specs?.formFactor === 'M.2' || s.specs?.isNVMe)
+    .reduce((sum, s) => sum + partQty(s), 0);
   const totalStorage = storages.reduce((sum, s) => sum + storageSizeGb(s) * partQty(s), 0);
   const totalWatt = Number(cpu?.specs?.tdp || 95) + Number(gpu?.specs?.tdp || 150) + 100;
-  const psuHeadroom = psu?.specs?.wattage ? Math.max(0, Math.round(((Number(psu.specs.wattage) - totalWatt) / totalWatt) * 100)) : null;
+  const psuHeadroom = psu?.specs?.wattage
+    ? Math.max(0, Math.round(((Number(psu.specs.wattage) - totalWatt) / totalWatt) * 100))
+    : null;
 
   return [
-    { icon: 'RAM', title: 'RAM هوشمند', value: ram ? `${ramGb}GB` : '—', meta: ram ? `${usedRamSlots}/${ramSlots} اسلات · هدف ${targetRam}GB` : 'در انتظار انتخاب', tone: ramGb >= targetRam ? 'good' : 'warn' },
-    { icon: 'M.2', title: 'SSD / M.2', value: totalStorage ? `${(totalStorage / 1000).toLocaleString('fa-IR', { maximumFractionDigits: 1 })}TB` : '—', meta: `${usedM2}/${m2Slots} اسلات M.2 استفاده شده`, tone: usedM2 <= m2Slots ? 'good' : 'bad' },
-    { icon: 'PSU', title: 'حاشیه پاور', value: psuHeadroom !== null ? `${psuHeadroom}%` : '—', meta: psu ? `${psu.specs?.wattage || '—'}W انتخاب شده` : 'پاور انتخاب نشده', tone: psuHeadroom === null ? 'warn' : psuHeadroom >= 25 ? 'good' : 'warn' },
-    { icon: 'CPU', title: 'توازن CPU/GPU', value: gpu?.specs?.vram ? `${gpu.specs.vram}GB VRAM` : 'تحلیل', meta: cpu?.specs?.cores ? `${cpu.specs.cores} هسته CPU` : 'بررسی گلوگاه', tone: 'info' },
+    {
+      icon: 'RAM',
+      title: 'RAM هوشمند',
+      value: ram ? `${ramGb}GB` : '—',
+      meta: ram ? `${usedRamSlots}/${ramSlots} اسلات · هدف ${targetRam}GB` : 'در انتظار انتخاب',
+      tone: ramGb >= targetRam ? 'good' : 'warn',
+    },
+    {
+      icon: 'M.2',
+      title: 'SSD / M.2',
+      value: totalStorage
+        ? `${(totalStorage / 1000).toLocaleString('fa-IR', { maximumFractionDigits: 1 })}TB`
+        : '—',
+      meta: `${usedM2}/${m2Slots} اسلات M.2 استفاده شده`,
+      tone: usedM2 <= m2Slots ? 'good' : 'bad',
+    },
+    {
+      icon: 'PSU',
+      title: 'حاشیه پاور',
+      value: psuHeadroom !== null ? `${psuHeadroom}%` : '—',
+      meta: psu ? `${psu.specs?.wattage || '—'}W انتخاب شده` : 'پاور انتخاب نشده',
+      tone: psuHeadroom === null ? 'warn' : psuHeadroom >= 25 ? 'good' : 'warn',
+    },
+    {
+      icon: 'CPU',
+      title: 'توازن CPU/GPU',
+      value: gpu?.specs?.vram ? `${gpu.specs.vram}GB VRAM` : 'تحلیل',
+      meta: cpu?.specs?.cores ? `${cpu.specs.cores} هسته CPU` : 'بررسی گلوگاه',
+      tone: 'info',
+    },
   ];
 };
 
@@ -397,24 +510,35 @@ const TIER_LABELS: Record<string, { label: string; color: string; bg: string; ic
   entry: { label: 'ابتدایی', color: '#6b7790', bg: 'rgba(107, 119, 144, 0.15)', icon: 'entry' },
 };
 
-const STATUS_META: Record<string, { label: string; emoji: string; color: string; bg: string; description: string }> = {
+const STATUS_META: Record<
+  string,
+  { label: string; emoji: string; color: string; bg: string; description: string }
+> = {
   compatible: {
-    label: 'سازگار', emoji: '', color: '#059669',
+    label: 'سازگار',
+    emoji: '',
+    color: '#059669',
     bg: 'rgba(5, 150, 105, 0.15)',
     description: 'همهٔ قطعات کاملاً سازگار هستند. سیستم آمادهٔ اسمبل است!',
   },
   warning: {
-    label: 'هشدار', emoji: '', color: '#f59e0b',
+    label: 'هشدار',
+    emoji: '',
+    color: '#f59e0b',
     bg: 'rgba(245, 158, 11, 0.15)',
     description: 'سیستم قابل اسمبل است ولی برخی قطعات بهینه نیستند.',
   },
   incompatible: {
-    label: 'ناسازگار', emoji: '', color: '#ef4444',
+    label: 'ناسازگار',
+    emoji: '',
+    color: '#ef4444',
     bg: 'rgba(239, 68, 68, 0.15)',
     description: 'برخی قطعات با هم سازگار نیستند. باید جایگزین شوند.',
   },
   unavailable: {
-    label: 'موجود نیست', emoji: '', color: '#6b7790',
+    label: 'موجود نیست',
+    emoji: '',
+    color: '#6b7790',
     bg: 'rgba(107, 119, 144, 0.15)',
     description: 'برخی قطعات در حال حاضر موجود نیستند. به زودی موجود می‌شوند.',
   },
@@ -427,7 +551,11 @@ const STATUS_META: Record<string, { label: string; emoji: string; color: string;
 const SpecBadge = ({ label, value, color }: { label: string; value: any; color?: string }) => {
   if (value === undefined || value === null || value === false || value === '') return null;
   return (
-    <span className="asm__spec-badge" title={label} style={color ? { color, borderColor: color } : undefined}>
+    <span
+      className="asm__spec-badge"
+      title={label}
+      style={color ? { color, borderColor: color } : undefined}
+    >
       {value}
     </span>
   );
@@ -437,7 +565,11 @@ const ConfidenceBadge = ({ confidence }: { confidence: number }) => {
   const color = confidence >= 90 ? '#059669' : confidence >= 75 ? '#386bf9' : '#f59e0b';
   const text = confidence >= 90 ? 'تأییدشده' : confidence >= 75 ? 'بالا' : 'متوسط';
   return (
-    <span className="asm__confidence-badge" style={{ color, borderColor: color }} title={`تشخیص: ${confidence}% - ${text}`}>
+    <span
+      className="asm__confidence-badge"
+      style={{ color, borderColor: color }}
+      title={`تشخیص: ${confidence}% - ${text}`}
+    >
       {confidence}%
     </span>
   );
@@ -469,7 +601,8 @@ const getSpecList = (part: Part): Array<{ label: string; value: string; icon: st
     if (s.frequency) list.push({ label: 'فرکانس', value: `${s.frequency}MHz`, icon: 'PWR' });
     if (s.rgb) list.push({ label: 'نورپردازی', value: 'RGB', icon: 'RGB' });
   } else if (part.category === 'storage') {
-    if (s.size) list.push({ label: 'ظرفیت', value: s.sizeTB ? `${s.sizeTB}TB` : `${s.size}GB`, icon: 'MEM' });
+    if (s.size)
+      list.push({ label: 'ظرفیت', value: s.sizeTB ? `${s.sizeTB}TB` : `${s.size}GB`, icon: 'MEM' });
     if (s.isNVMe) list.push({ label: 'نوع', value: 'NVMe M.2', icon: 'PWR' });
     if (s.formFactor) list.push({ label: 'فرم', value: s.formFactor, icon: 'FF' });
     if (s.pcie) list.push({ label: 'PCIe', value: s.pcie, icon: 'SPD' });
@@ -517,7 +650,9 @@ const PartCard = ({
   const isDisabled = blocked || unavailable;
 
   return (
-    <div className={`asm__part-card ${part.isOptional ? 'asm__part-card--optional' : ''} ${blocked ? 'asm__part-card--blocked' : ''} ${unavailable ? 'asm__part-card--unavailable' : ''}`}>
+    <div
+      className={`asm__part-card ${part.isOptional ? 'asm__part-card--optional' : ''} ${blocked ? 'asm__part-card--blocked' : ''} ${unavailable ? 'asm__part-card--unavailable' : ''}`}
+    >
       {blocked && (
         <div className="asm__part-blocked-banner">
           این قطعه با بقیهٔ سیستم سازگار نیست — انتخاب غیرفعال است
@@ -530,7 +665,9 @@ const PartCard = ({
       )}
       <div className="asm__part-main">
         <div className="asm__part-cat">
-          <span className="asm__part-cat-ic"><Icon /></span>
+          <span className="asm__part-cat-ic">
+            <Icon />
+          </span>
           <div>
             <span className="asm__part-cat-label">{part.categoryLabel}</span>
             {part.isOptional ? (
@@ -549,21 +686,33 @@ const PartCard = ({
                 src={part.image}
                 alt={part.name}
                 loading="lazy"
-                onError={e => {
+                onError={(e) => {
                   (e.target as HTMLImageElement).style.display = 'none';
-                  const fb = (e.target as HTMLImageElement).parentElement?.querySelector('.asm__part-ph') as HTMLElement;
+                  const fb = (e.target as HTMLImageElement).parentElement?.querySelector(
+                    '.asm__part-ph'
+                  ) as HTMLElement;
                   if (fb) fb.style.display = 'flex';
                 }}
               />
-              <span className="asm__part-ph" style={{ display: 'none' }}><Icon /></span>
+              <span className="asm__part-ph" style={{ display: 'none' }}>
+                <Icon />
+              </span>
             </div>
           ) : (
-            <span className={`asm__part-img asm__part-ph ${isDisabled ? 'asm__part-ph--disabled' : ''}`}><Icon /></span>
+            <span
+              className={`asm__part-img asm__part-ph ${isDisabled ? 'asm__part-ph--disabled' : ''}`}
+            >
+              <Icon />
+            </span>
           )}
           {part.discountPercent > 0 && !isDisabled && (
             <span className="asm__part-badge">{part.discountPercent}% تخفیف</span>
           )}
-          {isDisabled && <span className="asm__part-badge asm__part-badge--gray">{blocked ? 'ناسازگار' : 'ناموجود'}</span>}
+          {isDisabled && (
+            <span className="asm__part-badge asm__part-badge--gray">
+              {blocked ? 'ناسازگار' : 'ناموجود'}
+            </span>
+          )}
         </div>
 
         <div className="asm__part-info">
@@ -584,9 +733,7 @@ const PartCard = ({
           )}
 
           {blockingReason && (
-            <div className="asm__part-block-reason">
-              {cleanPublicText(blockingReason)}
-            </div>
+            <div className="asm__part-block-reason">{cleanPublicText(blockingReason)}</div>
           )}
 
           {part.pickReason && !isDisabled && (
@@ -611,20 +758,30 @@ const PartCard = ({
         </div>
 
         <div className="asm__part-actions">
-          <a className={`asm__icon-link ${isDisabled ? 'asm__icon-link--disabled' : ''}`}
-             href={part.url}
-             target="_blank"
-             rel="noopener noreferrer"
-             title={isDisabled ? 'غیرفعال' : 'مشاهده محصول'}>
+          <a
+            className={`asm__icon-link ${isDisabled ? 'asm__icon-link--disabled' : ''}`}
+            href={part.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={isDisabled ? 'غیرفعال' : 'مشاهده محصول'}
+          >
             <EyeIcon />
           </a>
           {!isDisabled && part.alternatives && part.alternatives.length > 0 && (
-            <button className="asm__icon-btn" onClick={onToggle} title={expanded ? 'پنهان کردن' : `${part.alternatives.length} جایگزین`}>
+            <button
+              className="asm__icon-btn"
+              onClick={onToggle}
+              title={expanded ? 'پنهان کردن' : `${part.alternatives.length} جایگزین`}
+            >
               {expanded ? <CollapseIcon /> : <ExpandIcon />}
             </button>
           )}
           {!isDisabled && part.isOptional && onRemoveOptional && (
-            <button className="asm__icon-btn asm__icon-btn--remove" onClick={onRemoveOptional} title="حذف">
+            <button
+              className="asm__icon-btn asm__icon-btn--remove"
+              onClick={onRemoveOptional}
+              title="حذف"
+            >
               ×
             </button>
           )}
@@ -675,7 +832,9 @@ const CompatibilityPanelV3 = ({
       {/* پیام‌های "موجود نیست" */}
       {unavailableMessages && unavailableMessages.length > 0 && (
         <div className="asm__unavailable-banner">
-          <div className="asm__unavailable-banner-icon"><WarningIcon /></div>
+          <div className="asm__unavailable-banner-icon">
+            <WarningIcon />
+          </div>
           <div className="asm__unavailable-banner-content">
             <div className="asm__unavailable-banner-title">برخی قطعات الان موجود نیستن</div>
             <ul className="asm__unavailable-banner-list">
@@ -689,7 +848,10 @@ const CompatibilityPanelV3 = ({
 
       {/* هدر */}
       <div className="asm__compat-v3-head" style={{ background: meta.bg, borderColor: meta.color }}>
-        <div className="asm__compat-v3-score-circle" style={{ borderColor: meta.color, color: meta.color }}>
+        <div
+          className="asm__compat-v3-score-circle"
+          style={{ borderColor: meta.color, color: meta.color }}
+        >
           <span className="asm__compat-v3-score-num">{matrix.score}</span>
           <span className="asm__compat-v3-score-max">/100</span>
         </div>
@@ -704,13 +866,13 @@ const CompatibilityPanelV3 = ({
       {/* خطاها (بحرانی) */}
       {matrix.errors.length > 0 && (
         <div className="asm__compat-v3-section asm__compat-v3-section--error">
-          <div className="asm__compat-v3-section-title">
-            مشکلات بحرانی ({matrix.errors.length})
-          </div>
+          <div className="asm__compat-v3-section-title">مشکلات بحرانی ({matrix.errors.length})</div>
           {matrix.errors.map((issue, i) => (
             <div key={i} className="asm__compat-v3-row">
               <div className="asm__compat-v3-row-header">
-                <span className="asm__compat-v3-row-icon"><WarningIcon /></span>
+                <span className="asm__compat-v3-row-icon">
+                  <WarningIcon />
+                </span>
                 <span className="asm__compat-v3-row-message">{cleanPublicText(issue.message)}</span>
               </div>
               {issue.reason && (
@@ -731,13 +893,13 @@ const CompatibilityPanelV3 = ({
       {/* هشدارها */}
       {matrix.warnings.length > 0 && (
         <div className="asm__compat-v3-section asm__compat-v3-section--warning">
-          <div className="asm__compat-v3-section-title">
-            هشدارها ({matrix.warnings.length})
-          </div>
+          <div className="asm__compat-v3-section-title">هشدارها ({matrix.warnings.length})</div>
           {matrix.warnings.map((issue, i) => (
             <div key={i} className="asm__compat-v3-row">
               <div className="asm__compat-v3-row-header">
-                <span className="asm__compat-v3-row-icon"><InfoIcon /></span>
+                <span className="asm__compat-v3-row-icon">
+                  <InfoIcon />
+                </span>
                 <span className="asm__compat-v3-row-message">{cleanPublicText(issue.message)}</span>
               </div>
               {issue.reason && (
@@ -757,7 +919,9 @@ const CompatibilityPanelV3 = ({
           <div className="asm__compat-v3-section-title">نکات ({matrix.info.length})</div>
           {matrix.info.map((issue, i) => (
             <div key={i} className="asm__compat-v3-row">
-              <span className="asm__compat-v3-row-icon"><InfoIcon /></span>
+              <span className="asm__compat-v3-row-icon">
+                <InfoIcon />
+              </span>
               <span className="asm__compat-v3-row-message">{cleanPublicText(issue.message)}</span>
             </div>
           ))}
@@ -765,16 +929,20 @@ const CompatibilityPanelV3 = ({
       )}
 
       {/* همه چی سازگار */}
-      {matrix.errors.length === 0 && matrix.warnings.length === 0 && matrix.status === 'compatible' && (
-        <div className="asm__compat-v3-section asm__compat-v3-section--ok">
-          <div className="asm__compat-v3-row">
-            <span className="asm__compat-v3-row-icon"><CheckIcon /></span>
-            <span className="asm__compat-v3-row-message">
-              همهٔ قوانین سازگاری بررسی شدند و سیستم آمادهٔ اسمبل است.
-            </span>
+      {matrix.errors.length === 0 &&
+        matrix.warnings.length === 0 &&
+        matrix.status === 'compatible' && (
+          <div className="asm__compat-v3-section asm__compat-v3-section--ok">
+            <div className="asm__compat-v3-row">
+              <span className="asm__compat-v3-row-icon">
+                <CheckIcon />
+              </span>
+              <span className="asm__compat-v3-row-message">
+                همهٔ قوانین سازگاری بررسی شدند و سیستم آمادهٔ اسمبل است.
+              </span>
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 };
@@ -799,7 +967,9 @@ export default function AssembleWizard() {
   const [showCompat, setShowCompat] = useState(true);
   const [showFps, setShowFps] = useState(true);
   const [expandedParts, setExpandedParts] = useState<Set<string>>(new Set());
-  const [range, setRange] = useState<{ min: number; max: number; recommended: number } | null>(null);
+  const [range, setRange] = useState<{ min: number; max: number; recommended: number } | null>(
+    null
+  );
   const [rangeLoading, setRangeLoading] = useState(false);
   const [parts, setParts] = useState<Part[]>([]);
   const [blockedPartIds, setBlockedPartIds] = useState<Set<string>>(new Set());
@@ -821,7 +991,10 @@ export default function AssembleWizard() {
   useEffect(() => {
     if (!loading) return;
     setLoadStep(0);
-    const iv = setInterval(() => setLoadStep(s => s < LOADING_STEPS.length - 1 ? s + 1 : s), 1500);
+    const iv = setInterval(
+      () => setLoadStep((s) => (s < LOADING_STEPS.length - 1 ? s + 1 : s)),
+      1500
+    );
     return () => clearInterval(iv);
   }, [loading]);
 
@@ -829,19 +1002,25 @@ export default function AssembleWizard() {
     if (step !== 2) return;
     let cancelled = false;
     setRangeLoading(true);
-    fetch(`/api/assemble/budget-range?useCase=${encodeURIComponent(useCase === 'custom' ? 'gaming' : useCase)}`)
-      .then(r => r.json())
-      .then(data => {
+    fetch(
+      `/api/assemble/budget-range?useCase=${encodeURIComponent(useCase === 'custom' ? 'gaming' : useCase)}`
+    )
+      .then((r) => r.json())
+      .then((data) => {
         if (cancelled || !data) return;
         const min = Number(data.min) || 10_000_000;
         const max = Number(data.max) || 200_000_000;
         const recommended = Number(data.recommended) || Math.round((min + max) / 2);
         setRange({ min, max, recommended });
-        setBudget(b => b < min || b > max ? recommended : b);
+        setBudget((b) => (b < min || b > max ? recommended : b));
       })
       .catch(() => setRange({ min: 10_000_000, max: 200_000_000, recommended: 35_000_000 }))
-      .finally(() => { if (!cancelled) setRangeLoading(false); });
-    return () => { cancelled = true; };
+      .finally(() => {
+        if (!cancelled) setRangeLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [step, useCase]);
 
   const build = async () => {
@@ -859,9 +1038,16 @@ export default function AssembleWizard() {
       const res = await fetch('/api/assemble', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ useCase, budget, note, customDesc, includeOptional, verifyStock: true }),
+        body: JSON.stringify({
+          useCase,
+          budget,
+          note,
+          customDesc,
+          includeOptional,
+          verifyStock: true,
+        }),
       });
-      const data = await res.json() as Result;
+      const data = (await res.json()) as Result;
       setResult(data);
       if (data.parts) setParts(data.parts);
       if (data.compatibilityMatrix) {
@@ -879,7 +1065,7 @@ export default function AssembleWizard() {
             budget,
             useCaseLabel: data.useCaseLabel,
             compatibilityScore: data.compatibilityScore,
-            parts: data.parts.map(p => ({
+            parts: data.parts.map((p) => ({
               category: p.category,
               categoryLabel: p.categoryLabel,
               name: p.name,
@@ -891,8 +1077,8 @@ export default function AssembleWizard() {
             })),
           }),
         })
-          .then(r => r.json())
-          .then(aiData => {
+          .then((r) => r.json())
+          .then((aiData) => {
             setAiAnalysis({
               enabled: aiData.enabled !== false,
               text: aiData.analysis || aiData.fallback || '',
@@ -927,18 +1113,21 @@ export default function AssembleWizard() {
 
   const buyAll = () => {
     if (!parts.length) return;
-    const availableParts = parts.filter(p => !unavailablePartIds.has(String(p.id)));
+    const availableParts = parts.filter((p) => !unavailablePartIds.has(String(p.id)));
     if (!availableParts.length) {
       alert('هیچ قطعهٔ موجودی برای افزودن به سبد وجود ندارد.');
       return;
     }
-    addBulk(availableParts.map(p => ({ id: p.id, qty: Math.max(1, Number(p.quantity || 1)) })), {
-      onSuccess: () => setBought(true),
-    });
+    addBulk(
+      availableParts.map((p) => ({ id: p.id, qty: Math.max(1, Number(p.quantity || 1)) })),
+      {
+        onSuccess: () => setBought(true),
+      }
+    );
   };
 
   const togglePartExpand = (partId: string) => {
-    setExpandedParts(prev => {
+    setExpandedParts((prev) => {
       const next = new Set(prev);
       if (next.has(partId)) next.delete(partId);
       else next.add(partId);
@@ -947,13 +1136,15 @@ export default function AssembleWizard() {
   };
 
   const selectAlternative = (partId: string, alt: Part) => {
-    setParts(prev => prev.map(p => {
-      if (String(p.id) === String(partId)) {
-        return { ...alt, alternatives: p.alternatives, isOptional: p.isOptional };
-      }
-      return p;
-    }));
-    setExpandedParts(prev => {
+    setParts((prev) =>
+      prev.map((p) => {
+        if (String(p.id) === String(partId)) {
+          return { ...alt, alternatives: p.alternatives, isOptional: p.isOptional };
+        }
+        return p;
+      })
+    );
+    setExpandedParts((prev) => {
       const next = new Set(prev);
       next.delete(partId);
       return next;
@@ -964,10 +1155,10 @@ export default function AssembleWizard() {
     const suggested = suggestion.suggested;
     if (!isRealPart(suggested)) return;
 
-    setParts(prev => {
+    setParts((prev) => {
       const currentId = suggestion.current?.id;
       if (suggestion.mode === 'quantity' && currentId !== undefined) {
-        return prev.map(p => {
+        return prev.map((p) => {
           if (String(p.id) !== String(currentId)) return p;
           const nextQty = partQty(p) + Math.max(1, Number(suggestion.quantityDelta || 1));
           const nextSpecs = { ...p.specs };
@@ -981,24 +1172,41 @@ export default function AssembleWizard() {
             ...p,
             quantity: nextQty,
             specs: nextSpecs,
-            quantityLabel: p.category === 'ram'
-              ? `${nextQty.toLocaleString('fa-IR')} کیت RAM · مجموع ${Number(p.specs?.capacity || 0) * nextQty}GB`
-              : `${nextQty.toLocaleString('fa-IR')} عدد برای ظرفیت بیشتر`,
+            quantityLabel:
+              p.category === 'ram'
+                ? `${nextQty.toLocaleString('fa-IR')} کیت RAM · مجموع ${Number(p.specs?.capacity || 0) * nextQty}GB`
+                : `${nextQty.toLocaleString('fa-IR')} عدد برای ظرفیت بیشتر`,
           };
         });
       }
 
       if (suggestion.mode === 'add') {
-        if (prev.some(p => String(p.id) === String(suggested.id))) {
-          return prev.map(p => String(p.id) === String(suggested.id) ? { ...p, quantity: partQty(p) + 1 } : p);
+        if (prev.some((p) => String(p.id) === String(suggested.id))) {
+          return prev.map((p) =>
+            String(p.id) === String(suggested.id) ? { ...p, quantity: partQty(p) + 1 } : p
+          );
         }
-        return [...prev, { ...suggested, alternatives: suggested.alternatives || [], isOptional: suggested.isOptional ?? true, quantity: suggested.quantity || 1 }];
+        return [
+          ...prev,
+          {
+            ...suggested,
+            alternatives: suggested.alternatives || [],
+            isOptional: suggested.isOptional ?? true,
+            quantity: suggested.quantity || 1,
+          },
+        ];
       }
 
-      if (prev.some(p => String(p.id) === String(suggested.id))) return prev;
-      return prev.map(p => String(p.id) === String(currentId)
-        ? { ...suggested, alternatives: p.alternatives || suggested.alternatives || [], isOptional: p.isOptional, quantity: suggested.quantity || 1 }
-        : p
+      if (prev.some((p) => String(p.id) === String(suggested.id))) return prev;
+      return prev.map((p) =>
+        String(p.id) === String(currentId)
+          ? {
+              ...suggested,
+              alternatives: p.alternatives || suggested.alternatives || [],
+              isOptional: p.isOptional,
+              quantity: suggested.quantity || 1,
+            }
+          : p
       );
     });
   };
@@ -1007,56 +1215,83 @@ export default function AssembleWizard() {
     const suggested = action.suggested;
     if (!isRealPart(suggested)) return;
 
-    setParts(prev => {
-      const exists = prev.some(p => String(p.id) === String(suggested.id));
+    setParts((prev) => {
+      const exists = prev.some((p) => String(p.id) === String(suggested.id));
       if (exists) return prev;
 
       const currentId = action.current?.id;
-      if (currentId !== undefined && prev.some(p => String(p.id) === String(currentId))) {
-        return prev.map(p => String(p.id) === String(currentId)
-          ? { ...suggested, alternatives: p.alternatives || suggested.alternatives || [], isOptional: p.isOptional }
-          : p
+      if (currentId !== undefined && prev.some((p) => String(p.id) === String(currentId))) {
+        return prev.map((p) =>
+          String(p.id) === String(currentId)
+            ? {
+                ...suggested,
+                alternatives: p.alternatives || suggested.alternatives || [],
+                isOptional: p.isOptional,
+              }
+            : p
         );
       }
 
-      const sameCategoryIndex = prev.findIndex(p => p.category === suggested.category);
+      const sameCategoryIndex = prev.findIndex((p) => p.category === suggested.category);
       if (sameCategoryIndex >= 0) {
-        return prev.map((p, idx) => idx === sameCategoryIndex
-          ? { ...suggested, alternatives: p.alternatives || suggested.alternatives || [], isOptional: p.isOptional }
-          : p
+        return prev.map((p, idx) =>
+          idx === sameCategoryIndex
+            ? {
+                ...suggested,
+                alternatives: p.alternatives || suggested.alternatives || [],
+                isOptional: p.isOptional,
+              }
+            : p
         );
       }
 
-      return [...prev, { ...suggested, alternatives: suggested.alternatives || [], isOptional: suggested.isOptional || false }];
+      return [
+        ...prev,
+        {
+          ...suggested,
+          alternatives: suggested.alternatives || [],
+          isOptional: suggested.isOptional || false,
+        },
+      ];
     });
   };
 
   const removeOptional = (partId: string) => {
-    setParts(prev => prev.filter(p => p.id !== partId));
+    setParts((prev) => prev.filter((p) => p.id !== partId));
   };
 
-  const tierInfo = result?.tier ? TIER_LABELS[result.tier] || TIER_LABELS.medium : TIER_LABELS.medium;
+  const tierInfo = result?.tier
+    ? TIER_LABELS[result.tier] || TIER_LABELS.medium
+    : TIER_LABELS.medium;
 
   const estimatedFps = useMemo(() => {
     if (!parts.length || useCase !== 'gaming') return null;
-    const cpu = parts.find(p => p.category === 'cpu');
-    const gpu = parts.find(p => p.category === 'gpu');
-    const ram = parts.find(p => p.category === 'ram');
+    const cpu = parts.find((p) => p.category === 'cpu');
+    const gpu = parts.find((p) => p.category === 'gpu');
+    const ram = parts.find((p) => p.category === 'ram');
     let score = 0;
     if (gpu?.specs?.vram) score += gpu.specs.vram * 5;
     if (gpu?.specs?.tier === 'ultra') score += 40;
     if (gpu?.specs?.tier === 'high') score += 20;
     if (cpu?.specs?.cores) score += cpu.specs.cores * 2;
     if (ram?.specs?.capacity && ram.specs.capacity < 16) score -= 15;
-    return score >= 100 ? '60-120 FPS در 4K' : score >= 60 ? '60-100 FPS در 1440p' : '60-80 FPS در 1080p';
+    return score >= 100
+      ? '60-120 FPS در 4K'
+      : score >= 60
+        ? '60-100 FPS در 1440p'
+        : '60-80 FPS در 1080p';
   }, [parts, useCase]);
 
   const currentSummary = useMemo(() => makeSummary(parts), [parts]);
   const displaySummary = parts.length ? currentSummary : result?.summary;
   const insights = useMemo(() => buildInsights(parts, budget, useCase), [parts, budget, useCase]);
   const smartSuggestions = useMemo(() => buildSmartSuggestions(parts, budget), [parts, budget]);
-  const quickRamSuggestion = smartSuggestions.find(s => s.mode === 'quantity' && s.suggested.category === 'ram');
-  const quickStorageSuggestion = smartSuggestions.find(s => s.mode === 'quantity' && s.suggested.category === 'storage');
+  const quickRamSuggestion = smartSuggestions.find(
+    (s) => s.mode === 'quantity' && s.suggested.category === 'ram'
+  );
+  const quickStorageSuggestion = smartSuggestions.find(
+    (s) => s.mode === 'quantity' && s.suggested.category === 'storage'
+  );
 
   const hasIncompatible = blockedPartIds.size > 0;
   const hasUnavailable = unavailablePartIds.size > 0;
@@ -1065,14 +1300,27 @@ export default function AssembleWizard() {
     <div className="asm">
       {/* هیرو */}
       <div className="asm__hero">
-        <span className="asm__hero-icon"><CpuIcon /></span>
+        <span className="asm__hero-icon">
+          <CpuIcon />
+        </span>
         <h1>اسمبل آنلاین هوشمند</h1>
-        <p>کاربری و بودجه‌ات رو بگو تا سیستم با تصمیم‌گیری چنداسلاتی RAM/SSD، بررسی لحظه‌ای قیمت و تحلیل دقیق سازگاری برات چیده بشه.</p>
+        <p>
+          کاربری و بودجه‌ات رو بگو تا سیستم با تصمیم‌گیری چنداسلاتی RAM/SSD، بررسی لحظه‌ای قیمت و
+          تحلیل دقیق سازگاری برات چیده بشه.
+        </p>
         <div className="asm__hero-stats">
-          <span className="asm__hero-stat"><b>RAM Slots</b> چند کیت دقیق</span>
-          <span className="asm__hero-stat"><b>M.2/SATA</b> چند SSD</span>
-          <span className="asm__hero-stat"><b>Real-time</b> موجودی و قیمت</span>
-          <span className="asm__hero-stat"><b>AI</b> تحلیل ارزش خرید</span>
+          <span className="asm__hero-stat">
+            <b>RAM Slots</b> چند کیت دقیق
+          </span>
+          <span className="asm__hero-stat">
+            <b>M.2/SATA</b> چند SSD
+          </span>
+          <span className="asm__hero-stat">
+            <b>Real-time</b> موجودی و قیمت
+          </span>
+          <span className="asm__hero-stat">
+            <b>AI</b> تحلیل ارزش خرید
+          </span>
         </div>
       </div>
 
@@ -1085,20 +1333,26 @@ export default function AssembleWizard() {
       {step === 1 && (
         <div className="asm__panel">
           <h2>سیستم رو برای چه کاری می‌خوای؟</h2>
-          <p className="asm__sub">با انتخاب کاربری، قطعات مناسب و وزن هر دسته متناسب با نیازت تنظیم می‌شه.</p>
+          <p className="asm__sub">
+            با انتخاب کاربری، قطعات مناسب و وزن هر دسته متناسب با نیازت تنظیم می‌شه.
+          </p>
 
           <div className="asm__usecases">
-            {USE_CASES.map(u => {
+            {USE_CASES.map((u) => {
               const Icon = USECASE_ICONS[u.key] || CpuIcon;
               return (
                 <button
                   key={u.key}
                   type="button"
-                  className={`asm__usecase${useCase === u.key ? ' asm__usecase--active' : ''}`}
+                  className={`asm__usecase${useCase === u.key ? 'asm__usecase--active' : ''}`}
                   onClick={() => setUseCase(u.key)}
                 >
-                  <span className="asm__usecase-check"><CheckIcon /></span>
-                  <span className="asm__usecase-icon"><Icon /></span>
+                  <span className="asm__usecase-check">
+                    <CheckIcon />
+                  </span>
+                  <span className="asm__usecase-icon">
+                    <Icon />
+                  </span>
                   <div className="asm__usecase-label">{u.label}</div>
                   <div className="asm__usecase-desc">{u.desc}</div>
                 </button>
@@ -1108,11 +1362,13 @@ export default function AssembleWizard() {
 
           {useCase === 'custom' && (
             <div className="asm__custom-box">
-              <label className="asm__custom-label"><CustomIcon /> توضیح بده چه کاری می‌خوای بکنی:</label>
+              <label className="asm__custom-label">
+                <CustomIcon /> توضیح بده چه کاری می‌خوای بکنی:
+              </label>
               <textarea
                 className="asm__note"
                 value={customDesc}
-                onChange={e => setCustomDesc(e.target.value)}
+                onChange={(e) => setCustomDesc(e.target.value)}
                 placeholder="مثلاً: هم گیمینگ سنگین، هم ادیت ویدیو ۴K، هم استریم همزمان"
                 maxLength={300}
               />
@@ -1143,7 +1399,9 @@ export default function AssembleWizard() {
                 <span className="asm__sub-range-icon">📊</span>
                 بازهٔ واقعی: <b>{shortToman(range.min)}</b> تا <b>{shortToman(range.max)}</b>
                 {range.recommended && (
-                  <span className="asm__sub-range-rec">پیشنهادی: <b>{shortToman(range.recommended)}</b></span>
+                  <span className="asm__sub-range-rec">
+                    پیشنهادی: <b>{shortToman(range.recommended)}</b>
+                  </span>
                 )}
               </span>
             ) : (
@@ -1159,7 +1417,7 @@ export default function AssembleWizard() {
                 <div className="asm__skeleton-bar asm__skeleton-bar--range" />
                 <div className="asm__skeleton-bar asm__skeleton-bar--labels" />
                 <div className="asm__skeleton-presets">
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                     <div key={i} className="asm__skeleton-preset" />
                   ))}
                 </div>
@@ -1183,7 +1441,7 @@ export default function AssembleWizard() {
                 max={range.max}
                 step={Math.max(1_000_000, Math.round((range.max - range.min) / 100))}
                 value={budget}
-                onChange={e => setBudget(Number(e.target.value))}
+                onChange={(e) => setBudget(Number(e.target.value))}
               />
 
               <div className="asm__range-labels">
@@ -1198,18 +1456,18 @@ export default function AssembleWizard() {
 
               {/* پریست‌ها — فقط نمایش داده می‌شن اگه در بازه باشن */}
               <div className="asm__presets">
-                {BUDGET_PRESETS
-                  .filter(p => p.value >= range.min && p.value <= range.max * 1.15)
-                  .map(p => (
-                    <button
-                      key={p.value}
-                      type="button"
-                      className={`asm__preset${budget === p.value ? ' asm__preset--active' : ''}`}
-                      onClick={() => setBudget(p.value)}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
+                {BUDGET_PRESETS.filter(
+                  (p) => p.value >= range.min && p.value <= range.max * 1.15
+                ).map((p) => (
+                  <button
+                    key={p.value}
+                    type="button"
+                    className={`asm__preset${budget === p.value ? 'asm__preset--active' : ''}`}
+                    onClick={() => setBudget(p.value)}
+                  >
+                    {p.label}
+                  </button>
+                ))}
               </div>
               <p className="asm__presets-hint">
                 حداقل قیمت ممکن: {shortToman(range.min)} — کمتر از این نمی‌تونیم سیستم سازگار بسازیم
@@ -1223,13 +1481,14 @@ export default function AssembleWizard() {
               <input
                 type="checkbox"
                 checked={includeOptional}
-                onChange={e => setIncludeOptional(e.target.checked)}
+                onChange={(e) => setIncludeOptional(e.target.checked)}
               />
               <span>شامل قطعات اختیاری (کولر، فن RGB، نوار نور)</span>
             </label>
             <p className="asm__options-hint">
-              قطعات <b>اجباری</b> (CPU، GPU، مادربرد، رم، SSD، پاور، کیس) همیشه انتخاب می‌شن.
-              سیستم به‌طور real-time موجودی و سازگاری رو چک می‌کنه و قطعات ناسازگار یا ناموجود رو <b>غیرفعال</b> نشون می‌ده.
+              قطعات <b>اجباری</b> (CPU، GPU، مادربرد، رم، SSD، پاور، کیس) همیشه انتخاب می‌شن. سیستم
+              به‌طور real-time موجودی و سازگاری رو چک می‌کنه و قطعات ناسازگار یا ناموجود رو{' '}
+              <b>غیرفعال</b> نشون می‌ده.
             </p>
           </div>
 
@@ -1265,8 +1524,12 @@ export default function AssembleWizard() {
               <div className="asm__loading-title">در حال چیدن سیستم…</div>
               <div className="asm__loading-steps">
                 {LOADING_STEPS.map((s, i) => (
-                  <div key={i} className={`asm__loading-step${i <= loadStep ? ' asm__loading-step--on' : ''}`}>
-                    <span className="asm__ls-dot" />{s}
+                  <div
+                    key={i}
+                    className={`asm__loading-step${i <= loadStep ? 'asm__loading-step--on' : ''}`}
+                  >
+                    <span className="asm__ls-dot" />
+                    {s}
                   </div>
                 ))}
               </div>
@@ -1289,12 +1552,16 @@ export default function AssembleWizard() {
                   {React.createElement(USECASE_ICONS[useCase] || CpuIcon)}
                 </span>
                 <h2 className="asm__black">سیستم {result.useCaseLabel}</h2>
-                <span className="asm__badge-tier" style={{ backgroundColor: tierInfo.bg, color: tierInfo.color }}>
+                <span
+                  className="asm__badge-tier"
+                  style={{ backgroundColor: tierInfo.bg, color: tierInfo.color }}
+                >
                   {tierInfo.label}
                 </span>
                 <span className="asm__badge-count">
                   {displaySummary?.mandatoryCount || 0} اصلی
-                  {(displaySummary?.optionalCount || 0) > 0 && ` + ${displaySummary?.optionalCount || 0} اختیاری`}
+                  {(displaySummary?.optionalCount || 0) > 0 &&
+                    ` + ${displaySummary?.optionalCount || 0} اختیاری`}
                 </span>
               </div>
 
@@ -1303,21 +1570,27 @@ export default function AssembleWizard() {
                 <ThemeSelector value={assembleTheme} onChange={setAssembleTheme} />
                 <div className="asm__toolbar-right">
                   <button
-                    className={`asm__mode-btn${viewMode === 'wizard' ? ' asm__mode-btn--active' : ''}`}
+                    className={`asm__mode-btn${viewMode === 'wizard' ? 'asm__mode-btn--active' : ''}`}
                     onClick={() => setViewMode('wizard')}
                     type="button"
-                  >گام‌به‌گام</button>
+                  >
+                    گام‌به‌گام
+                  </button>
                   <button
-                    className={`asm__mode-btn${viewMode === 'progrid' ? ' asm__mode-btn--active' : ''}`}
+                    className={`asm__mode-btn${viewMode === 'progrid' ? 'asm__mode-btn--active' : ''}`}
                     onClick={() => setViewMode('progrid')}
                     type="button"
-                  >نمای Pro</button>
+                  >
+                    نمای Pro
+                  </button>
                   <button
                     className="asm__invoice-btn"
                     onClick={() => setInvoiceOpen(true)}
                     type="button"
                     title="مشاهده و پرینت پیش‌فاکتور رسمی"
-                  >🧾 پیش‌فاکتور</button>
+                  >
+                    🧾 پیش‌فاکتور
+                  </button>
                 </div>
               </div>
 
@@ -1366,108 +1639,151 @@ export default function AssembleWizard() {
               </div>
 
               {/* پنل Auto-Resolver — اقدامات هوشمند */}
-              {result.resolution && (result.resolution.actions.length > 0 || result.resolution.suggestions.length > 0) && (
-                <div className="asm__resolver-panel">
-                  <div className="asm__resolver-head">
-                    <span className="asm__resolver-icon"><SparkIcon /></span>
-                    <div>
-                      <div className="asm__resolver-title">
-                        {result.resolution.resolved ? 'سیستم با موفقیت سازگار شد' : 'برخی قطعات نیاز به جایگزین دارند'}
-                      </div>
-                      <div className="asm__resolver-subtitle">
-                        سیستم هوشمند {result.resolution.actionsCount} اقدام انجام داد و {result.resolution.suggestionCount} پیشنهاد جایگزین داد
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* پیشنهادهای قابل اعمال */}
-                  {result.resolution.actions.some(action => isRealPart(action.suggested)) && (
-                    <div className="asm__resolver-actions">
-                      <div className="asm__resolver-section-title">پیشنهادهای قابل اعمال روی همین سیستم</div>
-                      {result.resolution.actions.filter(action => isRealPart(action.suggested)).map((action, i) => {
-                        const suggested = action.suggested as Part;
-                        const alreadyAdded = parts.some(p => String(p.id) === String(suggested.id));
-                        return (
-                          <div key={`${suggested.id}-${i}`} className="asm__resolver-action-item">
-                            <div className="asm__resolver-action-info">
-                              <strong>{suggested.categoryLabel}: {suggested.name}</strong>
-                              <span>{action.userMessage || action.reason}</span>
-                              <em>{toman(suggested.finalPrice)}</em>
-                            </div>
-                            <button
-                              type="button"
-                              className="asm__resolver-action-add"
-                              onClick={() => addSuggestedAction(action)}
-                              disabled={alreadyAdded}
-                            >
-                              {alreadyAdded ? 'اضافه شد' : 'افزودن به سیستم'}
-                            </button>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* پیام‌های اقدامات */}
-                  {result.resolution.messages.length > 0 && (
-                    <div className="asm__resolver-messages">
-                      {result.resolution.messages.map((msg, i) => (
-                        <div key={i} className={`asm__resolver-message asm__resolver-message--${msg.severity}`}>
-                          <span className="asm__resolver-message-icon">
-                            {msg.severity === 'success' ? <CheckIcon /> : msg.severity === 'warning' ? <WarningIcon /> : msg.severity === 'error' ? <WarningIcon /> : <InfoIcon />}
-                          </span>
-                          <span>{cleanPublicText(msg.text)}</span>
+              {result.resolution &&
+                (result.resolution.actions.length > 0 ||
+                  result.resolution.suggestions.length > 0) && (
+                  <div className="asm__resolver-panel">
+                    <div className="asm__resolver-head">
+                      <span className="asm__resolver-icon">
+                        <SparkIcon />
+                      </span>
+                      <div>
+                        <div className="asm__resolver-title">
+                          {result.resolution.resolved
+                            ? 'سیستم با موفقیت سازگار شد'
+                            : 'برخی قطعات نیاز به جایگزین دارند'}
                         </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* قطعات حذف‌شده */}
-                  {result.resolution.removedParts.length > 0 && (
-                    <div className="asm__resolver-removed">
-                      <div className="asm__resolver-section-title">قطعات حذف‌شده</div>
-                      {result.resolution.removedParts.map((rp, i) => (
-                        <div key={i} className="asm__resolver-removed-item">
-                          <div className="asm__resolver-removed-header">
-                            <span className="asm__resolver-removed-icon"><WarningIcon /></span>
-                            <span className="asm__resolver-removed-name">{rp.categoryLabel}: {rp.name}</span>
-                          </div>
-                          <div className="asm__resolver-removed-reason">{cleanPublicText(rp.reason)}</div>
+                        <div className="asm__resolver-subtitle">
+                          سیستم هوشمند {result.resolution.actionsCount} اقدام انجام داد و{' '}
+                          {result.resolution.suggestionCount} پیشنهاد جایگزین داد
                         </div>
-                      ))}
+                      </div>
                     </div>
-                  )}
 
-                  {/* پیشنهادات جایگزین */}
-                  {result.resolution.suggestions.length > 0 && (
-                    <div className="asm__resolver-suggestions">
-                      <div className="asm__resolver-section-title">پیشنهادات جایگزین</div>
-                      {result.resolution.suggestions.map((sug, i) => (
-                        <div key={i} className="asm__resolver-suggestion-item">
-                          <div className="asm__resolver-suggestion-header">
-                            <span className="asm__resolver-suggestion-badge"><InfoIcon /></span>
-                            <span className="asm__resolver-suggestion-name">{sug.name}</span>
-                            <span className="asm__resolver-suggestion-status">
-                              {sug.availability === 'coming_soon' ? 'به زودی' : sug.availability}
+                    {/* پیشنهادهای قابل اعمال */}
+                    {result.resolution.actions.some((action) => isRealPart(action.suggested)) && (
+                      <div className="asm__resolver-actions">
+                        <div className="asm__resolver-section-title">
+                          پیشنهادهای قابل اعمال روی همین سیستم
+                        </div>
+                        {result.resolution.actions
+                          .filter((action) => isRealPart(action.suggested))
+                          .map((action, i) => {
+                            const suggested = action.suggested as Part;
+                            const alreadyAdded = parts.some(
+                              (p) => String(p.id) === String(suggested.id)
+                            );
+                            return (
+                              <div
+                                key={`${suggested.id}-${i}`}
+                                className="asm__resolver-action-item"
+                              >
+                                <div className="asm__resolver-action-info">
+                                  <strong>
+                                    {suggested.categoryLabel}: {suggested.name}
+                                  </strong>
+                                  <span>{action.userMessage || action.reason}</span>
+                                  <em>{toman(suggested.finalPrice)}</em>
+                                </div>
+                                <button
+                                  type="button"
+                                  className="asm__resolver-action-add"
+                                  onClick={() => addSuggestedAction(action)}
+                                  disabled={alreadyAdded}
+                                >
+                                  {alreadyAdded ? 'اضافه شد' : 'افزودن به سیستم'}
+                                </button>
+                              </div>
+                            );
+                          })}
+                      </div>
+                    )}
+
+                    {/* پیام‌های اقدامات */}
+                    {result.resolution.messages.length > 0 && (
+                      <div className="asm__resolver-messages">
+                        {result.resolution.messages.map((msg, i) => (
+                          <div
+                            key={i}
+                            className={`asm__resolver-message asm__resolver-message--${msg.severity}`}
+                          >
+                            <span className="asm__resolver-message-icon">
+                              {msg.severity === 'success' ? (
+                                <CheckIcon />
+                              ) : msg.severity === 'warning' ? (
+                                <WarningIcon />
+                              ) : msg.severity === 'error' ? (
+                                <WarningIcon />
+                              ) : (
+                                <InfoIcon />
+                              )}
                             </span>
+                            <span>{cleanPublicText(msg.text)}</span>
                           </div>
-                          <div className="asm__resolver-suggestion-model">مدل: {sug.model}</div>
-                          <div className="asm__resolver-suggestion-reason">{cleanPublicText(sug.reason)}</div>
-                          {sug.estimatedPrice && (
-                            <div className="asm__resolver-suggestion-price">قیمت تخمینی: {sug.estimatedPrice}</div>
-                          )}
-                          {sug.socket && (
-                            <div className="asm__resolver-suggestion-spec">سوکت: {sug.socket}</div>
-                          )}
-                          {sug.ramType && (
-                            <div className="asm__resolver-suggestion-spec">رم: {sug.ramType}</div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
+                        ))}
+                      </div>
+                    )}
+
+                    {/* قطعات حذف‌شده */}
+                    {result.resolution.removedParts.length > 0 && (
+                      <div className="asm__resolver-removed">
+                        <div className="asm__resolver-section-title">قطعات حذف‌شده</div>
+                        {result.resolution.removedParts.map((rp, i) => (
+                          <div key={i} className="asm__resolver-removed-item">
+                            <div className="asm__resolver-removed-header">
+                              <span className="asm__resolver-removed-icon">
+                                <WarningIcon />
+                              </span>
+                              <span className="asm__resolver-removed-name">
+                                {rp.categoryLabel}: {rp.name}
+                              </span>
+                            </div>
+                            <div className="asm__resolver-removed-reason">
+                              {cleanPublicText(rp.reason)}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* پیشنهادات جایگزین */}
+                    {result.resolution.suggestions.length > 0 && (
+                      <div className="asm__resolver-suggestions">
+                        <div className="asm__resolver-section-title">پیشنهادات جایگزین</div>
+                        {result.resolution.suggestions.map((sug, i) => (
+                          <div key={i} className="asm__resolver-suggestion-item">
+                            <div className="asm__resolver-suggestion-header">
+                              <span className="asm__resolver-suggestion-badge">
+                                <InfoIcon />
+                              </span>
+                              <span className="asm__resolver-suggestion-name">{sug.name}</span>
+                              <span className="asm__resolver-suggestion-status">
+                                {sug.availability === 'coming_soon' ? 'به زودی' : sug.availability}
+                              </span>
+                            </div>
+                            <div className="asm__resolver-suggestion-model">مدل: {sug.model}</div>
+                            <div className="asm__resolver-suggestion-reason">
+                              {cleanPublicText(sug.reason)}
+                            </div>
+                            {sug.estimatedPrice && (
+                              <div className="asm__resolver-suggestion-price">
+                                قیمت تخمینی: {sug.estimatedPrice}
+                              </div>
+                            )}
+                            {sug.socket && (
+                              <div className="asm__resolver-suggestion-spec">
+                                سوکت: {sug.socket}
+                              </div>
+                            )}
+                            {sug.ramType && (
+                              <div className="asm__resolver-suggestion-spec">رم: {sug.ramType}</div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
               {/* پنل سازگاری v3 */}
               {showCompat && result.compatibilityMatrix && (
@@ -1479,7 +1795,9 @@ export default function AssembleWizard() {
 
               {showFps && useCase === 'gaming' && estimatedFps && (
                 <div className="asm__fps-estimate">
-                  <span className="asm__fps-icon"><GpuIcon /></span>
+                  <span className="asm__fps-icon">
+                    <GpuIcon />
+                  </span>
                   <div className="asm__fps-content">
                     <div className="asm__fps-title">تخمین عملکرد گیمینگ</div>
                     <div className="asm__fps-text">{estimatedFps}</div>
@@ -1490,26 +1808,52 @@ export default function AssembleWizard() {
               {smartSuggestions.length > 0 && (
                 <div className="asm__public-suggestions">
                   <div className="asm__public-suggestions-head">
-                    <span className="asm__public-suggestions-icon"><SparkIcon /></span>
+                    <span className="asm__public-suggestions-icon">
+                      <SparkIcon />
+                    </span>
                     <div>
                       <strong>پیشنهادهای هماهنگ با این سیستم</strong>
                       <small>ارتقاهای سازگار و قابل اعمال</small>
                     </div>
                   </div>
                   <div className="asm__public-suggestions-grid">
-                    {smartSuggestions.map(sug => {
-                      const alreadyAdded = parts.some(p => String(p.id) === String(sug.suggested.id));
+                    {smartSuggestions.map((sug) => {
+                      const alreadyAdded = parts.some(
+                        (p) => String(p.id) === String(sug.suggested.id)
+                      );
                       return (
                         <div key={sug.id} className="asm__public-suggestion-card">
                           <div className="asm__public-suggestion-main">
-                            <span className="asm__public-suggestion-cat">{sug.suggested.categoryLabel}</span>
+                            <span className="asm__public-suggestion-cat">
+                              {sug.suggested.categoryLabel}
+                            </span>
                             <strong>{sug.suggested.name}</strong>
                             <small>{sug.reason}</small>
                           </div>
                           <div className="asm__public-suggestion-side">
                             <b>{toman(sug.suggested.finalPrice)}</b>
-                            <button type="button" onClick={() => applySmartSuggestion(sug)} disabled={sug.mode !== 'quantity' && alreadyAdded}>
-                              {sug.mode === 'quantity' ? <><CartIcon /> افزودن یک عدد</> : alreadyAdded ? <><CheckIcon /> اعمال شد</> : sug.mode === 'add' ? <><CartIcon /> افزودن</> : <><RefreshIcon /> جایگزینی</>}
+                            <button
+                              type="button"
+                              onClick={() => applySmartSuggestion(sug)}
+                              disabled={sug.mode !== 'quantity' && alreadyAdded}
+                            >
+                              {sug.mode === 'quantity' ? (
+                                <>
+                                  <CartIcon /> افزودن یک عدد
+                                </>
+                              ) : alreadyAdded ? (
+                                <>
+                                  <CheckIcon /> اعمال شد
+                                </>
+                              ) : sug.mode === 'add' ? (
+                                <>
+                                  <CartIcon /> افزودن
+                                </>
+                              ) : (
+                                <>
+                                  <RefreshIcon /> جایگزینی
+                                </>
+                              )}
                             </button>
                           </div>
                         </div>
@@ -1519,66 +1863,81 @@ export default function AssembleWizard() {
                 </div>
               )}
 
-
               <div className="asm__parts-section">
                 <h3 className="asm__parts-title">
                   قطعات سیستم
-                  <span className="asm__parts-count">{displaySummary?.itemCount || parts.length} قطعه</span>
+                  <span className="asm__parts-count">
+                    {displaySummary?.itemCount || parts.length} قطعه
+                  </span>
                 </h3>
 
                 <div className="asm__parts-mandatory">
                   <h4 className="asm__parts-subtitle">
-                    قطعات اصلی ({parts.filter(p => !p.isOptional).length})
-                    {hasIncompatible && <span className="asm__parts-warning-tag">— برخی ناسازگار</span>}
-                    {hasUnavailable && <span className="asm__parts-warning-tag">— برخی ناموجود</span>}
+                    قطعات اصلی ({parts.filter((p) => !p.isOptional).length})
+                    {hasIncompatible && (
+                      <span className="asm__parts-warning-tag">— برخی ناسازگار</span>
+                    )}
+                    {hasUnavailable && (
+                      <span className="asm__parts-warning-tag">— برخی ناموجود</span>
+                    )}
                   </h4>
                   <div className="asm__parts-cards-grid">
-                    {parts.filter(p => !p.isOptional).map((p, idx) => {
-                      const blocked = blockedPartIds.has(String(p.id));
-                      const unavailable = unavailablePartIds.has(String(p.id));
-                      const blockingIssue = result.compatibilityMatrix?.errors.find(
-                        e => e.affectedParts?.includes(String(p.id))
-                      );
-                      return (
-                        <AssembleProductCard
-                          key={`${p.category}-${p.id}`}
-                          part={p}
-                          index={idx}
-                          expanded={expandedParts.has(String(p.id))}
-                          onToggleExpand={() => togglePartExpand(String(p.id))}
-                          onSelectAlternative={(alt) => selectAlternative(String(p.id), alt)}
-                          blocked={blocked}
-                          unavailable={unavailable}
-                          blockingReason={blocked ? blockingIssue?.message : (unavailable ? 'این قطعه الان موجود نیست' : undefined)}
-                        />
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {parts.filter(p => p.isOptional).length > 0 && (
-                  <div className="asm__parts-optional">
-                    <h4 className="asm__parts-subtitle">
-                      قطعات تکمیلی ({parts.filter(p => p.isOptional).length})
-                    </h4>
-                    <div className="asm__parts-cards-grid">
-                      {parts.filter(p => p.isOptional).map((p, idx) => {
+                    {parts
+                      .filter((p) => !p.isOptional)
+                      .map((p, idx) => {
                         const blocked = blockedPartIds.has(String(p.id));
                         const unavailable = unavailablePartIds.has(String(p.id));
+                        const blockingIssue = result.compatibilityMatrix?.errors.find((e) =>
+                          e.affectedParts?.includes(String(p.id))
+                        );
                         return (
                           <AssembleProductCard
                             key={`${p.category}-${p.id}`}
                             part={p}
-                            index={idx + 100}
+                            index={idx}
                             expanded={expandedParts.has(String(p.id))}
                             onToggleExpand={() => togglePartExpand(String(p.id))}
                             onSelectAlternative={(alt) => selectAlternative(String(p.id), alt)}
-                            onRemoveOptional={() => removeOptional(String(p.id))}
                             blocked={blocked}
                             unavailable={unavailable}
+                            blockingReason={
+                              blocked
+                                ? blockingIssue?.message
+                                : unavailable
+                                  ? 'این قطعه الان موجود نیست'
+                                  : undefined
+                            }
                           />
                         );
                       })}
+                  </div>
+                </div>
+
+                {parts.filter((p) => p.isOptional).length > 0 && (
+                  <div className="asm__parts-optional">
+                    <h4 className="asm__parts-subtitle">
+                      قطعات تکمیلی ({parts.filter((p) => p.isOptional).length})
+                    </h4>
+                    <div className="asm__parts-cards-grid">
+                      {parts
+                        .filter((p) => p.isOptional)
+                        .map((p, idx) => {
+                          const blocked = blockedPartIds.has(String(p.id));
+                          const unavailable = unavailablePartIds.has(String(p.id));
+                          return (
+                            <AssembleProductCard
+                              key={`${p.category}-${p.id}`}
+                              part={p}
+                              index={idx + 100}
+                              expanded={expandedParts.has(String(p.id))}
+                              onToggleExpand={() => togglePartExpand(String(p.id))}
+                              onSelectAlternative={(alt) => selectAlternative(String(p.id), alt)}
+                              onRemoveOptional={() => removeOptional(String(p.id))}
+                              blocked={blocked}
+                              unavailable={unavailable}
+                            />
+                          );
+                        })}
                     </div>
                   </div>
                 )}
@@ -1586,24 +1945,30 @@ export default function AssembleWizard() {
 
               {/* حذف توضیحات تکنیکال طولانی - AI توضیح می‌ده */}
 
-
               {/* ═══════ پنل تحلیل AI ═══════ */}
               {(aiAnalysis.loading || aiAnalysis.text) && (
                 <div className="asm__ai-panel">
                   <div className="asm__ai-head">
                     <span className="asm__ai-icon">
                       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2L9.5 8.5L3 11L9.5 13.5L12 20L14.5 13.5L21 11L14.5 8.5L12 2Z" fill="currentColor" opacity="0.2" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                        <path
+                          d="M12 2L9.5 8.5L3 11L9.5 13.5L12 20L14.5 13.5L21 11L14.5 8.5L12 2Z"
+                          fill="currentColor"
+                          opacity="0.2"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinejoin="round"
+                        />
                         <circle cx="18" cy="18" r="2" fill="currentColor" opacity="0.4" />
                         <circle cx="6" cy="6" r="1.5" fill="currentColor" opacity="0.4" />
                       </svg>
                     </span>
                     <div className="asm__ai-info">
-                      <div className="asm__ai-title">
-                        تحلیل هوشمند سیستم
-                      </div>
+                      <div className="asm__ai-title">تحلیل هوشمند سیستم</div>
                       <div className="asm__ai-subtitle">
-                        {aiAnalysis.loading ? 'در حال بررسی هماهنگی قطعات...' : 'تحلیل سیستم آماده است'}
+                        {aiAnalysis.loading
+                          ? 'در حال بررسی هماهنگی قطعات...'
+                          : 'تحلیل سیستم آماده است'}
                       </div>
                     </div>
                   </div>
@@ -1616,9 +1981,13 @@ export default function AssembleWizard() {
                       </div>
                     ) : (
                       <div className="asm__ai-text">
-                        {aiAnalysis.text.split('\n').filter(Boolean).slice(0, 4).map((line, i) => (
-                          <p key={i}>{line}</p>
-                        ))}
+                        {aiAnalysis.text
+                          .split('\n')
+                          .filter(Boolean)
+                          .slice(0, 4)
+                          .map((line, i) => (
+                            <p key={i}>{line}</p>
+                          ))}
                       </div>
                     )}
                   </div>
@@ -1631,8 +2000,16 @@ export default function AssembleWizard() {
                   <span className="asm__sum-before">{toman(displaySummary?.totalBefore || 0)}</span>
                 </div>
                 <div className="asm__sum-row">
-                  <span className="asm__sum-saving-label"><span className="asm__sum-saving-icon"><ShieldIcon /></span> صرفه‌جویی</span>
-                  <span className="asm__sum-saving">− {toman(displaySummary?.totalSaving || 0)} ({displaySummary?.savingPercent || 0}٪)</span>
+                  <span className="asm__sum-saving-label">
+                    <span className="asm__sum-saving-icon">
+                      <ShieldIcon />
+                    </span>{' '}
+                    صرفه‌جویی
+                  </span>
+                  <span className="asm__sum-saving">
+                    − {toman(displaySummary?.totalSaving || 0)} (
+                    {displaySummary?.savingPercent || 0}٪)
+                  </span>
                 </div>
                 <div className="asm__sum-row asm__sum-total">
                   <span>قیمت نهایی</span>
@@ -1642,12 +2019,18 @@ export default function AssembleWizard() {
                 {(quickRamSuggestion || quickStorageSuggestion) && (
                   <div className="asm__quick-adds">
                     {quickRamSuggestion && (
-                      <button type="button" onClick={() => applySmartSuggestion(quickRamSuggestion)}>
+                      <button
+                        type="button"
+                        onClick={() => applySmartSuggestion(quickRamSuggestion)}
+                      >
                         <RamIcon /> افزودن RAM سازگار
                       </button>
                     )}
                     {quickStorageSuggestion && (
-                      <button type="button" onClick={() => applySmartSuggestion(quickStorageSuggestion)}>
+                      <button
+                        type="button"
+                        onClick={() => applySmartSuggestion(quickStorageSuggestion)}
+                      >
                         <SsdIcon /> افزودن SSD سازگار
                       </button>
                     )}
@@ -1657,20 +2040,42 @@ export default function AssembleWizard() {
                 {bought ? (
                   <div className="asm__bought">
                     <CheckIcon /> همه قطعات اضافه شد!
-                    <button className="asm__btn-ghost" style={{ flex: 'none', marginInlineStart: 8 }} onClick={() => router.push('/cart')}>
+                    <button
+                      className="asm__btn-ghost"
+                      style={{ flex: 'none', marginInlineStart: 8 }}
+                      onClick={() => router.push('/cart')}
+                    >
                       <CartIcon /> مشاهده سبد
                     </button>
                   </div>
                 ) : (
-                  <button className="asm__buy" onClick={buyAll} disabled={buying || hasIncompatible}>
-                    {buying ? <><span className="asm__buy-spin" /> در حال افزودن…</> : <><CartIcon /> افزودن قطعات موجود به سبد</>}
+                  <button
+                    className="asm__buy"
+                    onClick={buyAll}
+                    disabled={buying || hasIncompatible}
+                  >
+                    {buying ? (
+                      <>
+                        <span className="asm__buy-spin" /> در حال افزودن…
+                      </>
+                    ) : (
+                      <>
+                        <CartIcon /> افزودن قطعات موجود به سبد
+                      </>
+                    )}
                   </button>
                 )}
 
                 <div className="asm__sum-actions">
-                  <button className="asm__btn-ghost" onClick={() => setStep(2)}><EditIcon /> تغییر بودجه</button>
-                  <button className="asm__btn-ghost" onClick={build}><RefreshIcon /> پیشنهاد دیگر</button>
-                  <button className="asm__btn-ghost" onClick={restart}><SparkIcon /> شروع دوباره</button>
+                  <button className="asm__btn-ghost" onClick={() => setStep(2)}>
+                    <EditIcon /> تغییر بودجه
+                  </button>
+                  <button className="asm__btn-ghost" onClick={build}>
+                    <RefreshIcon /> پیشنهاد دیگر
+                  </button>
+                  <button className="asm__btn-ghost" onClick={restart}>
+                    <SparkIcon /> شروع دوباره
+                  </button>
                 </div>
               </div>
             </>
@@ -1690,9 +2095,21 @@ export default function AssembleWizard() {
   );
 }
 
-function Step({ n, label, active, done }: { n: number; label: string; active: boolean; done: boolean }) {
+function Step({
+  n,
+  label,
+  active,
+  done,
+}: {
+  n: number;
+  label: string;
+  active: boolean;
+  done: boolean;
+}) {
   return (
-    <div className={`asm__step${active ? ' asm__step--active' : ''}${done ? ' asm__step--done' : ''}`}>
+    <div
+      className={`asm__step${active ? 'asm__step--active' : ''}${done ? 'asm__step--done' : ''}`}
+    >
       <span className="asm__step-num">{done ? <CheckIcon /> : n}</span>
       {label}
     </div>

@@ -50,7 +50,7 @@ export const footer = [
     title: 'خدمات مربوط کاربران',
     links: [
       {
-        name: 'حساب کابری',
+        name: 'حساب کاربری',
         link: '/profile',
       },
       {

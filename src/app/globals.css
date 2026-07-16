@@ -498,13 +498,17 @@ html.dark {
   --offl-primary: #6ea0ff;
   --offl-primary-glow: rgba(72, 124, 255, 0.35);
 }
-html { background: var(--offl-bg); transition: background-color 240ms ease, color 240ms ease; }
+html {
+  background: var(--offl-bg);
+  transition:
+    background-color 240ms ease,
+    color 240ms ease;
+}
 html.dark body {
   background:
     radial-gradient(circle at 12% 8%, rgba(56, 107, 249, 0.18), transparent 30rem),
     radial-gradient(circle at 88% 18%, rgba(139, 92, 246, 0.14), transparent 28rem),
-    radial-gradient(circle at 50% 100%, rgba(14, 165, 233, 0.09), transparent 36rem),
-    var(--offl-bg) !important;
+    radial-gradient(circle at 50% 100%, rgba(14, 165, 233, 0.09), transparent 36rem), var(--offl-bg) !important;
   color: var(--offl-text) !important;
 }
 html.dark body::before {
@@ -514,17 +518,22 @@ html.dark body::before {
   inset: 0;
   z-index: -1;
   background-image:
-    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
   background-size: 48px 48px;
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent 75%);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent 75%);
 }
-html.dark ::selection { background: rgba(80, 130, 255, 0.38); color: #fff; }
+html.dark ::selection {
+  background: rgba(80, 130, 255, 0.38);
+  color: #fff;
+}
 html.dark .bg-white,
 html.dark .bg-neutral-50,
 html.dark .bg-slate-50,
 html.dark .bg-gray-50,
-html.dark .bg-zinc-50 { background-color: var(--offl-surface) !important; }
+html.dark .bg-zinc-50 {
+  background-color: var(--offl-surface) !important;
+}
 html.dark .bg-\[\#F3F6FB\],
 html.dark .bg-\[\#f3f6fb\],
 html.dark .bg-\[\#E4E7E9\],
@@ -532,13 +541,17 @@ html.dark .bg-\[\#e4e7e9\],
 html.dark .bg-gray-100,
 html.dark .bg-zinc-100,
 html.dark .bg-slate-100,
-html.dark .bg-neutral-100 { background-color: var(--offl-surface-2) !important; }
+html.dark .bg-neutral-100 {
+  background-color: var(--offl-surface-2) !important;
+}
 html.dark .text-black,
 html.dark .text-neutral-900,
 html.dark .text-zinc-900,
 html.dark .text-gray-900,
 html.dark .text-slate-900,
-html.dark .text-\[\#232429\] { color: var(--offl-text) !important; }
+html.dark .text-\[\#232429\] {
+  color: var(--offl-text) !important;
+}
 html.dark .text-neutral-800,
 html.dark .text-zinc-800,
 html.dark .text-gray-800,
@@ -548,7 +561,9 @@ html.dark .text-zinc-700,
 html.dark .text-gray-700,
 html.dark .text-slate-700,
 html.dark .text-\[\#545A66\],
-html.dark .text-\[\#545a66\] { color: #d7e2f3 !important; }
+html.dark .text-\[\#545a66\] {
+  color: #d7e2f3 !important;
+}
 html.dark .text-neutral-600,
 html.dark .text-zinc-600,
 html.dark .text-gray-600,
@@ -563,7 +578,9 @@ html.dark .text-neutral-400,
 html.dark .text-\[\#7D8793\],
 html.dark .text-\[\#7d8793\],
 html.dark .text-\[\#616A76\],
-html.dark .text-\[\#616a76\] { color: var(--offl-text-muted) !important; }
+html.dark .text-\[\#616a76\] {
+  color: var(--offl-text-muted) !important;
+}
 html.dark .border,
 html.dark .border-b,
 html.dark .border-t,
@@ -576,7 +593,9 @@ html.dark .border-zinc-200,
 html.dark .border-neutral-100,
 html.dark .border-neutral-200,
 html.dark .border-\[\#E4E7E9\],
-html.dark .border-\[\#e4e7e9\] { border-color: var(--offl-border) !important; }
+html.dark .border-\[\#e4e7e9\] {
+  border-color: var(--offl-border) !important;
+}
 html.dark .shadow,
 html.dark .shadow-sm,
 html.dark .shadow-md,
@@ -585,12 +604,18 @@ html.dark .shadow-xl,
 html.dark .shadow-2xl,
 html.dark .shadow_pro,
 html.dark .shadow_category {
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.04) !important;
+  box-shadow:
+    0 18px 60px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.04) !important;
 }
 html.dark header,
 html.dark .container_page.bg-blue,
-html.dark .lg\:bg-white { background-color: rgba(7, 11, 22, 0.86) !important; }
-html.dark header { backdrop-filter: blur(18px); }
+html.dark .lg\:bg-white {
+  background-color: rgba(7, 11, 22, 0.86) !important;
+}
+html.dark header {
+  backdrop-filter: blur(18px);
+}
 html.dark [data-slot='input-wrapper'],
 html.dark [data-slot='base'],
 html.dark input,
@@ -601,7 +626,9 @@ html.dark select {
   border-color: var(--offl-border) !important;
 }
 html.dark input::placeholder,
-html.dark textarea::placeholder { color: #7f8da3 !important; }
+html.dark textarea::placeholder {
+  color: #7f8da3 !important;
+}
 html.dark [data-slot='content'],
 html.dark [data-slot='popover'],
 html.dark [role='dialog'],
@@ -613,19 +640,32 @@ html.dark .custom_sidebar_category {
   border-color: var(--offl-border) !important;
   backdrop-filter: blur(20px);
 }
-html.dark .mix-blend-multiply { mix-blend-mode: normal !important; }
-html.dark img { filter: saturate(0.98) contrast(1.03); }
-html.dark .line-through { color: #718096 !important; }
+html.dark .mix-blend-multiply {
+  mix-blend-mode: normal !important;
+}
+html.dark img {
+  filter: saturate(0.98) contrast(1.03);
+}
+html.dark .line-through {
+  color: #718096 !important;
+}
 html.dark .product-attributes tbody tr,
 html.dark .shop_attributes tbody tr,
-html.dark table tbody tr { background-color: rgba(15, 23, 42, 0.72) !important; }
+html.dark table tbody tr {
+  background-color: rgba(15, 23, 42, 0.72) !important;
+}
 html.dark .product-attributes tbody tr:nth-child(even),
 html.dark .shop_attributes tbody tr:nth-child(even),
-html.dark table tbody tr:nth-child(even) { background-color: rgba(30, 41, 59, 0.7) !important; }
+html.dark table tbody tr:nth-child(even) {
+  background-color: rgba(30, 41, 59, 0.7) !important;
+}
 html.dark .product-attributes th,
 html.dark .product-attributes td,
 html.dark table th,
-html.dark table td { color: var(--offl-text) !important; border-color: var(--offl-border) !important; }
+html.dark table td {
+  color: var(--offl-text) !important;
+  border-color: var(--offl-border) !important;
+}
 html.dark .container_des h1,
 html.dark .container_des h2,
 html.dark .container_des h3,
@@ -633,11 +673,15 @@ html.dark .container_des h4,
 html.dark .container_des h5,
 html.dark .container_des h6,
 html.dark .container_des strong,
-html.dark .container_des b { color: #f8fbff !important; }
+html.dark .container_des b {
+  color: #f8fbff !important;
+}
 html.dark .container_des p,
 html.dark .container_des li,
 html.dark .container_des blockquote p,
-html.dark .container_des td { color: #cbd7e9 !important; }
+html.dark .container_des td {
+  color: #cbd7e9 !important;
+}
 html.dark .container_des h1,
 html.dark .container_des blockquote,
 html.dark .container_des [data-text-highlight='true'],
@@ -649,9 +693,18 @@ html.dark .container_des [data-text-highlight='star'] {
   background: linear-gradient(135deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.86)) !important;
   box-shadow: 0 14px 38px rgba(0, 0, 0, 0.35) !important;
 }
-html.dark .container_des code { background-color: rgba(30, 41, 59, 0.95) !important; color: #f0abfc !important; }
-html.dark .container_des pre { background-color: #050814 !important; border: 1px solid var(--offl-border); }
-html.dark footer { background: radial-gradient(circle at 20% 0%, rgba(56, 107, 249, 0.18), transparent 28rem), #050814 !important; }
+html.dark .container_des code {
+  background-color: rgba(30, 41, 59, 0.95) !important;
+  color: #f0abfc !important;
+}
+html.dark .container_des pre {
+  background-color: #050814 !important;
+  border: 1px solid var(--offl-border);
+}
+html.dark footer {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(56, 107, 249, 0.18), transparent 28rem), #050814 !important;
+}
 /* footer trust logos - no bg, white logos on dark */
 html.dark .footer-trust-logo {
   background: transparent !important;
@@ -665,7 +718,8 @@ html.dark .shadow_menu_bottom {
 }
 html.dark body,
 html.dark body *:not(svg):not(path):not(circle):not(rect):not(line):not(polyline) {
-  transition-property: background-color, border-color, color, box-shadow, filter, opacity, transform;
+  transition-property:
+    background-color, border-color, color, box-shadow, filter, opacity, transform;
   transition-duration: 220ms;
   transition-timing-function: ease;
 }
@@ -673,11 +727,25 @@ html.dark body *:not(svg):not(path):not(circle):not(rect):not(line):not(polyline
   content: '';
   position: absolute;
   inset: -50%;
-  background: conic-gradient(from 90deg, transparent, rgba(56, 107, 249, 0.45), rgba(139, 92, 246, 0.38), transparent 35%);
+  background: conic-gradient(
+    from 90deg,
+    transparent,
+    rgba(56, 107, 249, 0.45),
+    rgba(139, 92, 246, 0.38),
+    transparent 35%
+  );
   animation: themeSpin 5s linear infinite;
 }
-.theme-toggle-button::after { content: ''; position: absolute; inset: 2px; border-radius: 1.35rem; background: inherit; }
-.theme-toggle-button > * { z-index: 1; }
+.theme-toggle-button::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 1.35rem;
+  background: inherit;
+}
+.theme-toggle-button > * {
+  z-index: 1;
+}
 .theme-orbit {
   pointer-events: none;
   position: absolute;
@@ -686,19 +754,49 @@ html.dark body *:not(svg):not(path):not(circle):not(rect):not(line):not(polyline
   border: 1px solid rgba(56, 107, 249, 0.2);
   animation: themePulse 2.8s ease-in-out infinite;
 }
-.theme-orbit-two { inset: -12px; border-color: rgba(139, 92, 246, 0.16); animation-delay: 0.7s; }
-.theme-command-panel { transform-origin: bottom left; }
-@keyframes themeSpin { to { transform: rotate(360deg); } }
-@keyframes themePulse { 0%, 100% { opacity: 0.25; transform: scale(0.96); } 50% { opacity: 0.8; transform: scale(1.06); } }
+.theme-orbit-two {
+  inset: -12px;
+  border-color: rgba(139, 92, 246, 0.16);
+  animation-delay: 0.7s;
+}
+.theme-command-panel {
+  transform-origin: bottom left;
+}
+@keyframes themeSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes themePulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.06);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   html.dark body,
   html.dark body *,
   .theme-toggle-button::before,
-  .theme-orbit { animation: none !important; transition: none !important; }
+  .theme-orbit {
+    animation: none !important;
+    transition: none !important;
+  }
 }
-html.dark * { scrollbar-color: #334155 #0b1222; }
-html.dark *::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #386bf9, #7c3aed); border-radius: 999px; }
-html.dark *::-webkit-scrollbar-track { background: #0b1222; }
+html.dark * {
+  scrollbar-color: #334155 #0b1222;
+}
+html.dark *::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #386bf9, #7c3aed);
+  border-radius: 999px;
+}
+html.dark *::-webkit-scrollbar-track {
+  background: #0b1222;
+}
 
 /* =========================================================
    Offland Dark Mode V5.1 — Deep coverage and product-image studio
@@ -908,8 +1006,7 @@ html.dark header .lg\:bg-white {
   background: transparent !important;
 }
 html.dark [data-slot='input-wrapper'] {
-  background:
-    linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.76)) !important;
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.76)) !important;
   border: 1px solid rgba(130, 170, 255, 0.18) !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
 }
@@ -932,9 +1029,8 @@ html.dark .product-gallery-shell {
 }
 html.dark .product-image-stage {
   overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 44%, rgba(255, 255, 255, 0.98) 0 36%, rgba(238, 244, 255, 0.96) 56%, rgba(209, 222, 245, 0.92) 100%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  background: transparent !important;
+  border: 1px solid rgba(148, 163, 184, 0.18) !important;
   box-shadow:
     inset 0 0 0 1px rgba(15, 23, 42, 0.05),
     inset 0 -28px 60px rgba(56, 107, 249, 0.08),
@@ -949,9 +1045,20 @@ html.dark .product-thumb-stage::before {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(135deg, rgba(255,255,255,0.34), transparent 24%, transparent 70%, rgba(56,107,249,0.10)),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.34),
+      transparent 24%,
+      transparent 70%,
+      rgba(56, 107, 249, 0.1)
+    ),
     radial-gradient(circle at 50% 85%, rgba(56, 107, 249, 0.12), transparent 44%);
   opacity: 0.85;
+}
+/* حذف لایهٔ سفید (sheen) روی محصول اصلی در حالت تاریک */
+html.dark .product-image-stage::before {
+  background: none !important;
+  opacity: 0 !important;
 }
 html.dark .product-image-stage::after,
 html.dark .product-card-image-pad::after {
@@ -971,7 +1078,7 @@ html.dark .product-image-stage .iiz__img,
 html.dark .product-image-stage img {
   position: relative;
   z-index: 1;
-  mix-blend-mode: multiply;
+  mix-blend-mode: normal;
   filter: saturate(1.02) contrast(1.02) drop-shadow(0 18px 22px rgba(15, 23, 42, 0.16)) !important;
 }
 html.dark .product-card-image-pad,
@@ -982,11 +1089,15 @@ html.dark .product-card-image-pad > div[class*='w-'] {
 html.dark .product-card-image-pad::before {
   border-radius: 1.25rem;
   inset: 0.35rem;
-  background:
-    radial-gradient(circle at 50% 36%, rgba(255,255,255,0.98), rgba(244,248,255,0.94) 58%, rgba(226,235,250,0.9) 100%) !important;
+  background: radial-gradient(
+    circle at 50% 36%,
+    rgba(255, 255, 255, 0.98),
+    rgba(244, 248, 255, 0.94) 58%,
+    rgba(226, 235, 250, 0.9) 100%
+  ) !important;
   box-shadow:
     inset 0 0 0 1px rgba(15, 23, 42, 0.04),
-    0 14px 38px rgba(0,0,0,0.16);
+    0 14px 38px rgba(0, 0, 0, 0.16);
 }
 html.dark .product-card-image-pad img,
 html.dark .product-card-image-pad picture,
@@ -1001,16 +1112,24 @@ html.dark .product-card-image-pad [data-nimg] {
   filter: saturate(1.03) contrast(1.02) drop-shadow(0 14px 20px rgba(15, 23, 42, 0.14)) !important;
 }
 html.dark .product-card-image-pad:hover::before {
-  background:
-    radial-gradient(circle at 50% 34%, rgba(255,255,255,1), rgba(239,246,255,0.98) 58%, rgba(210,225,252,0.96) 100%) !important;
+  background: radial-gradient(
+    circle at 50% 34%,
+    rgba(255, 255, 255, 1),
+    rgba(239, 246, 255, 0.98) 58%,
+    rgba(210, 225, 252, 0.96) 100%
+  ) !important;
 }
 html.dark .product-thumb-stage,
 html.dark .assembly-image-pad {
   overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 38%, rgba(255,255,255,0.98), rgba(238,244,255,0.94) 62%, rgba(211,224,248,0.9)) !important;
-  border-color: rgba(255,255,255,0.18) !important;
-  box-shadow: 0 12px 34px rgba(0,0,0,0.22) !important;
+  background: radial-gradient(
+    circle at 50% 38%,
+    rgba(255, 255, 255, 0.98),
+    rgba(238, 244, 255, 0.94) 62%,
+    rgba(211, 224, 248, 0.9)
+  ) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.22) !important;
 }
 html.dark .product-thumb-stage img,
 html.dark .assembly-image-pad img,
@@ -1018,7 +1137,7 @@ html.dark .assembly-image-pad [data-nimg] {
   position: relative;
   z-index: 1;
   mix-blend-mode: multiply;
-  filter: saturate(1.03) contrast(1.02) drop-shadow(0 8px 12px rgba(15,23,42,0.14)) !important;
+  filter: saturate(1.03) contrast(1.02) drop-shadow(0 8px 12px rgba(15, 23, 42, 0.14)) !important;
 }
 
 /* product/card shell: make all cards feel designed */
@@ -1048,7 +1167,7 @@ html.dark .group.relative.overflow-hidden:hover {
 html.dark .sticky.top-0,
 html.dark .sticky.bottom-0 {
   background:
-    radial-gradient(circle at 0% 0%, rgba(56,107,249,0.12), transparent 16rem),
+    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.12), transparent 16rem),
     linear-gradient(145deg, rgba(12, 18, 32, 0.94), rgba(20, 30, 50, 0.88)) !important;
   border: 1px solid rgba(148, 163, 184, 0.16) !important;
   backdrop-filter: blur(18px);
@@ -1078,7 +1197,7 @@ html.dark .container_sidebar .link {
 }
 html.dark .container_sidebar {
   background:
-    radial-gradient(circle at 0% 0%, rgba(56,107,249,0.12), transparent 18rem),
+    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.12), transparent 18rem),
     linear-gradient(145deg, rgba(17, 27, 46, 0.94), rgba(8, 13, 26, 0.94)) !important;
 }
 html.dark .container_sidebar .menu .link:hover,
@@ -1088,13 +1207,16 @@ html.dark .container_sidebar .menu .container_link:hover {
 }
 html.dark .container_sidebar .menu .active {
   background: linear-gradient(180deg, #386bf9, #6ea0ff) !important;
-  box-shadow: 0 0 22px rgba(56,107,249,0.34);
+  box-shadow: 0 0 22px rgba(56, 107, 249, 0.34);
 }
 
 /* bottom navigation active pill */
 html.dark .shadow_menu_bottom button[class*='bg-main/10'] {
-  background:
-    linear-gradient(135deg, rgba(56, 107, 249, 0.16), rgba(255,255,255,0.04)) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(56, 107, 249, 0.16),
+    rgba(255, 255, 255, 0.04)
+  ) !important;
   box-shadow: inset 0 0 0 1px rgba(130, 170, 255, 0.16);
 }
 
@@ -1133,7 +1255,12 @@ html.dark .bg-default-100 {
   background-color: rgba(51, 65, 85, 0.85) !important;
 }
 html.dark .animate-shimmer {
-  background-image: linear-gradient(90deg, transparent, rgba(130, 170, 255, 0.18), transparent) !important;
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    rgba(130, 170, 255, 0.18),
+    transparent
+  ) !important;
 }
 html.dark hr,
 html.dark .h-px,
@@ -1174,12 +1301,16 @@ html.dark .product-image-pad::before {
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background:
-    radial-gradient(circle at 50% 36%, rgba(255,255,255,0.99), rgba(244,248,255,0.96) 58%, rgba(226,235,250,0.92) 100%) !important;
+  background: radial-gradient(
+    circle at 50% 36%,
+    rgba(255, 255, 255, 0.99),
+    rgba(244, 248, 255, 0.96) 58%,
+    rgba(226, 235, 250, 0.92) 100%
+  ) !important;
   box-shadow:
     inset 0 0 0 1px rgba(15, 23, 42, 0.04),
     inset 0 -20px 44px rgba(56, 107, 249, 0.08),
-    0 14px 38px rgba(0,0,0,0.16);
+    0 14px 38px rgba(0, 0, 0, 0.16);
 }
 html.dark .product-image-pad::after {
   content: '';
@@ -1228,7 +1359,12 @@ html.dark [class*='from-blue-100'][class*='via-blue-50'][class*='to-purple-50'] 
   background:
     radial-gradient(circle at 8% 10%, rgba(56, 107, 249, 0.18), transparent 26rem),
     radial-gradient(circle at 88% 18%, rgba(168, 85, 247, 0.16), transparent 24rem),
-    linear-gradient(135deg, rgba(10, 18, 34, 0.98), rgba(15, 23, 42, 0.94) 48%, rgba(7, 12, 24, 0.98)) !important;
+    linear-gradient(
+      135deg,
+      rgba(10, 18, 34, 0.98),
+      rgba(15, 23, 42, 0.94) 48%,
+      rgba(7, 12, 24, 0.98)
+    ) !important;
   border-color: rgba(130, 170, 255, 0.24) !important;
   box-shadow:
     0 30px 90px rgba(0, 0, 0, 0.42),
@@ -1241,8 +1377,8 @@ html.dark [class*='from-blue-100'][class*='via-blue-50'][class*='to-purple-50']:
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 34px 34px;
   mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
 }
@@ -1278,11 +1414,15 @@ html.dark .container_page span:not(.text-white):not([class*='bg-gradient']) {
 /* Story/category circles should be dark-framed but image area still clean */
 html.dark a .rounded-full,
 html.dark span.rounded-full {
-  background:
-    radial-gradient(circle at 50% 40%, rgba(255,255,255,0.96), rgba(238,244,255,0.92) 62%, rgba(210,225,252,0.9)) !important;
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(255, 255, 255, 0.96),
+    rgba(238, 244, 255, 0.92) 62%,
+    rgba(210, 225, 252, 0.9)
+  ) !important;
   box-shadow:
     0 16px 40px rgba(0, 0, 0, 0.28),
-    inset 0 0 0 1px rgba(15,23,42,0.06) !important;
+    inset 0 0 0 1px rgba(15, 23, 42, 0.06) !important;
 }
 html.dark a .rounded-full + p,
 html.dark a p {
@@ -1291,7 +1431,8 @@ html.dark a p {
 
 /* Product comments / questions empty states: no white blocks */
 html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br,
-html.dark div[class*='rounded-2xl'][class*='border-gray-200'][class*='from-gray-50'][class*='to-white'] {
+html.dark
+  div[class*='rounded-2xl'][class*='border-gray-200'][class*='from-gray-50'][class*='to-white'] {
   position: relative;
   overflow: hidden;
   background:
@@ -1301,14 +1442,14 @@ html.dark div[class*='rounded-2xl'][class*='border-gray-200'][class*='from-gray-
   border: 1px solid rgba(148, 163, 184, 0.18) !important;
   box-shadow:
     0 24px 70px rgba(0, 0, 0, 0.34),
-    inset 0 1px 0 rgba(255,255,255,0.04) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
 }
 /* Empty state grid overlay removed for Turbopack CSS parser safety. */
 html.dark .rounded-full.bg-blue-100,
 html.dark .rounded-full.bg-purple-100 {
   background:
-    radial-gradient(circle at 35% 30%, rgba(255,255,255,0.28), transparent 34%),
-    linear-gradient(135deg, rgba(56,107,249,0.24), rgba(124,58,237,0.26)) !important;
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.28), transparent 34%),
+    linear-gradient(135deg, rgba(56, 107, 249, 0.24), rgba(124, 58, 237, 0.26)) !important;
   box-shadow: 0 18px 45px rgba(56, 107, 249, 0.18) !important;
 }
 html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br h3,
@@ -1344,8 +1485,8 @@ html.dark .line-clamp-4 {
 html.dark article .bg-gradient-to-br.from-white,
 html.dark article [class*='from-white'][class*='via-blue'] {
   background:
-    radial-gradient(circle at 0% 0%, rgba(56,107,249,0.12), transparent 18rem),
-    linear-gradient(145deg, rgba(15,23,42,0.94), rgba(8,13,26,0.94)) !important;
+    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.12), transparent 18rem),
+    linear-gradient(145deg, rgba(15, 23, 42, 0.94), rgba(8, 13, 26, 0.94)) !important;
 }
 html.dark article .text-gray-700,
 html.dark article .group-hover\:text-gray-900:hover,
@@ -1356,8 +1497,7 @@ html.dark article .bg-white,
 html.dark aside .bg-white,
 html.dark aside a.bg-white,
 html.dark aside .border-gray-200.bg-white {
-  background:
-    linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
+  background: linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border-color: rgba(148, 163, 184, 0.18) !important;
 }
 html.dark aside h3,
@@ -1371,12 +1511,17 @@ html.dark aside span:not(.text-white) {
 html.dark .product-image-pad,
 html.dark .product-thumb-stage,
 html.dark .assembly-image-pad {
-  border: 1px solid rgba(255,255,255,0.16) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
 }
 html.dark .product-image-pad::before {
   background:
-    radial-gradient(circle at 50% 36%, rgba(255,255,255,0.99), rgba(244,248,255,0.96) 58%, rgba(226,235,250,0.92) 100%),
-    linear-gradient(135deg, rgba(56,107,249,0.06), rgba(124,58,237,0.05)) !important;
+    radial-gradient(
+      circle at 50% 36%,
+      rgba(255, 255, 255, 0.99),
+      rgba(244, 248, 255, 0.96) 58%,
+      rgba(226, 235, 250, 0.92) 100%
+    ),
+    linear-gradient(135deg, rgba(56, 107, 249, 0.06), rgba(124, 58, 237, 0.05)) !important;
 }
 
 /* Navigation arrows in dark */
@@ -1385,7 +1530,7 @@ html.dark .featured-swiper-button-next,
 html.dark button[aria-label='عکس قبلی'],
 html.dark button[aria-label='عکس بعدی'] {
   background: rgba(10, 16, 30, 0.86) !important;
-  border-color: rgba(130,170,255,0.24) !important;
+  border-color: rgba(130, 170, 255, 0.24) !important;
   color: #eaf1ff !important;
   backdrop-filter: blur(14px);
 }
@@ -1449,7 +1594,7 @@ html.dark .featured-product-showcase::before {
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(circle at 10% 0%, rgba(56, 107, 249, 0.10), transparent 22rem),
+    radial-gradient(circle at 10% 0%, rgba(56, 107, 249, 0.1), transparent 22rem),
     radial-gradient(circle at 90% 10%, rgba(139, 92, 246, 0.09), transparent 24rem);
   opacity: 0.9;
 }
@@ -1462,28 +1607,35 @@ html.dark .featured-product-showcase > * {
 
 /* Mag header: no pale/flat strip */
 html.dark .mag-header-shell {
-  background:
-    linear-gradient(180deg, rgba(7, 11, 22, 0.94), rgba(7, 11, 22, 0.78)) !important;
+  background: linear-gradient(180deg, rgba(7, 11, 22, 0.94), rgba(7, 11, 22, 0.78)) !important;
   border-color: rgba(148, 163, 184, 0.14) !important;
   box-shadow: 0 18px 70px rgba(0, 0, 0, 0.34) !important;
 }
 html.dark .mag-header-mainbar {
-  background:
-    linear-gradient(90deg, rgba(56, 107, 249, 0.96), rgba(73, 128, 255, 0.94) 44%, rgba(124, 58, 237, 0.9)) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 14px 38px rgba(56,107,249,0.18) !important;
+  background: linear-gradient(
+    90deg,
+    rgba(56, 107, 249, 0.96),
+    rgba(73, 128, 255, 0.94) 44%,
+    rgba(124, 58, 237, 0.9)
+  ) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 14px 38px rgba(56, 107, 249, 0.18) !important;
 }
 html.dark .mag-short-ticker {
   background:
-    radial-gradient(circle at 0% 0%, rgba(255,255,255,0.09), transparent 10rem),
-    linear-gradient(135deg, rgba(0,0,0,0.92), rgba(15,23,42,0.92)) !important;
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 28px rgba(0,0,0,0.28);
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.09), transparent 10rem),
+    linear-gradient(135deg, rgba(0, 0, 0, 0.92), rgba(15, 23, 42, 0.92)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 8px 28px rgba(0, 0, 0, 0.28);
 }
 html.dark .mag-store-cta {
-  background: rgba(8,13,26,0.86) !important;
+  background: rgba(8, 13, 26, 0.86) !important;
   color: #dbeafe !important;
-  border: 1px solid rgba(255,255,255,0.14);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.26) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.26) !important;
 }
 
 /* Mag listing page */
@@ -1495,10 +1647,11 @@ html.dark .mag-hottest-section {
 }
 html.dark .mag-section-title-card,
 html.dark .mag-featured-heading {
-  background:
-    linear-gradient(135deg, rgba(17,27,46,0.96), rgba(10,16,30,0.96)) !important;
+  background: linear-gradient(135deg, rgba(17, 27, 46, 0.96), rgba(10, 16, 30, 0.96)) !important;
   border: 1px solid var(--dm-stroke-2) !important;
-  box-shadow: 0 18px 50px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
 }
 html.dark .mag-section-title-card h3,
 html.dark .mag-section-title-card h6,
@@ -1512,26 +1665,26 @@ html.dark .mag-article-card,
 html.dark .mag-featured-card,
 html.dark .short-news-card {
   background:
-    radial-gradient(circle at 100% 0%, rgba(56,107,249,0.10), transparent 16rem),
-    linear-gradient(145deg, rgba(17,27,46,0.96), rgba(8,13,26,0.96)) !important;
+    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.1), transparent 16rem),
+    linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border-color: var(--dm-stroke) !important;
   box-shadow:
-    0 22px 70px rgba(0,0,0,0.34),
-    inset 0 1px 0 rgba(255,255,255,0.035) !important;
+    0 22px 70px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
 }
 html.dark .mag-article-card:hover,
 html.dark .mag-featured-card:hover,
 html.dark .short-news-card:hover {
-  border-color: rgba(125,167,255,0.5) !important;
+  border-color: rgba(125, 167, 255, 0.5) !important;
   box-shadow:
-    0 28px 86px rgba(0,0,0,0.44),
-    0 0 0 1px rgba(56,107,249,0.18),
-    0 0 46px rgba(56,107,249,0.10) !important;
+    0 28px 86px rgba(0, 0, 0, 0.44),
+    0 0 0 1px rgba(56, 107, 249, 0.18),
+    0 0 46px rgba(56, 107, 249, 0.1) !important;
 }
 html.dark .mag-article-image {
   background: #050814 !important;
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: inset 0 -28px 80px rgba(56,107,249,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 -28px 80px rgba(56, 107, 249, 0.08);
 }
 html.dark .mag-article-image img {
   filter: saturate(1.08) contrast(1.04) brightness(0.92) !important;
@@ -1550,8 +1703,8 @@ html.dark .short-news-card h3 {
   color: var(--dm-text) !important;
 }
 html.dark .mag-read-more {
-  background: rgba(8,13,26,0.86) !important;
-  border: 1px solid rgba(255,255,255,0.18) !important;
+  background: rgba(8, 13, 26, 0.86) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
   backdrop-filter: blur(12px);
 }
 html.dark .mag-read-more span {
@@ -1560,11 +1713,11 @@ html.dark .mag-read-more span {
 html.dark .short-news-hero,
 html.dark .single-blog-summary {
   background:
-    radial-gradient(circle at 0% 0%, rgba(56,107,249,0.16), transparent 18rem),
-    radial-gradient(circle at 100% 100%, rgba(236,72,153,0.10), transparent 18rem),
-    linear-gradient(145deg, rgba(17,27,46,0.96), rgba(8,13,26,0.96)) !important;
+    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.16), transparent 18rem),
+    radial-gradient(circle at 100% 100%, rgba(236, 72, 153, 0.1), transparent 18rem),
+    linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border: 1px solid var(--dm-stroke) !important;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.36) !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.36) !important;
 }
 html.dark .short-news-hero h1,
 html.dark .short-news-hero p,
@@ -1578,8 +1731,8 @@ html.dark .short-news-card h3 {
   color: var(--dm-text) !important;
 }
 html.dark .short-news-excerpt {
-  background: rgba(71,85,105,0.24) !important;
-  border: 1px solid rgba(148,163,184,0.12);
+  background: rgba(71, 85, 105, 0.24) !important;
+  border: 1px solid rgba(148, 163, 184, 0.12);
 }
 html.dark .short-news-excerpt a {
   color: #93c5fd !important;
@@ -1590,20 +1743,24 @@ html.dark .single-blog-article {
   color: var(--dm-text-2);
 }
 html.dark .single-blog-category > div:first-child {
-  background: rgba(8,13,26,0.88) !important;
-  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(8, 13, 26, 0.88) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14);
 }
 html.dark .single-blog-title {
   background: linear-gradient(135deg, #f8fbff 0%, #a9c7ff 50%, #c4b5fd 100%) !important;
   background-clip: text !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  filter: drop-shadow(0 14px 30px rgba(56,107,249,0.14));
+  filter: drop-shadow(0 14px 30px rgba(56, 107, 249, 0.14));
 }
 html.dark .single-blog-cover {
-  background:
-    linear-gradient(135deg, rgba(56,107,249,0.30), rgba(139,92,246,0.24), rgba(236,72,153,0.18)) !important;
-  border: 1px solid rgba(255,255,255,0.14) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(56, 107, 249, 0.3),
+    rgba(139, 92, 246, 0.24),
+    rgba(236, 72, 153, 0.18)
+  ) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
 }
 html.dark .single-blog-cover img {
   filter: saturate(1.08) contrast(1.05) brightness(0.95) !important;
@@ -1617,10 +1774,10 @@ html.dark .product-carousel-section {
 }
 html.dark .featured-product-showcase {
   background:
-    radial-gradient(circle at 10% 5%, rgba(56,107,249,0.22), transparent 26rem),
-    radial-gradient(circle at 90% 20%, rgba(139,92,246,0.18), transparent 24rem),
-    linear-gradient(135deg, rgba(7,12,24,0.98), rgba(15,23,42,0.96)) !important;
-  border-color: rgba(125,167,255,0.26) !important;
+    radial-gradient(circle at 10% 5%, rgba(56, 107, 249, 0.22), transparent 26rem),
+    radial-gradient(circle at 90% 20%, rgba(139, 92, 246, 0.18), transparent 24rem),
+    linear-gradient(135deg, rgba(7, 12, 24, 0.98), rgba(15, 23, 42, 0.96)) !important;
+  border-color: rgba(125, 167, 255, 0.26) !important;
 }
 html.dark .featured-product-showcase h6,
 html.dark .home-special-section h6,
@@ -1629,8 +1786,8 @@ html.dark .product-carousel-section h6 {
 }
 html.dark .featured-product-showcase a[href*='vitrin_id'],
 html.dark .product-carousel-section a[href*='vitrin_id'] {
-  background: rgba(56,107,249,0.13) !important;
-  border-color: rgba(125,167,255,0.36) !important;
+  background: rgba(56, 107, 249, 0.13) !important;
+  border-color: rgba(125, 167, 255, 0.36) !important;
   color: #dbeafe !important;
 }
 
@@ -1640,10 +1797,10 @@ html.dark .category-filter-panel,
 html.dark .category-sortbar,
 html.dark .category-mobile-filterbar {
   background:
-    radial-gradient(circle at 100% 0%, rgba(56,107,249,0.10), transparent 18rem),
-    linear-gradient(145deg, rgba(13,20,35,0.94), rgba(8,13,26,0.94)) !important;
+    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.1), transparent 18rem),
+    linear-gradient(145deg, rgba(13, 20, 35, 0.94), rgba(8, 13, 26, 0.94)) !important;
   border-color: var(--dm-stroke) !important;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.28) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28) !important;
 }
 html.dark .category-sortbar {
   border: 1px solid var(--dm-stroke) !important;
@@ -1667,7 +1824,7 @@ html.dark .category-products-grid {
   border-radius: 1.25rem;
 }
 html.dark .category-mobile-product-row {
-  background: rgba(15,24,42,0.72) !important;
+  background: rgba(15, 24, 42, 0.72) !important;
   border-color: var(--dm-stroke) !important;
   border-radius: 1rem;
   margin-bottom: 0.55rem;
@@ -1691,10 +1848,9 @@ html.dark .container_accordion_filter span {
 /* Product details and empty states */
 html.dark form[data-question-form],
 html.dark [data-question-form] {
-  background:
-    linear-gradient(145deg, rgba(17,27,46,0.96), rgba(8,13,26,0.96)) !important;
+  background: linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border: 1px solid var(--dm-stroke) !important;
-  box-shadow: 0 18px 50px rgba(0,0,0,0.30) !important;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.3) !important;
 }
 html.dark form[data-question-form] span,
 html.dark form[data-question-form] textarea {
@@ -1702,10 +1858,10 @@ html.dark form[data-question-form] textarea {
 }
 html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br {
   background:
-    radial-gradient(circle at 50% 0%, rgba(56,107,249,0.16), transparent 22rem),
-    linear-gradient(145deg, rgba(17,27,46,0.96), rgba(8,13,26,0.96)) !important;
+    radial-gradient(circle at 50% 0%, rgba(56, 107, 249, 0.16), transparent 22rem),
+    linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border-color: var(--dm-stroke) !important;
-  box-shadow: 0 24px 70px rgba(0,0,0,0.34) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34) !important;
 }
 html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br h3,
 html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br p {
@@ -1720,13 +1876,17 @@ html.dark .product-image-stage,
 html.dark .product-image-pad,
 html.dark .product-thumb-stage,
 html.dark .assembly-image-pad {
-  background:
-    radial-gradient(circle at 50% 38%, rgba(255,255,255,0.99), rgba(241,246,255,0.97) 58%, rgba(219,232,253,0.94) 100%) !important;
-  border-color: rgba(255,255,255,0.18) !important;
+  background: radial-gradient(
+    circle at 50% 38%,
+    rgba(255, 255, 255, 0.99),
+    rgba(241, 246, 255, 0.97) 58%,
+    rgba(219, 232, 253, 0.94) 100%
+  ) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
   box-shadow:
-    inset 0 0 0 1px rgba(15,23,42,0.05),
-    inset 0 -24px 58px rgba(56,107,249,0.10),
-    0 18px 50px rgba(0,0,0,0.26) !important;
+    inset 0 0 0 1px rgba(15, 23, 42, 0.05),
+    inset 0 -24px 58px rgba(56, 107, 249, 0.1),
+    0 18px 50px rgba(0, 0, 0, 0.26) !important;
 }
 html.dark .product-image-stage img,
 html.dark .product-image-pad img,
@@ -1737,12 +1897,12 @@ html.dark .product-image-pad [data-nimg],
 html.dark .product-thumb-stage [data-nimg],
 html.dark .assembly-image-pad [data-nimg] {
   mix-blend-mode: multiply !important;
-  filter: saturate(1.03) contrast(1.03) drop-shadow(0 18px 20px rgba(15,23,42,0.16)) !important;
+  filter: saturate(1.03) contrast(1.03) drop-shadow(0 18px 20px rgba(15, 23, 42, 0.16)) !important;
 }
 html.dark .product-gallery-shell {
   background:
-    radial-gradient(circle at 0% 0%, rgba(56,107,249,0.14), transparent 18rem),
-    linear-gradient(145deg, rgba(12,18,32,0.94), rgba(7,12,24,0.94)) !important;
+    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.14), transparent 18rem),
+    linear-gradient(145deg, rgba(12, 18, 32, 0.94), rgba(7, 12, 24, 0.94)) !important;
 }
 
 /* hard final text contrast */
@@ -1810,8 +1970,12 @@ html.dark .keen-slider__slide:hover {
 
 /* ── CardProduct in dark ── */
 html.dark .product-card-image-pad {
-  background:
-    radial-gradient(circle at 50% 44%, rgba(255,255,255,0.96) 0 34%, rgba(238,244,255,0.94) 54%, rgba(209,222,245,0.90) 100%) !important;
+  background: radial-gradient(
+    circle at 50% 44%,
+    rgba(255, 255, 255, 0.96) 0 34%,
+    rgba(238, 244, 255, 0.94) 54%,
+    rgba(209, 222, 245, 0.9) 100%
+  ) !important;
 }
 
 /* ── Carousel section title bar ── */
@@ -1840,7 +2004,9 @@ html.dark .featured-product-showcase .swiper-slide > div > div {
 }
 html.dark .featured-product-showcase .swiper-slide:hover > div > div {
   border-color: rgba(130, 170, 255, 0.28) !important;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 20px rgba(56, 107, 249, 0.08) !important;
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(56, 107, 249, 0.08) !important;
 }
 html.dark .featured-product-showcase h6 {
   color: var(--offl-text) !important;
@@ -1879,27 +2045,26 @@ html.dark *::-webkit-scrollbar-thumb {
 }
 
 /* ── Cart/profile buttons in header ── */
-html.dark header button[class*="bg-white"],
-html.dark header a[class*="bg-white"] {
+html.dark header button[class*='bg-white'],
+html.dark header a[class*='bg-white'] {
   background: rgba(15, 23, 42, 0.6) !important;
   border-color: rgba(148, 163, 184, 0.15) !important;
   backdrop-filter: blur(12px);
 }
-html.dark header button[class*="bg-white"]:hover,
-html.dark header a[class*="bg-white"]:hover {
+html.dark header button[class*='bg-white']:hover,
+html.dark header a[class*='bg-white']:hover {
   border-color: rgba(130, 170, 255, 0.3) !important;
   background: rgba(15, 23, 42, 0.8) !important;
 }
 
 /* ── Search bar dark polish ── */
-html.dark [data-slot="input-wrapper"] {
-  background:
-    linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.76)) !important;
+html.dark [data-slot='input-wrapper'] {
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.76)) !important;
   border: 1px solid rgba(130, 170, 255, 0.18) !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
   transition: all 0.3s ease;
 }
-html.dark [data-slot="input-wrapper"]:focus-within {
+html.dark [data-slot='input-wrapper']:focus-within {
   border-color: rgba(130, 170, 255, 0.55) !important;
   box-shadow:
     0 0 0 4px rgba(56, 107, 249, 0.13),
@@ -1923,7 +2088,9 @@ html.dark .animate-pulse {
   animation: shimmer 1.5s linear infinite !important;
 }
 @keyframes shimmer {
-  to { background-position: -200% 0; }
+  to {
+    background-position: -200% 0;
+  }
 }
 
 /* ── Category section dark ── */
@@ -1947,19 +2114,20 @@ html.dark .bg-\[\#F93838\] {
 
 /* ── Brand card hover ── */
 html.dark .brand-card,
-html.dark [class*="brand"] img {
+html.dark [class*='brand'] img {
   transition: all 0.3s ease;
   filter: brightness(0.9) saturate(0.9);
 }
 html.dark .brand-card:hover,
-html.dark [class*="brand"]:hover img {
+html.dark [class*='brand']:hover img {
   filter: brightness(1) saturate(1) drop-shadow(0 4px 12px rgba(56, 107, 249, 0.15));
   transform: scale(1.04);
 }
 
 /* ── Smooth transition for all dark mode elements ── */
 html.dark *:not(.animate-pulse) {
-  transition-property: background-color, border-color, color, box-shadow, filter, opacity, transform;
+  transition-property:
+    background-color, border-color, color, box-shadow, filter, opacity, transform;
   transition-duration: 220ms;
   transition-timing-function: ease;
 }
@@ -1993,12 +2161,12 @@ html.dark .header-top-bar {
 }
 
 /* ── View all button dark ── */
-html.dark .product-carousel-section a[class*="rounded-lg"] {
+html.dark .product-carousel-section a[class*='rounded-lg'] {
   background: rgba(15, 23, 42, 0.6) !important;
   border-color: rgba(148, 163, 184, 0.15) !important;
   backdrop-filter: blur(8px);
 }
-html.dark .product-carousel-section a[class*="rounded-lg"]:hover {
+html.dark .product-carousel-section a[class*='rounded-lg']:hover {
   background: rgba(56, 107, 249, 0.15) !important;
   border-color: rgba(130, 170, 255, 0.35) !important;
   box-shadow: 0 4px 16px rgba(56, 107, 249, 0.12);
@@ -2034,7 +2202,7 @@ html.dark .shadow_menu_bottom {
 
 /* ── Special section dark ── */
 html.dark .special-section,
-html.dark [class*="special"] {
+html.dark [class*='special'] {
   background:
     radial-gradient(circle at 15% 10%, rgba(56, 107, 249, 0.14), transparent 22rem),
     radial-gradient(circle at 85% 80%, rgba(139, 92, 246, 0.1), transparent 20rem),
@@ -2044,7 +2212,7 @@ html.dark [class*="special"] {
 
 /* ── Skeleton loaders dark ── */
 html.dark .Skeleton,
-html.dark [class*="skeleton"],
+html.dark [class*='skeleton'],
 html.dark .bg-gray-200 {
   background: rgba(30, 41, 59, 0.5) !important;
 }
@@ -2256,17 +2424,17 @@ html.dark .category-dark-shell {
 html.dark .category-filter-panel,
 html.dark .custom_sidebar.container_filter {
   background:
-    radial-gradient(circle at 0% 0%, rgba(56,107,249,0.10), transparent 14rem),
-    linear-gradient(160deg, rgba(15,22,40,0.97), rgba(8,12,24,0.98)) !important;
-  border: 1px solid rgba(148,163,184,0.14) !important;
+    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.1), transparent 14rem),
+    linear-gradient(160deg, rgba(15, 22, 40, 0.97), rgba(8, 12, 24, 0.98)) !important;
+  border: 1px solid rgba(148, 163, 184, 0.14) !important;
   border-radius: 1rem !important;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.35) !important;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.35) !important;
 }
 
 /* ── Filter title "فیلترها" ── */
 html.dark .category-filter-panel > div:first-child > p,
 html.dark .category-filter-panel p.text-\[\#0C0C0C\],
-html.dark .category-filter-panel p[class*="text-[#0C0C0C]"] {
+html.dark .category-filter-panel p[class*='text-[#0C0C0C]'] {
   color: #eef4ff !important;
 }
 
@@ -2277,8 +2445,8 @@ html.dark .category-filter-panel button span {
 
 /* ── ToggleFilter: background + text ── */
 html.dark .category-filter-panel .rounded-lg.lg\:bg-\[\#F3F6FB\],
-html.dark .category-filter-panel div[class*="lg:bg-[#F3F6FB]"] {
-  background: rgba(56,107,249,0.06) !important;
+html.dark .category-filter-panel div[class*='lg:bg-[#F3F6FB]'] {
+  background: rgba(56, 107, 249, 0.06) !important;
   border-radius: 0.75rem !important;
 }
 html.dark .category-filter-panel p.text-\[\#0C0C0C\] {
@@ -2288,11 +2456,11 @@ html.dark .category-filter-panel p.text-\[\#0C0C0C\] {
 /* ── CheckboxFilter container background ── */
 html.dark .container_accordion_filter,
 html.dark div.lg\:bg-\[\#F3F6FB\] {
-  background: rgba(56,107,249,0.04) !important;
+  background: rgba(56, 107, 249, 0.04) !important;
 }
 
 /* ── Accordion item titles in dark ── */
-html.dark .container_accordion_filter [data-slot="trigger"],
+html.dark .container_accordion_filter [data-slot='trigger'],
 html.dark .container_accordion_filter button[aria-expanded] {
   color: var(--offl-text) !important;
 }
@@ -2303,12 +2471,12 @@ html.dark .container_accordion_filter .text-\[\#0C0C0C\] {
 /* ── Accordion borders in dark ── */
 html.dark .container_accordion_filter .border-\[\#E4E7E9\],
 html.dark .container_accordion_filter .border-b.border-\[\#E4E7E9\],
-html.dark .container_accordion_filter [class*="border-[#E4E7E9]"] {
-  border-color: rgba(148,163,184,0.14) !important;
+html.dark .container_accordion_filter [class*='border-[#E4E7E9]'] {
+  border-color: rgba(148, 163, 184, 0.14) !important;
 }
 
 /* ── Accordion chevron icons in dark ── */
-html.dark .container_accordion_filter svg path[stroke="#393B40"] {
+html.dark .container_accordion_filter svg path[stroke='#393B40'] {
   stroke: var(--offl-text) !important;
 }
 
@@ -2320,24 +2488,24 @@ html.dark .container_accordion_filter label span {
 
 /* ── Search input inside filters in dark ── */
 html.dark .container_accordion_filter input.bg-\[\#f5f6f6\],
-html.dark .container_accordion_filter input[class*="bg-[#f5f6f6]"],
-html.dark .container_accordion_filter input[class*="bg-[#F5F6F6]"] {
-  background: rgba(148,163,184,0.08) !important;
-  border: 1px solid rgba(148,163,184,0.18) !important;
+html.dark .container_accordion_filter input[class*='bg-[#f5f6f6]'],
+html.dark .container_accordion_filter input[class*='bg-[#F5F6F6]'] {
+  background: rgba(148, 163, 184, 0.08) !important;
+  border: 1px solid rgba(148, 163, 184, 0.18) !important;
   color: var(--offl-text) !important;
 }
 
 /* ── Range price inputs in dark ── */
-html.dark .category-filter-panel input[class*="bg-[#F5F6F6]"],
-html.dark .category-filter-panel input[class*="bg-[#f5f6f6]"] {
-  background: rgba(148,163,184,0.08) !important;
-  border: 1px solid rgba(148,163,184,0.18) !important;
+html.dark .category-filter-panel input[class*='bg-[#F5F6F6]'],
+html.dark .category-filter-panel input[class*='bg-[#f5f6f6]'] {
+  background: rgba(148, 163, 184, 0.08) !important;
+  border: 1px solid rgba(148, 163, 184, 0.18) !important;
   color: var(--offl-text) !important;
 }
 
 /* ── Sort bar in dark ── */
 html.dark .category-sortbar {
-  border-color: rgba(148,163,184,0.14) !important;
+  border-color: rgba(148, 163, 184, 0.14) !important;
 }
 html.dark .category-sortbar span,
 html.dark .category-sortbar p {
@@ -2349,32 +2517,32 @@ html.dark .category-sortbar .text-main {
 
 /* ── Sort modal in dark ── */
 html.dark .category-sort-modal,
-html.dark [role="dialog"] .flex.flex-col.items-center.rounded-xl.bg-white {
-  background: rgba(12,18,32,0.98) !important;
-  border: 1px solid rgba(148,163,184,0.18) !important;
+html.dark [role='dialog'] .flex.flex-col.items-center.rounded-xl.bg-white {
+  background: rgba(12, 18, 32, 0.98) !important;
+  border: 1px solid rgba(148, 163, 184, 0.18) !important;
 }
 html.dark .category-sort-modal .text-\[\#232429\],
-html.dark [role="dialog"] .text-\[\#232429\] {
+html.dark [role='dialog'] .text-\[\#232429\] {
   color: var(--offl-text) !important;
 }
 
 /* ── Mobile filter bar ── */
 html.dark .category-mobile-filterbar {
-  background: rgba(8,12,24,0.95) !important;
-  border-bottom: 1px solid rgba(148,163,184,0.14) !important;
+  background: rgba(8, 12, 24, 0.95) !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14) !important;
 }
 html.dark .category-mobile-filterbar button,
 html.dark .category-mobile-filterbar span {
   color: var(--offl-text) !important;
 }
 html.dark .category-mobile-filterbar .border-gray-200 {
-  border-color: rgba(148,163,184,0.18) !important;
-  background: rgba(148,163,184,0.06) !important;
+  border-color: rgba(148, 163, 184, 0.18) !important;
+  background: rgba(148, 163, 184, 0.06) !important;
 }
 
 /* ── Mobile product row in category ── */
 html.dark .category-mobile-product-row {
-  border-color: rgba(148,163,184,0.12) !important;
+  border-color: rgba(148, 163, 184, 0.12) !important;
   background: transparent !important;
 }
 html.dark .category-mobile-product-row .text-black {
@@ -2388,21 +2556,21 @@ html.dark .category-products-grid {
 
 /* ── Category tags section in dark ── */
 html.dark .category-tags-section {
-  background: rgba(12,18,32,0.5) !important;
-  border: 1px solid rgba(148,163,184,0.12) !important;
+  background: rgba(12, 18, 32, 0.5) !important;
+  border: 1px solid rgba(148, 163, 184, 0.12) !important;
   border-radius: 1rem !important;
 }
 html.dark .category-tags-section .text-gray-800 {
   color: var(--offl-text) !important;
 }
 html.dark .category-tags-section .border-gray-200 {
-  border-color: rgba(148,163,184,0.14) !important;
+  border-color: rgba(148, 163, 184, 0.14) !important;
 }
 
 /* ── Category description h2 SEO styling in dark ── */
 html.dark .container_des h2 {
   color: #eef4ff !important;
-  border-bottom: 1px solid rgba(148,163,184,0.18) !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18) !important;
   padding-bottom: 0.5rem !important;
   margin-top: 1.5rem !important;
   margin-bottom: 0.75rem !important;
@@ -2425,15 +2593,15 @@ html.dark .category-dark-shell .text-\[\#616A76\] {
 
 /* ── BackPrevPage mobile header ── */
 html.dark .sticky.top-0.bg-white {
-  background: rgba(8,12,24,0.97) !important;
-  border-color: rgba(148,163,184,0.14) !important;
+  background: rgba(8, 12, 24, 0.97) !important;
+  border-color: rgba(148, 163, 184, 0.14) !important;
   backdrop-filter: blur(18px) !important;
 }
 html.dark .sticky.top-0.bg-white .text-\[\#0C0C0C\],
 html.dark .sticky.top-0.bg-white .text-\[\#545A66\] {
   color: var(--offl-text) !important;
 }
-html.dark .sticky.top-0.bg-white svg path[stroke="#545A66"] {
+html.dark .sticky.top-0.bg-white svg path[stroke='#545A66'] {
   stroke: var(--offl-text) !important;
 }
 
@@ -2441,7 +2609,7 @@ html.dark .sticky.top-0.bg-white svg path[stroke="#545A66"] {
 html.dark .category-dark-shell h1,
 html.dark .category-dark-shell .text-\[\#232429\] {
   color: #ffffff !important;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
 /* ── Empty category in dark ── */
@@ -2456,15 +2624,15 @@ html.dark .container_page + span .text-main {
 }
 
 /* ── HeroUI Accordion content area in dark ── */
-html.dark [data-slot="base"][class*="border"] {
-  border-color: rgba(148,163,184,0.14) !important;
+html.dark [data-slot='base'][class*='border'] {
+  border-color: rgba(148, 163, 184, 0.14) !important;
 }
 
 /* ── Switch component in dark ── */
-html.dark .category-filter-panel [data-slot="track"] {
-  background: rgba(148,163,184,0.25) !important;
+html.dark .category-filter-panel [data-slot='track'] {
+  background: rgba(148, 163, 184, 0.25) !important;
 }
-html.dark .category-filter-panel [data-selected="true"][data-slot="track"] {
+html.dark .category-filter-panel [data-selected='true'][data-slot='track'] {
   background: var(--offl-primary) !important;
 }
 
@@ -2475,40 +2643,40 @@ html.dark .category-filter-text {
 
 /* ── ToggleFilter background in dark ── */
 html.dark .category-toggle-filter {
-  background: rgba(56,107,249,0.06) !important;
-  border-color: rgba(148,163,184,0.14) !important;
+  background: rgba(56, 107, 249, 0.06) !important;
+  border-color: rgba(148, 163, 184, 0.14) !important;
 }
 
 /* ── CheckboxFilter background in dark ── */
 html.dark .category-checkbox-filter {
-  background: rgba(56,107,249,0.04) !important;
+  background: rgba(56, 107, 249, 0.04) !important;
 }
 
 /* ── CheckboxFilter borders in dark ── */
 html.dark .category-checkbox-filter .border-\[\#E4E7E9\],
-html.dark .category-checkbox-filter [class*="border-[#E4E7E9]"] {
-  border-color: rgba(148,163,184,0.14) !important;
+html.dark .category-checkbox-filter [class*='border-[#E4E7E9]'] {
+  border-color: rgba(148, 163, 184, 0.14) !important;
 }
 
 /* ── Checkbox labels in dark (HeroUI) ── */
-html.dark .category-checkbox-filter [data-slot="label"] span,
-html.dark .category-checkbox-filter [data-slot="label"] {
+html.dark .category-checkbox-filter [data-slot='label'] span,
+html.dark .category-checkbox-filter [data-slot='label'] {
   color: var(--offl-text) !important;
 }
 
 /* ── Checkbox wrapper checkmark in dark ── */
-html.dark .category-checkbox-filter [data-slot="wrapper"] {
-  border-color: rgba(148,163,184,0.3) !important;
+html.dark .category-checkbox-filter [data-slot='wrapper'] {
+  border-color: rgba(148, 163, 184, 0.3) !important;
 }
-html.dark .category-checkbox-filter [data-selected="true"][data-slot="wrapper"] {
+html.dark .category-checkbox-filter [data-selected='true'][data-slot='wrapper'] {
   background: var(--offl-primary) !important;
   border-color: var(--offl-primary) !important;
 }
 
 /* ── Search input inside CheckboxFilter in dark ── */
 html.dark .category-checkbox-filter input {
-  background: rgba(148,163,184,0.08) !important;
-  border: 1px solid rgba(148,163,184,0.18) !important;
+  background: rgba(148, 163, 184, 0.08) !important;
+  border: 1px solid rgba(148, 163, 184, 0.18) !important;
   color: var(--offl-text) !important;
 }
 
@@ -2523,13 +2691,13 @@ html.dark .category-sort-modal .text-\[\#232429\] {
 }
 
 /* ── Accordion chevron SVG in CheckboxFilter ── */
-html.dark .category-checkbox-filter svg path[stroke="#393B40"] {
+html.dark .category-checkbox-filter svg path[stroke='#393B40'] {
   stroke: var(--offl-text) !important;
 }
 
 /* ── Price range slider track in dark ── */
 html.dark .category-filter-panel .bg-\[\#4285F4\],
-html.dark .category-filter-panel [class*="bg-[#4285F4]"] {
+html.dark .category-filter-panel [class*='bg-[#4285F4]'] {
   background: var(--offl-primary) !important;
 }
 
@@ -2566,9 +2734,9 @@ html.dark .font-yekan.font-semibold.text-xl.text-gray-800 {
 
 /* ── Factor box (product page sidebar) in dark ── */
 html.dark .factor-box {
-  background: linear-gradient(160deg, rgba(12,18,32,0.97), rgba(8,12,26,0.98)) !important;
-  border: 1px solid rgba(148,163,184,0.16) !important;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4) !important;
+  background: linear-gradient(160deg, rgba(12, 18, 32, 0.97), rgba(8, 12, 26, 0.98)) !important;
+  border: 1px solid rgba(148, 163, 184, 0.16) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
   border-radius: 1rem !important;
 }
 html.dark .factor-box .text-black,
@@ -2583,14 +2751,18 @@ html.dark .factor-box .bg-slate-100 {
 
 /* ── قیمت بروز badge in dark ── */
 html.dark .price-updated-badge {
-  background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(20,184,166,0.12)) !important;
-  border: 1px solid rgba(16,185,129,0.25) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.15),
+    rgba(20, 184, 166, 0.12)
+  ) !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
 }
 html.dark .price-updated-badge .text-emerald-700 {
   color: #6ee7b7 !important;
 }
-html.dark .price-updated-badge span[class*="emerald-600"] {
-  color: rgba(110,231,183,0.6) !important;
+html.dark .price-updated-badge span[class*='emerald-600'] {
+  color: rgba(110, 231, 183, 0.6) !important;
 }
 
 /* ── Product page main shell in dark ── */
@@ -2606,19 +2778,19 @@ html.dark .container_page.bg-white {
 html.dark h1.text-black,
 html.dark .text-2xl.text-black {
   color: #ffffff !important;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
 /* ── Product details sections in dark ── */
 html.dark .scroll-mt-28.bg-white,
 html.dark .scroll-mt-28.rounded-lg.border.border-gray-200.bg-white {
-  background: rgba(12,18,32,0.6) !important;
-  border-color: rgba(148,163,184,0.14) !important;
+  background: rgba(12, 18, 32, 0.6) !important;
+  border-color: rgba(148, 163, 184, 0.14) !important;
   border-radius: 1rem !important;
 }
 html.dark .scroll-mt-28 h2 {
   color: var(--offl-text) !important;
-  border-color: rgba(148,163,184,0.18) !important;
+  border-color: rgba(148, 163, 184, 0.18) !important;
 }
 html.dark .scroll-mt-28 p,
 html.dark .scroll-mt-28 span,
@@ -2628,8 +2800,8 @@ html.dark .scroll-mt-28 li {
 
 /* ── Product tags section in dark ── */
 html.dark .product-tags-section {
-  background: rgba(12,18,32,0.4) !important;
-  border: 1px solid rgba(148,163,184,0.12) !important;
+  background: rgba(12, 18, 32, 0.4) !important;
+  border: 1px solid rgba(148, 163, 184, 0.12) !important;
   border-radius: 1rem !important;
 }
 html.dark .product-tags-section h2,
@@ -2637,19 +2809,19 @@ html.dark .product-tags-section .text-gray-800 {
   color: var(--offl-text) !important;
 }
 html.dark .product-tags-section .border-gray-200 {
-  border-color: rgba(148,163,184,0.14) !important;
+  border-color: rgba(148, 163, 184, 0.14) !important;
 }
 
 /* ── Warranty badge in dark ── */
 html.dark .bg-main.p-2.text-white {
   background: linear-gradient(135deg, var(--offl-primary), #6ea0ff) !important;
-  box-shadow: 0 4px 16px rgba(56,107,249,0.25);
+  box-shadow: 0 4px 16px rgba(56, 107, 249, 0.25);
 }
 
 /* ── Fast shipping badge in dark ── */
 html.dark .rounded-full.bg-main {
   background: linear-gradient(135deg, var(--offl-primary), #6ea0ff) !important;
-  box-shadow: 0 4px 12px rgba(56,107,249,0.2);
+  box-shadow: 0 4px 12px rgba(56, 107, 249, 0.2);
 }
 
 /* ── Short attribute in dark ── */
@@ -2703,13 +2875,13 @@ html.dark .container_des h2 {
 
 /* ── Pagination in dark ── */
 html.dark .pagination-btn,
-html.dark button[class*="pagination"] {
-  background: rgba(148,163,184,0.08) !important;
+html.dark button[class*='pagination'] {
+  background: rgba(148, 163, 184, 0.08) !important;
   color: var(--offl-text) !important;
-  border: 1px solid rgba(148,163,184,0.16) !important;
+  border: 1px solid rgba(148, 163, 184, 0.16) !important;
 }
 html.dark .pagination-btn.active,
-html.dark .pagination-btn[class*="bg-main"] {
+html.dark .pagination-btn[class*='bg-main'] {
   background: var(--offl-primary) !important;
   color: #fff !important;
   border-color: var(--offl-primary) !important;
@@ -2717,7 +2889,12 @@ html.dark .pagination-btn[class*="bg-main"] {
 
 /* ── Product image area in dark ── */
 html.dark .product-image-area {
-  background: radial-gradient(circle at 50% 44%, rgba(255,255,255,0.96) 0 34%, rgba(238,244,255,0.94) 54%, rgba(209,222,245,0.90) 100%) !important;
+  background: radial-gradient(
+    circle at 50% 44%,
+    rgba(255, 255, 255, 0.96) 0 34%,
+    rgba(238, 244, 255, 0.94) 54%,
+    rgba(209, 222, 245, 0.9) 100%
+  ) !important;
   border-radius: 1rem !important;
 }
 
@@ -2729,7 +2906,7 @@ html.dark .compare-shell .text-gray-800 {
   color: var(--offl-text) !important;
 }
 html.dark .compare-shell .border-gray-200 {
-  border-color: rgba(148,163,184,0.14) !important;
+  border-color: rgba(148, 163, 184, 0.14) !important;
 }
 
 /* ── "ناموجود" text in dark ── */
@@ -2781,13 +2958,15 @@ html.dark :focus-visible {
 
 /* ── Article cards in dark ── */
 html.dark .mag-article-card {
-  background: linear-gradient(160deg, rgba(15,22,40,0.95), rgba(8,12,26,0.97)) !important;
-  border: 1px solid rgba(148,163,184,0.14) !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3) !important;
+  background: linear-gradient(160deg, rgba(15, 22, 40, 0.95), rgba(8, 12, 26, 0.97)) !important;
+  border: 1px solid rgba(148, 163, 184, 0.14) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
 }
 html.dark .mag-article-card:hover {
-  border-color: rgba(130,170,255,0.35) !important;
-  box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 24px rgba(56,107,249,0.08) !important;
+  border-color: rgba(130, 170, 255, 0.35) !important;
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(56, 107, 249, 0.08) !important;
 }
 html.dark .mag-article-card .bg-gradient-to-r.from-gray-900 {
   color: #eef4ff !important;
@@ -2809,20 +2988,20 @@ html.dark .mag-article-card .text-gray-900 {
   color: #eef4ff !important;
 }
 html.dark .mag-article-card .border-gray-100 {
-  border-color: rgba(148,163,184,0.1) !important;
+  border-color: rgba(148, 163, 184, 0.1) !important;
 }
 html.dark .mag-article-card .bg-white {
-  background: rgba(30,41,59,0.8) !important;
+  background: rgba(30, 41, 59, 0.8) !important;
 }
 html.dark .mag-article-card .mag-read-more {
-  background: rgba(30,41,59,0.95) !important;
+  background: rgba(30, 41, 59, 0.95) !important;
   color: #93c5fd !important;
 }
 html.dark .mag-article-card .mag-read-more span {
   color: #93c5fd !important;
 }
 html.dark .mag-article-card .mag-article-image .bg-gradient-to-t {
-  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent) !important;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent) !important;
 }
 
 /* ── HomeArticles section header in dark ── */
@@ -2832,14 +3011,14 @@ html.dark .home-articles-header .text-gray-900 {
 }
 html.dark .home-articles-header button,
 html.dark .home-articles-header a {
-  background: rgba(30,41,59,0.6) !important;
-  border-color: rgba(148,163,184,0.18) !important;
+  background: rgba(30, 41, 59, 0.6) !important;
+  border-color: rgba(148, 163, 184, 0.18) !important;
   color: #cbd5e1 !important;
 }
 html.dark .home-articles-header button:hover,
 html.dark .home-articles-header a:hover {
-  background: rgba(56,107,249,0.15) !important;
-  border-color: rgba(130,170,255,0.4) !important;
+  background: rgba(56, 107, 249, 0.15) !important;
+  border-color: rgba(130, 170, 255, 0.4) !important;
   color: #93c5fd !important;
 }
 
@@ -2862,11 +3041,11 @@ html.dark .keen-slider .text-gray-900 {
   color: #eef4ff !important;
 }
 html.dark .keen-slider .bg-white\/80 {
-  background: rgba(30,41,59,0.8) !important;
+  background: rgba(30, 41, 59, 0.8) !important;
   color: #93c5fd !important;
 }
 html.dark .keen-slider .border-blue-300 {
-  border-color: rgba(130,170,255,0.3) !important;
+  border-color: rgba(130, 170, 255, 0.3) !important;
 }
 
 /* ── Special section in dark ── */
@@ -2874,7 +3053,7 @@ html.dark .home-special-section {
   background: transparent !important;
 }
 html.dark .home-special-section .border-gray-200 {
-  border-color: rgba(148,163,184,0.14) !important;
+  border-color: rgba(148, 163, 184, 0.14) !important;
 }
 
 /* ── Category description text in dark ── */
@@ -2900,9 +3079,13 @@ html.dark .container_des h4 {
 
 /* ── Article type badge in dark ── */
 html.dark .from-blue-600.to-purple-600.text-white {
-  background: linear-gradient(135deg, rgba(56,107,249,0.85), rgba(139,92,246,0.85)) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(56, 107, 249, 0.85),
+    rgba(139, 92, 246, 0.85)
+  ) !important;
   color: #fff !important;
-  box-shadow: 0 4px 12px rgba(56,107,249,0.25) !important;
+  box-shadow: 0 4px 12px rgba(56, 107, 249, 0.25) !important;
 }
 
 /* ── Date text in articles dark ── */
@@ -2913,13 +3096,13 @@ html.dark .text-gray-400 {
 
 /* ── Skeleton article card in dark ── */
 html.dark .skeleton-article-card {
-  background: rgba(15,22,40,0.8) !important;
-  border: 1px solid rgba(148,163,184,0.1) !important;
+  background: rgba(15, 22, 40, 0.8) !important;
+  border: 1px solid rgba(148, 163, 184, 0.1) !important;
 }
 
 /* ── "مشاهده همه" link in dark ── */
 html.dark .home-articles-header .border-gray-200 {
-  border-color: rgba(148,163,184,0.18) !important;
+  border-color: rgba(148, 163, 184, 0.18) !important;
 }
 
 /* ── Article card hover: colored underline ── */
@@ -2935,8 +3118,13 @@ html.dark .price-updated-badge {
   animation: pricePulse 3s ease-in-out infinite;
 }
 @keyframes pricePulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.2); }
-  50% { box-shadow: 0 0 16px 4px rgba(16,185,129,0.15); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 16px 4px rgba(16, 185, 129, 0.15);
+  }
 }
 
 /* ── Factor box premium glow ── */
@@ -2944,20 +3132,29 @@ html.dark .factor-box {
   animation: factorGlow 4s ease-in-out infinite;
 }
 @keyframes factorGlow {
-  0%, 100% { box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 0 rgba(56,107,249,0); }
-  50% { box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px 0 rgba(56,107,249,0.06); }
+  0%,
+  100% {
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.4),
+      0 0 0 0 rgba(56, 107, 249, 0);
+  }
+  50% {
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.4),
+      0 0 30px 0 rgba(56, 107, 249, 0.06);
+  }
 }
 
 /* ── Add to cart button glow in dark ── */
 html.dark .bg-main {
-  box-shadow: 0 4px 16px rgba(56,107,249,0.2);
+  box-shadow: 0 4px 16px rgba(56, 107, 249, 0.2);
 }
 
 /* ── "ادامه خرید" and "مشاهده در سبد" buttons in dark ── */
 html.dark .factor-box .border-\[\#E4E7E9\] {
-  border-color: rgba(148,163,184,0.2) !important;
+  border-color: rgba(148, 163, 184, 0.2) !important;
   color: var(--offl-primary) !important;
-  background: rgba(56,107,249,0.08) !important;
+  background: rgba(56, 107, 249, 0.08) !important;
 }
 
 /* ── Product ID text in dark ── */
@@ -2989,7 +3186,7 @@ html.dark .mag-article-card:hover .text-gray-800 {
 
 /* ── Category badge background fix in dark ── */
 html.dark .mag-article-card .shadow-lg .bg-gradient-to-r {
-  box-shadow: 0 4px 12px rgba(56,107,249,0.3) !important;
+  box-shadow: 0 4px 12px rgba(56, 107, 249, 0.3) !important;
 }
 
 /* ── "بیشتر بخوانید" in dark ── */
@@ -2999,10 +3196,10 @@ html.dark .mag-article-card .text-blue-600 {
 
 /* ── Article card border in HomeArticles ── */
 html.dark .border-2.border-gray-100 {
-  border-color: rgba(148,163,184,0.1) !important;
+  border-color: rgba(148, 163, 184, 0.1) !important;
 }
 html.dark .border-blue-200 {
-  border-color: rgba(130,170,255,0.3) !important;
+  border-color: rgba(130, 170, 255, 0.3) !important;
 }
 
 /* ── Date text icon color in dark ── */
@@ -3012,7 +3209,7 @@ html.dark .mag-article-card svg.text-blue-500 {
 
 /* ── Skeleton shimmer in dark ── */
 html.dark .skeleton-article-card .bg-gray-200 {
-  background: rgba(148,163,184,0.1) !important;
+  background: rgba(148, 163, 184, 0.1) !important;
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -3105,8 +3302,13 @@ html.dark .single-blog-article .to-gray-100 {
   cursor: pointer;
 }
 @keyframes asmHeaderGradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 .asm-header-btn::before {
   content: '';
@@ -3135,8 +3337,17 @@ html.dark .single-blog-article .to-gray-100 {
   animation: asmHeaderActivePulse 2s ease infinite;
 }
 @keyframes asmHeaderActivePulse {
-  0%, 100% { box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4), 0 0 0 1px rgba(255,255,255,0.15) inset; }
-  50% { box-shadow: 0 8px 30px rgba(5, 150, 105, 0.7), 0 0 0 1px rgba(255,255,255,0.3) inset; }
+  0%,
+  100% {
+    box-shadow:
+      0 6px 20px rgba(5, 150, 105, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+  }
+  50% {
+    box-shadow:
+      0 8px 30px rgba(5, 150, 105, 0.7),
+      0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+  }
 }
 
 .asm-header-btn__icon {
@@ -3169,9 +3380,18 @@ html.dark .single-blog-article .to-gray-100 {
   animation: asmHeaderPulse 1.8s ease infinite;
 }
 @keyframes asmHeaderPulse {
-  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); transform: scale(1); }
-  70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); transform: scale(0.8); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); transform: scale(0.8); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    transform: scale(1);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+    transform: scale(0.8);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    transform: scale(0.8);
+  }
 }
 
 .asm-header-btn__content {
@@ -3205,8 +3425,13 @@ html.dark .single-blog-article .to-gray-100 {
   animation: asmHeaderDot 1.5s ease infinite;
 }
 @keyframes asmHeaderDot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 .asm-header-btn__arrow {
@@ -3323,7 +3548,6 @@ html.dark .single-blog-prose.container_des blockquote {
 html.dark .single-blog-prose.container_des img {
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
 }
-
 
 /* ── Flawless magazine article layout/prose image fixes ── */
 .single-blog-content-card,

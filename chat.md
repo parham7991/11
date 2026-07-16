@@ -1,10 +1,13 @@
 # بهبود تعویض حالت تاریک/روشن (بدون لگ + انیمیشن جذاب)
 
 ## علت لگ (Root Cause)
+
 قبلاً با هر بار زدن دکمه، کلاس `dark` روی تگ `<html>` عوض می‌شد. چون در `globals.css` ده‌ها قانون `!important` برای رنگ/بک‌گراند (مثل `html.dark .bg-white { ... }`) وجود دارد، مرورگر مجبور بود **کل صفحه را دوباره رنگ‌آمیزی (repaint) کند** — آن هم روی صفحه‌های سنگین با `backdrop-blur` و سایه‌های زیاد. این repaint همگام و سنگین بود و حس لگ می‌داد. هیچ انتقالی روی کارت گرافیک (GPU) هم برای این تغییر وجود نداشت.
 
 ## راه حل: View Transitions API
+
 از ویژگی استاندارد مرورگر `document.startViewTransition()` استفاده کردیم:
+
 1. مرورگر از وضعیت **قبل** از تغییر یک عکس (snapshot) می‌گیرد.
 2. کلاس `dark` را عوض می‌کند و از وضعیت **بعد** عکس می‌گیرد.
 3. بین دو عکس را با کارت گرافیک **cross-fade** می‌کند → بدون repaint سنگین، بدون لگ.
@@ -12,6 +15,7 @@
 روی این cross-fade یک **افکت حلقه‌ای (circular reveal)** گذاشتیم: تمِ جدید دقیقاً از **نقطه‌ای که روی دکمه کلیک کرده‌اید** مثل یک دایره باز می‌شود و کل صفحه را می‌پوشاند (شبیه انیمیشن تم اندروید / Material You).
 
 ## فایل‌های تغییر یافته
+
 - **`src/app/globals.css`**
   - انتقال ۲۴۰ms روی `html` فقط برای مرورگرهای **بدون** View Transitions باقی ماند (`@supports not`).
   - بلوک جدید `::view-transition-*` با keyframe `theme-circle-reveal` که نقطه شروع را از متغیرهای `--theme-toggle-x/y` می‌گیرد.
@@ -24,6 +28,7 @@
   - مختصات `event.clientX/Y` هنگام کلیک فرستاده می‌شود تا دایره از جای دکمه باز شود.
 
 ## تست دستی
+
 دکمه تم (هدر یا ویجت شناور) را بزنید؛ صفحه باید با یک حلقه نرم از محل دکمه تعویض شود، بدون گیر‌کردن.
 
 ---
@@ -34,7 +39,9 @@
 > وضعیت: فقط کشف‌وشناسایی (read-only) انجام شد. هنوز هیچ فایلی تغییر نکرده. این فایل برای **بررسی و تایید** شماست.
 
 ## ۱) وضعیت فعلی (خلاصه معماری)
+
 بخش اسمبل یک **ویزارد ۳ مرحله‌ای** است (نوع کاربری → بودجه → نتایج):
+
 - **ورودی:** `src/app/(user)/assemble-online/page.tsx` → رندر `AssembleWizard.tsx`
 - **اورکستراتور:** `src/components/assemble/AssembleWizard.tsx` (همه state محلی درون خودش؛ **هیچ Zustand/URL persistence ندارد**)
 - **موتور سمت سرور:** `src/lib/ai-chat/assembler.ts` + `compatibility-checker.ts` + `auto-resolver.ts` + `part-detector.ts`
@@ -46,43 +53,49 @@
 
 ## ۲) مشکلات شناخته‌شده (اولویت‌بندی شده)
 
-| # | مشکل | تاثیر | محل |
-|---|------|-------|-----|
-| **A** | بعد از تغییر قطعه، set های `blockedPartIds`/`unavailablePartIds` دوباره محاسبه نمی‌شوند → دکمه خرید همیشه غیرفعال | **بحرانی** | `AssembleWizard.tsx` |
-| **B** | تشخیص سوکت اشتباه: `AM5/AM4` و `unknown` → عدم سازگاری کاذب | **بالا** | `part-detector.ts` |
-| **C** | بررسی موجودی فقط روی ۵ کاندیدای اول (`slice(0,5)`) | **متوسط** | `/api/assemble/route.ts` |
-| **D** | ریاضی تعداد/اسلات رم شکننده (قاطی کردن `usedRamSlots` با تعداد اسلات) | **متوسط** | `AssembleWizard.tsx` |
-| **E** | هیچ پایداری (persistence) ندارد؛ رفرش = ساخت از دست رفته | **متوسط** | همه‌جا |
-| **F** | ۳ تا ماشین‌حساب قیمت متفاوت (سرور/کلاینت/assembly-pricing) | **پایین** | ۳ فایل |
-| **G** | دو تا `PartCard` تکراری (یکی inline بلااستفاده) | **پایین** | `AssembleWizard.tsx` |
-| **H** | چیدمان RTL در CSS: نوار مراحل، اسلایدر بودجه، گریدها | **متوسط** | `assemble.css` |
-| **I** | auto-resolver از کاندیداهای قبل از تایید موجودی استفاده می‌کند | **پایین** | `auto-resolver.ts` |
+| #     | مشکل                                                                                                              | تاثیر      | محل                      |
+| ----- | ----------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------ |
+| **A** | بعد از تغییر قطعه، set های `blockedPartIds`/`unavailablePartIds` دوباره محاسبه نمی‌شوند → دکمه خرید همیشه غیرفعال | **بحرانی** | `AssembleWizard.tsx`     |
+| **B** | تشخیص سوکت اشتباه: `AM5/AM4` و `unknown` → عدم سازگاری کاذب                                                       | **بالا**   | `part-detector.ts`       |
+| **C** | بررسی موجودی فقط روی ۵ کاندیدای اول (`slice(0,5)`)                                                                | **متوسط**  | `/api/assemble/route.ts` |
+| **D** | ریاضی تعداد/اسلات رم شکننده (قاطی کردن `usedRamSlots` با تعداد اسلات)                                             | **متوسط**  | `AssembleWizard.tsx`     |
+| **E** | هیچ پایداری (persistence) ندارد؛ رفرش = ساخت از دست رفته                                                          | **متوسط**  | همه‌جا                   |
+| **F** | ۳ تا ماشین‌حساب قیمت متفاوت (سرور/کلاینت/assembly-pricing)                                                        | **پایین**  | ۳ فایل                   |
+| **G** | دو تا `PartCard` تکراری (یکی inline بلااستفاده)                                                                   | **پایین**  | `AssembleWizard.tsx`     |
+| **H** | چیدمان RTL در CSS: نوار مراحل، اسلایدر بودجه، گریدها                                                              | **متوسط**  | `assemble.css`           |
+| **I** | auto-resolver از کاندیداهای قبل از تایید موجودی استفاده می‌کند                                                    | **پایین**  | `auto-resolver.ts`       |
 
 ## ۳) ایده‌های بهبود (پیشنهادی — برای بررسی شما)
 
 ### 🎯 محور ۱: انتخاب دقیق و سازگاری واقعی (اولویت اول کاربر)
+
 1. **محاسبه مجدد سازگاری بعد از هر ویرایش** — وقتی کاربر قطعه را عوض می‌کند، set ها را پاک یا با فراخوانی `/api/assemble/compatibility` آپدیت کنیم. باگ «دکمه خرید گیر کرده» را مستقیماً حل می‌کند.
 2. **نرمال‌سازی سوکت در `part-detector.ts`** — `AM5/AM4` → سوکت قطعی؛ هرگز `unknown`؛ حذف پیش‌فرض `DDR5` وقتی واقعاً نامعلوم است.
 3. **تایید موجودی روی قطعاتِ انتخاب‌شده** (نه فقط ۵ تا اول) — می‌بندد باگ نمایش «موجود» برای کالای تمام‌شده.
 4. **اصلاح ریاضی رم**: تشخیص درست تعداد اسلات vs ماژول، یکسان‌سازی `quantity` بین سرور و کلاینت.
 
 ### 🎯 محور ۲: چیدمان و RTL (ظاهر «چیدن»)
+
 5. **بازبینی `assemble.css`** برای جهت‌گیری صحیح RTL: نوار پیشرفت مراحل از لبه درست، اسلایدر بودجه، ترتیب گرید قطعات اجباری/اختیاری.
 6. **بهبود `PcBuildVisual`** — نمای case واضح‌تر با وضعیت هر قطعه (سازگار/مسدود/ناموجود) با آیکون و رنگ درست.
 
 ### 🎯 محور ۳: جزئیات و دقت بیشتر (خروجی پر از جزئیات)
+
 7. **کارت قطعه غنی‌تر** — spec badge دقیق‌تر، دلیل انتخاب (`pickReason`)، جایگزین‌ها با فیلتر، مقایسه کوتاه.
 8. **یکسان‌سازی تایپ‌ها**: کلاینت `Part` → سرور `AssemblyPart` (کاهش drift).
 9. **یکسان‌سازی ۳ ماشین‌حساب قیمت** به یک تابع واحد.
 10. **پنل سازگاری خواناتر** — نمایش دقیق‌تر rule ها، دلیل و راه‌حل به فارسی ساده.
 
 ### 🎯 محور ۴: پایداری (Persistence)
+
 11. **ذخیره ساخت در `localStorage`** (یا URL) تا با رفرش از دست نرود؛ دکمه «ادامه ساخت قبلی».
 
 ### 🎯 محور ۵: تمیزکاری کد
+
 12. **حذف `PartCard` تکراری** و استفاده از `AssembleProductCard` واحد.
 
 ## ۴) پیشنهاد اجرا به صورت Chunk
+
 - **Chunk 1 — زیرساخت و تایپ‌ها:** یکسان‌سازی `Part`/`AssemblyPart` + تابع قیمت واحد + helper محاسبه سازگاری در کلاینت.
 - **Chunk 2 — محور ۱ (دقت انتخاب):** رفع A/B/C/D.
 - **Chunk 3 — محور ۲ (RTL/چیدمان):** بازبینی CSS + بهبود PcBuildVisual.
@@ -90,7 +103,9 @@
 - **Chunk 5 — محور ۴ (پایداری):** localStorage persistence.
 
 ## ۵) سوال از شما
+
 از کجا شروع کنیم؟ پیشنهاد من: **محور ۱ (دقت انتخاب + رفع باگ بحرانی A)** چون با خواسته «دقت انتخاب» همخوانی دارد و بدترین باگ را می‌بندد.
+
 - گزینه الف: شروع با محور ۱ (دقت انتخاب + رفع A/B/C/D)
 - گزینه ب: شروع با محور ۲ (چیدمان/RTL)
 - گزینه ج: شروع با محور ۳ (جزئیات و کارت غنی‌تر)
@@ -103,6 +118,7 @@
 کاربر گزینه «همه chunk 1-5» را انتخاب کرد → حالت خودکار. موارد زیر پیاده‌سازی و **typecheck** شدند (بدون خطای تایپ در فایل‌های تغییریافته).
 
 ## Chunk 2 — دقت انتخاب و سازگاری (بحرانی‌ترین)
+
 **فایل‌ها:** `AssembleWizard.tsx`, `compatibility-checker.ts`, `part-detector.ts`, `api/assemble/route.ts`
 
 - **A) دکمه خرید گیر‌کرده — حل شد.** تابع `recomputeCompatibility` اضافه شد که بعد از هر ویرایش (تعویض قطعه، پیشنهاد هوشمند، افزودن/حذف) به `/api/assemble/compatibility` زده و `blockedPartIds`/`unavailablePartIds` را دوباره می‌سازد. با `useRef` (compatReqId) از پاسخ‌های قدیمی جلوگیری می‌شود.
@@ -111,6 +127,7 @@
 - **D) ریاضی رم — اصلاح شد.** در `applySmartSuggestion` (حالت quantity)، برای تعداد اسلات از `ramSlots` استفاده شد نه `usedRamSlots` (قبلاً اشتباه بود).
 
 ## Chunk 3 — چیدمان و RTL
+
 **فایل‌ها:** `assemble.css`, منطق `PcBuildVisual`
 
 - اسلایدر بودجه (`input[type=range]`) فاقد `direction: rtl` بود → با برچسب‌های RTL (حداقل در راست) همخوانی نداشت. `direction: rtl` اضافه شد.
@@ -118,10 +135,12 @@
 - `PcBuildVisual` از قبل مفصل است (اسلات + وضعیت نصب‌شده/ناسازگار/ناموجود + پرچم + نقطه وضعیت + راهنما). با Fix A، حالا وضعیت را **بعد از ویرایش** هم درست نشان می‌دهد.
 
 ## Chunk 4 — جزئیات و دقت بیشتر
+
 - بررسی شد: `AssembleProductCard` از قبل غنی است — `pickReason` (دلیل انتخاب)، `SpecBadges` (مشخصات)، drawer جایگزین‌ها با فیلتر Air/Liquid، و برچسب تعداد را نمایش می‌دهد. نیازی به بازنویسی نبود.
 - یکسان‌سازی تایپ (کلاینت `Part` ← سرور `AssemblyPart`) و ۳ تا ماشین‌حساب قیمت: **عمداً انجام نشد** — ریسک رگرسیون بالا و سود کم در حال حاضر. در صورت درخواست جداگانه انجام می‌شود.
 
 ## Chunk 5 — پایداری (Persistence)
+
 **فایل‌ها:** `AssembleWizard.tsx`, `assemble.css`
 
 - ساخت در `localStorage` (کلید `assemble_build_v1`) ذخیره می‌شود: `parts`, `result`, `blocked`/`unavailable`، بودجه و کاربری.
@@ -129,10 +148,12 @@
 - در مرحلهٔ ۱ بنر «ساخت قبلی ذخیره شده» با دکمه‌های **ادامه ساخت** و **شروع جدید** نمایش داده می‌شود. رفرش دیگر ساخت را پاک نمی‌کند.
 
 ## ریسک‌ها / نکات
+
 - `recomputeCompatibility` روی هر ویرایش یک درخواست شبکه می‌فرستد (checkStock پیش‌فرض روشن است) → تایید موجودی همزمان انجام می‌شود. در صورت خطای شبکه، set های قبلی حفظ می‌شوند.
 - حذف پیش‌فرض `ramType` در detector ممکن است در موارد نادر اجازه دهد ترکیب واقعاً ناسازگار (DDR4 رم + DDR5 مادربرد که تشخیص نخورده) رد شود؛ این تعادلی آگاهانه برای حذف «ناسازگاری کاذب» است.
 
 ## قدم بعدی (پیشنهاد)
+
 تست دستی: ۱) یک سیستم بسازید ۲) یک قطعهٔ ناسازگار را با جایگزین تعویض کنید و چک کنید دکمه «افزودن به سبد» فعال می‌شود ۳) رفرش کنید و «ادامه ساخت» را بزنید.
 
 ---
@@ -140,6 +161,7 @@
 # ✅ ادامه — جزئیات بیشتر (Chunk 4)
 
 ## پنل سازگاری: نمایش نام دقیق قطعاتِ درگیر
+
 **فایل‌ها:** `AssembleWizard.tsx`, `assemble.css`
 
 - `CompatibilityPanelV3` حالا prop `parts` می‌گیرد و نام دقیق قطعاتِ آسیب‌دیده (`issue.affectedParts`) را زیر هر خطای بحرانی/هشدار به‌صورت chip نمایش می‌دهد.
@@ -148,6 +170,7 @@
 - **Commit:** `dcd5dee` (push shod be `feat/assemble-accuracy-rtl-persistence`).
 
 ## یادداشت
+
 - حذف `PartCard` (کد مرده) توسط کاربر رد شد → اعمال نشد (همان commit قبلی).
 - توکن GitHub در چت افشا شد؛ پیشنهاد شد پس از کار revoke/rotate شود. Origin بدون توکن تنظیم شد.
 
@@ -156,6 +179,7 @@
 # 🔥 ادامه ۲ — درخواست جدید کاربر (firehose)
 
 کاربر خواست:
+
 1. **UI خیلی شلوغ است** → باید تمیز شود (declutter).
 2. **دقت انتخاب با توجه به کاربری، منحصر‌به‌فرد باشد** (gaming/office/editing/streaming هر کدام انتخاب خاص).
 3. **نمودار مبلغ/انتخاب «خاص» باشد**.
@@ -164,6 +188,7 @@
 6. توکن + مدل داده شد: `sk-or-v1-...` و `tencent/hy3:free`.
 
 ## انجام‌شده (Chunk A + B)
+
 **فایل‌ها:** `ai-pick/route.ts`, `providers.ts`, `.env.example`, `.env.local` (gitignored)
 
 - **OpenRouter از قبل پشتیبانی می‌شد** (`providers.ts` + `getAiChatConfig`). فقط:
@@ -175,9 +200,11 @@
 - **Commit:** `c420083` (push shod). Typecheck: OK.
 
 ## باقی‌مانده (Chunk C — نیاز به جهت‌گیری)
+
 **Declutter + نمودار مبلغ «خاص»** — طراحی باز و مبهم. کاهش شلوغی ممکن است با «افزودن نمودار» تضاد داشته باشد، پس قبل از اجرا جهت را از کاربر می‌پرسم.
 
 گزینه‌های پیشنهادی:
+
 - الف) جمع‌وجور کردن پنل‌های ثانویه (Telemetry / AI Analysis / Radar) با حالت Collapsible + فاصله‌گذاری تمیز‌تر.
 - ب) تب‌بندی نتایج (خلاصه | قطعات | تحلیل | چیدمان) به‌جای نمایش همه با هم.
 - ج) افزودن «نمودار تخصیص بودجه» (stacked bar کلاسی که سهم هر دسته + بودجهٔ باقی‌مانده را نشان دهد) برای جایگزینی متن قیمت پراکنده.
@@ -190,12 +217,14 @@
 # 🔧 ادامه ۳ — درخواست «همه‌چیز رو فیکس کن» (Declutter + نمودار خاص + OpenRouter + انتخاب دقیق با AI)
 
 ## وضعیت فعلی (پس از کشف کامل)
+
 - **Env**: `AI_CHAT_PROVIDER=openrouter` + `AI_CHAT_MODEL=tencent/hy3:free` + توکن در `.env.local` (gitignored). `providers.ts` هم مدل `tencent/hy3:free` رو داره. ✅ نیازی به تغییر env نیست.
 - **انتخاب واقعاً با AI انجام می‌شه**: `route.ts → selectPartsWithAi → aiPickBest → POST /api/assemble/ai-pick` برای هر دسته. ولی وقتی انتخاب AI از `maxPrice` (سقف بودجه) بیشتر باشه یا AI خالی برگردونه، کلاً می‌افته روی rule-based (`smartCandidateScore`). پس «اولویت مطلق AI» نیست.
 - **پرامپت ai-pick**: `USE_CASE_PROFILE` داره ولی کوتاهه؛ `specLine` فقط چند مشخصه رو می‌ده؛ پرامپت تضادهای سازگاری و مشخصات دقیق انتخاب‌شده‌ها رو کامل نمی‌فرسته.
 - **UI نتایج خیلی شلوغ**: هیرو + toolbar + showcase + TelemetryDashboard + BuildIdentityCard + smart-dashboard + resolver + CompatibilityPanelV3 + FPS + smart-suggestions + بخش قطعات + پنل تحلیل AI + خلاصهٔ قیمت — همه با هم و بدون سلسله‌مراتب. `Collapsible.tsx` ساخته شده ولی هنوز جایی استفاده نشده. `BudgetBreakdown.tsx` یک نوار stacked ساده است.
 
 ## نقشه اجرا (Chunk)
+
 - **Chunk 1 (backend — ai-pick):** تقویت انتخاب
   - `USE_CASE_PROFILE` غنی‌تر و **منحصر‌به‌فردتر** بر اساس کاربری (gaming=GPU/VRAM محور، editing=هسته/رم/NVMe محور، streaming=تعادل، office=iGPU/سکوت/ارزان).
   - `specLine` کامل‌تر (تعداد اسلات، فرکانس، pcie، gpu length، رتبه، برند).
@@ -208,6 +237,7 @@
 - **Chunk 5:** typecheck + تست دستی.
 
 ## امنیت
+
 توکن در `.env.local` (gitignored) ست شده و در git نمی‌آید. در `chat.md` توکن نوشته نمی‌شود.
 
 ---
@@ -217,6 +247,7 @@
 **فایل‌ها:** `src/app/api/assemble/ai-pick/route.ts`, `src/app/api/assemble/route.ts`
 
 ### تغییرات
+
 1. **پروفایل کاربری منحصر‌به‌فرد (`USE_CASE_PROFILE`):** هر کاربری (gaming/office/editing/streaming) حالا هدف، اولویت، پرهیز **و راهنمای اختصاصی به‌تفکیک هر دسته** (`perCategory`) دارد. مثلاً:
    - gaming → GPU (VRAM ۱۲GB+) اولویت ۱؛ CPU متعادل؛ رم DDR5 ۱۶-۳۲GB.
    - editing → CPU ۱۲+ هسته، رم ۳۲-۶۴GB، GPU VRAM بالا، SSD NVMe پرظرفیت.
@@ -228,13 +259,16 @@
 5. **اقتدار AI در `route.ts`:** قبلاً اگر انتخاب AI از پنجرهٔ تخمینی (`maxPrice`) بیشتر بود، کلاً می‌افتاد روی rule-based. حالا AI **اولویت مطلق** است و فقط وقتی انتخابش (الف) ناموجود باشد یا (ب) از ۹۵٪ بودجهٔ باقی‌مانده تجاوز کند، به rule-based برمی‌گردد. خطای سخت/عدم‌موجودی = تنها شرط fallback.
 
 ### نتیجه
+
 انتخاب واقعاً با AI و متناسب با کاربری انجام می‌شود؛ دقت سازگاری بالا رفته و خروجی شفاف‌تر (دلیل انتخاب).
 
 ### ریسک
+
 - وابستگی به پاسخ‌دهی OpenRouter/مدل `tencent/hy3:free`. در صورت خطا/عدم‌خروجی، fallback rule-based همچنان فعال است (ایمن).
 - توکن در `.env.local` ست است؛ در git نمی‌آید.
 
 ### قدم بعدی
+
 **Chunk 2** — declutter صفحهٔ نتایج (تب‌بندی/جمع‌شونده + فاصله‌گذاری). **Chunk 3** — نمودار تخصیص بودجهٔ خاص. **Chunk 4** — نمایش نام AI/مدل («فیری») در هدر.
 
 ---
@@ -244,28 +278,36 @@
 بررسی دقیق کد (code inspection) نشان داد که **هر سه chunk از «درخواست همه‌چیز رو فیکس کن» در واقع پیاده‌سازی شده‌اند** — فقط به‌دلیل خالی‌بودنِ `node_modules` قابل typecheck نبوده‌اند و در `chat.md` ثبت نشده بودند.
 
 ## Chunk 2 — Declutter (تمیزکاری صفحهٔ نتایج) ✅
+
 **فایل‌ها:** `AssembleWizard.tsx`, `Collapsible.tsx` (جدید), `assemble.css` (+۲۴۸ خط استایل)
+
 - **تب‌بندی نتایج:** `aw-result-tabs` با ۴ تب → `نمای کلی | قطعات | تحلیل و سازگاری | چیدمان و هویت`. صفحه دیگر همه‌چیز را با هم نشان نمی‌دهد.
 - **Collapsible:** برای «داشبورد تصمیم‌گیری هوشمند»، «اقدامات هوشمند (Auto-Resolver)» و «بررسی سازگاری قطعات» استفاده شد (با `defaultOpen` متفاوت).
 - فاصله‌گذاری و سلسله‌مراتب در CSS بازبینی شد.
 
 ## Chunk 3 — نمودار تخصیص بودجهٔ خاص ✅
+
 **فایل‌ها:** `BudgetBreakdown.tsx` (جدید), `assemble.css`
+
 - **Donut chart** متحرک (SVG arc) + legend با نوار درصد به‌تفکیک دسته + برجسته‌سازی «باقی‌مانده».
 - عنوان: «نمودار تخصیص بودجه»؛ مرکز donut = مبلغ خرج‌شده / کل / درصد. رنگ هر دسته از `CATEGORY_META` (منحصر‌به‌فرد).
 - جایگزین متن قیمت پراکنده شد.
 
 ## Chunk 4 — نمایش نام AI/مدل در هدر ✅
+
 **فایل‌ها:** `route.ts`, `AssembleWizard.tsx`
+
 - بک‌اند `route.ts` (خط ~۱۷۸) حالا `ai: getAiIdentity()` برمی‌گرداند → `name` (مثل «فیری»)، `emoji`، `providerName`، `model`، `free`.
 - هدر نتایج (`aw-ai-badge`): ایموجی + نام دستیار + «OpenRouter · رایگان» نمایش داده می‌شود.
 
 ## وضعیت Typecheck (مهم)
+
 - ۵۱ خطای نمایش‌داده‌شده در IDE = **۱۰۰٪ ساختگی**. علت: `node_modules` کاملاً خالی است (`react`/`next` نصب نشده‌اند) → تمام JSX و import ها `any`/unresolved می‌شوند و ۷۷۱ خطای cascade تولید می‌کنند.
 - خطای ظاهراً واقعی در `L1845/L1871` (`AssembleProductCard`) بررسی دستی شد: تمام prop ها (`part`, `index`, `onSelectAlternative`, `blocked`, `unavailable`, `blockingReason`, `expanded`, `onToggleExpand`, و `onRemoveOptional` برای اختیاری) **دقیقاً با قرارداد تایپ کامپوننت منطبق‌اند** → خطا صرفاً cascade از نبودِ `react` است (spurious).
 - برای اجرای typecheck واقعی باید `pnpm install` اجرا شود (lockfile = `pnpm-lock.yaml`، `.npmrc` پنل‌محور pnpm).
 
 ## قدم بعدی (نیاز به تایید کاربر)
+
 گزینه ۱: `pnpm install` → typecheck واقعی → رفع خطای احتمالی → commit.
 گزینه ۲: commit مستقیم working tree (بدون typecheck؛ کد از نظر تایپی صحیح است و خطای مشکوک بررسی شد).
 
@@ -283,7 +325,9 @@
 > نکته: طبق درخواست کاربر، **دیگر `build`/`pnpm build` اینجا اجرا نمی‌شود** (روی Vercel ساخته می‌شود). بررسی نهایی روی Vercel انجام می‌شود.
 
 ## Chunk 1 — بازبرندینگ + سادگی (AssembleWizard) ✅
+
 **فایل:** `src/components/assemble/AssembleWizard.tsx`
+
 - حذف import `TelemetryDashboard` و آیکون `SparkIcon` (جرقه = کلیشهٔ AI).
 - هیرو: «اسمبلر هوشمند آفلند» → «اسمبلر آفلند»؛ «سیستم رو **با هوش مصنوعی** برات می‌چینم» → «سیستم رو **دقیق و به‌صرفه** برات می‌چینم».
 - ردیف آمار هیرو: حذف «AI» و «Real-time» → «بهینه‌سازی بودجه» / «قیمت لحظه‌ای».
@@ -296,13 +340,16 @@
 - **ریسک:** یک خط comment باقی‌ماندهٔ telemetry در فایل (بی‌ضرر؛ در chunk بعدی پاک می‌شود).
 
 ## Chunk 2 — انتخاب دقیق‌تر و آرام (AssembleProductCard) ✅
+
 **فایل:** `src/components/assemble/AssembleProductCard.tsx`
+
 - حذف import و همهٔ کاربردهای `SparkIcon` (جرقه = کلیشهٔ AI). آیکون «دلیل انتخاب» از جرقه → `CheckIcon` (آرام‌تر).
 - `AlternativesDrawer` (کشوی جایگزین‌ها): حالا بر اساس **تطابق (relevance)** مرتب می‌شود — تابع `scoreAlt` بر اساس confidence/ظرفیت/VRAM/هسته/اسلات، بدون نمایش درصد. بهترین تطابق اول می‌آید ⇒ انتخاب **دقیق‌تر**.
 - **درصد اطمینان (confidence%) در UI اصلاً نمایش داده نمی‌شد**؛ بررسی شد که `PartCard`/`ConfidenceBadge` در `AssembleWizard` **کد مرده (dead code)** است و هیچ‌جا رندر نمی‌شود ⇒ نشانهٔ AI وجود ندارد. (در صورت تمایل بعداً پاک‌سازی می‌شود؛ تأثیر بصری ندارد.)
 - هر جایگزین همچنان `shortSpec` (مشخصات کلیدی) را نشان می‌دهد ⇒ مقایسهٔ دقیق‌تر.
 
 ## Chunk 3 — متادیتا + آرام‌سازی CSS (در انتظار) ⏳
+
 - `assemble-online/page.tsx`: حذف «هوشمند / با هوش مصنوعی» از متادیتا.
 - `assemble.css`: کاهش اورب/اسکن/نئون در هیرو، فاصله‌گذاری بیشتر در لیست قطعات، حذف استایل `aw-ai-badge`.
 
@@ -352,22 +399,25 @@
 
 ## ۴) نقشهٔ محتوا (نگاشت بلوپرینت تسک → پیاده‌سازی)
 
-| صفحه | JSON-LD | تمرکز ویژه |
-|---|---|---|
-| `about` | `Organization` | هیرو «سرزمینِ تخفیف»، داستان، مأموریت/چشم‌انداز/ارزش‌ها، تمایز، دسته‌بندی‌ها، **دستیار هوشمند**، **جادوگر اسمبل** (گام‌به‌گام)، تعهد، عدد/ارقام (placeholder)، CTA |
-| `contact-us` | `ContactPage` + `BreadcrumbList` | کارت‌های راه ارتباط، **فرم client** (نام/موبایل/ایمیل/موضوع dropdown/پیام)، FAQ ۵تایی، بدون نقشه iframe، بدون شبکه اجتماعی |
-| `Terms` | `WebPage` + `BreadcrumbList` | **اصلاح باگ:** حذف «ماهیت کالاهای دیجیتال»؛ §4 تحویل = فیزیکی (پست/تیپاکس/باربری/پیک)؛ §5 بازگشت = ۷ روز + استثناها؛ ارجاع به `/warranty`؛ هشدار مسئولیت پیشنهادهای AI |
-| `privacy` | `WebPage` + `BreadcrumbList` | ۱۵ بخش طبق بلوپرینت؛ جدول کوکی‌ها؛ بخش «تصمیم‌گیری خودکار و پردازش AI» (بدون فاش‌کردن راز)؛ انتقال بین‌المللی داده (سرویس‌دهندگان AI خارجی) |
-| `warranty` | `WebPage` + `BreadcrumbList` | اصول، انواع، تحت‌پوشش/خارج‌پوشش، جدول مدت (CPU ۳۶، RAM مادام‌العمر، SSD ۳۶/۶۰، PSU ۲۴/۳۶)، ۶ مرحلهٔ استفاده، استعلام، قطعات بدون گارانتی |
+| صفحه         | JSON-LD                          | تمرکز ویژه                                                                                                                                                             |
+| ------------ | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `about`      | `Organization`                   | هیرو «سرزمینِ تخفیف»، داستان، مأموریت/چشم‌انداز/ارزش‌ها، تمایز، دسته‌بندی‌ها، **دستیار هوشمند**، **جادوگر اسمبل** (گام‌به‌گام)، تعهد، عدد/ارقام (placeholder)، CTA     |
+| `contact-us` | `ContactPage` + `BreadcrumbList` | کارت‌های راه ارتباط، **فرم client** (نام/موبایل/ایمیل/موضوع dropdown/پیام)، FAQ ۵تایی، بدون نقشه iframe، بدون شبکه اجتماعی                                             |
+| `Terms`      | `WebPage` + `BreadcrumbList`     | **اصلاح باگ:** حذف «ماهیت کالاهای دیجیتال»؛ §4 تحویل = فیزیکی (پست/تیپاکس/باربری/پیک)؛ §5 بازگشت = ۷ روز + استثناها؛ ارجاع به `/warranty`؛ هشدار مسئولیت پیشنهادهای AI |
+| `privacy`    | `WebPage` + `BreadcrumbList`     | ۱۵ بخش طبق بلوپرینت؛ جدول کوکی‌ها؛ بخش «تصمیم‌گیری خودکار و پردازش AI» (بدون فاش‌کردن راز)؛ انتقال بین‌المللی داده (سرویس‌دهندگان AI خارجی)                            |
+| `warranty`   | `WebPage` + `BreadcrumbList`     | اصول، انواع، تحت‌پوشش/خارج‌پوشش، جدول مدت (CPU ۳۶، RAM مادام‌العمر، SSD ۳۶/۶۰، PSU ۲۴/۳۶)، ۶ مرحلهٔ استفاده، استعلام، قطعات بدون گارانتی                               |
 
 ## ۵) ترتیب chunkها (طبق تسک)
+
 ۱. اسکن + این برنامه ✅ · ۲. کامپوننت مشترک `LegalPage` + `about` · ۳. `contact-us` (فرم) · ۴. `Terms` · ۵. `privacy` · ۶. `warranty` · ۷. پولیش متقابل + چک SEO + بررسی نوع‌ها.
 
 ## ۶) نکتهٔ Build / تداخل دستورالعمل
+
 - تسک می‌گوید بعد هر chunk `pnpm build` اجرا کن؛ اما در `chat.md` قبلی ثبت شده که **در این محیط build اجرا نمی‌شود** (روی Vercel ساخته می‌شود) و env محلی (`NEXT_PUBLIC_BASE_SERVER_API_URL`) ست نیست.
 - **تصمیم:** برای چک سریعِ نوع‌ها از `npx tsc --noEmit` (نیاز به env ندارد) استفاده می‌کنم؛ اجرای کاملِ `pnpm build` را به درخواست تو یا Vercel واگذار می‌کنم. در صورت تمایل `pnpm build` را هم اجرا می‌کنم.
 
 ## Chunk 2 — کامپوننت مشترک `LegalPage` + صفحهٔ `about` ✅
+
 - **کامپوننت جدید:** `src/components/common/LegalPage.tsx` (Server Component). شامل:
   - `LegalPage` (پوسته: breadcrumb داخلی + `<article>` + h1 + توضیح + فوتر آخرین‌به‌روزرسانی + تزریق JSON-LD).
   - `LegalSection` (h2 با نوار آکسان تم)، `LegalCard`، `LegalList` (مرتب/نامرتب)، `LegalTable` (سِمَنتیک، RTL-aware).
@@ -382,6 +432,7 @@
 - **بعدی:** Chunk 3 = `contact-us` (با فرم client).
 
 ## Chunk 3 — صفحهٔ `contact-us` + فرم client ✅
+
 - **کامپوننت client جدید:** `src/components/common/ContactForm.tsx` (`'use client'`, `useState`).
   - فیلدها: نام، موبایل، ایمیل، موضوع (select: پشتیبانی/مشاوره/گارانتی/پیشنهاد/انتقاد/سایر)، پیام.
   - اعتبارسنجی سمت‌کلاینت: نام ≥۲، موبایل `/^09\d{9}$/`, ایمیل، موضوع اجباری، پیام ≥۱۰.
@@ -399,6 +450,7 @@
 - **بعدی:** Chunk 4 = `Terms` (با اصلاح باگ «کالای دیجیتال»).
 
 ## Chunk 4 — صفحهٔ `Terms` ✅ (اصلاح باگ کالای دیجیتال)
+
 - **فایل:** `src/app/(user)/Terms/page.tsx` → URL `/Terms`.
 - JSON-LD: `[WebPage, BreadcrumbList]`.
 - **۱۷ بخش** طبق بلوپرینت؛ ساختار شماره‌گذاری‌شده (۱ تا ۱۷).
@@ -411,6 +463,7 @@
 - **بعدی:** Chunk 5 = `privacy`.
 
 ## Chunk 5 — صفحهٔ `privacy` ✅
+
 - **فایل:** `src/app/(user)/privacy/page.tsx` → URL `/privacy`.
 - JSON-LD: `[WebPage, BreadcrumbList]`.
 - **۱۵ بخش** دقیقاً طبق بلوپرینت (مقدمه، تعاریف، ۵ دستهٔ جمع‌آوری، اهداف، مبنای حقوقی، اشتراک‌گذاری، ماندگاری، حقوق کاربر، امنیت، کوکی‌ها، تصمیم‌گیری خودکار، انتقال بین‌المللی، کودکان، تغییرات، تماس).
@@ -423,20 +476,24 @@
 - **بعدی:** Chunk 6 = `warranty`.
 
 ## Chunk 6 — صفحهٔ `warranty` ✅
+
 - **فایل:** `src/app/(user)/warranty/page.tsx` → URL `/warranty`.
 - JSON-LD: `[WebPage, BreadcrumbList]`.
 - **۱۳ بخش** طبق بلوپرینت: مقدمه، اصول کلی، انواع گارانتی (۴ کارت)، تحت پوشش، خارج پوشش، مدت (جدول نمونه)، ۶ مرحله، استعلام، قطعات بدون/محدود گارانتی، تعهدات، سلب مسئولیت، تماس.
-- **جدول مدت گارانتی:** CPU ۳۶، RAM مادام‌العمر*، SSD ۳۶/۶۰، PSU ۲۴/۳۶، مادربرد ۳۶، GPU ۲۴/۳۶، مانیتور ۱۲/۳۶، لپ‌تاپ ۱۲/۲۴ (نمونه + نکتهٔ ستاره‌دار).
+- **جدول مدت گارانتی:** CPU ۳۶، RAM مادام‌العمر\*، SSD ۳۶/۶۰، PSU ۲۴/۳۶، مادربرد ۳۶، GPU ۲۴/۳۶، مانیتور ۱۲/۳۶، لپ‌تاپ ۱۲/۲۴ (نمونه + نکتهٔ ستاره‌دار).
 - **لیست شرکت‌های گارانتی‌کننده** به‌صورت **کامنت PLACEHOLDER** در بالای فایل (حامی/آواژنگ/آپادانا/ماتریس/سازگار/متمم/کاوان/هماهنگ/IRG + `// TODO`)؛ در متن از «شرکت گارانتی‌کنندهٔ مجاز» استفاده شد.
 - پیوندهای داخلی: `/contact-us`، `/Terms`، `/privacy` — واقعی.
 
 ## Chunk 7 — پولیش متقابل، چک SEO و نهایی ✅
+
 ### انحرافات از مسیر لفظیِ تسک (مستندشده)
+
 1. **مسیر فایل:** صفحات در گروه `(user)` قرار گرفتند (نه `src/app/` لفظی) تا هدر/فوتر/منو را به‌ارث ببرند → URL دقیقاً یکسان (`/privacy` و غیره).
 2. **/chat:** مسیر `/chat` در ریپو **وجود ندارد** (دستیار هوشمند یک ویجتِ شناور در لایهٔ ریشه است). طبق قانون سخت «بدون لینک مرده»، لینک‌های `/chat` به جای اسپنِ توضیحی (دستیار شناور) تبدیل شدند.
 3. **/category:** مسیر پایه `/category` یک catch-all اجباری `[...id]` است و در حالت بدون id ۴۰۴ می‌دهد؛ لینک «دسته‌بندی‌ها» به صفحهٔ واقعی `/category-list` (دارای page.tsx) اشاره کرد.
 
 ### چک‌لیست نهایی
+
 - [x] هر ۵ صفحه نوشته و ذخیره شد (about/contact-us/Terms/privacy/warranty).
 - [x] متادیتای یکتا + OG (fa_IR) + canonical + robots در همه.
 - [x] JSON-LD: `Organization` در about؛ `[WebPage, BreadcrumbList]` در بقیه.
@@ -450,11 +507,14 @@
 - [x] فرم تماس client با اعتبارسنجی + پیام موفقیت + TODO اتصال `/api/contact`.
 
 ### یادداشت برای Vercel
+
 - فرم تماس هنوز به API وصل نیست (noop) — هنگام دیباگ روی Vercel، endpoint `POST /api/contact` را بسازید یا مسیر فعلاً noop را تأیید کنید.
 - در صورت نیاز به لینکِ دقیق «دسته‌بندی‌ها»، این را با `/category` جایگزین کنید (اگر catch-all به‌روزرسانی شود).
 
 ## Chunk 8 — بازخورد کاربر: ظریف‌سازی فوتر و حذف جزئیات ✅
+
 بازخورد پس از build روی Vercel:
+
 - **حذف «آخرین به‌روزرسانی»:** prop `lastUpdated` و ثابت `LAST_UPDATED` از `LegalPage` و هر ۵ صفحه حذف شد (همراه با اصلاح متن سیاست‌نامه که به آن ارجاع داشت).
 - **حذف آدرس:** ثابت `PLACEHOLDER_ADDRESS` و کارت «آدرس» و آیتم آدرس در تماس حذف شدند. گرید کارت‌های تماس به `md:grid-cols-3` (۳ کارت: تلفن/ایمیل/ساعت) تغییر یافت.
 - **طراحی ظریف‌تر (خفن‌تر):** سایهٔ `shadow_pro` از کارت اصلی برداشته شد (فقط border ظریف `var(--offl-border)`).
@@ -465,6 +525,7 @@
 - همهٔ تغییرات تم‌آگاه و RTL باقی ماند.
 
 ## Chunk 9 — اصلاح لینک مردهٔ `/reules` → `/privacy` ✅
+
 - در `src/lib/data.ts` (بخش «خدمات مربوط کاربران») آیتم «حفظ حریم خصوصی» به `/reules` اشاره می‌کرد که مسیری ندارد (لینک مرده). اصلاح شد به `/privacy`.
 - در `next.config.ts` ریدایرکت دائمی افزوده شد: `/reules` → `/privacy` (برای بوکمارک‌ها و بازدیدهای مستقیم، جلوگیری از ۴۰۴).
 - بررسی شد: هیچ مرجع دیگری به `/reules` در ریپو نیست.
@@ -477,6 +538,7 @@
 **محور اصلی قدرت:** **RAG + Accuracy** (بازیابی دقیق‌تر محصول + رتبه‌بندی مرتبط‌بودن).
 
 ## چانک‌ها (Chunk plan)
+
 - **Chunk 1 ✅ — RAG retrieval engine (انجام شد):** `rag.ts` rewrite + فیلد `relevance` در `types.ts`.
 - **Chunk 2 — وایرینگ route چت + کانتکستِ فشرده:** `ai-chat/route.ts` از منابع رتبه‌بندی‌شده استفاده کند، فقط N تای بالا را به مدل بدهد (تمرکز + دقت بالاتر)، `relevance` به کلاینت برسد.
 - **Chunk 3 — دقت اسمبل (assemble accuracy):** بهبود `rule-based fallback` در `ai-pick` (امتیازدهی دقیق‌تر وقتی AI خاموش است) + سفت‌تر کردن guardrailها + اصلاح `ai-analyze` fallback.
@@ -485,6 +547,7 @@
 ---
 
 ## Chunk 1 ✅ — RAG retrieval engine (multi-query + ranking + dedupe + cache)
+
 **فایل‌ها:** `src/lib/ai-chat/rag.ts` (بازنویسی), `src/lib/ai-chat/types.ts` (افزودن `relevance?` به `ChatSource`).
 
 **چه تغییراتی:**
@@ -504,6 +567,7 @@
 ---
 
 ## Chunk 2 ✅ — وایرینگ route چت + کانتکست فشرده
+
 **فایل‌ها:** `src/app/api/ai-chat/route.ts`, `src/lib/ai-chat/rag.ts` (refactor `buildContextText`).
 
 **چه تغییراتی:**
@@ -520,20 +584,23 @@
 ---
 
 ## Chunk 3 ✅ — دقت اسمبل (Assemble accuracy)
+
 **فایل:** `src/app/api/assemble/ai-pick/route.ts`.
 
 **چه تغییراتی:**
 ۱) **تابع `compatibilityInfo(c, body)`:** بررسی سازگاری یک کاندیدا با قطعات قبلاً انتخاب‌شده — قرینهٔ سمت‌سرورِ محدودیت‌های پرامپت AI (`buildConstraints`). پوشش می‌دهد:
-   - مادربرد ↔ سوکت CPU و نوع RAM
-   - رم ↔ نوع RAM مادربرد
-   - پاور ↔ توان لازم (CPU+GPU با حاشیه ۳۰٪) — کمبود = جریمهٔ سنگین
-   - کیس ↔ فرم‌فکتور مادربرد و طول کارت گرافیک
-   - خنک‌کننده ↔ TDP پردازنده
-   - اگر `specs` خالی باشد، آن بخش نادیده گرفته می‌شود (بی‌خطر؛ فقط جریمه نمی‌کند).
+
+- مادربرد ↔ سوکت CPU و نوع RAM
+- رم ↔ نوع RAM مادربرد
+- پاور ↔ توان لازم (CPU+GPU با حاشیه ۳۰٪) — کمبود = جریمهٔ سنگین
+- کیس ↔ فرم‌فکتور مادربرد و طول کارت گرافیک
+- خنک‌کننده ↔ TDP پردازنده
+- اگر `specs` خالی باشد، آن بخش نادیده گرفته می‌شود (بی‌خطر؛ فقط جریمه نمی‌کند).
 
 ۲) **هر دو مسیر سازگار می‌مانند:**
-   - **مسیر AI:** بعد از استخراج انتخاب AI و رد کردن گاردریل دسته، حالا با `compatibilityInfo` هم چک می‌شود؛ اگر AI قطعهٔ ناسازگار داده باشد، حذف و به `ruleBasedPick` برمی‌گردد.
-   - **مسیر fallback (rule-based):** در `candidateSmartScore` امتیاز سازگاری (+ حاشیهٔ ایمن) اضافه شد، و در فیلتر `valid` کاندیداهای «ناسازگار سخت» کلاً حذف می‌شوند (حتی اگر قیمت‌شان خوب باشد).
+
+- **مسیر AI:** بعد از استخراج انتخاب AI و رد کردن گاردریل دسته، حالا با `compatibilityInfo` هم چک می‌شود؛ اگر AI قطعهٔ ناسازگار داده باشد، حذف و به `ruleBasedPick` برمی‌گردد.
+- **مسیر fallback (rule-based):** در `candidateSmartScore` امتیاز سازگاری (+ حاشیهٔ ایمن) اضافه شد، و در فیلتر `valid` کاندیداهای «ناسازگار سخت» کلاً حذف می‌شوند (حتی اگر قیمت‌شان خوب باشد).
 
 ۳) **بازبینی `ai-analyze` fallback:** تابع `buildFallbackAnalysis` از قبل دقیق و مقاوم بود (تحلیل قوت/گلوگاه/ارتقاء بر اساس specs واقعی + محاسبهٔ توان پاور). تغییری نیاز نداشت؛ صرفاً تأیید شد که با دادهٔ ناقص هم gracefully برخورد می‌کند.
 
@@ -544,17 +611,19 @@
 ---
 
 ## Chunk 4 ✅ — UI خفن + مخفی (chat widget)
+
 **فایل‌ها:** `src/components/ai-chat/AiChatWidget.tsx`, `src/components/ai-chat/ai-chat.css`.
 
 **چه تغییراتی:**
 ۱) **نشان مرتبط‌بودن (relevance):** ستونِ `relevance` که در Chunk 1 محاسبه شد، حالا روی کارت محصول نمایش داده می‌شود:
-   - **نوار مرتبط‌بودن:** خط ظریفی در پایین کارت با طول متناسب با امتیاز (`--rel`) — سبز→آبی.
-   - **بج «مرتبط»:** فقط برای محصولِ مرتبط‌ترین (relevance ≥ ۷۰٪) روی کارت می‌آید (بدون شلوغیِ اضافه).
-   - **تأکید ملایم:** کارتِ مرتبط‌ترین یک حاشیه/سایهٔ سبزِ نرم می‌گیرد (بدون دخالتِ گوشه‌گیر در صفحه).
-۲) **FAB مخفی‌تر (stealth):** اندازه کمی کوچک‌تر (۵۶px)، شفافیت کمتر (۰.۹۲)، و پالس‌های حلقه‌ای فقط **۲ بار** روی باز شدن اجرا می‌شوند (جلب‌توجه اولیه، بعد آرام → مخفی‌تر).
-۳) **برچسبِ هاور (servo-corner hint):** روی هاورِ FAB، برچسب ظریفی با نام دستیار ظاهر می‌شود (فقط با هاور؛ در حالت عادی دیده نمی‌شود).
-۴) **ورودِ پلکانی کارت‌ها:** کارت‌های محصول با تاخیر کم (۵۵ms × ایندکس) یکی‌یکی ظاهر می‌شوند (احساس خفن‌تر).
-۵) **هم‌راستا با قبل:** استریم زنده، دکمه‌های پویا (`[[دکمه‌ها: …]]`)، سؤال‌های پیشنهادی و تمام رفتار قبلی دست‌نخورده باقی ماند. تمام حرکت‌ها به `prefers-reduced-motion` احترام می‌گذارند.
+
+- **نوار مرتبط‌بودن:** خط ظریفی در پایین کارت با طول متناسب با امتیاز (`--rel`) — سبز→آبی.
+- **بج «مرتبط»:** فقط برای محصولِ مرتبط‌ترین (relevance ≥ ۷۰٪) روی کارت می‌آید (بدون شلوغیِ اضافه).
+- **تأکید ملایم:** کارتِ مرتبط‌ترین یک حاشیه/سایهٔ سبزِ نرم می‌گیرد (بدون دخالتِ گوشه‌گیر در صفحه).
+  ۲) **FAB مخفی‌تر (stealth):** اندازه کمی کوچک‌تر (۵۶px)، شفافیت کمتر (۰.۹۲)، و پالس‌های حلقه‌ای فقط **۲ بار** روی باز شدن اجرا می‌شوند (جلب‌توجه اولیه، بعد آرام → مخفی‌تر).
+  ۳) **برچسبِ هاور (servo-corner hint):** روی هاورِ FAB، برچسب ظریفی با نام دستیار ظاهر می‌شود (فقط با هاور؛ در حالت عادی دیده نمی‌شود).
+  ۴) **ورودِ پلکانی کارت‌ها:** کارت‌های محصول با تاخیر کم (۵۵ms × ایندکس) یکی‌یکی ظاهر می‌شوند (احساس خفن‌تر).
+  ۵) **هم‌راستا با قبل:** استریم زنده، دکمه‌های پویا (`[[دکمه‌ها: …]]`)، سؤال‌های پیشنهادی و تمام رفتار قبلی دست‌نخورده باقی ماند. تمام حرکت‌ها به `prefers-reduced-motion` احترام می‌گذارند.
 
 **سازگاری:** فقط CSS + نشانه‌گذاریِ ویجت تغییر کرد؛ قرارداد داده (`ChatSource.relevance`) قبلاً در Chunk 1 اضافه شد. بدون تغییر در routeها.
 **ریسک:** `relevance` عددی است که از چند سیگنال (قصد/برند/موجودی/تخفیف) ساخته می‌شود؛ نرمال‌سازی روی ۰..۱ انجام شد تا نوار/بج منطقی باشد. اگر `relevance` خالی باشد، نوار و بج نمایش داده نمی‌شوند (بی‌خطر).
@@ -562,12 +631,13 @@
 ---
 
 # ✅ خلاصهٔ نهایی — ارتقای AI (RAG + Accuracy + خفن/مخفی)
-| چانک | فایل | نتیجه |
-|------|------|-------|
-| ۱ | `rag.ts`, `types.ts` | multi-query + relevance ranking + dedupe + cache |
-| ۲ | `ai-chat/route.ts`, `rag.ts` | کانتکست فشرده (top-6) + هم‌راستایی مدل↔UI + `buildContextText` |
-| ۳ | `assemble/ai-pick/route.ts` | `compatibilityInfo` روی هر دو مسیر (AI + fallback) |
-| ۴ | `AiChatWidget.tsx`, `ai-chat.css` | relevance badge/bar + stealth FAB + hover label + stagger |
+
+| چانک | فایل                              | نتیجه                                                           |
+| ---- | --------------------------------- | --------------------------------------------------------------- |
+| ۱    | `rag.ts`, `types.ts`              | multi-query + relevance ranking + dedupe + cache                |
+| ۲    | `ai-chat/route.ts`, `rag.ts`      | کانتکست فشرده (top-6) + هم‌راستایی مدل↔UI + `buildContextText` |
+| ۳    | `assemble/ai-pick/route.ts`       | `compatibilityInfo` روی هر دو مسیر (AI + fallback)              |
+| ۴    | `AiChatWidget.tsx`, `ai-chat.css` | relevance badge/bar + stealth FAB + hover label + stagger       |
 
 **نحوهٔ تست (دستی):** `npm run dev` → چت را باز کن و سؤال محصولی بپرس (مثلاً «بهترین کارت گرافیک گیمینگ»)؛ کارت‌های مرتبط‌تر باید بج «مرتبط» + نوار داشته باشند. در اسمبل، یک دسته را با AI خاموش (یا api-key اشتباه) انتخاب کن تا fallback سازگار برگردد. تست RAG دقیق‌تر: سؤالاتی با نام انگلیسی (GPU/CPU) یا برند خاص.
 
@@ -576,6 +646,7 @@
 # 📲 Plan: PWA ro "Daghigh & Khafan" (Complete + Clean)
 
 ## 🔍 Discovery — chizi ke fahan hast (va kharab bud)
+
 - `src/app/pwa/page.tsx` → safhe-ye moarefi PWA (eddea mikone icon/maskable/apple/splash set shode — **false**).
 - `src/app/api/pwa/share/route.ts` → Web Share Target receiver (POST formData → redirect).
 - `src/components/pwa/PWAClient.tsx` → UI-e install/offline/update banner + `sw.js` register. **Vali hichja mount nashode** (dar layout/provider nist).
@@ -586,6 +657,7 @@
 - Rasterizer (convert/sharp/rsvg) dar mohit nist → baraye PNG az `@resvg/resvg-js` (prebuilt) estefade mikonam.
 
 ## 🧩 Chunk list
+
 1. **Icons** — generate `icon-192.png`, `icon-512.png`, `maskable-512.png`, `apple-touch-icon.png` az `logo.svg` (resvg).
 2. **Manifest** — `src/app/manifest.ts` (Next metadata route): name/short_name/rtl/fa, icons, display standalone, share_target → `/api/pwa/share`, shortcuts.
 3. **Service Worker** — `public/sw.js`: precache + offline fallback, network-first navigations, cache-first static, skip API/backend, handle `SKIP_WAITING` + `CACHE_URLS`.
@@ -601,30 +673,36 @@
 # 📲 Plan 2 — Mobile UI + Install popups + adaptive iOS icon
 
 ## 🔍 Discovery (mobile)
+
 - `MenuButtom.tsx`: منوی پایین full-width, `h-[75px]`, `z-9`, `lg:hidden`.
 - `AiChatWidget` FAB: `.aic-root` fixed, `z-9998`, bottom-left (layout `position="left"`). Roye menu miyftad → menu kharab.
 - `ThemeToggle` (floating) **mount nashode**; dark-mode faqat tu header. User khast dark-mode **tu hamin menu-ye paeen** bashad.
 
 ## ✅ Chunk 1 — Mobile menu cleanup: DONE
+
 - `MenuButtom.tsx`: دکمهٔ تغییر تم (sun/moon + برچسب) bezane tu menu, baghal-e botre-haye dige (useTheme).
 - `ai-chat.css`: FAB rooye موبایل/تبلت (`max-width:1023px`) `bottom: calc(75px + 16px + safe-area)` → balatar az menu, menu ro kharab nemikone.
 - Note: ThemeProvider dar GlobalContextProvider wrap shode → useTheme dar menu OK.
 
 ## ⏭ Next: Chunk 2 — Install popups (iOS + Android/Windows)
+
 - iOS: detect (Safari) → popup "Add to Home Screen: Share → Add".
 - Android/Windows: `beforeinstallprompt` (mozojod) → banner.
 - PWA banners royee mobile balatar az menu (75px) raise shavad.
 
 ## ✅ Chunk 2 — Install popups: DONE
+
 - `PWAClient.tsx`: iOS detect (iPhone/iPad/iPadOS) → popup "Share → Add to Home Screen" (2.2s delay, dismiss 30 rooz).
 - Android/Windows: `beforeinstallprompt` → `.pwa-install` banner (ghablan mojood, hala mahfuz).
 - PWA banners (install/online/offline/update) royee mobile `bottom: calc(75px + 12px + safe-area)` → balatar az menu.
 
 ## ⏭ Next: Chunk 3 — Adaptive iOS icon (dark/light)
+
 - generate `apple-touch-icon-dark.png` (dark bg #0b1220) kenar light (mojood).
 - script: `<link rel=apple-touch-icon>` ro bar asase theme (data-theme) avaz kone + rooye toggle.
 
 ## ✅ Chunk 3 — Adaptive iOS icon: DONE
+
 - `apple-touch-icon-dark.png` (180×180, bg #0b1220) generate shod.
 - `layout.tsx`: script `apple-touch-icon-theme` → `<link rel=apple-touch-icon>` ro bar asase `dark`/`light` avaz mikone + rooye toggle (MutationObserver).
 - Logo = OFFLAND (manifest + tamam icon-ha az `logo.svg`). ✅
@@ -636,11 +714,13 @@
 # 🐞 Feedback fix — logo dorost + install UX
 
 ## 🔍 Discovery
+
 - Logo eshtebah: `icons/logo.svg` (wordmark-e sade) bud. Logo-ye asli = `public/images/logo-off-3.png` (colored, 1100×400, transparent) — HeaderCoin hamin ro migire. `images/logo.svg` hattā WEBP bud!
 - `logo-white.png` (white, transparent) baraye dark mode.
 - Windows Chrome: `beforeinstallprompt` rooye prod mishe, vali dokme-ye install hamishe ghabol nist → CTA-e hamishe-hazer ezafe shod.
 
 ## ✅ Fixes
+
 - Icon-ha regenerate shodand ba logo-ye SAHIH (logo-off-3 colored / logo-white dark), tarh-e gradient #386bf9→#6f3cf5, rounded app-icon:
   - `icon-192/512.png` (any), `maskable-512.png` (full-bleed), `apple-touch-icon.png` (light), `apple-touch-icon-dark.png` (white logo on #0b1220).
 - `src/store/pwa-store.ts` (zustand): deferredPrompt + install().
@@ -656,6 +736,7 @@
 به درخواست کاربر، کل زیرساخت PWA از پروژه حذف شد.
 
 ### فایل‌های حذف‌شده
+
 - `src/app/manifest.ts` (تولید manifest)
 - `src/app/pwa/page.tsx` (صفحهٔ راهنمای نصب)
 - `src/components/pwa/PWAClient.tsx` (کلاینت: نصب، آفلاین، به‌روزرسانی نرم)
@@ -667,14 +748,17 @@
 - `public/icons/icon-192.png`, `icon-512.png`, `maskable-512.png` (آیکون‌های اختصاصی manifest)
 
 ### تغییرات در فایل‌های موجود
+
 - `src/app/layout.tsx`: حذف import و mount `PWAClient`، حذف `manifest` و `appleWebApp` از متادیتا، تغییر `icons` به فقط `apple` (آیکون تب از `favicon.ico` پیش‌فرض استفاده می‌کند).
 - `src/components/common/MenuButtom.tsx`: حذف import و دکمهٔ `InstallButton`.
 - `src/components/common/header/HeaderCenter.tsx`: حذف import و دکمهٔ `InstallButton`.
 
 ### موارد حفظ‌شده (غیر‑PWA)
+
 - `public/icons/apple-touch-icon.png` و `apple-touch-icon-dark.png` (آیکون bookmark آیفون — جزو تب/فاویکون است، نه منیفست PWA)؛ اسکریپت adaptive آن در layout باقی ماند.
 
 ### ریسک / پیگیری
+
 - هیچ ارجاع dangling باقی نماند (بررسی شد).
 - پیشنهاد: یک‌بار `next build` برای اطمینان از نبود خطای type compile.
 
@@ -686,7 +770,9 @@ Darkhast: "ide jadid baraye khfan kardan site" → user clarify kard: **ide crea
 Context: Persian RTL e-commerce (Next.js 16, HeroUI, Zustand, React Query, framer-motion, swiper).
 
 ### گزینه ۱ — دستیار خرید هوشمند (AI Shopping Concierge) ⭐ پیشنهادِ flagships
+
 یک چت‌بات کوچک روی گوشه صفحه که با متن فارسی/فینگلیش محصول رو پیدا می‌کند.
+
 - RAG روی کاتالوگ محصولات (embedding + vector search).
 - فهم فینگلیش: "labas zanane sefir" → فیلتر درست.
 - پیشنهاد cross-sell: "این کفش به کیف انتخابی‌ت می‌خوره؟"
@@ -694,27 +780,34 @@ Context: Persian RTL e-commerce (Next.js 16, HeroUI, Zustand, React Query, frame
 - ریسک: نیاز به مدل/API (Anthropic) + embedding pipeline. سنگین‌ترین گزینه.
 
 ### گزینه ۲ — جعبه شگفت‌انگیز (Mystery / Surprise Bag) 🎁 پیشنهادِ quick-win
+
 باندل تخفیف‌خورده از موجودی اضافه/نزدیک‌به‌اتمام.
+
 - صفحه `/mystery` با افکت عود (keen-slider + confetti).
 - قیمت تصادفی یا "حداقل ۳۰٪ زیر قیمت": gamification.
 - افزودن به سبد خرید مثل محصول عادی (cart-store موجود).
 - ریسک: کم. فقط UI + یک نوع محصول جدید. خیلی "creative" و قابل‌اجرا سریع.
 
 ### گزینه ۳ — مشاور قسطی هوشمند (Smart Installment Advisor)
+
 محاسبه‌گر اقساط که بر اساس جمع سبد، بهترین پلن رو پیشنهاد می‌دهد.
+
 - فرم کوچک: مبلغ، پیش‌پرداخت، تعداد قسط → نمودار پرداخت (Recharts-style SVG).
 - پیشنهاد هوشمند: "با ۴ قسط ماهانه، هر قسط X تومن".
 - ذخیره در checkout-store برای ادامه تسویه.
 - ریسک: متوسط. منطق مالی ساده، UI با HeroUI.
 
 ### گزینه ۴ — سبد اشتراکی (Shared Group Cart)
+
 به‌اشتراک‌گذاری سبد با لینک → دوستان آیتم اضافه می‌کنند، هزینه تقسیم می‌شود.
+
 - تولید کد/لینک (`/cart/share?token=...`).
 - realtime یا semi-realtime (polling via React Query).
 - مناسب خرید گروهی/هدیه.
 - ریسک: متوسط-بالا (نیاز به sync). سنگین‌تر از ۲ و ۳.
 
 ### توصیه من
+
 - اگر می‌خوای **سریع و خیره‌کننده**: گزینه ۲ (Mystery Box).
 - اگر می‌خوای **از تخصص AI/RAG استفاده کنی**: گزینه ۱ (Concierge).
 - کدوم ro belsazam? Baramo bego "1" / "2" / "3" / "4" ya esmhesh ro benevis.
@@ -727,33 +820,42 @@ Darkhast: "pishnahad hay dige ham rabet karbari behtar ham smart tar".
 Target: ویژگی‌هایی که **تجربه کاربری (UX)** رو بالا می‌برن و **هوشمند** (داده‌محور / AI) هستن.
 
 ### گزینه ۵ — جستجوی صوتی فارسی (Persian Voice Search) 🎤 ⭐ پیشنهاد
+
 "بگو چی می‌خوای" — جستجو با صدا به فارسی (Web Speech API, RTL-friendly).
+
 - دکمهٔ میکروفون کنار سرچ‌بار؛ تبدیل گفتار→متن→فیلتر کاتالوگ.
 - fallback روی مرورگرهای قدیمی (فینگلیش تایپی).
 - UX: دسترسی‌پذیری بالا + سرعت. Smart: پردازش query فارسی.
 - ریسک: کم-متوسط (Web Speech توی اکثر کروم‌ها هست؛ کافی‌ست MVP).
 
 ### گزینه ۶ — مشاور اندازه هوشمند (Smart Size Advisor) 📏
+
 کاربر قد/وزن/سایز لباس معمولی رو می‌دهد → AI سایز درست هر محصول رو پیشنهاد می‌دهد.
+
 - کاهش چشمگیر مرجوعی (بزرگ‌ترین ضرر فروشگاه پوشاک).
 - فرم کوچک + نمایش "این سایز به شما می‌خورد" روی صفحهٔ محصول.
 - ذخیرهٔ پروفایل در user-store → پیشنهاد خودکار در خریدهای بعد.
 - UX عالی، Smart واقعی. ریسک: متوسط (نیاز به منطق/مدل سایز).
 
 ### گزینه ۷ — سبد پیش‌بینی‌شده / خرید هوشمند (Predictive Reorder) 🔁
+
 بر اساس سفارش‌های قبلی: "دفعهٔ پیش اینو خریدی، تموم شده؟" + دکمهٔ یک‌کلیکهٔ تکرار.
+
 - یادآوری مصرفی‌ها (مواد غذایی/آرایشی) با تناوب تخمینی.
 - قابل اتصال به cart-store موجود.
 - UX: راحتی مطلق. Smart: الگوی رفتار کاربر.
 - ریسک: کم-متوسط.
 
 ### گزینه ۸ — مقایسه‌گر هوشمند با قضاوت AI (Smart Compare + AI Verdict) ⚖️
+
 مقایسهٔ ۲–۴ محصول + خلاصهٔ "کدوم به نیاز شما نزدیک‌تر؟" توسط AI.
+
 - جدول مقایسه (HeroUI Table) + کارت "توصیهٔ هوشمند".
 - کاهش زمان تصمیم‌گیری کاربر.
 - UX + Smart ترکیبی. ریسک: متوسط (نیاز به خلاصه‌ساز AI).
 
 ### توصیه من (این بخش)
+
 - **بیشترین UX + کمترین ریسک MVP**: گزینه ۵ (Voice Search).
 - **بیشترین اثر تجاری (کاهش مرجوعی)**: گزینه ۶ (Size Advisor).
 - کدوم ro belsazam? Bego "5" / "6" / "7" / "8".
@@ -766,34 +868,43 @@ Darkhast: "pishnahad hay dige ham rabet karbari behtar ham smart tar" (بار س
 In ۴ تا کاملاً جدای از ۸ تای قبل هستن.
 
 ### گزینه ۹ — جستجوی تصویری (Visual / Image Search) 📸 ⭐ پیشنهادِ wow
+
 کاربر عکس محصول/لباس رو می‌دهد → سایت «شبیه‌ترین» کالاها رو پیدا می‌کند.
+
 - آپلود یا عکس با دوربین → image embedding → vector search روی کاتالوگ.
 - UX: «عکس رو بده، مدلشو پیدا کن» — خیلی فارسی‌کاربرپسند (مثل دیجی‌کالا/آمازون).
 - Smart: پردازش تصویر + similarity.
 - ریسک: متوسط-بالا (نیاز به pipeline embedding تصویر).
 
 ### گزینه ۱۰ — خلاصه‌ساز نقد هوشمند (AI Review Summary) 📝 ⭐ پیشنهادِ behtarin ROI
+
 صدها نظر کاربر را با LLM خلاصه می‌کند → «نقاط قوت / ضعف» کوتاه روی صفحهٔ محصول.
+
 - مثل Amazon "AI review highlights".
 - کاهش زمان مطالعه + افزایش اعتماد + تبدیل به خرید.
 - Smart (LLM summarization)، UX عالی، ریسک کم-متوسط.
 - ابزار: `/api/ai/summarize-reviews`, کامپوننت `ReviewSummary.tsx`.
 
 ### گزینه ۱۱ — جریان شخصی‌ساز لحظه‌ای («برای شما» هوشمند) 🎯
+
 بر اساس رفتار همین جلسه (SESSION)، چیدمان صفحهٔ اصلی را لحظه‌ای مرتب می‌کند.
+
 - اگر کاربر لباس می‌بیند → کارت‌های «مشابه» بالا می‌آیند.
 - Smart: session-based ranking (بدون نیاز به login).
 - UX: حس «سایت برای من» — تعامل‌پذیر و سریع.
 - ریسک: کم-متوسط.
 
 ### گزینه ۱۲ — دستیار بودجه هوشمند (Budget-aware Cart Curator) 💰
+
 کاربر بودجه را می‌گذارد → AI سبدی می‌چیند که «به اندازهٔ بودجه» باشد.
+
 - "۲ میلیون داری، این ۳ تا بهت می‌خوره + ۱ تا جایزه".
 - کاهش abandon-cart (وقتی قیمت کل می‌ترساند).
 - Smart (constraint solver) + UX عملی.
 - ریسک: متوسط.
 
 ### توصیه من (این بخش)
+
 - **بهترین تعادل UX+Smart+ریسک**: گزینه ۱۰ (AI Review Summary).
 - **بیشترین wow-factor**: گزینه ۹ (Visual Search).
 - کدوم ro belsazam? Bego "9" / "10" / "11" / "12".
@@ -806,36 +917,45 @@ Darkhast: "pishnahad hay dige..." (بار چهارم). مجموعاً ۱۶ ای�
 **توصیه:** بعد از این بخش، یه عدد (۱ تا ۱۶) انتخاب کن تا بسازم؛ تولید بی‌پایان نکنیم.
 
 ### گزینه ۱۳ — تخفیف‌یاب خودکار (Auto Coupon Finder) 🏷️ ⭐ پیشنهاد
+
 مثل Honey: بهترین کد تخفیف موجود را خودش پیدا و اعمال می‌کند.
+
 - روی صفحهٔ پرداخت: "بهترین کد پیدا شد: ۱۵٪ تخفیف".
 - کاهش abandon-cart + حس «سود بردم».
 - Smart (جستجوی کد در پایگاه/قوانین)، UX عالی، ریسک کم-متوسط.
 - اتصال به checkout-store موجود.
 
 ### گزینه ۱۴ — دستیار استایل «چی بپوشم؟» (AI Outfit Stylist) 👗
+
 کاربر مناسبت را می‌گوید (مهمانی/کار/عروسی) → AI ست لباس از کاتالوگ می‌چیند.
+
 - نمایش «لوک‌بوک» تعاملی (keen-slider).
 - Smart (ترکیب بر اساس ویژگی محصول)، UX بسیار جذاب.
 - ریسک: متوسط.
 
 ### گزینه ۱۵ — پشتیبانی proactive (Stuck-detector) 🆘
+
 اگر کاربر در چک‌اوت/سبد گیر کرد → به‌صورت proactive پیشنهاد کمک می‌دهد.
+
 - تشخیص اصطکاک (تایم‌اوت، خطای فرم) → tooltip/bot کوچک.
 - Smart (تحلیل رفتار لحظه‌ای)، UX حمایتی.
 - ریسک: کم-متوسط.
 
 ### گزینه ۱۶ — پیش‌نمایش ۳D/AR محصول 🔮
+
 دوراندازی ۳بعدی یا AR روی صفحهٔ محصول («امتحان قبل از خرید»).
+
 - UX انفجاری، Smart، اما **سنگین**: ریسک بالا (نیاز به مدل/asset ۳D).
 - فقط اگر زیرساخت داری توصیه می‌شود.
 
 ### 🎯 جمع‌بندی — برترین‌ها به تفکیک هدف
-| هدف | بهترین گزینه |
-|------|---------------|
-| کم‌ترین ریسک + MVP سریع | ۵ (Voice) / ۲ (Mystery) / ۱۳ (Coupon) |
-| بیشترین اثر تجاری | ۶ (Size) / ۱۰ (Review Summary) / ۱۳ (Coupon) |
-| بیشترین wow-factor | ۹ (Visual) / ۱۶ (3D/AR) / ۱۴ (Stylist) |
-| استفاده از AI/RAG تخصصی | ۱ (Concierge) / ۹ (Visual) / ۱۰ (Review) |
+
+| هدف                     | بهترین گزینه                                 |
+| ----------------------- | -------------------------------------------- |
+| کم‌ترین ریسک + MVP سریع | ۵ (Voice) / ۲ (Mystery) / ۱۳ (Coupon)        |
+| بیشترین اثر تجاری       | ۶ (Size) / ۱۰ (Review Summary) / ۱۳ (Coupon) |
+| بیشترین wow-factor      | ۹ (Visual) / ۱۶ (3D/AR) / ۱۴ (Stylist)       |
+| استفاده از AI/RAG تخصصی | ۱ (Concierge) / ۹ (Visual) / ۱۰ (Review)     |
 
 **Hala yeki ro entekhab kon (۱ تا ۱۶) ta belsazam.**
 
@@ -844,6 +964,7 @@ Darkhast: "pishnahad hay dige..." (بار چهارم). مجموعاً ۱۶ ای�
 ## 🔍 واقعیت سایت — OFFLAND (offl.ir) — ۱۴۰۵/۰۴/۲۳
 
 Check shod: **«فروشگاه اینترنتی آفلند | سرزمین تخفیف»**.
+
 - نوع: فروشگاه قطعات کامپیوتر / گیمینگ / تکنولوژی (Persian RTL, Next.js).
 - دسته‌بندی غالب (از تحلیل HTML): مادربرد (۷۵)، گیمینگ (۶۱)، پاور (۳۱)، رم، پردازنده، کارت گرافیک، کیس، کنسول، موبایل، فن/کولر، ماوس.
 - قابلیت **compare** دارد (۶۳ ارجاع)، اما **هیچ builder / چک سازگاری (compatibility)** ندارد.
@@ -853,7 +974,9 @@ Check shod: **«فروشگاه اینترنتی آفلند | سرزمین تخف
 ## 💡 ایده‌های tailored — OFFLAND (PC/تکنولوژی + UX بهتر + Smart)
 
 ### گزینه A — سیستم‌ساز هوشمند + چک سازگاری ⭐ (قهرمان)
+
 مثل PCPartPicker: کاربر قطعات را انتخاب می‌کند → سایت **سازگاری** را لحظه‌ای چک می‌کند.
+
 - سوکت CPU↔مادربرد، نوع RAM (DDR4/5)، توان پاور، جای‌گیری در کیس.
 - هشدار زرد/قرمز: «این رم با مادربرد سازگار نیست».
 - Smart: engine قانون سازگاری (data-driven). UX: راهنمای گام‌به‌گام.
@@ -861,29 +984,36 @@ Check shod: **«فروشگاه اینترنتی آفلند | سرزمین تخف
 - ریسک: متوسط (نیاز به دیتای مشخصات قطعات). **آن‌ها ندارند → کاملاً novel.**
 
 ### گزینه B — ماشین‌حساب توان پاور (PSU Wattage Calculator) 🔌
+
 جمع TDP قطعات انتخابی → پیشنهاد وات پاور + لیست پاورهای موجود در فروشگاه.
+
 - زیرمجموعه‌ی عملی از A. خیلی کاربردی برای خریدار PC.
 - ریسک: کم-متوسط.
 
 ### گزینه C — دستیار بودجه گیمینگ (Budget Gaming Advisor) 🎮🤖
+
 «بودجه X میلیون → بهترین سیستم گیمینگ» را AI از کاتالوگ موجود چیدمان می‌دهد.
+
 - با هویت «سرزمین تخفیف» و تمرکز گیمینگ کاملاً هم‌راستا.
 - Smart (انتخاب محدود به بودجه + سازگاری)، UX جذاب (کارت «سیستم پیشنهادی»).
 - ریسک: متوسط.
 
 ### گزینه D — تعقیب قیمت هوشمند (Price-drop Tracker & Alerts) 💸
+
 چون برند «سرزمین تخفیف» است: کاربر محصول را واچ‌لیست می‌کند → وقتی ارزان شد اعلان.
+
 - watchlist + نوتیف (ایمیل/پوش) + نمودار تاریخچهٔ قیمت.
 - Smart (تحلیل روند قیمت)، UX: «۳۰٪ ارزان‌تر شد!».
 - ریسک: کم-متوسط. بسیار on-brand.
 
 ### 🎯 توصیه نهایی برای OFFLAND
-| هدف | بهترین |
-|------|---------|
-| بزرگ‌ترین مزیت رقابتی | **A (PC Builder)** — رقبا ندارند |
-| هم‌راستا با «سرزمین تخفیف» | **D (Price Tracker)** |
-| AI/RAG تخصصی | **C (Gaming Advisor)** |
-| MVP سریع | **B (PSU Calculator)** |
+
+| هدف                        | بهترین                           |
+| -------------------------- | -------------------------------- |
+| بزرگ‌ترین مزیت رقابتی      | **A (PC Builder)** — رقبا ندارند |
+| هم‌راستا با «سرزمین تخفیف» | **D (Price Tracker)**            |
+| AI/RAG تخصصی               | **C (Gaming Advisor)**           |
+| MVP سریع                   | **B (PSU Calculator)**           |
 
 **Yeki ro entekhab kon: A / B / C / D ta belsazam.**
 
@@ -895,31 +1025,40 @@ Darkhast: "pishnahad hay dige ham rabet karbari behtar ham smart tar" (بار پ
 ۴ تای زیر کاملاً جدای از A–D و ۱۶ تای عمومی هستن.
 
 ### گزینه E — مقایسه‌گر بنچمارک + پیش‌بینی FPS ⭐ (ستاره)
+
 روی قابلیت compare موجود سوار می‌شود: انتخاب GPU+CPU → **تخمین FPS** در بازی‌های محبوب.
+
 - جدول «در Warzone / Valorant / Cyberpunk چند فریم؟» با رده‌بندی کیفیت.
 - Smart: دیتابیس بنچمارک + interpolate. UX: گیمر فوراً تصمیم می‌گیرد.
 - با تمرکز گیمینگ (۶۱ ارجاع) کاملاً هم‌راستا.
 - ریسک: متوسط (نیاز به دیتای بنچمارک؛ قابل شروع با تعداد کم بازی).
 
 ### گزینه F — دستیار ارتقا (Upgrade Advisor) 🔧
+
 کاربر سیستم فعلی‌اش را وارد می‌کند → AI می‌گوید «برای هدف X کدام قطعه را عوض کن».
+
 - "برای ادیت ۴K چی کم داری؟" → پیشنهاد RAM/کارت گرافیک.
 - Smart (تحلیل شکاف با هدف)، UX عملی و شخصی.
 - ریسک: متوسط.
 
 ### گزینه G — حالت «به‌صرفه‌ترین» خودکار (Best-Value Ranking) 💡
+
 تغییرگیری که لیست را بر اساس **بهترین قیمت/عملکرد** مرتب می‌کند نه فقط ارزان‌ترین.
+
 - "امروز به‌صرفه‌ترین گرافیک‌ها" با امتیاز ارزش.
 - Smart (value scoring)، on-brand با «سرزمین تخفیف».
 - ریسک: کم-متوسط.
 
 ### گزینه H — کاوشگر مشخصات تعاملی (Interactive Spec Educator) 📚
+
 روی صفحهٔ محصول: توضیح سادهٔ هر مشخصات فنی برای غیرمتخصص.
+
 - "این رم چطور روی سرعت اثر دارد؟" → tooltip/کارت آموزشی.
 - Smart (تولید/نگاشت محتوای آموزشی)، UX: کاهش سردرگمی.
 - ریسک: کم-متوسط.
 
 ### 🎯 توصیه برای این بخش
+
 - **بیشترین جذابیت گیمر + استفاده از compare موجود**: **E (FPS Estimator)**.
 - **بیشترین کاربرد عملی**: **F (Upgrade Advisor)**.
 - **کم‌ترین ریسک + on-brand**: **G (Best-Value Ranking)**.
@@ -933,10 +1072,12 @@ Darkhast: "pishnahad hay dige ham rabet karbari behtar ham smart tar" (بار پ
 این بخش یک نقشهٔ کلی از کل پروژه است (بر اساس اسکن واقعی فایل‌ها، نه حدس).
 
 ## ۱) ماهیت پروژه
+
 پلتفرم فروشگاه اینترنتی فارسی (RTL) برای قطعات کامپیوتر، لپ‌تاپ، موبایل و کالای دیجیتال.
 نکتهٔ متمایز: یکپارچگی با هوش مصنوعی — **دستیار خرید (AI Chat)** و **جادوگر اسمبل (Assemble)**.
 
 ## ۲) پشته فنی (Stack)
+
 - **Next.js 16** (App Router, Turbopack در dev, standalone build برای Docker)
 - **React 19** + **TypeScript strict**
 - **Tailwind 3.4** + **HeroUI** + **Framer Motion**
@@ -949,6 +1090,7 @@ Darkhast: "pishnahad hay dige ham rabet karbari behtar ham smart tar" (بار پ
 - مدیر بسته: **pnpm** (اولویت) / npm / yarn
 
 ## ۳) ساختار پوشه‌ها (src/)
+
 - `src/app/` — لایه ناوبری (App Router)
   - `(user)/` — روت‌های اصلی کاربر (خانه، محصول، دسته‌بندی، سبد، تسویه، پروفایل، مَگ، برند، تگ، نتایج جستجو، مقایسه، assemble)
   - `auth/` — ورود/تأیید کد
@@ -965,6 +1107,7 @@ Darkhast: "pishnahad hay dige ham rabet karbari behtar ham smart tar" (بار پ
 - `src/types/` — تعاریف تایپ (Home, Product, ShortNews)
 
 ## ۴) ویژگی‌های کلیدی
+
 - صفحات محصول غنی (گالری زوم، مشخصات، نظرات، امتیاز، پرسش‌وپاسخ، مقایسه، علاقه‌مندی)
 - فیلتر/مرتب‌سازی پیشرفته در دسته‌بندی
 - سبد خرید + تسویه (آدرس، ارسال، پرداخت، verify)
@@ -977,19 +1120,23 @@ Darkhast: "pishnahad hay dige ham rabet karbari behtar ham smart tar" (بار پ
 - PWA (قابلیت نصب) — اخیراً در commit آخر حذف شده (`refactor: remove PWA entirely`)
 
 ## ۵) احراز هویت
+
 - مبتنی بر JWT (jsonwebtoken) + cookie (js-cookie)
 - `middleware.ts` برای محافظت روت‌ها
 - فلو: دریافت کد (`useGetCode`) → تأیید (`useVerifyAuth`) → session (`useGetSession`)
 - route handlers: `api/check-session`, `api/token`, `session`, `api/logout`
 
 ## ۶) وضعیت فعلی (از تاریخچهٔ chat.md)
+
 پروژه در حال تکامل فعال است. آخرین محورها:
+
 - بازطراحی آرام برند آفلند در اسمبلر (AssembleWizard)
 - بازنویسی ۵ صفحهٔ قانونی/محتوایی (privacy/Terms/about/contact-us/warranty) — انجام‌شده
 - حذف PWA (آخرین commit)
 - پیشنهادهای جدید: FPS Estimator / Upgrade Advisor / Best-Value Ranking / مقایسه رادار (در انتظار انتخاب کاربر)
 
 ## ۷) نکات فنی مهم
+
 - `lib/data.ts` و `lib/client.ts` لایهٔ ارتباط با بک‌اند (`BASE_SERVER_API_URL`) — نباید بدون دیدنشان تغییری داد
 - کش با Redis از طریق `lib/redis.ts`
 - کد در قالب chunk engine نوشته می‌شود (هر بار یک chunk + ثبت در chat.md)
@@ -1002,28 +1149,33 @@ Darkhast: "pishnahad hay dige ham rabet karbari behtar ham smart tar" (بار پ
 **هدف:** کاربر خواست رفتارِ build/update پروژهٔ فعلی دقیقاً مثل نسخهٔ کارکرده (فایل zip) باشد.
 
 ### ۸-۱) مقایسهٔ دو پروژه
+
 - هر دو `template-nextjs@0.1.0`، Next 16.0.10، React 19.1.1.
 - `package.json` (script های dev/build/start/lint) یکسان — `next build --webpack`.
 - درخت `src/` یکسان به‌جز ۳ فایلِ PWA که در نسخهٔ فعلی **عمداً** حذف شده‌اند (commit: `refactor: remove PWA entirely`). هیچ import شکسته‌ای از حذف PWA باقی نمانده.
 - `tsconfig` / `tailwind.config` / `postcss.config` یکسان.
 
 ### ۸-۲) تفاوت‌های موثر روی build
+
 1. **`next.config.ts`**: نسخهٔ کارکرده این دو فلگ را داشت که build را با وجود خطای TS/ESLint رد می‌کرد؛ نسخهٔ فعلی آن‌ها را حذف کرده بود:
    - `eslint.ignoreDuringBuilds: true`
    - `typescript.ignoreBuildErrors: true`
 2. **`Dockerfile`**: نسخهٔ کارکرده داشت، نسخهٔ فعلی نداشت.
 
 ### ۸-۳) تغییرات اعمال‌شده (scope: Flags + Dockerfile)
+
 - ✅ به `next.config.ts` دو فلگ بالا اضافه شد (حالا build مثل نسخهٔ کارکرده رد می‌شود حتی با خطای lint/TS).
 - ✅ `Dockerfile` از نسخهٔ کارکرده بازگردانده شد (تصویر standalone، اجرا با `node server.js`).
 
 ### ۸-۴) نکات / ریسک
+
 - `next build` خودش `NODE_ENV=production` می‌کند، پس `output: 'standalone'` (conditional) در داخل Docker هم درست تولید می‌شود؛ Dockerfile نیازی به تغییر اضافی نداشت.
 - `ignoreBuildErrors: true` خطاهای TS را **مخفی** می‌کند (مثل نسخهٔ کارکرده). اگر روزی خواستید build سخت‌گیرانه باشد، این دو فلگ را برگردانید.
 - Dockerfile از `yarn install --frozen-lockfile` استفاده می‌کند؛ `yarn.lock` در پروژه هست، مشکلی نیست.
 - تست پیشنهادی: `yarn build` (یا `docker build .`) را اجرا کنید تا خروجی standalone تولید شود.
 
 ### ۸-۵) قدم بعدی (اختیاری)
+
 - اجرای واقعی `yarn build` برای تاییدِ تولید فایل `.next/standalone`. (نیاز به نصب node_modules دارد — سنگین است، فعلاً انجام نشد مگر با تایید شما)
 
 ---
@@ -1031,10 +1183,11 @@ Darkhast: "pishnahad hay dige ham rabet karbari behtar ham smart tar" (بار پ
 # ۹) اصلاح کش صفحهٔ اول + متای گوگل
 
 ## ۹-۱) تشخیص (Root Cause — واحد برای هر دو مشکل)
+
 - صفحهٔ اول `src/app/(user)/(home)/page.tsx` این دو خط را داشت:
   - `export const dynamic = 'force-static';`
   - `export const revalidate = false;`
-  → صفحه کاملاً استاتیک و در زمان build پخته می‌شود و **هیچ‌وقت revalidate نمی‌شود**.
+    → صفحه کاملاً استاتیک و در زمان build پخته می‌شود و **هیچ‌وقت revalidate نمی‌شود**.
 - `fetchHome` (`src/app/(user)/(home)/services/fetch-home.ts`) از `cache: 'force-cache'` استفاده می‌کرد → نتیجهٔ fetch تا ابد کش می‌شد؛ حتی با revalidate شدن صفحه، دادهٔ جدید از API گرفته نمی‌شد.
 - بررسی سایت زنده (`https://www.offl.ir/`، خروجی واقعی HTML):
   - تگ‌های `<title>`، `<meta name="description">`، `<link rel="canonical">` و `<meta name="robots">` **حضور دارند** و گوگل تکنیکاً می‌تواند بخواند.
@@ -1043,7 +1196,9 @@ Darkhast: "pishnahad hay dige ham rabet karbari behtar ham smart tar" (بار پ
 **نتیجه:** هر دو علامت (درخواست کش ۳۰ دقیقه‌ای + «گوگل متا را نمی‌خواند») ریشهٔ واحد دارند: صفحهٔ استاتیکِ بدون revalidate که متای به‌روزرسانی‌شده از CMS را هرگز نمی‌گیرد.
 
 ## ۹-۲) چانک A — کش ۳۰ دقیقه‌ای (ISR) ✅ انجام شد
+
 تغییرات اعمال‌شده:
+
 1. `src/app/(user)/(home)/page.tsx`:
    - حذف `export const dynamic = 'force-static';`
    - تغییر `export const revalidate = false;` → `export const revalidate = 1800;` (۳۰ × ۶۰ ثانیه)
@@ -1055,7 +1210,9 @@ Darkhast: "pishnahad hay dige ham rabet karbari behtar ham smart tar" (بار پ
 **نکته مهم برای گوگل:** حتی با این اصلاح، اگر در Search Console هنوز نسخهٔ قدیمی را می‌بینید، پس از deploy باید در «URL Inspection → Request Indexing» درخواستِ کراوِ مجدد بدهید تا گوگل نسخهٔ جدید را بخواند (revalidate فقط سمت سرور است، کراوِ گوگل را مجبور نمی‌کند).
 
 ## ۹-۳) چانک B — استحکام متا (fallback) ✅ انجام شد
+
 در `src/seo/home.ts`، تابع `generate_metadata_home`، شاخهٔ fallback (وقتی `seo` از API خالی/نال است):
+
 - **قبل:** فقط `title: 'آفلند'` و description ست نمی‌شد؛ og/twitter هم فقط «آفلند».
 - **بعد:** از `default_meta_data` استفاده شد:
   - `title` و `description` توصیفی (همان متن کامل آرایشی/بهداشتی/عطر...).
@@ -1065,9 +1222,45 @@ Darkhast: "pishnahad hay dige ham rabet karbari behtar ham smart tar" (بار پ
 **اثر:** حتی اگر CMS برای صفحهٔ اول seo نفرستد، گوگل همیشه عنوان و توضیحِ کامل و باکیفیت می‌بیند (نه فقط «آفلند»).
 
 ## ۹-۴) ریسک / پیگیری
+
 - حذف `force-static` بی‌خطر است: صفحه هیچ تابع داینامیکی (cookies/headers) ندارد و با `revalidate` باقی‌مانده به صورت استاتیک+ISR می‌ماند.
 - `revalidate` سگمنت و `next.revalidate` در fetch هر دو ۱۸۰۰ تنظیم شدند تا با هم هم‌راستا باشند.
 - پیشنهاد تست: پس از deploy، با `curl -sI https://www.offl.ir/` هدر `Cache-Control`/`Age` را چک کنید و ۳۰ دقیقه بعد تفاوت متا را تایید کنید.
 
 ### قدم بعدی
+
 برای ادامه بگویید `next` تا چانک B (استحکام fallback متا) را اعمال کنم.
+
+---
+
+# ۱۰) حذف لایهٔ سفید روی محصول در حالت تاریک (dark mode)
+
+## ۱۰-۱) علامت
+
+در حالت dark، روی تصویر اصلی محصول در صفحهٔ جزئیات یک **لایه/پس‌زمینهٔ سفید** نمایش داده می‌شد (ورژن «استودیو»).
+
+## ۱۰-۲) ریشه (Root Cause)
+
+در `src/app/globals.css` بخش **PRODUCT IMAGE STUDIO** (خط ~۹۲۳) عمداً یک «پدِ روشن» روی محصول گذاشته شده بود:
+
+- `.product-image-stage` در dark → `background: radial-gradient(... rgba(255,255,255,0.98) ...)` (پنل سفید).
+- `.product-image-stage::before` → sheen سفید روی تصویر.
+- `.product-image-stage img/.iiz` → `mix-blend-mode: multiply` (فقط روی زمینهٔ سفید درست کار می‌کند).
+
+نکتهٔ حیاتی: `mix-blend-mode: multiply` روی زمینهٔ تیره تصویر را **سیاه/ناشناخته** می‌کند؛ پس فقط حذف پس‌زمینه کافی نبود.
+
+## ۱۰-۳) اصلاحات (در `globals.css`)
+
+1. `.product-image-stage` (dark): `background` → `transparent` و حاشیهٔ سفید → `rgba(148,163,184,0.18)` (تیره).
+2. اضافه شد: `html.dark .product-image-stage::before { background:none !important; opacity:0 !important; }` برای حذف sheen سفید.
+3. `.product-image-stage img/.iiz` (dark): `mix-blend-mode: multiply` → `normal` (تصویر روی استیجِ تیره درست نمایش می‌شود).
+
+## ۱۰-۴) ریسک / نکات
+
+- فقط **محصول اصلی** (صفحهٔ جزئیات) اصلاح شد. کارت‌های محصول (`.product-card-image-pad`)، بخش اسمبلی (`.assembly-image-pad`) و تامبنیل‌ها (`.product-thumb-stage`) هنوز سیستم «استودیو/پد روشن» را دارند — در صورت تمایل هم‌تراز می‌شوند.
+- اگر عکس محصول خودش پس‌زمینهٔ سفید (JPG) داشته باشد، آن باکسِ سفیدِ خودِ عکس همچنان روی استیجِ تیره نمایش داده می‌شود (این خودِ عکس است، نه لایه). در صورت نیاز می‌توان blend را طوری تنظیم کرد که پس‌زمینهٔ عکس هم محو شود.
+- تست پیشنهادی: حالت دارک → صفحهٔ محصول؛ پس‌زمینه باید تیره باشد و عکس واضح (نه سیاه).
+
+### قدم بعدی
+
+در صورت تایید، `commit/push` کنم؛ یا بگویید کارت‌های محصول و اسمبلی را هم هم‌تراز کنم.

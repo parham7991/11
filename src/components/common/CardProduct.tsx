@@ -130,7 +130,7 @@ const CardProduct = ({
               }
               className={[
                 classImage,
-                'product-image-pad',
+                'product-image-pad rounded-xl',
                 shouldHighlightOutOfStock ? 'blur-sm' : '',
               ]
                 .filter(Boolean)
@@ -141,12 +141,14 @@ const CardProduct = ({
               showLoader={true}
             />
           ) : (
-            <span className={`product-image-pad flex items-center justify-center ${classImage}`}>
+            <span
+              className={`product-image-pad flex items-center justify-center rounded-xl ${classImage}`}
+            >
               <img height={100} width={100} src={Logo.src} />
             </span>
           )}
 
-          <p className="product-name line-clamp-2 h-[52px] pt-3 text-[13px] font-[500] leading-5 text-[#1e293b] lg:h-[64px] lg:text-[15px] lg:leading-6">
+          <p className="product-name line-clamp-2 h-[52px] min-h-[48px] pt-3 text-[13px] font-[500] leading-5 text-[#1e293b] lg:h-[64px] lg:text-[15px] lg:leading-6">
             {productName}
           </p>
         </div>

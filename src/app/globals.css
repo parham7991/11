@@ -719,13 +719,7 @@ html.dark body *:not(svg):not(path):not(circle):not(rect):not(line):not(polyline
   content: '';
   position: absolute;
   inset: -50%;
-  background: conic-gradient(
-    from 90deg,
-    transparent,
-    rgba(255, 255, 255, 0.45),
-    rgba(255, 255, 255, 0.38),
-    transparent 35%
-  );
+  background: #0f0f11;
   animation: themeSpin 5s linear infinite;
 }
 .theme-toggle-button::after {
@@ -1030,13 +1024,7 @@ html.dark .product-thumb-stage::before {
   pointer-events: none;
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.34),
-    transparent 24%,
-    transparent 70%,
-    rgba(255, 255, 255, 0.1)
-  );
+  background: #0f0f11;
   opacity: 0.85;
 }
 /* حذف لایهٔ سفید (sheen) روی محصول اصلی در حالت تاریک */
@@ -1073,12 +1061,7 @@ html.dark .product-card-image-pad > div[class*='w-'] {
 html.dark .product-card-image-pad::before {
   border-radius: 0.75rem;
   inset: 0.35rem;
-  background: radial-gradient(
-    circle at 50% 36%,
-    rgba(255, 255, 255, 0.98),
-    rgba(244, 248, 255, 0.94) 58%,
-    rgba(226, 235, 250, 0.9) 100%
-  ) !important;
+  background: #0f0f11 !important;
   box-shadow:
     inset 0 0 0 1px rgba(22, 22, 24, 0.04),
     0 14px 38px rgba(0, 0, 0, 0.16);
@@ -1092,27 +1075,17 @@ html.dark .product-card-image-pad > div:not(:empty) {
 }
 html.dark .product-card-image-pad img,
 html.dark .product-card-image-pad [data-nimg] {
-  mix-blend-mode: multiply;
+  mix-blend-mode: normal;
   filter: saturate(1.03) contrast(1.02) drop-shadow(0 14px 20px rgba(22, 22, 24, 0.14)) !important;
 }
 html.dark .product-card-image-pad:hover::before {
-  background: radial-gradient(
-    circle at 50% 34%,
-    rgba(255, 255, 255, 1),
-    rgba(239, 246, 255, 0.98) 58%,
-    rgba(210, 225, 252, 0.96) 100%
-  ) !important;
+  background: #0f0f11 !important;
 }
 html.dark .product-thumb-stage,
 html.dark .assembly-image-pad {
   overflow: hidden;
-  background: radial-gradient(
-    circle at 50% 38%,
-    rgba(255, 255, 255, 0.98),
-    rgba(238, 244, 255, 0.94) 62%,
-    rgba(211, 224, 248, 0.9)
-  ) !important;
-  border-color: rgba(255, 255, 255, 0.18) !important;
+  background: #0f0f11 !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
   box-shadow: 0 12px 34px rgba(0, 0, 0, 0.22) !important;
 }
 html.dark .product-thumb-stage img,
@@ -1120,7 +1093,7 @@ html.dark .assembly-image-pad img,
 html.dark .assembly-image-pad [data-nimg] {
   position: relative;
   z-index: 1;
-  mix-blend-mode: multiply;
+  mix-blend-mode: normal;
   filter: saturate(1.03) contrast(1.02) drop-shadow(0 8px 12px rgba(22, 22, 24, 0.14)) !important;
 }
 
@@ -1148,7 +1121,7 @@ html.dark .group.relative.overflow-hidden:hover {
 /* product detail sticky boxes and tabs */
 html.dark .sticky.top-0,
 html.dark .sticky.bottom-0 {
-  background: linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(31, 31, 34, 0.88)) !important;
+  background: #0a0a0b !important;
   border: 1px solid rgba(148, 163, 184, 0.16) !important;
   backdrop-filter: blur(18px);
 }
@@ -1188,11 +1161,7 @@ html.dark .container_sidebar .menu .active {
 
 /* bottom navigation active pill */
 html.dark .shadow_menu_bottom button[class*='bg-main/10'] {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.16),
-    rgba(255, 255, 255, 0.04)
-  ) !important;
+  background: #0f0f11 !important;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
 }
 
@@ -1231,12 +1200,7 @@ html.dark .bg-default-100 {
   background-color: rgba(51, 65, 85, 0.85) !important;
 }
 html.dark .animate-shimmer {
-  background-image: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.18),
-    transparent
-  ) !important;
+  background-image: #0f0f11 !important;
 }
 html.dark hr,
 html.dark .h-px,
@@ -1277,12 +1241,7 @@ html.dark .product-image-pad::before {
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: radial-gradient(
-    circle at 50% 36%,
-    rgba(255, 255, 255, 0.99),
-    rgba(244, 248, 255, 0.96) 58%,
-    rgba(226, 235, 250, 0.92) 100%
-  ) !important;
+  background: #0f0f11 !important;
   box-shadow:
     inset 0 0 0 1px rgba(22, 22, 24, 0.04),
     inset 0 -20px 44px rgba(255, 255, 255, 0.08),
@@ -1303,7 +1262,7 @@ html.dark .product-image-pad::after {
 }
 html.dark .product-image-pad img,
 html.dark .product-image-pad [data-nimg] {
-  mix-blend-mode: multiply;
+  mix-blend-mode: normal;
   filter: saturate(1.03) contrast(1.02) drop-shadow(0 14px 20px rgba(22, 22, 24, 0.14)) !important;
 }
 
@@ -1350,9 +1309,7 @@ html.dark [class*='from-blue-100'][class*='via-blue-50'][class*='to-purple-50']:
   pointer-events: none;
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-image: #0f0f11;
   background-size: 34px 34px;
   mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
 }
@@ -1386,12 +1343,7 @@ html.dark .container_page span:not(.text-white):not([class*='bg-gradient']) {
 /* Story/category circles should be dark-framed but image area still clean */
 html.dark a .rounded-full,
 html.dark span.rounded-full {
-  background: radial-gradient(
-    circle at 50% 40%,
-    rgba(255, 255, 255, 0.96),
-    rgba(238, 244, 255, 0.92) 62%,
-    rgba(210, 225, 252, 0.9)
-  ) !important;
+  background: #0f0f11 !important;
   box-shadow:
     0 16px 40px rgba(0, 0, 0, 0.28),
     inset 0 0 0 1px rgba(22, 22, 24, 0.06) !important;
@@ -1416,11 +1368,7 @@ html.dark
 /* Empty state grid overlay removed for Turbopack CSS parser safety. */
 html.dark .rounded-full.bg-blue-100,
 html.dark .rounded-full.bg-purple-100 {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.24),
-    rgba(255, 255, 255, 0.26)
-  ) !important;
+  background: #0f0f11 !important;
   box-shadow: 0 18px 45px rgba(255, 255, 255, 0.18) !important;
 }
 html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br h3,
@@ -1483,14 +1431,7 @@ html.dark .assembly-image-pad {
   border: 1px solid rgba(255, 255, 255, 0.16) !important;
 }
 html.dark .product-image-pad::before {
-  background:
-    radial-gradient(
-      circle at 50% 36%,
-      rgba(255, 255, 255, 0.99),
-      rgba(244, 248, 255, 0.96) 58%,
-      rgba(226, 235, 250, 0.92) 100%
-    ),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.05)) !important;
+  background: #0f0f11 !important;
 }
 
 /* Navigation arrows in dark */
@@ -1578,12 +1519,7 @@ html.dark .mag-header-shell {
   box-shadow: 0 18px 70px rgba(0, 0, 0, 0.34) !important;
 }
 html.dark .mag-header-mainbar {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.96),
-    rgba(73, 128, 255, 0.94) 44%,
-    rgba(255, 255, 255, 0.9)
-  ) !important;
+  background: #0f0f11 !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
     0 14px 38px rgba(255, 255, 255, 0.18) !important;
@@ -1713,12 +1649,7 @@ html.dark .single-blog-title {
   filter: drop-shadow(0 14px 30px rgba(255, 255, 255, 0.14));
 }
 html.dark .single-blog-cover {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.3),
-    rgba(255, 255, 255, 0.24),
-    rgba(255, 255, 255, 0.18)
-  ) !important;
+  background: #0f0f11 !important;
   border: 1px solid rgba(255, 255, 255, 0.14) !important;
 }
 html.dark .single-blog-cover img {
@@ -1732,8 +1663,8 @@ html.dark .product-carousel-section {
   border-radius: 1.5rem;
 }
 html.dark .featured-product-showcase {
-  background: linear-gradient(135deg, rgba(7, 12, 24, 0.98), rgba(22, 22, 24, 0.96)) !important;
-  border-color: rgba(125, 167, 255, 0.26) !important;
+  background: #0a0a0b !important;
+  border-color: rgba(148, 163, 184, 0.12) !important;
 }
 html.dark .featured-product-showcase h6,
 html.dark .home-special-section h6,
@@ -1828,13 +1759,8 @@ html.dark .product-image-stage,
 html.dark .product-image-pad,
 html.dark .product-thumb-stage,
 html.dark .assembly-image-pad {
-  background: radial-gradient(
-    circle at 50% 38%,
-    rgba(255, 255, 255, 0.99),
-    rgba(241, 246, 255, 0.97) 58%,
-    rgba(219, 232, 253, 0.94) 100%
-  ) !important;
-  border-color: rgba(255, 255, 255, 0.18) !important;
+  background: #0f0f11 !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
   box-shadow:
     inset 0 0 0 1px rgba(22, 22, 24, 0.05),
     inset 0 -24px 58px rgba(255, 255, 255, 0.1),
@@ -1848,7 +1774,7 @@ html.dark .product-image-stage [data-nimg],
 html.dark .product-image-pad [data-nimg],
 html.dark .product-thumb-stage [data-nimg],
 html.dark .assembly-image-pad [data-nimg] {
-  mix-blend-mode: multiply !important;
+  mix-blend-mode: normal !important;
   filter: saturate(1.03) contrast(1.03) drop-shadow(0 18px 20px rgba(22, 22, 24, 0.16)) !important;
 }
 html.dark .product-gallery-shell {
@@ -1920,12 +1846,7 @@ html.dark .keen-slider__slide:hover {
 
 /* ── CardProduct in dark ── */
 html.dark .product-card-image-pad {
-  background: radial-gradient(
-    circle at 50% 44%,
-    rgba(255, 255, 255, 0.96) 0 34%,
-    rgba(238, 244, 255, 0.94) 54%,
-    rgba(209, 222, 245, 0.9) 100%
-  ) !important;
+  background: #0f0f11 !important;
 }
 
 /* ── Carousel section title bar ── */
@@ -1941,8 +1862,8 @@ html.dark .product-carousel-section h6 {
 
 /* ── Featured carousel dark polish ── */
 html.dark .featured-product-showcase {
-  background: linear-gradient(145deg, rgba(22, 22, 24, 0.96), rgba(31, 31, 34, 0.92)) !important;
-  border-color: rgba(255, 255, 255, 0.18) !important;
+  background: #0a0a0b !important;
+  border-color: rgba(148, 163, 184, 0.12) !important;
 }
 html.dark .featured-product-showcase .swiper-slide > div > div {
   background: rgba(22, 22, 24, 0.72) !important;
@@ -2025,12 +1946,7 @@ html.dark a:not(.footer-trust-logo):hover img {
 
 /* ── Skeleton shimmer in dark mode ── */
 html.dark .animate-pulse {
-  background: linear-gradient(
-    110deg,
-    rgba(30, 41, 59, 0.6) 8%,
-    rgba(255, 255, 255, 0.08) 18%,
-    rgba(30, 41, 59, 0.6) 33%
-  ) !important;
+  background: #0f0f11 !important;
   background-size: 200% 100% !important;
   animation: shimmer 1.5s linear infinite !important;
 }
@@ -2199,14 +2115,7 @@ html.dark .banner-card:hover {
 
 /* ── Banner flash glow in dark mode ── */
 html.dark .banner-flash {
-  background: linear-gradient(
-    105deg,
-    transparent 40%,
-    rgba(255, 255, 255, 0) 45%,
-    rgba(255, 255, 255, 0.35) 50%,
-    rgba(255, 255, 255, 0) 55%,
-    transparent 60%
-  ) !important;
+  background: #0f0f11 !important;
   background-size: 250% 100% !important;
 }
 
@@ -2827,12 +2736,7 @@ html.dark .pagination-btn[class*='bg-main'] {
 
 /* ── Product image area in dark ── */
 html.dark .product-image-area {
-  background: radial-gradient(
-    circle at 50% 44%,
-    rgba(255, 255, 255, 0.96) 0 34%,
-    rgba(238, 244, 255, 0.94) 54%,
-    rgba(209, 222, 245, 0.9) 100%
-  ) !important;
+  background: #0f0f11 !important;
   border-radius: 1rem !important;
 }
 
@@ -3017,11 +2921,7 @@ html.dark .container_des h4 {
 
 /* ── Article type badge in dark ── */
 html.dark .from-blue-600.to-purple-600.text-white {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.85),
-    rgba(255, 255, 255, 0.85)
-  ) !important;
+  background: #0f0f11 !important;
   color: #fff !important;
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25) !important;
 }
@@ -3255,7 +3155,7 @@ html.dark .single-blog-article .to-gray-100 {
   right: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  background: #0f0f11;
   transition: right 0.6s ease;
 }
 .asm-header-btn:hover::before {
@@ -3271,33 +3171,35 @@ html.dark .single-blog-article .to-gray-100 {
   transform: translateY(0) scale(0.98);
 }
 .asm-header-btn--compact {
-  padding: 4px 9px 4px 7px;
-  border-radius: 10px;
+  padding: 2px 8px;
+  border-radius: 9px;
   gap: 5px;
+  transform: scale(0.8);
+  transform-origin: center right;
 }
 .asm-header-btn--compact .asm-header-btn__icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
 }
 .asm-header-btn--compact .asm-header-btn__icon svg {
-  width: 15px;
-  height: 15px;
+  width: 13px;
+  height: 13px;
 }
 .asm-header-btn--compact .asm-header-btn__title {
-  font-size: 11.5px;
+  font-size: 10.5px;
 }
 .asm-header-btn--compact .asm-header-btn__subtitle {
-  font-size: 8.5px;
+  font-size: 8px;
 }
 .asm-header-btn--compact .asm-header-btn__arrow {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
+  width: 17px;
+  height: 17px;
+  border-radius: 5px;
 }
 .asm-header-btn--compact .asm-header-btn__arrow svg {
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
 }
 .asm-header-btn--active {
   background: linear-gradient(135deg, #059669 0%, #10b981 100%);
@@ -3486,7 +3388,7 @@ html.dark .single-blog-prose.container_des h3 {
   margin: 2rem 0;
   border-right: 0;
   border-radius: 1.25rem;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.08), rgba(255, 255, 255, 0.08));
+  background: #0f0f11;
   padding: 1.25rem 1.5rem;
   color: rgb(51 65 85);
 }
@@ -3503,7 +3405,7 @@ html.dark .single-blog-prose.container_des h3 {
 }
 
 html.dark .single-blog-prose.container_des blockquote {
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.12), rgba(255, 255, 255, 0.12));
+  background: #0f0f11;
   color: rgb(203 213 225);
 }
 
@@ -3711,4 +3613,73 @@ html.dark .single-blog-prose.container_des td {
   .mag-bento-compact {
     min-height: 260px !important;
   }
+}
+
+/* =========================================================
+   V7.0 — NUCLEAR DARK MODE: pitch-black, zero glare
+   Authoritative final pass. No white/blue background halos.
+   Product image pads become uniform dark; images render with
+   normal blend so photos stay visible on the dark surface.
+   ========================================================= */
+
+/* Image studio pads → uniform dark, no white sheen */
+html.dark .product-image-stage,
+html.dark .product-image-pad,
+html.dark .product-card-image-pad,
+html.dark .product-thumb-stage,
+html.dark .assembly-image-pad,
+html.dark .product-image-area,
+html.dark .product-gallery-shell {
+  background: #101012 !important;
+  border-color: rgba(148, 163, 184, 0.1) !important;
+  box-shadow: none !important;
+}
+
+/* Kill decorative white/blue sheen overlays on image pads */
+html.dark .product-image-stage::before,
+html.dark .product-image-stage::after,
+html.dark .product-card-image-pad::before,
+html.dark .product-card-image-pad::after,
+html.dark .product-card-image-pad:hover::before,
+html.dark .product-image-pad::before,
+html.dark .product-image-pad::after,
+html.dark .product-thumb-stage::before,
+html.dark .assembly-image-pad::before {
+  background: none !important;
+  box-shadow: none !important;
+  opacity: 0 !important;
+  content: none !important;
+}
+
+/* Product images: normal blend so they stay visible on dark */
+html.dark .product-image-stage img,
+html.dark .product-image-stage .iiz,
+html.dark .product-image-stage .iiz__img,
+html.dark .product-image-pad img,
+html.dark .product-image-pad [data-nimg],
+html.dark .product-card-image-pad img,
+html.dark .product-card-image-pad [data-nimg],
+html.dark .product-thumb-stage img,
+html.dark .assembly-image-pad img,
+html.dark .assembly-image-pad [data-nimg] {
+  mix-blend-mode: normal !important;
+}
+
+/* Named sections → solid pitch dark, no gradient halo */
+html.dark footer,
+html.dark .featured-product-showcase,
+html.dark .home-special-section,
+html.dark .product-carousel-section,
+html.dark .sticky.top-0,
+html.dark .sticky.bottom-0 {
+  background: #0a0a0b !important;
+}
+
+/* Neutralize any leftover atmosphere pseudo-halos */
+html.dark .category-dark-shell::before,
+html.dark .home-special-section::before,
+html.dark .featured-product-showcase::before {
+  background: none !important;
+  opacity: 0 !important;
+  content: none !important;
 }

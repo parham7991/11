@@ -1493,3 +1493,34 @@ Darkhast: "pishnahad hay dige ham rabet karbari behtar ham smart tar" (بار پ
 
 **ریسک:** کم. چک شد که `asm-header-btn--compact` واقعاً در `HeaderTop.tsx` (خط ۳۹) استفاده می‌شود.
 **تست پیشنهادی:** دارک/لایت صفحهٔ اصلی + دسته + صفحهٔ محصول؛ چک هم‌ترازی فوتر کارت‌ها و گوشه‌های تصویر.
+
+---
+
+# ☢️ V7.0 — دارک‌مود Pitch-Black (Nuclear) + دکمهٔ اسمبل کوچک + کارت
+
+بازخورد: «هنوز مشکلات جدی دارد». سه اصلاح قاطع اعمال شد:
+
+## ۱) حذف کامل هاله‌های دارک‌مود (`globals.css`)
+
+- **اسکریپت:** همهٔ لایه‌های `radial-gradient`/`linear-gradient` با `rgba(255,255,255,…)` یا `rgba(56,107,249,…)` که به‌عنوان **background** بودند → به رنگِ solidِ تیره (`#0f0f11` برای پدها) تبدیل شدند.
+- **بلوک‌های نام‌برده → سالید مشکی یکدست:**
+  - `html.dark .sticky.top-0` / `.sticky.bottom-0` → `#0a0a0b`
+  - `html.dark .featured-product-showcase` (هر دو بلوک) → `#0a0a0b`
+  - `html.dark footer` → `#0a0a0b`
+- **blend-mode:** همهٔ `mix-blend-mode: multiply` در دارک → `normal` (تصویر روی زمینهٔ تیره واضح می‌ماند، بدون سیاه‌شدن).
+- **بلوک نهاییِ V7.0 (authoritative override) در انتهای فایل:** پدهای تصویر (`product-image-stage/pad/card-image-pad/thumb-stage/assembly-image-pad/image-area/gallery-shell`) → `#101012`، همهٔ `::before/::after`های شاین سفید حذف (`background:none; opacity:0; content:none`)، تصاویر `blend:normal`، و سکشن‌های نام‌برده `#0a0a0b`. این لایه با `!important` و specificityِ برابر در آخرِ فایل، هر باقی‌ماندهٔ احتمالی را خنثی می‌کند.
+- **نتیجه:** هیچ `radial/linear`ِ سفید یا آبی به‌عنوان background در دارک نماند (grep=۰). brace متوازن (۶۱۸/۶۱۸)، prettier سالم.
+- **نگه‌داشته‌شده (عمدی):** چند `rgba(255,255,255,0.08–0.15)` روی **هاور دکمه/چیپ «مشاهده همه»/`::selection`** — این‌ها افوردنسِ استاندارد UIِ تیره‌اند، نه هالهٔ پس‌زمینه؛ حذفشان تعامل را نامرئی می‌کرد.
+- ⚠️ **تریداف:** چون پدها دیگر سفید نیستند و blend=normal شد، عکس محصولی که خودش پس‌زمینهٔ سفید (JPG) دارد، همان مربعِ سفیدِ عکس را نشان می‌دهد (این خودِ عکس است). طبق درخواستِ «pitch black»، پدِ استودیوی سفید حذف شد.
+
+## ۲) کوچک‌سازی شدید دکمهٔ اسمبل (`.asm-header-btn--compact`)
+
+- `padding: 2px 8px` · `transform: scale(0.8)` (origin: center right برای RTL) · آیکن ۲۲px · فلش ۱۷px · تیتر `10.5px` · زیرنویس `8px`.
+- هدف: ارتفاع مؤثر دکمه هم‌تراز دکمهٔ تلگرام (`h-10`) در `HeaderTop` و بدون به‌هم‌ریختن نوار.
+
+## ۳) یکدستی کارت (`CardProduct.tsx`)
+
+- `rounded-xl` مستقیم روی `product-image-pad` (هم `Image` هم fallback `span`) اضافه شد تا nested border دقیقاً روی رادیوس کارت بنشیند.
+- `product-name` حالا `min-h-[48px]` (کنار `h-[52px] lg:h-[64px]`) دارد → ارتفاع قطعی، فوترها تراز.
+
+**تست:** دارک‌مود → صفحهٔ اصلی/دسته/محصول باید کاملاً تیرهٔ یکدست باشد بدون لکهٔ نوری؛ دکمهٔ اسمبل کوچک؛ گوشه‌ها و فوتر کارت‌ها منظم.

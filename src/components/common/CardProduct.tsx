@@ -38,7 +38,7 @@ const CardProduct = ({
 
   return (
     <div
-      className={`group relative flex h-full flex-1 flex-col justify-between overflow-hidden border-gray-200 shadow ${className}`}
+      className={`group relative flex h-full flex-1 flex-col justify-between overflow-hidden rounded-xl border-gray-200 shadow ${className}`}
     >
       <div
         className={`absolute left-2 right-2 top-2 z-[5] flex items-start justify-between ${classAction}`}

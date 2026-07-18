@@ -690,7 +690,7 @@ html.dark .container_des pre {
 }
 html.dark footer {
   background:
-    radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.18), transparent 28rem), #0a0a0b !important;
+    radial-gradient(circle at 20% 0%, rgba(56, 107, 249, 0.05), transparent 28rem), #0a0a0b !important;
 }
 /* footer trust logos - no bg, white logos on dark */
 html.dark .footer-trust-logo {
@@ -945,7 +945,7 @@ html.dark .container_des [data-text-highlight='important'],
 html.dark .container_des [data-text-highlight='warning'],
 html.dark .container_des [data-text-highlight='star'] {
   background:
-    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.14), transparent 14rem),
+    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.05), transparent 14rem),
     linear-gradient(135deg, rgba(22, 33, 55, 0.96), rgba(11, 18, 32, 0.94)) !important;
   color: #d7e2f3 !important;
   border: 1px solid rgba(255, 255, 255, 0.18) !important;
@@ -972,7 +972,7 @@ html.dark [role='menu'],
 html.dark .custom_sidebar,
 html.dark .custom_sidebar_category {
   background:
-    radial-gradient(circle at 8% 0%, rgba(255, 255, 255, 0.16), transparent 16rem),
+    radial-gradient(circle at 8% 0%, rgba(56, 107, 249, 0.05), transparent 16rem),
     linear-gradient(145deg, rgba(8, 13, 26, 0.98), rgba(22, 22, 24, 0.96)) !important;
   border: 1px solid rgba(148, 163, 184, 0.18) !important;
   box-shadow: 0 28px 80px rgba(0, 0, 0, 0.52) !important;
@@ -1009,7 +1009,7 @@ html.dark [data-slot='input-wrapper']:focus-within {
    not left as random white blocks. */
 html.dark .product-gallery-shell {
   background:
-    radial-gradient(circle at 10% 0%, rgba(255, 255, 255, 0.12), transparent 18rem),
+    radial-gradient(circle at 10% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
     linear-gradient(145deg, rgba(22, 22, 24, 0.92), rgba(8, 13, 26, 0.94)) !important;
   border: 1px solid rgba(148, 163, 184, 0.18) !important;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42) !important;
@@ -1039,7 +1039,7 @@ html.dark .product-thumb-stage::before {
       transparent 70%,
       rgba(255, 255, 255, 0.1)
     ),
-    radial-gradient(circle at 50% 85%, rgba(255, 255, 255, 0.12), transparent 44%);
+    radial-gradient(circle at 50% 85%, rgba(56, 107, 249, 0.05), transparent 44%);
   opacity: 0.85;
 }
 /* حذف لایهٔ سفید (sheen) روی محصول اصلی در حالت تاریک */
@@ -1071,10 +1071,10 @@ html.dark .product-image-stage img {
 html.dark .product-card-image-pad,
 html.dark .product-card-image-pad > span,
 html.dark .product-card-image-pad > div[class*='w-'] {
-  border-radius: 1.25rem;
+  border-radius: 0.625rem;
 }
 html.dark .product-card-image-pad::before {
-  border-radius: 1.25rem;
+  border-radius: 0.625rem;
   inset: 0.35rem;
   background: radial-gradient(
     circle at 50% 36%,
@@ -1134,7 +1134,7 @@ html.dark .rounded-xl.shadow,
 html.dark .rounded-lg.shadow,
 html.dark .shadow_pro {
   background:
-    radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.09), transparent 14rem),
+    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.05), transparent 14rem),
     linear-gradient(145deg, rgba(17, 27, 46, 0.94), rgba(9, 14, 28, 0.94)) !important;
   border: 1px solid rgba(148, 163, 184, 0.16) !important;
   box-shadow:
@@ -1154,7 +1154,7 @@ html.dark .group.relative.overflow-hidden:hover {
 html.dark .sticky.top-0,
 html.dark .sticky.bottom-0 {
   background:
-    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.12), transparent 16rem),
+    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.05), transparent 16rem),
     linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(31, 31, 34, 0.88)) !important;
   border: 1px solid rgba(148, 163, 184, 0.16) !important;
   backdrop-filter: blur(18px);
@@ -1167,7 +1167,7 @@ html.dark .sticky.top-0 button[class*='bg-blue-600'] {
 html.dark [data-tab].rounded-lg,
 html.dark .scroll-mt-28.rounded-lg {
   background:
-    radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.08), transparent 18rem),
+    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
     linear-gradient(145deg, rgba(13, 20, 35, 0.94), rgba(8, 13, 26, 0.94)) !important;
   border: 1px solid rgba(148, 163, 184, 0.16) !important;
 }
@@ -1184,7 +1184,7 @@ html.dark .container_sidebar .link {
 }
 html.dark .container_sidebar {
   background:
-    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.12), transparent 18rem),
+    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
     linear-gradient(145deg, rgba(17, 27, 46, 0.94), rgba(8, 13, 26, 0.94)) !important;
 }
 html.dark .container_sidebar .menu .link:hover,
@@ -1279,7 +1279,7 @@ html.dark .product-image-pad {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  border-radius: 1.25rem;
+  border-radius: 0.75rem;
 }
 html.dark .product-image-pad::before {
   content: '';
@@ -1333,8 +1333,8 @@ html.dark [class*='from-blue-50'][class*='to-purple-50'],
 html.dark [class*='from-amber-50'][class*='to-orange-100'],
 html.dark [class*='from-slate-100'][class*='to-white'] {
   background-image:
-    radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 0.16), transparent 18rem),
-    radial-gradient(circle at 100% 35%, rgba(255, 255, 255, 0.13), transparent 20rem),
+    radial-gradient(circle at 12% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
+    radial-gradient(circle at 100% 35%, rgba(56, 107, 249, 0.05), transparent 20rem),
     linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(7, 12, 24, 0.96)) !important;
   color: var(--offl-text-body) !important;
   border-color: var(--offl-hairline) !important;
@@ -1344,8 +1344,8 @@ html.dark [class*='from-slate-100'][class*='to-white'] {
 html.dark .relative.mx-auto.mb-8.w-\[99\%\],
 html.dark [class*='from-blue-100'][class*='via-blue-50'][class*='to-purple-50'] {
   background:
-    radial-gradient(circle at 8% 10%, rgba(255, 255, 255, 0.18), transparent 26rem),
-    radial-gradient(circle at 88% 18%, rgba(255, 255, 255, 0.16), transparent 24rem),
+    radial-gradient(circle at 8% 10%, rgba(56, 107, 249, 0.05), transparent 26rem),
+    radial-gradient(circle at 88% 18%, rgba(56, 107, 249, 0.05), transparent 24rem),
     linear-gradient(
       135deg,
       rgba(10, 18, 34, 0.98),
@@ -1379,7 +1379,7 @@ html.dark .container_page.mt-7,
 html.dark .container_page.mt-6.rounded-xl,
 html.dark .container_page.category-dark-shell {
   background:
-    radial-gradient(circle at 95% 0%, rgba(255, 255, 255, 0.1), transparent 20rem),
+    radial-gradient(circle at 95% 0%, rgba(56, 107, 249, 0.05), transparent 20rem),
     linear-gradient(145deg, rgba(11, 18, 32, 0.66), rgba(7, 12, 24, 0.48)) !important;
   border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 1.5rem;
@@ -1423,8 +1423,8 @@ html.dark
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.16), transparent 22rem),
-    radial-gradient(circle at 100% 80%, rgba(255, 255, 255, 0.12), transparent 18rem),
+    radial-gradient(circle at 50% 0%, rgba(56, 107, 249, 0.05), transparent 22rem),
+    radial-gradient(circle at 100% 80%, rgba(56, 107, 249, 0.05), transparent 18rem),
     linear-gradient(145deg, rgba(18, 27, 45, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border: 1px solid rgba(148, 163, 184, 0.18) !important;
   box-shadow:
@@ -1435,7 +1435,7 @@ html.dark
 html.dark .rounded-full.bg-blue-100,
 html.dark .rounded-full.bg-purple-100 {
   background:
-    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.28), transparent 34%),
+    radial-gradient(circle at 35% 30%, rgba(56, 107, 249, 0.05), transparent 34%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.26)) !important;
   box-shadow: 0 18px 45px rgba(255, 255, 255, 0.18) !important;
 }
@@ -1472,7 +1472,7 @@ html.dark .line-clamp-4 {
 html.dark article .bg-gradient-to-br.from-white,
 html.dark article [class*='from-white'][class*='via-blue'] {
   background:
-    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.12), transparent 18rem),
+    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
     linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(8, 13, 26, 0.94)) !important;
 }
 html.dark article .text-gray-700,
@@ -1581,9 +1581,9 @@ html.dark .featured-product-showcase::before {
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(circle at 10% 0%, rgba(255, 255, 255, 0.1), transparent 22rem),
-    radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.09), transparent 24rem);
-  opacity: 0.9;
+    radial-gradient(circle at 10% 0%, rgba(56, 107, 249, 0.05), transparent 22rem),
+    radial-gradient(circle at 90% 10%, rgba(56, 107, 249, 0.05), transparent 24rem);
+  opacity: 0.6;
 }
 html.dark .category-dark-shell > *,
 html.dark .home-special-section > *,
@@ -1611,7 +1611,7 @@ html.dark .mag-header-mainbar {
 }
 html.dark .mag-short-ticker {
   background:
-    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.09), transparent 10rem),
+    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.05), transparent 10rem),
     linear-gradient(135deg, rgba(0, 0, 0, 0.92), rgba(22, 22, 24, 0.92)) !important;
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow:
@@ -1652,7 +1652,7 @@ html.dark .mag-article-card,
 html.dark .mag-featured-card,
 html.dark .short-news-card {
   background:
-    radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.1), transparent 16rem),
+    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.05), transparent 16rem),
     linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border-color: var(--dm-stroke) !important;
   box-shadow:
@@ -1700,8 +1700,8 @@ html.dark .mag-read-more span {
 html.dark .short-news-hero,
 html.dark .single-blog-summary {
   background:
-    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.16), transparent 18rem),
-    radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.1), transparent 18rem),
+    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
+    radial-gradient(circle at 100% 100%, rgba(56, 107, 249, 0.05), transparent 18rem),
     linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border: 1px solid var(--dm-stroke) !important;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.36) !important;
@@ -1761,8 +1761,8 @@ html.dark .product-carousel-section {
 }
 html.dark .featured-product-showcase {
   background:
-    radial-gradient(circle at 10% 5%, rgba(255, 255, 255, 0.22), transparent 26rem),
-    radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0.18), transparent 24rem),
+    radial-gradient(circle at 10% 5%, rgba(56, 107, 249, 0.05), transparent 26rem),
+    radial-gradient(circle at 90% 20%, rgba(56, 107, 249, 0.05), transparent 24rem),
     linear-gradient(135deg, rgba(7, 12, 24, 0.98), rgba(22, 22, 24, 0.96)) !important;
   border-color: rgba(125, 167, 255, 0.26) !important;
 }
@@ -1784,7 +1784,7 @@ html.dark .category-filter-panel,
 html.dark .category-sortbar,
 html.dark .category-mobile-filterbar {
   background:
-    radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.1), transparent 18rem),
+    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
     linear-gradient(145deg, rgba(13, 20, 35, 0.94), rgba(8, 13, 26, 0.94)) !important;
   border-color: var(--dm-stroke) !important;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28) !important;
@@ -1845,7 +1845,7 @@ html.dark form[data-question-form] textarea {
 }
 html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br {
   background:
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.16), transparent 22rem),
+    radial-gradient(circle at 50% 0%, rgba(56, 107, 249, 0.05), transparent 22rem),
     linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border-color: var(--dm-stroke) !important;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34) !important;
@@ -1888,7 +1888,7 @@ html.dark .assembly-image-pad [data-nimg] {
 }
 html.dark .product-gallery-shell {
   background:
-    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.14), transparent 18rem),
+    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
     linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(7, 12, 24, 0.94)) !important;
 }
 
@@ -1979,8 +1979,8 @@ html.dark .product-carousel-section h6 {
 /* ── Featured carousel dark polish ── */
 html.dark .featured-product-showcase {
   background:
-    radial-gradient(circle at 12% 8%, rgba(255, 255, 255, 0.22), transparent 30rem),
-    radial-gradient(circle at 88% 18%, rgba(255, 255, 255, 0.16), transparent 28rem),
+    radial-gradient(circle at 12% 8%, rgba(56, 107, 249, 0.05), transparent 30rem),
+    radial-gradient(circle at 88% 18%, rgba(56, 107, 249, 0.05), transparent 28rem),
     linear-gradient(145deg, rgba(22, 22, 24, 0.96), rgba(31, 31, 34, 0.92)) !important;
   border-color: rgba(255, 255, 255, 0.18) !important;
 }
@@ -2083,7 +2083,7 @@ html.dark .animate-pulse {
 /* ── Category section dark ── */
 html.dark .category-dark-shell {
   background:
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.1), transparent 24rem),
+    radial-gradient(circle at 50% 0%, rgba(56, 107, 249, 0.05), transparent 24rem),
     rgba(22, 22, 24, 0.6) !important;
   border: 1px solid rgba(148, 163, 184, 0.08);
   backdrop-filter: blur(8px);
@@ -2122,7 +2122,7 @@ html.dark *:not(.animate-pulse) {
 /* ── Top slider dark polish ── */
 html.dark .bg-\[\#F3F6FB\] {
   background:
-    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.12), transparent 22rem),
+    radial-gradient(circle at 80% 20%, rgba(56, 107, 249, 0.05), transparent 22rem),
     linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(7, 11, 22, 0.98)) !important;
 }
 
@@ -2191,8 +2191,8 @@ html.dark .shadow_menu_bottom {
 html.dark .special-section,
 html.dark [class*='special'] {
   background:
-    radial-gradient(circle at 15% 10%, rgba(255, 255, 255, 0.14), transparent 22rem),
-    radial-gradient(circle at 85% 80%, rgba(255, 255, 255, 0.1), transparent 20rem),
+    radial-gradient(circle at 15% 10%, rgba(56, 107, 249, 0.05), transparent 22rem),
+    radial-gradient(circle at 85% 80%, rgba(56, 107, 249, 0.05), transparent 20rem),
     rgba(22, 22, 24, 0.7) !important;
   border-color: rgba(148, 163, 184, 0.1) !important;
 }
@@ -2411,7 +2411,7 @@ html.dark .category-dark-shell {
 html.dark .category-filter-panel,
 html.dark .custom_sidebar.container_filter {
   background:
-    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.1), transparent 14rem),
+    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.05), transparent 14rem),
     linear-gradient(160deg, rgba(15, 22, 40, 0.97), rgba(8, 12, 24, 0.98)) !important;
   border: 1px solid rgba(148, 163, 184, 0.14) !important;
   border-radius: 1rem !important;

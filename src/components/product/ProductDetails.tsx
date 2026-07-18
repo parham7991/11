@@ -98,7 +98,7 @@ const ProductDetails = ({ product }: Props) => {
   return (
     <div className="mt-8">
       {/* Sticky Tab headers */}
-      <div className="sticky top-0 z-40 w-full rounded-lg bg-gradient-to-b from-gray-50 to-white py-3 shadow-md dark:from-[#0B0F19] dark:to-[#0B0F19]">
+      <div className="sticky top-0 z-40 w-full rounded-lg bg-gradient-to-b from-gray-50 to-white py-3 shadow-md">
         <div className="container_page">
           <div className="relative flex w-full gap-2 overflow-x-auto scrollbar-hide">
             {tabs.map((tab) => (

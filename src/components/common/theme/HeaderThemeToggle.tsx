@@ -12,7 +12,7 @@ const HeaderThemeToggle = () => {
       onClick={toggleTheme}
       aria-label={resolvedTheme === 'dark' ? 'روشن کردن' : 'تاریک کردن'}
       title={resolvedTheme === 'dark' ? 'حالت روشن' : 'حالت تاریک'}
-      className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white transition-all duration-300 hover:border-blue-400 hover:bg-blue-50 hover:shadow-md active:scale-90 dark:border-white/10 dark:bg-white/5 dark:hover:border-blue-400/50 dark:hover:bg-blue-500/10 dark:hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] lg:h-10 lg:w-10"
+      className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white transition-all duration-300 hover:border-blue-400 hover:bg-blue-50 hover:shadow-md active:scale-90 lg:h-10 lg:w-10 dark:border-white/10 dark:bg-white/5 dark:hover:border-blue-400/50 dark:hover:bg-blue-500/10"
     >
       {/* Sun icon - shown in dark mode */}
       <svg

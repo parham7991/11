@@ -13,8 +13,6 @@
   --asm-border: #e6e9f2;
   --asm-green: #059669;
   --asm-glow: rgba(56, 107, 249, 0.4);
-  --asm-cyan: #06b6d4;
-  --asm-track: #e6e9f2;
   max-width: 1080px;
   margin: 0 auto;
   padding: 22px 16px 90px;
@@ -30,8 +28,6 @@ html.dark .asm {
   --asm-muted: #93a1ba;
   --asm-border: rgba(148, 163, 184, 0.16);
   --asm-green: #34d399;
-  --asm-cyan: #22d3ee;
-  --asm-track: rgba(148, 163, 184, 0.22);
 }
 .asm__b {
   font-family: 'bold', Tahoma, sans-serif;
@@ -128,34 +124,11 @@ html.dark .asm {
   color: #fff;
   background: linear-gradient(135deg, var(--asm-primary), var(--asm-primary-2));
   border-color: transparent;
-  box-shadow:
-    0 6px 16px var(--asm-glow),
-    0 0 18px var(--asm-glow),
-    0 0 2px rgba(6, 182, 212, 0.6) inset;
-  animation: asm-step-pulse 2.4s ease-in-out infinite;
-}
-@keyframes asm-step-pulse {
-  0%,
-  100% {
-    box-shadow:
-      0 6px 16px var(--asm-glow),
-      0 0 14px var(--asm-glow);
-  }
-  50% {
-    box-shadow:
-      0 6px 20px var(--asm-glow),
-      0 0 26px rgba(6, 182, 212, 0.55);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .asm__step--active {
-    animation: none;
-  }
+  box-shadow: 0 6px 16px var(--asm-glow);
 }
 .asm__step--done {
   color: var(--asm-green);
   border-color: var(--asm-green);
-  box-shadow: 0 0 12px rgba(52, 211, 153, 0.25);
 }
 .asm__step-num {
   display: inline-flex;
@@ -293,146 +266,8 @@ html.dark .asm {
 }
 .asm__range {
   width: 100%;
-  height: 8px;
-  direction: rtl;
-  -webkit-appearance: none;
-  appearance: none;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--asm-primary), var(--asm-cyan));
-  box-shadow: 0 0 12px var(--asm-glow);
-  outline: none;
-  cursor: pointer;
-}
-.asm__range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #fff;
-  border: 3px solid var(--asm-primary);
-  box-shadow:
-    0 0 10px var(--asm-glow),
-    0 0 18px rgba(6, 182, 212, 0.55);
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
-}
-.asm__range::-webkit-slider-thumb:hover {
-  transform: scale(1.15);
-  box-shadow:
-    0 0 14px var(--asm-glow),
-    0 0 26px rgba(6, 182, 212, 0.7);
-}
-.asm__range::-moz-range-thumb {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #fff;
-  border: 3px solid var(--asm-primary);
-  box-shadow:
-    0 0 10px var(--asm-glow),
-    0 0 18px rgba(6, 182, 212, 0.55);
-}
-.asm__range::-moz-range-track {
-  height: 8px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--asm-primary), var(--asm-cyan));
-}
-
-/* ───────── گیج نئونی (RadialGauge) ───────── */
-.aw-gauge {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.aw-gauge__svg {
-  transform: rotate(0deg);
-}
-.aw-gauge__progress {
-  transition: stroke-dasharray 0.9s cubic-bezier(0.34, 1.2, 0.44, 1);
-}
-.aw-gauge__center {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-}
-.aw-gauge__value {
-  font-family: 'black', Tahoma, sans-serif;
-  font-size: 26px;
-  line-height: 1;
-  display: inline-flex;
-  align-items: baseline;
-}
-.aw-gauge__pct {
-  font-family: 'bold', Tahoma, sans-serif;
-  font-size: 13px;
-  margin-inline-start: 2px;
-}
-.aw-gauge__sub {
-  font-family: 'medium', Tahoma, sans-serif;
-  font-size: 10.5px;
-  color: var(--asm-muted);
-}
-
-/* کارت امتیاز ارزش خرید */
-.asm__value-score {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 18px 20px;
-  border-radius: 20px;
-  border: 1px solid var(--asm-border);
-  background: linear-gradient(135deg, var(--asm-surface), var(--asm-bg));
-  margin-bottom: 18px;
-  position: relative;
-  overflow: hidden;
-}
-.asm__value-score::before {
-  content: '';
-  position: absolute;
-  inset-block: 0;
-  inset-inline-end: -30px;
-  width: 160px;
-  background: radial-gradient(circle, var(--asm-glow), transparent 70%);
-  opacity: 0.5;
-  pointer-events: none;
-}
-.asm__value-score-body {
-  position: relative;
-  z-index: 1;
-}
-.asm__value-score-title {
-  font-family: 'black', Tahoma, sans-serif;
-  font-size: 16px;
-  margin-bottom: 4px;
-}
-.asm__value-score-desc {
-  font-size: 12px;
-  color: var(--asm-muted);
-  line-height: 1.8;
-  max-width: 420px;
-}
-.asm__value-score-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-}
-.asm__value-score-tag {
-  font-family: 'bold', Tahoma, sans-serif;
-  font-size: 11px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--asm-surface-2);
-  border: 1px solid var(--asm-border);
-  color: var(--asm-text);
+  accent-color: var(--asm-primary);
+  height: 6px;
 }
 .asm__range-labels {
   display: flex;

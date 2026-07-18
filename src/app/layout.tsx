@@ -5,7 +5,6 @@ import { SessionProvider } from '@/lib/auth/SessionProvider';
 import Fetcher from '@/lib/auth/Fetcher';
 import Script from 'next/script';
 import AiChatMount from '@/components/ai-chat/AiChatMount';
-import SearchCommandPalette from '@/components/common/header/SearchCommandPalette';
 import { getAiChatConfig } from '@/lib/ai-chat/config';
 
 export const metadata: Metadata = {
@@ -53,7 +52,7 @@ export default async function RootLayout({
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <body>
         <Script id="theme-init" strategy="beforeInteractive" type="text/javascript">
-          {`(function(){try{var key='offland-theme-mode';var mode=localStorage.getItem(key)||'dark';var systemDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;var isDark=mode==='dark'||(mode==='system'&&systemDark);var root=document.documentElement;root.classList.toggle('dark',isDark);root.dataset.theme=isDark?'dark':'light';root.dataset.themeMode=mode;root.style.colorScheme=isDark?'dark':'light';}catch(e){}})();`}
+          {`(function(){try{var key='offland-theme-mode';var mode=localStorage.getItem(key)||'system';var systemDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;var isDark=mode==='dark'||(mode==='system'&&systemDark);var root=document.documentElement;root.classList.toggle('dark',isDark);root.dataset.theme=isDark?'dark':'light';root.dataset.themeMode=mode;root.style.colorScheme=isDark?'dark':'light';}catch(e){}})();`}
         </Script>
         <Script id="gtag-init" strategy="afterInteractive" type="text/javascript">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -67,8 +66,6 @@ export default async function RootLayout({
             <Fetcher>{children}</Fetcher>
             {/* دستیار هوشمند آفلند (ویجت شناور) */}
             <AiChatMount enabled={aiChatEnabled} position="right" />
-            {/* پالت جستجوی سراسری (Ctrl/Cmd + K) */}
-            <SearchCommandPalette />
           </GlobalContextProvider>
         </SessionProvider>
       </body>

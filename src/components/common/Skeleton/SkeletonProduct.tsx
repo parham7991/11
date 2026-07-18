@@ -3,7 +3,7 @@ import React from 'react';
 
 const SkeletonProduct = () => {
   return (
-    <div className="group flex !h-full !w-full flex-col justify-between overflow-hidden !rounded-lg border border-gray-200 bg-white shadow dark:border-white/5 dark:bg-zinc-900/40 dark:shadow-none">
+    <div className="group flex !h-full !w-full flex-col justify-between overflow-hidden !rounded-lg border border-gray-200 bg-white shadow">
       {/* Image skeleton */}
       <div className="px-1 pr-2 pt-6 lg:px-3">
         <Skeleton className="mx-auto h-[115px] w-[95px] rounded-lg lg:h-[191px] lg:w-[90%]">

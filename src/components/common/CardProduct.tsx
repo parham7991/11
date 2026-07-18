@@ -15,12 +15,7 @@ type Props = {
   imageQuality?: number;
   imageSizes?: string;
   isSpical?: boolean;
-  /** موجودی باقی‌مانده — برای نوار glowing «تعداد محدود» در بخش ویژه */
-  stockQty?: number;
 };
-
-// آستانهٔ نمایش نوار «موجودی کم» (اورژانسی)
-const LOW_STOCK_THRESHOLD = 10;
 
 const CardProduct = ({
   product,
@@ -31,19 +26,9 @@ const CardProduct = ({
   imageQuality = 75,
   imageSizes = '(max-width: 768px) 85px, 162px',
   isSpical,
-  stockQty,
 }: Props) => {
   const isOutOfStock = product?.price === 0 || product?.is_in_stock === 0;
   const shouldHighlightOutOfStock = Boolean(isSpical && isOutOfStock);
-  const showStockBar =
-    !isOutOfStock &&
-    typeof stockQty === 'number' &&
-    Number.isFinite(stockQty) &&
-    stockQty > 0 &&
-    stockQty <= LOW_STOCK_THRESHOLD;
-  const stockPct = showStockBar
-    ? Math.max(10, Math.round((stockQty! / LOW_STOCK_THRESHOLD) * 100))
-    : 0;
   const discount = product?.special_price
     ? discountCalculation(Number(product?.special_price), Number(product?.price!))
     : null;
@@ -53,18 +38,18 @@ const CardProduct = ({
 
   return (
     <div
-      className={`group relative flex h-full flex-1 flex-col justify-between overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:border-blue-400 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] dark:border-white/5 dark:bg-zinc-900/40 dark:shadow-none dark:hover:border-cyan-500/50 ${className}`}
+      className={`group relative flex h-full flex-1 flex-col justify-between overflow-hidden border-gray-200 shadow ${className}`}
     >
       <div
         className={`absolute left-2 right-2 top-4 z-[4] flex items-start justify-between ${classAction}`}
       >
         <div className="flex flex-col" style={{ gap: '8px' }}>
           {/* fav */}
-          <button className="block h-4 w-4 text-zinc-600 dark:text-zinc-300 lg:h-5 lg:w-5">
+          <button className="block h-4 w-4 lg:h-5 lg:w-5">
             <svg viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M14.5835 0.474243C13.6451 0.488839 12.7272 0.750787 11.9224 1.23364C11.1177 1.71648 10.4546 2.40313 10.0001 3.22424C9.54566 2.40313 8.88257 1.71648 8.07783 1.23364C7.27308 0.750787 6.35517 0.488839 5.41679 0.474243C3.92091 0.539235 2.51155 1.19362 1.49661 2.29444C0.481678 3.39525 -0.0563308 4.85301 0.000128002 6.34924C0.000128002 10.1384 3.98846 14.2767 7.33346 17.0826C8.08031 17.7102 9.02459 18.0543 10.0001 18.0543C10.9757 18.0543 11.9199 17.7102 12.6668 17.0826C16.0118 14.2767 20.0001 10.1384 20.0001 6.34924C20.0566 4.85301 19.5186 3.39525 18.5036 2.29444C17.4887 1.19362 16.0793 0.539235 14.5835 0.474243ZM11.596 15.8076C11.1493 16.1837 10.5841 16.39 10.0001 16.39C9.41617 16.39 8.85098 16.1837 8.40429 15.8076C4.12263 12.2151 1.66679 8.76841 1.66679 6.34924C1.60983 5.29484 1.9721 4.26068 2.6746 3.47233C3.37709 2.68397 4.36282 2.20537 5.41679 2.14091C6.47077 2.20537 7.45649 2.68397 8.15899 3.47233C8.86149 4.26068 9.22376 5.29484 9.16679 6.34924C9.16679 6.57026 9.25459 6.78222 9.41087 6.9385C9.56715 7.09478 9.77911 7.18258 10.0001 7.18258C10.2211 7.18258 10.4331 7.09478 10.5894 6.9385C10.7457 6.78222 10.8335 6.57026 10.8335 6.34924C10.7765 5.29484 11.1388 4.26068 11.8413 3.47233C12.5438 2.68397 13.5295 2.20537 14.5835 2.14091C15.6374 2.20537 16.6232 2.68397 17.3257 3.47233C18.0282 4.26068 18.3904 5.29484 18.3335 6.34924C18.3335 8.76841 15.8776 12.2151 11.596 15.8042V15.8076Z"
-                fill="currentColor"
+                fill="#0F1014"
               />
             </svg>
           </button>
@@ -73,34 +58,34 @@ const CardProduct = ({
             target="_blank"
             prefetch={false}
             href={`/compare/${product.id}`}
-            className="block h-4 w-4 text-zinc-600 dark:text-zinc-300 lg:h-5 lg:w-5"
+            className="block h-4 w-4 lg:h-5 lg:w-5"
             onClick={(e) => e.stopPropagation()}
           >
             <svg className="" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M4.1665 3.33331L1.6665 5.83331L4.1665 8.33331"
-                stroke="currentColor"
+                stroke="#0F1014"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
               <path
                 d="M15.833 11.6666L18.333 14.1666L15.833 16.6666"
-                stroke="currentColor"
+                stroke="#0F1014"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
               <path
                 d="M1.6665 5.83331H18.3332"
-                stroke="currentColor"
+                stroke="#0F1014"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
               <path
                 d="M1.6665 14.1666H18.3332"
-                stroke="currentColor"
+                stroke="#0F1014"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -109,7 +94,7 @@ const CardProduct = ({
           </Link>
         </div>
         {product?.special_price && product?.is_in_stock !== 0 ? (
-          <div className="discount-badge flex h-fit w-fit items-center gap-0.5 rounded-xl bg-gradient-to-l from-rose-500 to-red-600 px-2 py-0.5 font-bold text-[13px] text-white shadow-[0_0_10px_rgba(239,68,68,0.3)] lg:px-2.5 lg:text-[15px]">
+          <div className="discount-badge flex h-fit w-fit items-center gap-0.5 rounded-md bg-gradient-to-l from-rose-500 to-red-600 px-2 py-0.5 font-bold text-[13px] text-white shadow-sm lg:px-2.5 lg:text-[15px]">
             <span>{discount}</span>
             <span>%</span>
           </div>
@@ -121,7 +106,7 @@ const CardProduct = ({
         className="flex h-full w-full flex-col justify-between"
         href={`/product/${product.id}`}
       >
-        <div className="product-card-image-pad relative rounded-t-2xl bg-zinc-50 px-1 pr-2 pt-6 dark:bg-zinc-900/10 lg:px-3">
+        <div className="product-card-image-pad relative px-1 pr-2 pt-6 lg:px-3">
           {shouldHighlightOutOfStock && (
             <img
               className="absolute left-1/2 z-50 mx-auto -translate-x-1/2"
@@ -143,11 +128,7 @@ const CardProduct = ({
                   : // @ts-expect-error error
                     product?.image?.title || product?.name || ''
               }
-              className={[
-                classImage,
-                'product-image-pad',
-                shouldHighlightOutOfStock ? 'blur-sm' : '',
-              ]
+              className={[classImage, 'product-image-pad', shouldHighlightOutOfStock ? 'blur-sm' : '']
                 .filter(Boolean)
                 .join(' ')}
               imgClass="object-contain"
@@ -161,25 +142,10 @@ const CardProduct = ({
             </span>
           )}
 
-          <p className="product-name line-clamp-2 pt-3 font-semibold text-[14px] leading-7 text-[#1e293b] dark:text-zinc-100 lg:text-[15px]">
+          <p className="product-name line-clamp-2 pt-3 font-[500] text-[13px] leading-7 text-[#1e293b] lg:text-[15px]">
             {productName}
           </p>
         </div>
-        {showStockBar && (
-          <div className="px-2 pb-1 lg:px-5">
-            <div className="mb-1 flex items-center justify-between">
-              <span className="font-medium text-[10px] text-red-500 dark:text-red-400 lg:text-[11px]">
-                فقط {toEnglishDigits(String(stockQty))} عدد باقی مانده
-              </span>
-            </div>
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200/70 dark:bg-zinc-800">
-              <div
-                className="h-full rounded-full bg-gradient-to-l from-amber-400 to-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)] transition-all duration-500"
-                style={{ width: `${stockPct}%` }}
-              />
-            </div>
-          </div>
-        )}
         <div
           className={`flex h-fit w-full items-center justify-between px-2 pb-3 lg:px-5 ${classItmsBottom}`}
         >
@@ -229,12 +195,12 @@ const CardProduct = ({
               )
             ) : (
               <div className="flex items-center justify-center gap-px lg:gap-1">
-                <p className="final-price font-bold text-[15px] text-emerald-600 dark:text-emerald-400 lg:text-[17px]">
-                  {addCommas(Number(product.special_price ? product.special_price : product.price))}
+                <p className="final-price font-bold text-[15px] text-emerald-600 lg:text-[17px]">
+                  {addCommas(
+                    Number(product.special_price ? product.special_price : product.price)
+                  )}
                 </p>
-                <p className="final-price font-bold text-[11px] text-emerald-600 dark:text-emerald-400 lg:text-[13px]">
-                  تومان
-                </p>
+                <p className="final-price font-bold text-[11px] text-emerald-600 lg:text-[13px]">تومان</p>
               </div>
             )}
           </div>

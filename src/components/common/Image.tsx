@@ -113,7 +113,7 @@ const Image = ({
         >
           <div className="h-full w-full bg-gray-200">
             {/* Shimmer Animation */}
-            <div className="h-full w-full animate-shimmer bg-gradient-to-r from-transparent via-white/40 to-transparent bg-[length:200%_100%] dark:via-transparent"></div>
+            <div className="h-full w-full animate-shimmer bg-gradient-to-r from-transparent via-white/40 to-transparent bg-[length:200%_100%]"></div>
           </div>
         </div>
       )}

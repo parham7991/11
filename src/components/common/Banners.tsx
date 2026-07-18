@@ -10,6 +10,22 @@ interface Props {
 }
 
 const Banners = memo(({ banners }: Props) => {
+  // اگر داده‌ای نیامد (مثلاً خطای API/تایم‌اوت)، به‌جای container خالی و زشت
+  // یک اسکلت لودینگ تمیز نشان می‌دهیم تا صفحه یکدست بماند.
+  if (!Array.isArray(banners) || banners.length === 0) {
+    return (
+      <div className="container_page flex flex-col items-center gap-5 lg:flex-row lg:gap-10">
+        {[0, 1].map((idx) => (
+          <div
+            key={idx}
+            className="banner-skeleton h-[180px] w-full animate-pulse rounded-xl bg-gray-200 lg:h-[250px]"
+            aria-hidden="true"
+          />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="container_page flex flex-col items-center gap-5 lg:flex-row lg:gap-10">
       {banners?.map((item, idx) => {
@@ -45,7 +61,9 @@ const Banners = memo(({ banners }: Props) => {
       })}
 
       {/* Inline keyframes for flash effect */}
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .banner-flash {
           background: linear-gradient(
             105deg,
@@ -75,7 +93,9 @@ const Banners = memo(({ banners }: Props) => {
             inset 0 -60px 50px -20px rgba(0, 0, 0, 0.25),
             0 16px 40px -8px rgba(0, 0, 0, 0.35);
         }
-      `}} />
+      `,
+        }}
+      />
     </div>
   );
 });

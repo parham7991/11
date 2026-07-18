@@ -2,6 +2,7 @@
 import React, { lazy, Suspense } from 'react';
 import { HiSparkles } from 'react-icons/hi';
 import { RiStarSFill } from 'react-icons/ri';
+import SpecialSectionSkeleton from '../common/Skeleton/SpecialSectionSkeleton';
 
 // Lazy load heavy components
 const SpecialSectionMobile = lazy(() => import('./SpecialSection.Mobile'));
@@ -34,7 +35,10 @@ type Props = {
 // ... (بقیه کد بدون تغییر)
 
 const SpecialSection = ({ products }: Props) => {
-  if (!Array.isArray(products?.items) || products?.items?.length === 0) return null;
+  // در حالت خالی/خطای API به‌جای ناپدید شدن، اسکلت لودینگ تمیز نشان بده
+  if (!Array.isArray(products?.items) || products?.items?.length === 0) {
+    return <SpecialSectionSkeleton className="home-special-section" />;
+  }
   return (
     <div className="home-special-section container_page overflow-hidden">
       {/* Header با آیکن و border */}

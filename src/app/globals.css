@@ -3300,6 +3300,7 @@ html.dark .single-blog-article .to-gray-100 {
   animation: asmHeaderGradientShift 6s ease infinite;
   white-space: nowrap;
   cursor: pointer;
+  flex-shrink: 0 !important;
 }
 @keyframes asmHeaderGradientShift {
   0%,
@@ -3399,12 +3400,14 @@ html.dark .single-blog-article .to-gray-100 {
   flex-direction: column;
   gap: 1px;
   align-items: flex-start;
+  white-space: nowrap !important;
 }
 .asm-header-btn__title {
   font-size: 13.5px;
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.2px;
+  white-space: nowrap !important;
 }
 .asm-header-btn__subtitle {
   font-size: 10px;
@@ -3415,6 +3418,7 @@ html.dark .single-blog-article .to-gray-100 {
   gap: 4px;
   font-family: 'reqular', Tahoma, sans-serif;
   letter-spacing: 0.1px;
+  white-space: nowrap !important;
 }
 .asm-header-btn__dot {
   width: 5px;

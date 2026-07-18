@@ -120,7 +120,7 @@ const HeaderCenter = () => {
             </a>
           </div>
         </div>
-        <div className="flex flex-1 items-center justify-end gap-3 space-x-3">
+        <div className="flex flex-1 items-center justify-end gap-3">
           <HeaderThemeToggle />
           <UserInfo className="hidden md:flex" />
           <AssembleButton className="hidden xl:flex" />

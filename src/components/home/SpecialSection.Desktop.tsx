@@ -52,6 +52,7 @@ const SpecialSectionDesktop = ({ products }: Props) => {
           }`}
           classAction="absolute top-0"
           classItmsBottom="mt-6"
+          stockQty={Number(product?.product_price?.qty)}
           imageQuality={isCenterCard ? 100 : 75}
           imageSizes={
             isCenterCard ? '(max-width: 768px) 165px, 600px' : '(max-width: 768px) 105px, 162px'

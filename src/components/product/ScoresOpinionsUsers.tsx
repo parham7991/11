@@ -46,7 +46,7 @@ const ScoresOpinionsUsers = ({ product }: Props) => {
             <Spinner size="lg" />
           </div>
         ) : !commentsData || commentsData.length === 0 ? (
-          <div className="mt-10 flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white p-6 lg:p-12">
+          <div className="mt-10 flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white p-6 dark:from-[#0B0F19] dark:to-[#0B0F19] lg:p-12">
             <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 lg:mb-4 lg:h-20 lg:w-20">
               <svg
                 className="h-8 w-8 text-blue-600 lg:h-10 lg:w-10"

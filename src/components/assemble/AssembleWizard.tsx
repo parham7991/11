@@ -31,6 +31,7 @@ import TelemetryDashboard from './TelemetryDashboard';
 import InvoiceModal from './InvoiceModal';
 import ThemeSelector, { type AssembleTheme } from './ThemeSelector';
 import BuildIdentityCard from './BuildIdentityCard';
+import RadialGauge from './RadialGauge';
 
 // ════════════════════════════════════════════════════════════════
 // 📋 نوع‌ها
@@ -1284,6 +1285,42 @@ export default function AssembleWizard() {
 
   const currentSummary = useMemo(() => makeSummary(parts), [parts]);
   const displaySummary = parts.length ? currentSummary : result?.summary;
+
+  // ═════ امتیاز ارزش خرید (AI Value Buy Score) ═════
+  // ترکیبی از سازگاری + استفادهٔ بهینه از بودجه + صرفه‌جویی.
+  const valueScore = useMemo(() => {
+    if (!result?.ok || !displaySummary) return null;
+    const comp = Math.max(0, Math.min(100, Number(result.compatibilityScore) || 0));
+    const saving = Math.max(0, Math.min(100, Number(displaySummary.savingPercent) || 0));
+    const spent = Number(displaySummary.totalAfter) || 0;
+    // استفاده از بودجه: نزدیک‌بودن به بودجه = ارزش بیشتر؛ عبور از بودجه = جریمه.
+    let util = 0;
+    if (budget > 0 && spent > 0) {
+      util =
+        spent <= budget
+          ? Math.round((spent / budget) * 100)
+          : Math.max(0, Math.round(100 - ((spent - budget) / budget) * 100));
+    }
+    const score = Math.round(comp * 0.55 + saving * 0.2 + util * 0.25);
+    return Math.max(0, Math.min(100, score));
+  }, [result?.ok, result?.compatibilityScore, displaySummary, budget]);
+
+  const valueScoreColor =
+    valueScore == null
+      ? 'var(--asm-primary)'
+      : valueScore >= 80
+        ? 'var(--asm-green)'
+        : valueScore >= 60
+          ? 'var(--asm-primary)'
+          : '#f59e0b';
+  const valueScoreLabel =
+    valueScore == null
+      ? ''
+      : valueScore >= 80
+        ? 'خرید عالی'
+        : valueScore >= 60
+          ? 'خرید مناسب'
+          : 'قابل بهبود';
   const insights = useMemo(() => buildInsights(parts, budget, useCase), [parts, budget, useCase]);
   const smartSuggestions = useMemo(() => buildSmartSuggestions(parts, budget), [parts, budget]);
   const quickRamSuggestion = smartSuggestions.find(
@@ -1564,6 +1601,37 @@ export default function AssembleWizard() {
                     ` + ${displaySummary?.optionalCount || 0} اختیاری`}
                 </span>
               </div>
+
+              {/* ═════ امتیاز ارزش خرید (گیج نئونی) ═════ */}
+              {valueScore != null && (
+                <div className="asm__value-score">
+                  <RadialGauge
+                    value={valueScore}
+                    color={valueScoreColor}
+                    sublabel={valueScoreLabel}
+                    size={124}
+                    thickness={11}
+                  />
+                  <div className="asm__value-score-body">
+                    <div className="asm__value-score-title">امتیاز ارزش خرید</div>
+                    <div className="asm__value-score-desc">
+                      این امتیاز بر اساس سازگاری قطعات، استفادهٔ بهینه از بودجه و میزان صرفه‌جویی
+                      محاسبه شده تا بدانی این ترکیب چقدر به‌صرفه است.
+                    </div>
+                    <div className="asm__value-score-tags">
+                      <span className="asm__value-score-tag">
+                        سازگاری {result.compatibilityScore || 0}٪
+                      </span>
+                      <span className="asm__value-score-tag">
+                        صرفه‌جویی {displaySummary?.savingPercent || 0}٪
+                      </span>
+                      <span className="asm__value-score-tag">
+                        قیمت نهایی {shortToman(displaySummary?.totalAfter || 0)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* ═════ تِم ظاهری + حالت نمایش + پیش‌فاکتور ═════ */}
               <div className={`asm__toolbar asm__toolbar--${assembleTheme}`}>

@@ -53,7 +53,9 @@ const Header = ({ category, onCategoryMenuOpen, isLoading }: Props) => {
   if (pathname.startsWith('/mag')) return null;
   // const cls = visible ? "yes" : "no";
   return (
-    <header className={`z-50 ${findPages ? 'hidden lg:block' : ''}`}>
+    <header
+      className={`sticky top-0 z-50 border-b border-gray-200 bg-white/70 backdrop-blur-md transition-all duration-300 dark:border-white/5 dark:bg-[#0B0F19]/80 ${findPages ? 'hidden lg:block' : ''}`}
+    >
       <HeaderTop />
       <HeaderCenter />
 

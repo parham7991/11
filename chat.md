@@ -1264,3 +1264,264 @@ Darkhast: "pishnahad hay dige ham rabet karbari behtar ham smart tar" (بار پ
 ### قدم بعدی
 
 در صورت تایید، `commit/push` کنم؛ یا بگویید کارت‌های محصول و اسمبلی را هم هم‌تراز کنم.
+
+---
+
+# ۱۱) Redesign کامل به Premium Dark-Mode-First (ناverview + Chunk plan)
+
+## ۱۱-۱) یافته‌های کلیدی (Discovery)
+
+- **Framework/Theme**: Next.js App Router + Tailwind v3 (`darkMode:'class'`) + HeroUI. `ThemeProvider` روی `<html>.dark` کار می‌کند.
+- **Dark system**: قبلاً یک سیستم بالغ داریم (`globals.css` ~۳۷۴۷ خط + متغیرهای `--offl-*` برای bg/surface/text/border). پس «حالت تاریک» از قبل هست؛ کار اصلی **ارتقای بصری به premium/glass/neon** و **یکپارچگی** است.
+- **Radius tokens**: `rounded-3xl`(24) / `rounded-2xl`(16) / `rounded-xl`(12) / `rounded-full`(9999) — **دقیقاً همان مقادیر مصوب spec**؛ نیازی به بازتعریف ندارند.
+- **Accent colors**: `cyan-500(#06b6d4)` / `blue-500(#3b82f6)` / `violet-500(#8b5cf6)` / `emerald-500(#10b981)` / `red-500(#ef4444)` — **همگی در Tailwind پیش‌فرض موجودند**؛ پس `tailwind.config` نیاز به افزودن رنگ ندارد (ریسک کمتر).
+- **Font**: سایت از **IRANYekan** (local `@font-face` در `public/font/`) استفاده می‌کند — همان فونت «پریمیوم» که spec پیشنهاد داده بود. فقط باید default سایت باشد.
+- **White gradients**: فقط **۷ مورد** `from/via/to-white` hardcoded (همگی بدون `dark:`) — یک chunk کوچک.
+- **Deps**: `framer-motion` + `react-countdown` + `@heroui/skeleton` **قبلاً نصب‌اند**.
+
+## ۱۱-۲) Chunk plan
+
+| #   | Chunk                                | Scope                                                                                              |
+| --- | ------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| 1   | **Theme & Design System Foundation** | dark=default؛ tokenهای accent در CSS vars؛ utilityهای glass/neon؛ font default                     |
+| 2   | No-White-Gradient scan               | ۷ مورد `from/via/to-white` ← افزودن `dark:from-[#0B0F19]`                                          |
+| 3   | Header & Mobile Nav                  | glassmorphic sticky header؛ یکپارچگی `HeaderThemeToggle`؛ overlay جستجو (Cmd+K)؛ نوار موبایل شناور |
+| 4   | CardProduct + Home                   | بازطراحی کارت (ابعاد یکنواخت، glass، badge/discount، قیمت high-contrast)؛ ثبات در Home             |
+| 5   | Template1 (Category Story)           | رینگ نئون چرخان دور دسته‌بندی                                                                      |
+| 6   | SpecialSection + Carousels           | هدر با شعله+countdown؛ کارت تایمر تاریک/neon؛ نوار موجودی glowing                                  |
+| 7   | AI PC Builder                        | stepper نئون؛ گام بودجه/slider؛ نتایج + compatibility badge + AI Value Buy Score (gauge)           |
+| 8   | Mag pages                            | layout/home/article؛ reading-progress tracker؛ ToC فعال؛ تایپوگرافی مقاله                          |
+| 9   | Micro-interactions                   | framer-motion drawer/slide؛ پرش badge سبد؛ skeleton/shimmer                                        |
+
+## ۱۱-۳) Chunk 1 — انجام‌شده (Foundation)
+
+تغییرات:
+
+1. `ThemeProvider.tsx`: default mode/resolved = `'dark'`؛ `getStoredMode` پیش‌فرض `'dark'`.
+2. `layout.tsx`: اسکریپت `theme-init` پیش‌فرض `'system'` → `'dark'`.
+3. `globals.css` `:root` و `html.dark`: افزودن `--offl-accent-cyan/blue/purple`، `--offl-neon-green`، `--offl-hot-red`، `--offl-glass-dark`.
+4. `globals.css` `@layer utilities`: کلاس‌های `.glass` / `.glass-card` / `.glass-panel` و helperهای `.neon-*`.
+5. `globals.css` `body`: `font-family: 'reqular', Tahoma, ...` (IRANYekan پیش‌فرض سایت).
+
+**ریسک/تست**: تغییرات افزودنی و کم‌خطر. کلاس‌های `.glass*` و `.neon-*` هنوز در هیچ کامپوننتی استفاده نشده‌اند (برای chunkهای بعد آماده‌اند). dark حالا پیش‌فرض است → سایت با dark باز می‌شود مگر کاربر قبلاً `light` ذخیره کرده باشد.
+**تست پیشنهادی**: `yarn dev` → سایت dark باز شود؛ تغییر به light و برگشت عمل کند.
+
+### قدم بعدی
+
+بگویید `next` تا **Chunk 2 (No-White-Gradient scan)** را اعمال کنم (۷ مورد، کوچک و بی‌خطر).
+
+---
+
+## ۱۱-۴) Chunk 2 — No-White-Gradient scan ✅
+
+۷ مورد `from/via/to-white` بررسی شدند:
+
+- **Article.tsx:95** (sheen-e white rooye badge): `dark:from-transparent` → sheen dar dark mode hazf shod.
+- **Image.tsx:116** (shimmer-e skeleton): `dark:via-transparent` → flash-e white dar dark mode hazf shod.
+- **QuestionAndAnswer:121 / ScoresOpinionsUsers:49 / ProductDetails:101** (`from-gray-50 to-white` empty-state): `dark:from-[#0B0F19] dark:to-[#0B0F19]` اضافه شد. (globals.css خط ۱۳۷۳ قبلاً همین‌ها را با gradient-e premium dark و `!important` handle mikard — ahora component ham self-sufficient shod.)
+- **Article.tsx:72 / 113** (`dark:from-white`): **intentional** — inha text-gradient-e title hastand (bg-clip-text) ke matn ro dar dark mode safed/o-khwan-a hay-ye mikard; age `#0B0F19` mikardim matn dark-mishod/ghaib. PAS rikht-e shodan.
+
+**Verify**: `grep -rn "from-white\|via-white\|to-white" --include=*.tsx | grep -v "dark:"` → **khali** (hame dark-aware).
+
+### قدم بعدی
+
+بگویید `next` تا **Chunk 3 (Header & Mobile Nav)** — glassmorphic sticky header + یکپارچگی theme toggle + overlay جستجو (Cmd+K) + نوار موبایل شناور.
+
+---
+
+## ۱۱-۵) Chunk 3 — Header & Mobile Nav ✅
+
+تغییرات:
+
+1. **`MenuButtom.tsx` (Mobile nav)**: نوار موبایل شناورِ شیشه‌ای شد — `fixed bottom-4 left-4 right-4 rounded-2xl border-white/5 bg-white/80 backdrop-blur-lg dark:bg-zinc-900/80` (بجای `bottom-0 w-full bg-white`). آیکون فعال: `hover:scale-105 active:scale-90` + neon glow `shadow-[0_0_15px_rgba(6,182,212,0.3)]`.
+2. **`header/index.tsx`**: `<header>` شد `sticky top-0 z-50 backdrop-blur-md bg-white/70 border-b border-gray-200 dark:bg-[#0B0F19]/80 dark:border-white/5` (wrapper شیشه‌ای طبق spec).
+3. **`HeaderThemeToggle.tsx`**: افزودن `dark:hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]` (neon glow روی تم‌تغییر).
+4. **`SearchCommandPalette.tsx` (جدید)**: پالت جستجوی سراسری با Ctrl/Cmd+K — overlay شیشه‌ای (`glass-panel`)، input، **تاریخچهٔ جستجو** (localStorage: `offl_search_history`)، **تگ‌های محبوب** (#کیس_شیشه‌ای، #RTX_4060، …). Enter → `/result?q=`.
+5. **`layout.tsx`**: mount سراسریِ `SearchCommandPalette` (در دسترس در همه صفحات، حتی /mag).
+
+**ریسک/محدودیت**:
+
+- هدر در دسکتاپ کاملاً glass نیست چون `HeaderTop` (`bg-[#F3F6FB]`) و `HeaderCenter` (`lg:bg-white`) هنوز bg سفت دارند. wrapper شیشه‌ای شد ولی برای glass کامل باید این بخش‌ها transparent شوند (pass بعدی / Chunk هدر تکمیلی).
+- `sticky` شدن `<header>` در کنار `sticky top-0` داخلیِ `HeaderBottom` (تب‌های صفحهٔ محصول) بی‌خطر است ولی در صورت رفتار عجیب قابل برگشت.
+- پالت جدید کنار `Search.tsx` (دراپ‌داون فعلی هدر) زندگی می‌کند؛ تداخلی ندارند.
+
+### قدم بعدی
+
+بگویید `next` تا **Chunk 4 (CardProduct + Home)** — بازطراحی کارت (ابعاد یکنواخت، glass، badge/discount neon، قیمت high-contrast) و ثبات در صفحهٔ اصلی.
+
+---
+
+## ۱۱-۶) Chunk 4 — CardProduct + Home ✅
+
+بازطراحی کارت محصول طبق spec 3.2 + رفع white-pad روی کارت‌ها در dark:
+
+**`CardProduct.tsx`:**
+
+- Root: `rounded-2xl border border-gray-200 bg-white shadow-sm ... dark:border-white/5 dark:bg-zinc-900/40 dark:shadow-none hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] dark:hover:border-cyan-500/50`.
+- Image pad: `rounded-t-2xl bg-zinc-50 dark:bg-zinc-900/10`.
+- Title: `font-semibold text-[14px] dark:text-zinc-100` (قبلاً `font-[500] text-[13px] text-[#1e293b]`).
+- Icons (fav/compare): `fill/stroke="#0F1014"` → `currentColor` + `text-zinc-600 dark:text-zinc-300` (theme-aware).
+- Discount badge: `rounded-md`→`rounded-xl` + neon `shadow-[0_0_10px_rgba(239,68,68,0.3)]`.
+- Price: `dark:text-emerald-400` اضافه شد.
+
+**`globals.css` (dark card studio):**
+
+- `.product-card-image-pad img` → `mix-blend-mode: multiply` به `normal` (تا عکس روی کارتِ تیره تیره/ناپیدا نشود).
+- نکته: white pad روی کارت‌ها قبلاً با `content: none !important` (خط ~۱۳۲۱) غیرفعال بود؛ پس کارت‌ها اصلاً لایهٔ سفید ندارند — فقط multiply اصلاح شد.
+
+**Consistency:** کارت `h-full flex-1 flex-col justify-between` داشت → ارتفاع یکنواخت در گرید حفظ شد. تغییر کامپوننت روی همهٔ استفاده‌های Home (Template1، SpecialSection، لیست دسته‌بندی و…) اعمال می‌شود.
+
+**ریسک:** برخی بخش‌های Home خودشان padding/bg دور کارت دارند که ممکن است نیاز به هم‌ترازی داشته باشند (pass بعدی / Chunk تکمیلی هدر-هوم). تست توصیه می‌شود.
+
+### قدم بعدی
+
+بگویید `next` تا **Chunk 5 (Template1 — Category Story)** — رینگ نئون چرخان دور دسته‌بندی.
+
+---
+
+## ۱۱-۷) Chunk 5 — Template1 (Category Story / رینگ نئون چرخان) ✅
+
+**فایل:** `src/components/home/Template1.tsx`
+
+- **کشف واقعیت:** بخش عمدهٔ رینگ نئون از قبل در working tree پیاده شده بود (مثل chunk های ۲/۳/۴؛ کد بود ولی در `chat.md` ثبت نشده بود). موارد موجود:
+  - `group` روی `<Link>` + رینگِ گرادیانی `from-cyan-400 via-blue-500 to-purple-600` که با `-inset-[3px]` دور آواتار دسته می‌چرخد (`animate-[spin_4s_linear_infinite]`).
+  - رینگ فقط روی **hover** ظاهر می‌شود (`opacity-0 → group-hover:opacity-100` با transition نرم ۵۰۰ms).
+  - آواتار داخلی `ring-1 ring-white/10` گرفت؛ عنوان تِم‌آگاه شد (`text-zinc-800 dark:text-zinc-200`, `font-semibold`).
+- **پولیشِ این chunk (اعمال‌شده):**
+  - **glow نئون:** `shadow-[0_0_18px_rgba(6,182,212,0.45)]` روی رینگ → درخشش واقعی نه فقط حلقهٔ رنگی.
+  - **دسترس‌پذیری کیبورد:** `group-focus-visible:opacity-100` → رینگ هنگام فوکوس با Tab هم دیده می‌شود.
+  - **احترام به reduced-motion:** `motion-reduce:animate-none` → برای کاربرانی که انیمیشن را خاموش کرده‌اند رینگ نمی‌چرخد (فقط ثابت نمایش داده می‌شود).
+
+**ریسک:** بسیار کم — فقط افزودن کلاس‌های utility روی یک span؛ بدون تغییر ساختار داده یا layout. رینگ در حالت idle نامرئی است (opacity-0) پس چیدمان دسته‌بندی‌ها دست‌نخورده می‌ماند.
+
+### قدم بعدی
+
+بگویید `next` تا **Chunk 6 (SpecialSection + Carousels)** — هدر با شعله+countdown، کارت تایمر تاریک/neon، نوار موجودی glowing.
+
+---
+
+## ۱۱-۸) Chunk 6 — SpecialSection: شعله + شمارش معکوس + نوار موجودی glowing ✅
+
+**فایل‌ها:** `SpecialCountdown.tsx` (جدید)، `SpecialSection.tsx`، `SpecialSection.Desktop.tsx`، `SpecialSection.Mobile.tsx`، `CardProduct.tsx`
+
+### تغییرات
+
+1. **کامپوننت جدید `SpecialCountdown.tsx` (client):**
+   - شمارش معکوس نئون‌دار (روز/ساعت/دقیقه/ثانیه) با آیکون **شعلهٔ پالس‌دار** (`HiFire` + `drop-shadow` قرمز).
+   - چیپ‌های تاریک/شیشه‌ای (`dark:bg-zinc-900/60` + glow قرمز)؛ اعداد فارسی + `tabular-nums`.
+   - **ایمن:** اگر `toDate` نبود/نامعتبر/گذشته بود → `null` رندر می‌کند (هیچ چیز خراب نمی‌شود). پارس تاریخ فقط در `useEffect` (کلاینت) تا hydration mismatch نده.
+   - `motion-reduce:animate-none` روی پالس شعله.
+2. **هدر `SpecialSection`:** آیکون شعله + عنوان (تِم‌آگاه `dark:text-zinc-100`) + `SpecialCountdown`. تاریخ پایان = نزدیک‌ترین `to_date` از میان آیتم‌ها (sort صعودی، اولی). importهای بلااستفادهٔ `HiSparkles`/`RiStarSFill` حذف شد؛ `HiFire` جایگزین. skeleton fallbackها dark-aware شدند.
+3. **نوار موجودی glowing در `CardProduct`:** prop اختیاری `stockQty`. وقتی موجودی ≤ ۱۰ (و موجود) → نوار درخشان قرمز→کهربایی با متن «فقط X عدد باقی مانده» (urgency). عرض نوار متناسب با `stockQty/10`.
+   - **decouple آگاهانه:** نوار به `stockQty` گِیت شد نه `isSpical` — تا رفتار out-of-stock بخش ویژه (که `isSpical` را پاس نمی‌دهد) دست‌نخورده بماند.
+4. **وایرینگ:** هر دو `SpecialSection.Desktop`/`Mobile` حالا `stockQty={Number(product?.product_price?.qty)}` را به کارت می‌دهند.
+
+### ریسک
+
+- بسیار کم و افزودنی. countdown با نبودِ `to_date` غیرفعال است (اکثر feedها ممکن است `to_date` نداشته باشند → صرفاً countdown نمایش داده نمی‌شود، بقیهٔ هدر سالم است).
+- نوار موجودی فقط وقتی `qty` عددِ معتبر ≤ ۱۰ باشد ظاهر می‌شود؛ در غیر این صورت هیچ تغییری در کارت نیست.
+- `HiFire` در `react-icons/hi` تأیید شد (موجود).
+
+### قدم بعدی
+
+بگویید `next` تا **Chunk 7 (AI PC Builder)** — stepper نئون، گام بودجه/slider، نتایج + compatibility badge + AI Value Buy Score (gauge).
+
+---
+
+## ۱۱-۹) Chunk 7 — AI PC Builder: stepper نئون + اسلایدر نئون + گیج «ارزش خرید» ✅
+
+**فایل‌ها:** `assemble.css`، `AssembleWizard.tsx`، (استفاده از) `RadialGauge.tsx`
+
+### تغییرات
+
+1. **متغیرهای جدید CSS:** `--asm-cyan` و `--asm-track` به `:root` و `html.dark .asm` اضافه شد (برای گرادیان نئون و مسیر گیج).
+2. **Stepper نئون:** `.asm__step--active` حالا glow دولایه + `inset` سایان + انیمیشن نرم `asm-step-pulse` (۲.۴s). مرحلهٔ done یک glow سبز ملایم گرفت. `prefers-reduced-motion` → انیمیشن خاموش.
+3. **اسلایدر بودجه نئون:** `.asm__range` بازطراحی شد — track گرادیانی (primary→cyan) با glow، thumb سفیدِ درخشان (۲۲px) با glow سایان و بزرگ‌شدن روی hover. استایل کامل webkit + moz. `direction: rtl` حفظ شد.
+4. **گیج «امتیاز ارزش خرید» (RadialGauge):** کامپوننت `RadialGauge` که از قبل ساخته شده بود ولی **هیچ‌جا استفاده نمی‌شد و CSS‌اش وجود نداشت**، حالا کامل شد:
+   - CSS کلاس‌های `.aw-gauge*` (حلقهٔ SVG نئونی متحرک + مرکز عدد/زیرمتن) اضافه شد.
+   - در بالای نتایج (بعد از هدر) کارت `asm__value-score` با گیج + توضیح + سه چیپ (سازگاری/صرفه‌جویی/قیمت نهایی) رندر می‌شود.
+   - **فرمول امتیاز:** `comp*0.55 + saving*0.20 + util*0.25` (سازگاری، درصد صرفه‌جویی، بهینگی استفاده از بودجه با جریمهٔ عبور از سقف). رنگ/برچسب پویا: ≥۸۰ سبز «خرید عالی»، ≥۶۰ آبی «خرید مناسب»، وگرنه کهربایی «قابل بهبود».
+
+### ریسک
+
+- CSS افزودنی و ایزوله (کلاس‌های جدید `.aw-gauge*`, `.asm__value-score*`؛ بازنویسی فقط `.asm__range`/`.asm__step--active`). ریسک بصری کم.
+- گیج فقط وقتی `result.ok` و summary موجود باشد رندر می‌شود (`valueScore != null`) → در حالت خطا/لودینگ چیزی اضافه نمی‌کند.
+- `RadialGauge` مقدار را روی ۰..۱۰۰ clamp می‌کند؛ ورودی نامعتبر باعث خرابی نمی‌شود.
+- **نکتهٔ باقی‌مانده (خارج از scope):** rebrand قدیمی (`TelemetryDashboard`/`SparkIcon`) هنوز در این فایل هست؛ طبق تصمیم قبلی بازطراحی آرام جداگانه دنبال می‌شود.
+
+### قدم بعدی
+
+بگویید `next` تا **Chunk 8 (Mag pages)** — layout/home/article، reading-progress tracker، ToC فعال، تایپوگرافی مقاله.
+
+---
+
+## ۱۱-۱۰) Chunk 8 — Mag: نوار پیشرفت مطالعهٔ سراسری + ToC فعال ✅
+
+**فایل‌ها:** `ReadingProgressBar.tsx` (جدید)، `mag/[id]/page.tsx`
+
+### کشف واقعیت
+
+`TableOfContents.tsx` از قبل **بسیار کامل** بود و بخش عمدهٔ spec را پوشش می‌داد:
+
+- ردیابی سرفصل فعال (`activeId`) با اسکرول + اسکرول خودکار دکمهٔ فعال به وسط.
+- نوار «پیشرفت مطالعه» **داخل پنل ToC** (سایدبار).
+- نقطهٔ نئونی فعال با `animate-ping` + تورفتگی بر اساس level + اسکرول نرم به سرفصل.
+
+پس ToC فعال و تایپوگرافی (`prose prose-slate dark:prose-invert`) از قبل موجود بودند.
+
+### چیزی که اضافه شد
+
+- **`ReadingProgressBar` (client):** نوار باریک نئونی **ثابت در بالای صفحه** (`fixed top-0 z-[60] h-1`, گرادیان آبی→بنفش→صورتی + glow) که پیشرفت خواندنِ مقاله را نسبت به `.single-blog-content-card` حساب می‌کند.
+  - **چرا:** نوار قبلی داخل ToC است؛ روی **موبایل** (که ToC به‌صورت inline/جمع‌شونده است و sticky نیست) دیده نمی‌شد. این نوار سراسری روی همهٔ اندازه‌ها دیده می‌شود.
+  - با `requestAnimationFrame` (اسکرول throttle)، چند بار boot اولیه (۱۰۰/۴۰۰/۹۰۰ms) برای محتوای دیرلود، و `pointer-events-none` تا با کلیک تداخل نکند. `motion-reduce:transition-none`.
+- در `mag/[id]/page.tsx` بالای `<main>` mount شد.
+
+### ریسک
+
+- بسیار کم و افزودنی. اگر `.single-blog-content-card` نبود → progress صفر می‌ماند و نوار نامرئی است (بی‌خطر). listenerها در unmount پاک می‌شوند.
+- منطق محاسبهٔ progress عیناً از همان فرمولِ اثبات‌شدهٔ ToC گرفته شد (سازگاری کامل).
+
+### قدم بعدی
+
+بگویید `next` تا **Chunk 9 (Micro-interactions)** — framer-motion drawer/slide، پرش badge سبد، skeleton/shimmer.
+
+---
+
+## ۱۱-۱۱) Chunk 9 — Micro-interactions (پایانِ ری‌دیزاین) ✅
+
+**فایل‌ها:** `globals.css`، `header/Cart.tsx`، `Skeleton/SkeletonProduct.tsx`، `home/SpecialSection.tsx`
+
+### تصمیم معماری (کاهش ریسک)
+
+`framer-motion` در `package.json` هست (^12.23.12) اما **در هیچ کامپوننتی استفاده نشده**. تزریق آن به درایوِر موجود (دراپ‌داون سبد = HeroUI Dropdown، منوی موبایل) ریسک رگرسیون داشت. طبق قانون anti-regression پروژه، micro-interactionها را **CSS-only** پیاده کردم (بدون وابستگی جدید، بدون دست‌زدن به منطق) — همان حس، ریسک نزدیک صفر.
+
+### تغییرات
+
+1. **پرش badge سبد (cart badge pop):** در `globals.css` کی‌فریم `cart-badge-pop` + کلاس `.animate-cart-pop` (پرش کش‌سان). در `Cart.tsx` با `useRef` تعداد قبلی نگه داشته می‌شود؛ هنگام **افزایش** تعداد، کلاس pop برای ۴۸۰ms فعال می‌شود (فقط روی add، نه هر رندر). به badge یک glow زردِ ملایم هم اضافه شد.
+2. **Skeleton shimmer (dark-aware):** کلاس `.skeleton-shimmer` (گرادیانِ جاروبی با کی‌فریم `shimmer` موجود) + واریانت `.dark` برای دارک‌مود. جایگزین `animate-pulse bg-gray-200`ها شد.
+3. **اعمال shimmer:** fallbackهای Suspense در `SpecialSection` → `.skeleton-shimmer` (به‌جای pulse خاکستری).
+4. **رفع white-flash اسکلت در دارک:** wrapper کارتِ `SkeletonProduct` (پرکاربردترین اسکلت — وی‌ترین/دسته‌بندی) از `bg-white` سفت به `dark:bg-zinc-900/40 dark:border-white/5 dark:shadow-none` تِم‌آگاه شد.
+5. **احترام به reduced-motion:** هر دو انیمیشن (shimmer + cart-pop) در `prefers-reduced-motion: reduce` خاموش می‌شوند.
+
+### ریسک
+
+- بسیار کم. فقط CSS + یک `useEffect`/`useRef` کوچک در Cart (بدون تغییر منطق سبد). اگر تعداد کاهش/ثابت باشد، هیچ انیمیشنی اجرا نمی‌شود.
+
+---
+
+# 🏁 خلاصهٔ نهایی — ری‌دیزاین Premium Dark-Mode-First (بخش ۱۱) — کامل شد
+
+| Chunk | حوزه                                                        | وضعیت |
+| ----- | ----------------------------------------------------------- | ----- |
+| ۱     | Foundation (dark=default + glass/neon tokens + font)        | ✅    |
+| ۲     | No-White-Gradient scan (۷ مورد)                             | ✅    |
+| ۳     | Header glass + Mobile nav شناور + Search Cmd+K              | ✅    |
+| ۴     | CardProduct + Home (کارت glass، قیمت high-contrast)         | ✅    |
+| ۵     | Template1 (رینگ نئون چرخان + glow + a11y)                   | ✅    |
+| ۶     | SpecialSection (شعله + countdown + نوار موجودی glowing)     | ✅    |
+| ۷     | AI PC Builder (stepper نئون + اسلایدر نئون + گیج ارزش خرید) | ✅    |
+| ۸     | Mag (نوار پیشرفت مطالعهٔ سراسری + ToC فعال)                 | ✅    |
+| ۹     | Micro-interactions (cart pop + skeleton shimmer، CSS-only)  | ✅    |
+
+**تست دستی پیشنهادی:** `yarn dev` → (۱) سایت با دارک باز شود، تعویض تم روان؛ (۲) هدر شیشه‌ای + Cmd/Ctrl+K؛ (۳) هاور روی دسته‌بندی‌ها = رینگ نئون؛ (۴) بخش ویژه = شعله + countdown (اگر feed تاریخ داشته باشد) + «فقط X باقی مانده»؛ (۵) اسمبل = stepper/slider نئون + گیج ارزش خرید؛ (۶) مقالهٔ مگ = نوار پیشرفت بالای صفحه؛ (۷) افزودن به سبد = پرش badge.
+**بیلد:** طبق دستور کاربر روی Vercel انجام می‌شود (اینجا `node_modules`/build اجرا نشد).

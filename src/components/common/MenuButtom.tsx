@@ -375,12 +375,12 @@ const MenuBottom = ({ isShow = false, className }: Props) => {
   return (
     <>
       <div
-        className={`shadow_menu_bottom fixed bottom-0 left-1/2 z-[9] flex h-[75px] w-full -translate-x-1/2 items-center justify-between bg-white px-4 lg:hidden ${className}`}
+        className={`shadow_menu_bottom fixed bottom-4 left-4 right-4 z-[9] flex h-[68px] items-center justify-around rounded-2xl border border-white/5 bg-white/80 px-3 backdrop-blur-lg transition-all duration-300 dark:border-white/5 dark:bg-zinc-900/80 lg:hidden ${className}`}
       >
         {menus.map((menu, idx) => (
           <button
             onClick={() => onselect(menu)}
-            className={`relative flex h-[44px] items-center gap-2 rounded-full px-3 ${pathname === menu.href ? 'bg-main/10' : ''}`}
+            className={`relative flex h-[44px] items-center gap-2 rounded-full px-3 transition-transform duration-200 hover:scale-105 active:scale-90 ${pathname === menu.href ? 'bg-main/10 shadow-[0_0_15px_rgba(6,182,212,0.3)] dark:bg-cyan-500/10 dark:shadow-[0_0_15px_rgba(6,182,212,0.35)]' : ''}`}
             key={idx}
           >
             {pathname === menu.href ? menu.activeIcon : menu.icon}

@@ -58,6 +58,7 @@ const SpecialSectionMobile = ({ products }: Props) => {
             classImage={'mx-auto !w-[105px] !h-[105px]'}
             classAction="absolute top-0"
             classItmsBottom="mt-6"
+            stockQty={Number(product?.product_price?.qty)}
             imageQuality={75}
             imageSizes={'105px'}
             product={{
@@ -80,6 +81,7 @@ const SpecialSectionMobile = ({ products }: Props) => {
           classImage={'mx-auto !w-[180px] !h-[180px]'}
           classAction="absolute top-0"
           classItmsBottom="mt-3"
+          stockQty={Number(centerItem?.product_price?.qty)}
           imageQuality={100}
           imageSizes={'360px'}
           product={{
@@ -102,6 +104,7 @@ const SpecialSectionMobile = ({ products }: Props) => {
             classImage={'mx-auto !w-[105px] !h-[105px]'}
             classAction="absolute top-0"
             classItmsBottom="mt-6"
+            stockQty={Number(product?.product_price?.qty)}
             imageQuality={75}
             imageSizes={'105px'}
             product={{

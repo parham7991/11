@@ -32,10 +32,12 @@ const Template1 = memo(({ story, className }: Props) => {
           prefetch={false}
           key={`${item.link}-${idx}`}
           href={item.link}
-          className="flex !w-fit cursor-pointer flex-col items-center justify-center rounded-lg py-3"
+          className="group flex !w-fit cursor-pointer flex-col items-center justify-center rounded-lg py-3"
         >
           <span className="relative flex h-[80px] w-[80px] items-center justify-center rounded-full lg:h-[100px] lg:w-[100px]">
-            <span className="relative block h-full w-full overflow-hidden rounded-full">
+            {/* spinning neon ring (on hover / keyboard focus) */}
+            <span className="absolute -inset-[3px] animate-[spin_4s_linear_infinite] rounded-full bg-gradient-to-tr from-cyan-400 via-blue-500 to-purple-600 opacity-0 shadow-[0_0_18px_rgba(6,182,212,0.45)] transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:animate-none"></span>
+            <span className="relative block h-full w-full overflow-hidden rounded-full ring-1 ring-white/10">
               {item.image && (
                 <Image
                   src={getFinalSrc(item.image) as string}
@@ -49,7 +51,7 @@ const Template1 = memo(({ story, className }: Props) => {
               )}
             </span>
           </span>
-          <p className="whitespace-nowrap pt-2 font-medium text-[12px] lg:pt-1 lg:text-[13px]">
+          <p className="whitespace-nowrap pt-2 font-semibold text-[12px] text-zinc-800 dark:text-zinc-200 lg:pt-1 lg:text-[13px]">
             {item.title}
           </p>
         </Link>

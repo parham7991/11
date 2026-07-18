@@ -1,6 +1,6 @@
 'use client';
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { addCommas } from '@/lib/fun';
 import { useGetCart } from '@/hooks/cart/useGetCart';
@@ -14,6 +14,20 @@ const Cart = () => {
   const totalCountBasket = data?.items?.reduce((total: number, basket: { qty: number }) => {
     return total + (basket?.qty ? basket?.qty : 0);
   }, 0);
+
+  // پرش badge سبد هنگام افزایش تعداد (micro-interaction)
+  const [pop, setPop] = useState(false);
+  const prevCountRef = useRef<number>(totalCountBasket ?? 0);
+  useEffect(() => {
+    const current = totalCountBasket ?? 0;
+    if (current > prevCountRef.current) {
+      setPop(true);
+      const t = setTimeout(() => setPop(false), 480);
+      prevCountRef.current = current;
+      return () => clearTimeout(t);
+    }
+    prevCountRef.current = current;
+  }, [totalCountBasket]);
 
   //   const totalProductPrice = data?.items?.reduce((sum, item) => {
   //     const price = Number(item?.product.price) * Number(item?.count ?  item?.count: 0);
@@ -37,11 +51,11 @@ const Cart = () => {
         <DropdownTrigger>
           <Button
             onPress={onClose}
-            className="hover:border-main !h-[48px] !w-[48px] min-w-[48px] overflow-visible rounded-[12px] border border-[#E4E7E9] bg-transparent transition-all duration-300"
+            className="!h-[48px] !w-[48px] min-w-[48px] overflow-visible rounded-[12px] border border-[#E4E7E9] bg-transparent transition-all duration-300 hover:border-main"
           >
             <span className="group">
               <svg
-                className={`group-hover:stroke-main stroke-[#7D8793]`}
+                className={`stroke-[#7D8793] group-hover:stroke-main`}
                 width="24"
                 height="25"
                 viewBox="0 0 24 25"
@@ -79,7 +93,9 @@ const Cart = () => {
               </svg>
             </span>
             {totalCountBasket >= 1 ? (
-              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#F9C638] text-[12px] font-medium text-white">
+              <span
+                className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#F9C638] font-medium text-[12px] text-white shadow-[0_0_10px_rgba(249,198,56,0.55)] ${pop ? 'animate-cart-pop' : ''}`}
+              >
                 {totalCountBasket ?? 0}
               </span>
             ) : null}
@@ -96,7 +112,7 @@ const Cart = () => {
               className="data-[hover=true]:!bg-transparent"
               key={'logout'}
             >
-              <span className="text-[18px] font-medium text-[#7D8793]">
+              <span className="font-medium text-[18px] text-[#7D8793]">
                 {Array.isArray(data?.items) ? data?.items?.length : '0'} محصول
               </span>
               {data?.items?.length >= 1 ? (
@@ -119,17 +135,17 @@ const Cart = () => {
                 <div className="mt-6 flex items-center justify-between gap-5">
                   <Button
                     onPress={onRedirect}
-                    className="bg-main h-[48px] w-full font-medium text-white lg:w-full"
+                    className="h-[48px] w-full bg-main font-medium text-white lg:w-full"
                   >
                     ثبت سفارش
                   </Button>
                   <div className="space-y-3">
-                    <span className="text-[12px] font-medium whitespace-nowrap text-[#7D8793]">
+                    <span className="whitespace-nowrap font-medium text-[12px] text-[#7D8793]">
                       مبلغ قابل پرداخت
                     </span>
 
                     <span className="flex items-center gap-1">
-                      <span className="text-[16px] font-bold whitespace-nowrap text-[#232429]">
+                      <span className="whitespace-nowrap font-bold text-[16px] text-[#232429]">
                         {addCommas(Number(data?.quote?.total))}{' '}
                       </span>
                       <svg

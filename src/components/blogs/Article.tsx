@@ -92,7 +92,7 @@ export default function Article({
                 <div
                   className={`relative overflow-hidden shadow-lg transition-all duration-500 group-hover:scale-105 group-hover:shadow-xl ${classNametype || ''}`}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 dark:from-transparent"></div>
                   <span className="relative">{cardarticle.type}</span>
                 </div>
               )}

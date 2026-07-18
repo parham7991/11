@@ -7,6 +7,7 @@ import { generate_metadata_magPost, jsonLdArticle } from '@/seo/mag';
 import FeaturedPosts from '@/components/blogs/FeaturedPosts';
 import CategoryDescription from '@/components/common/CategoryDescription';
 import TableOfContents from '@/components/blogs/TableOfContents';
+import ReadingProgressBar from '@/components/blogs/ReadingProgressBar';
 import ShortNewsSection from '@/components/blogs/ShortNewsSection';
 import SingleBlogADS from '@/components/blogs/SingleBlogADS';
 
@@ -43,6 +44,8 @@ export default async function Singleblog({ params }: { params: Promise<{ id: str
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+
+      <ReadingProgressBar targetSelector=".single-blog-content-card" />
 
       <main className="relative bg-[#f6f8fc] text-slate-950 dark:bg-slate-950 dark:text-slate-100">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(circle_at_82%_10%,rgba(56,107,249,0.14),transparent_32%),radial-gradient(circle_at_14%_0%,rgba(168,85,247,0.12),transparent_30%)] dark:bg-[radial-gradient(circle_at_82%_10%,rgba(56,107,249,0.10),transparent_32%),radial-gradient(circle_at_14%_0%,rgba(168,85,247,0.09),transparent_30%)]" />
@@ -84,7 +87,11 @@ export default async function Singleblog({ params }: { params: Promise<{ id: str
 
               <div className="flex justify-center pb-4">
                 <div className="inline-flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-8 py-4 text-slate-700 shadow-lg dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
-                  <svg className="h-6 w-6 text-blue-500 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                  <svg
+                    className="h-6 w-6 text-blue-500 dark:text-blue-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z"
@@ -96,7 +103,7 @@ export default async function Singleblog({ params }: { params: Promise<{ id: str
               </div>
             </section>
 
-            <aside className="order-2 hidden lg:order-3 lg:block lg:self-start lg:sticky lg:top-52">
+            <aside className="order-2 hidden lg:sticky lg:top-52 lg:order-3 lg:block lg:self-start">
               <TableOfContents content={post?.content || ''} />
             </aside>
           </div>

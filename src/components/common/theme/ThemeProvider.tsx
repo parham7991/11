@@ -30,12 +30,12 @@ const getSystemTheme = (): ResolvedTheme => {
 };
 
 const getStoredMode = (): ThemeMode => {
-  if (typeof window === 'undefined') return 'system';
+  if (typeof window === 'undefined') return 'dark';
   try {
     const storedMode = window.localStorage.getItem(STORAGE_KEY) as ThemeMode | null;
-    return storedMode && modes.includes(storedMode) ? storedMode : 'system';
+    return storedMode && modes.includes(storedMode) ? storedMode : 'dark';
   } catch {
-    return 'system';
+    return 'dark';
   }
 };
 
@@ -62,8 +62,8 @@ const applyTheme = (mode: ThemeMode, resolvedTheme: ResolvedTheme) => {
 };
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [mode, setModeState] = useState<ThemeMode>('system');
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light');
+  const [mode, setModeState] = useState<ThemeMode>('dark');
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('dark');
   const [mounted, setMounted] = useState(false);
 
   const setMode = useCallback((nextMode: ThemeMode) => {
@@ -128,11 +128,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     [mode, resolvedTheme, setMode, toggleTheme]
   );
 
-  return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };
 
 export const useTheme = () => {

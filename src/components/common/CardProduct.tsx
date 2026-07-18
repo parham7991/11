@@ -187,7 +187,7 @@ const CardProduct = ({
               </svg>
             </>
           </span>
-          <div className="flex h-full flex-col items-end justify-center gap-1">
+          <div className="flex h-[46px] flex-col items-end justify-center gap-1 lg:h-[52px]">
             {product.special_price && product?.price !== 0 && product?.is_in_stock !== 0 ? (
               <p className="original-price flex w-fit items-center justify-center rounded bg-red-100 px-2 py-0.5 font-medium text-[12px] text-red-500 line-through decoration-red-400 decoration-2 lg:text-[14px]">
                 {addCommas(Number(product.price))}

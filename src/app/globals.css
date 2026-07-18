@@ -7,6 +7,12 @@ body {
   overflow-x: hidden;
 }
 
+/* Image pad radius synced with card (rounded-xl) in both themes */
+.product-image-pad {
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
 @layer utilities {
   .container_page {
     @apply mx-auto w-[95%] max-w-[1440px] md:w-[95%] print:w-full;
@@ -689,8 +695,7 @@ html.dark .container_des pre {
   border: 1px solid var(--offl-border);
 }
 html.dark footer {
-  background:
-    radial-gradient(circle at 20% 0%, rgba(56, 107, 249, 0.05), transparent 28rem), #0a0a0b !important;
+  background: #0a0a0b !important;
 }
 /* footer trust logos - no bg, white logos on dark */
 html.dark .footer-trust-logo {
@@ -944,9 +949,7 @@ html.dark .container_des [data-text-highlight='tip'],
 html.dark .container_des [data-text-highlight='important'],
 html.dark .container_des [data-text-highlight='warning'],
 html.dark .container_des [data-text-highlight='star'] {
-  background:
-    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.05), transparent 14rem),
-    linear-gradient(135deg, rgba(22, 33, 55, 0.96), rgba(11, 18, 32, 0.94)) !important;
+  background: linear-gradient(135deg, rgba(22, 33, 55, 0.96), rgba(11, 18, 32, 0.94)) !important;
   color: #d7e2f3 !important;
   border: 1px solid rgba(255, 255, 255, 0.18) !important;
 }
@@ -971,9 +974,7 @@ html.dark [role='dialog'],
 html.dark [role='menu'],
 html.dark .custom_sidebar,
 html.dark .custom_sidebar_category {
-  background:
-    radial-gradient(circle at 8% 0%, rgba(56, 107, 249, 0.05), transparent 16rem),
-    linear-gradient(145deg, rgba(8, 13, 26, 0.98), rgba(22, 22, 24, 0.96)) !important;
+  background: linear-gradient(145deg, rgba(8, 13, 26, 0.98), rgba(22, 22, 24, 0.96)) !important;
   border: 1px solid rgba(148, 163, 184, 0.18) !important;
   box-shadow: 0 28px 80px rgba(0, 0, 0, 0.52) !important;
 }
@@ -1008,9 +1009,7 @@ html.dark [data-slot='input-wrapper']:focus-within {
    White product photos are intentionally placed on a premium light pad,
    not left as random white blocks. */
 html.dark .product-gallery-shell {
-  background:
-    radial-gradient(circle at 10% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
-    linear-gradient(145deg, rgba(22, 22, 24, 0.92), rgba(8, 13, 26, 0.94)) !important;
+  background: linear-gradient(145deg, rgba(22, 22, 24, 0.92), rgba(8, 13, 26, 0.94)) !important;
   border: 1px solid rgba(148, 163, 184, 0.18) !important;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42) !important;
 }
@@ -1031,15 +1030,13 @@ html.dark .product-thumb-stage::before {
   pointer-events: none;
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.34),
-      transparent 24%,
-      transparent 70%,
-      rgba(255, 255, 255, 0.1)
-    ),
-    radial-gradient(circle at 50% 85%, rgba(56, 107, 249, 0.05), transparent 44%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.34),
+    transparent 24%,
+    transparent 70%,
+    rgba(255, 255, 255, 0.1)
+  );
   opacity: 0.85;
 }
 /* حذف لایهٔ سفید (sheen) روی محصول اصلی در حالت تاریک */
@@ -1071,10 +1068,10 @@ html.dark .product-image-stage img {
 html.dark .product-card-image-pad,
 html.dark .product-card-image-pad > span,
 html.dark .product-card-image-pad > div[class*='w-'] {
-  border-radius: 0.625rem;
+  border-radius: 0.75rem;
 }
 html.dark .product-card-image-pad::before {
-  border-radius: 0.625rem;
+  border-radius: 0.75rem;
   inset: 0.35rem;
   background: radial-gradient(
     circle at 50% 36%,
@@ -1133,9 +1130,7 @@ html.dark .group.relative.overflow-hidden,
 html.dark .rounded-xl.shadow,
 html.dark .rounded-lg.shadow,
 html.dark .shadow_pro {
-  background:
-    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.05), transparent 14rem),
-    linear-gradient(145deg, rgba(17, 27, 46, 0.94), rgba(9, 14, 28, 0.94)) !important;
+  background: linear-gradient(145deg, rgba(17, 27, 46, 0.94), rgba(9, 14, 28, 0.94)) !important;
   border: 1px solid rgba(148, 163, 184, 0.16) !important;
   box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.34),
@@ -1153,9 +1148,7 @@ html.dark .group.relative.overflow-hidden:hover {
 /* product detail sticky boxes and tabs */
 html.dark .sticky.top-0,
 html.dark .sticky.bottom-0 {
-  background:
-    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.02), transparent 16rem),
-    linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(31, 31, 34, 0.88)) !important;
+  background: linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(31, 31, 34, 0.88)) !important;
   border: 1px solid rgba(148, 163, 184, 0.16) !important;
   backdrop-filter: blur(18px);
 }
@@ -1166,9 +1159,7 @@ html.dark .sticky.top-0 button[class*='bg-blue-600'] {
 }
 html.dark [data-tab].rounded-lg,
 html.dark .scroll-mt-28.rounded-lg {
-  background:
-    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
-    linear-gradient(145deg, rgba(13, 20, 35, 0.94), rgba(8, 13, 26, 0.94)) !important;
+  background: linear-gradient(145deg, rgba(13, 20, 35, 0.94), rgba(8, 13, 26, 0.94)) !important;
   border: 1px solid rgba(148, 163, 184, 0.16) !important;
 }
 
@@ -1183,9 +1174,7 @@ html.dark .container_sidebar .link {
   border-color: rgba(148, 163, 184, 0.16) !important;
 }
 html.dark .container_sidebar {
-  background:
-    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
-    linear-gradient(145deg, rgba(17, 27, 46, 0.94), rgba(8, 13, 26, 0.94)) !important;
+  background: linear-gradient(145deg, rgba(17, 27, 46, 0.94), rgba(8, 13, 26, 0.94)) !important;
 }
 html.dark .container_sidebar .menu .link:hover,
 html.dark .container_sidebar .menu .container_link:hover {
@@ -1332,10 +1321,11 @@ html.dark [class*='from-blue-100'][class*='to-pink-100'],
 html.dark [class*='from-blue-50'][class*='to-purple-50'],
 html.dark [class*='from-amber-50'][class*='to-orange-100'],
 html.dark [class*='from-slate-100'][class*='to-white'] {
-  background-image:
-    radial-gradient(circle at 12% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
-    radial-gradient(circle at 100% 35%, rgba(56, 107, 249, 0.05), transparent 20rem),
-    linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(7, 12, 24, 0.96)) !important;
+  background-image: linear-gradient(
+    145deg,
+    rgba(17, 27, 46, 0.96),
+    rgba(7, 12, 24, 0.96)
+  ) !important;
   color: var(--offl-text-body) !important;
   border-color: var(--offl-hairline) !important;
 }
@@ -1343,15 +1333,12 @@ html.dark [class*='from-slate-100'][class*='to-white'] {
 /* Featured homepage carousel: turn the pale promo area into a premium dark showcase */
 html.dark .relative.mx-auto.mb-8.w-\[99\%\],
 html.dark [class*='from-blue-100'][class*='via-blue-50'][class*='to-purple-50'] {
-  background:
-    radial-gradient(circle at 8% 10%, rgba(56, 107, 249, 0.05), transparent 26rem),
-    radial-gradient(circle at 88% 18%, rgba(56, 107, 249, 0.05), transparent 24rem),
-    linear-gradient(
-      135deg,
-      rgba(10, 18, 34, 0.98),
-      rgba(22, 22, 24, 0.94) 48%,
-      rgba(7, 12, 24, 0.98)
-    ) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(10, 18, 34, 0.98),
+    rgba(22, 22, 24, 0.94) 48%,
+    rgba(7, 12, 24, 0.98)
+  ) !important;
   border-color: rgba(255, 255, 255, 0.24) !important;
   box-shadow:
     0 30px 90px rgba(0, 0, 0, 0.42),
@@ -1378,9 +1365,7 @@ html.dark [class*='from-blue-100'][class*='via-blue-50'][class*='to-purple-50'] 
 html.dark .container_page.mt-7,
 html.dark .container_page.mt-6.rounded-xl,
 html.dark .container_page.category-dark-shell {
-  background:
-    radial-gradient(circle at 95% 0%, rgba(56, 107, 249, 0.05), transparent 20rem),
-    linear-gradient(145deg, rgba(11, 18, 32, 0.66), rgba(7, 12, 24, 0.48)) !important;
+  background: linear-gradient(145deg, rgba(11, 18, 32, 0.66), rgba(7, 12, 24, 0.48)) !important;
   border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 1.5rem;
   padding: clamp(0.75rem, 1.4vw, 1.25rem);
@@ -1422,10 +1407,7 @@ html.dark
   div[class*='rounded-2xl'][class*='border-gray-200'][class*='from-gray-50'][class*='to-white'] {
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(56, 107, 249, 0.05), transparent 22rem),
-    radial-gradient(circle at 100% 80%, rgba(56, 107, 249, 0.05), transparent 18rem),
-    linear-gradient(145deg, rgba(18, 27, 45, 0.96), rgba(8, 13, 26, 0.96)) !important;
+  background: linear-gradient(145deg, rgba(18, 27, 45, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border: 1px solid rgba(148, 163, 184, 0.18) !important;
   box-shadow:
     0 24px 70px rgba(0, 0, 0, 0.34),
@@ -1434,9 +1416,11 @@ html.dark
 /* Empty state grid overlay removed for Turbopack CSS parser safety. */
 html.dark .rounded-full.bg-blue-100,
 html.dark .rounded-full.bg-purple-100 {
-  background:
-    radial-gradient(circle at 35% 30%, rgba(56, 107, 249, 0.05), transparent 34%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.26)) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.24),
+    rgba(255, 255, 255, 0.26)
+  ) !important;
   box-shadow: 0 18px 45px rgba(255, 255, 255, 0.18) !important;
 }
 html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br h3,
@@ -1471,9 +1455,7 @@ html.dark .line-clamp-4 {
 }
 html.dark article .bg-gradient-to-br.from-white,
 html.dark article [class*='from-white'][class*='via-blue'] {
-  background:
-    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
-    linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(8, 13, 26, 0.94)) !important;
+  background: linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(8, 13, 26, 0.94)) !important;
 }
 html.dark article .text-gray-700,
 html.dark article .group-hover\:text-gray-900:hover,
@@ -1580,9 +1562,6 @@ html.dark .featured-product-showcase::before {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background:
-    radial-gradient(circle at 10% 0%, rgba(56, 107, 249, 0.05), transparent 22rem),
-    radial-gradient(circle at 90% 10%, rgba(56, 107, 249, 0.05), transparent 24rem);
   opacity: 0.6;
 }
 html.dark .category-dark-shell > *,
@@ -1610,9 +1589,7 @@ html.dark .mag-header-mainbar {
     0 14px 38px rgba(255, 255, 255, 0.18) !important;
 }
 html.dark .mag-short-ticker {
-  background:
-    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.05), transparent 10rem),
-    linear-gradient(135deg, rgba(0, 0, 0, 0.92), rgba(22, 22, 24, 0.92)) !important;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.92), rgba(22, 22, 24, 0.92)) !important;
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
@@ -1651,9 +1628,7 @@ html.dark .mag-hottest-grid {
 html.dark .mag-article-card,
 html.dark .mag-featured-card,
 html.dark .short-news-card {
-  background:
-    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.05), transparent 16rem),
-    linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
+  background: linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border-color: var(--dm-stroke) !important;
   box-shadow:
     0 22px 70px rgba(0, 0, 0, 0.34),
@@ -1699,10 +1674,7 @@ html.dark .mag-read-more span {
 }
 html.dark .short-news-hero,
 html.dark .single-blog-summary {
-  background:
-    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
-    radial-gradient(circle at 100% 100%, rgba(56, 107, 249, 0.05), transparent 18rem),
-    linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
+  background: linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border: 1px solid var(--dm-stroke) !important;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.36) !important;
 }
@@ -1760,10 +1732,7 @@ html.dark .product-carousel-section {
   border-radius: 1.5rem;
 }
 html.dark .featured-product-showcase {
-  background:
-    radial-gradient(circle at 10% 5%, rgba(56, 107, 249, 0.05), transparent 26rem),
-    radial-gradient(circle at 90% 20%, rgba(56, 107, 249, 0.05), transparent 24rem),
-    linear-gradient(135deg, rgba(7, 12, 24, 0.98), rgba(22, 22, 24, 0.96)) !important;
+  background: linear-gradient(135deg, rgba(7, 12, 24, 0.98), rgba(22, 22, 24, 0.96)) !important;
   border-color: rgba(125, 167, 255, 0.26) !important;
 }
 html.dark .featured-product-showcase h6,
@@ -1783,9 +1752,7 @@ html.dark .category-dark-shell,
 html.dark .category-filter-panel,
 html.dark .category-sortbar,
 html.dark .category-mobile-filterbar {
-  background:
-    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
-    linear-gradient(145deg, rgba(13, 20, 35, 0.94), rgba(8, 13, 26, 0.94)) !important;
+  background: linear-gradient(145deg, rgba(13, 20, 35, 0.94), rgba(8, 13, 26, 0.94)) !important;
   border-color: var(--dm-stroke) !important;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28) !important;
 }
@@ -1844,9 +1811,7 @@ html.dark form[data-question-form] textarea {
   color: var(--dm-text-2) !important;
 }
 html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br {
-  background:
-    radial-gradient(circle at 50% 0%, rgba(56, 107, 249, 0.05), transparent 22rem),
-    linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
+  background: linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border-color: var(--dm-stroke) !important;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34) !important;
 }
@@ -1887,9 +1852,7 @@ html.dark .assembly-image-pad [data-nimg] {
   filter: saturate(1.03) contrast(1.03) drop-shadow(0 18px 20px rgba(22, 22, 24, 0.16)) !important;
 }
 html.dark .product-gallery-shell {
-  background:
-    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.05), transparent 18rem),
-    linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(7, 12, 24, 0.94)) !important;
+  background: linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(7, 12, 24, 0.94)) !important;
 }
 
 /* hard final text contrast */
@@ -1978,10 +1941,7 @@ html.dark .product-carousel-section h6 {
 
 /* ── Featured carousel dark polish ── */
 html.dark .featured-product-showcase {
-  background:
-    radial-gradient(circle at 12% 8%, rgba(56, 107, 249, 0.05), transparent 30rem),
-    radial-gradient(circle at 88% 18%, rgba(56, 107, 249, 0.05), transparent 28rem),
-    linear-gradient(145deg, rgba(22, 22, 24, 0.96), rgba(31, 31, 34, 0.92)) !important;
+  background: linear-gradient(145deg, rgba(22, 22, 24, 0.96), rgba(31, 31, 34, 0.92)) !important;
   border-color: rgba(255, 255, 255, 0.18) !important;
 }
 html.dark .featured-product-showcase .swiper-slide > div > div {
@@ -2082,9 +2042,7 @@ html.dark .animate-pulse {
 
 /* ── Category section dark ── */
 html.dark .category-dark-shell {
-  background:
-    radial-gradient(circle at 50% 0%, rgba(56, 107, 249, 0.05), transparent 24rem),
-    rgba(22, 22, 24, 0.6) !important;
+  background: rgba(22, 22, 24, 0.6) !important;
   border: 1px solid rgba(148, 163, 184, 0.08);
   backdrop-filter: blur(8px);
 }
@@ -2121,9 +2079,7 @@ html.dark *:not(.animate-pulse) {
 
 /* ── Top slider dark polish ── */
 html.dark .bg-\[\#F3F6FB\] {
-  background:
-    radial-gradient(circle at 80% 20%, rgba(56, 107, 249, 0.05), transparent 22rem),
-    linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(7, 11, 22, 0.98)) !important;
+  background: linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(7, 11, 22, 0.98)) !important;
 }
 
 /* ── Navigation buttons dark ── */
@@ -2190,10 +2146,7 @@ html.dark .shadow_menu_bottom {
 /* ── Special section dark ── */
 html.dark .special-section,
 html.dark [class*='special'] {
-  background:
-    radial-gradient(circle at 15% 10%, rgba(56, 107, 249, 0.05), transparent 22rem),
-    radial-gradient(circle at 85% 80%, rgba(56, 107, 249, 0.05), transparent 20rem),
-    rgba(22, 22, 24, 0.7) !important;
+  background: rgba(22, 22, 24, 0.7) !important;
   border-color: rgba(148, 163, 184, 0.1) !important;
 }
 
@@ -2410,9 +2363,7 @@ html.dark .category-dark-shell {
 /* ── Category filter panel (desktop sidebar) ── */
 html.dark .category-filter-panel,
 html.dark .custom_sidebar.container_filter {
-  background:
-    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.05), transparent 14rem),
-    linear-gradient(160deg, rgba(15, 22, 40, 0.97), rgba(8, 12, 24, 0.98)) !important;
+  background: linear-gradient(160deg, rgba(15, 22, 40, 0.97), rgba(8, 12, 24, 0.98)) !important;
   border: 1px solid rgba(148, 163, 184, 0.14) !important;
   border-radius: 1rem !important;
   box-shadow: 0 16px 50px rgba(0, 0, 0, 0.35) !important;
@@ -3320,15 +3271,33 @@ html.dark .single-blog-article .to-gray-100 {
   transform: translateY(0) scale(0.98);
 }
 .asm-header-btn--compact {
-  padding: 6px 12px 6px 10px;
-  border-radius: 11px;
-  gap: 7px;
+  padding: 4px 9px 4px 7px;
+  border-radius: 10px;
+  gap: 5px;
+}
+.asm-header-btn--compact .asm-header-btn__icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+}
+.asm-header-btn--compact .asm-header-btn__icon svg {
+  width: 15px;
+  height: 15px;
 }
 .asm-header-btn--compact .asm-header-btn__title {
-  font-size: 12.5px;
+  font-size: 11.5px;
 }
 .asm-header-btn--compact .asm-header-btn__subtitle {
-  font-size: 9px;
+  font-size: 8.5px;
+}
+.asm-header-btn--compact .asm-header-btn__arrow {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+}
+.asm-header-btn--compact .asm-header-btn__arrow svg {
+  width: 12px;
+  height: 12px;
 }
 .asm-header-btn--active {
   background: linear-gradient(135deg, #059669 0%, #10b981 100%);

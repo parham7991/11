@@ -189,7 +189,7 @@ input[type='number'] {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
 }
 
 .container_des strong,
@@ -488,15 +488,16 @@ input[type='number'] {
   --offl-primary-glow: rgba(56, 107, 249, 0.3);
 }
 html.dark {
-  --offl-bg: #070b16;
-  --offl-bg-soft: #0b1222;
-  --offl-surface: #101827;
-  --offl-surface-2: #172033;
-  --offl-border: rgba(148, 163, 184, 0.18);
-  --offl-text: #eef4ff;
-  --offl-text-muted: #9aa8bd;
-  --offl-primary: #6ea0ff;
-  --offl-primary-glow: rgba(72, 124, 255, 0.35);
+  /* پالت مینیمال و شیک (خنثی، بدون ته‌رنگ گیمینگ) */
+  --offl-bg: #0a0a0b;
+  --offl-bg-soft: #111113;
+  --offl-surface: #161618;
+  --offl-surface-2: #1f1f22;
+  --offl-border: rgba(255, 255, 255, 0.09);
+  --offl-text: #f4f4f5;
+  --offl-text-muted: #a1a1aa;
+  --offl-primary: #5b8cff;
+  --offl-primary-glow: rgba(91, 140, 255, 0.14);
 }
 html {
   background: var(--offl-bg);
@@ -505,26 +506,12 @@ html {
     color 240ms ease;
 }
 html.dark body {
-  background:
-    radial-gradient(circle at 12% 8%, rgba(56, 107, 249, 0.18), transparent 30rem),
-    radial-gradient(circle at 88% 18%, rgba(139, 92, 246, 0.14), transparent 28rem),
-    radial-gradient(circle at 50% 100%, rgba(14, 165, 233, 0.09), transparent 36rem), var(--offl-bg) !important;
+  /* پس‌زمینهٔ تمیز و یکدست — بدون هاله‌های رنگی گیمینگ */
+  background: var(--offl-bg) !important;
   color: var(--offl-text) !important;
 }
-html.dark body::before {
-  content: '';
-  pointer-events: none;
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent 75%);
-}
 html.dark ::selection {
-  background: rgba(80, 130, 255, 0.38);
+  background: rgba(255, 255, 255, 0.16);
   color: #fff;
 }
 html.dark .bg-white,
@@ -621,7 +608,7 @@ html.dark [data-slot='base'],
 html.dark input,
 html.dark textarea,
 html.dark select {
-  background-color: rgba(15, 23, 42, 0.88) !important;
+  background-color: rgba(22, 22, 24, 0.88) !important;
   color: var(--offl-text) !important;
   border-color: var(--offl-border) !important;
 }
@@ -635,7 +622,7 @@ html.dark [role='dialog'],
 html.dark [role='menu'],
 html.dark .custom_sidebar,
 html.dark .custom_sidebar_category {
-  background-color: rgba(12, 18, 32, 0.96) !important;
+  background-color: rgba(22, 22, 24, 0.96) !important;
   color: var(--offl-text) !important;
   border-color: var(--offl-border) !important;
   backdrop-filter: blur(20px);
@@ -652,7 +639,7 @@ html.dark .line-through {
 html.dark .product-attributes tbody tr,
 html.dark .shop_attributes tbody tr,
 html.dark table tbody tr {
-  background-color: rgba(15, 23, 42, 0.72) !important;
+  background-color: rgba(22, 22, 24, 0.72) !important;
 }
 html.dark .product-attributes tbody tr:nth-child(even),
 html.dark .shop_attributes tbody tr:nth-child(even),
@@ -690,7 +677,7 @@ html.dark .container_des [data-text-highlight='tip'],
 html.dark .container_des [data-text-highlight='important'],
 html.dark .container_des [data-text-highlight='warning'],
 html.dark .container_des [data-text-highlight='star'] {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.86)) !important;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.92), rgba(22, 22, 24, 0.86)) !important;
   box-shadow: 0 14px 38px rgba(0, 0, 0, 0.35) !important;
 }
 html.dark .container_des code {
@@ -698,12 +685,12 @@ html.dark .container_des code {
   color: #f0abfc !important;
 }
 html.dark .container_des pre {
-  background-color: #050814 !important;
+  background-color: #0a0a0b !important;
   border: 1px solid var(--offl-border);
 }
 html.dark footer {
   background:
-    radial-gradient(circle at 20% 0%, rgba(56, 107, 249, 0.18), transparent 28rem), #050814 !important;
+    radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.18), transparent 28rem), #0a0a0b !important;
 }
 /* footer trust logos - no bg, white logos on dark */
 html.dark .footer-trust-logo {
@@ -730,8 +717,8 @@ html.dark body *:not(svg):not(path):not(circle):not(rect):not(line):not(polyline
   background: conic-gradient(
     from 90deg,
     transparent,
-    rgba(56, 107, 249, 0.45),
-    rgba(139, 92, 246, 0.38),
+    rgba(255, 255, 255, 0.45),
+    rgba(255, 255, 255, 0.38),
     transparent 35%
   );
   animation: themeSpin 5s linear infinite;
@@ -751,12 +738,12 @@ html.dark body *:not(svg):not(path):not(circle):not(rect):not(line):not(polyline
   position: absolute;
   inset: -6px;
   border-radius: 999px;
-  border: 1px solid rgba(56, 107, 249, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   animation: themePulse 2.8s ease-in-out infinite;
 }
 .theme-orbit-two {
   inset: -12px;
-  border-color: rgba(139, 92, 246, 0.16);
+  border-color: rgba(255, 255, 255, 0.16);
   animation-delay: 0.7s;
 }
 .theme-command-panel {
@@ -820,7 +807,7 @@ html.dark .hover\:bg-main\/90:hover,
 html.dark .hover\:bg-blue-600:hover,
 html.dark .hover\:bg-blue-700:hover {
   background: linear-gradient(135deg, #386bf9 0%, #5f8dff 54%, #7c3aed 100%) !important;
-  box-shadow: 0 12px 36px rgba(56, 107, 249, 0.28) !important;
+  box-shadow: 0 12px 36px rgba(255, 255, 255, 0.28) !important;
 }
 /* prevent purple rectangle behind header logo in dark mode */
 html.dark header .header-logo-bar {
@@ -840,13 +827,13 @@ html.dark .border-blue-500,
 html.dark .border-r-blue-500,
 html.dark .border-b-blue-500,
 html.dark .hover\:border-main:hover {
-  border-color: rgba(130, 170, 255, 0.72) !important;
+  border-color: rgba(255, 255, 255, 0.72) !important;
 }
 html.dark .bg-blue-50,
 html.dark .bg-main\/10,
 html.dark .hover\:bg-blue-50:hover,
 html.dark .hover\:bg-main\/10:hover {
-  background-color: rgba(56, 107, 249, 0.13) !important;
+  background-color: rgba(255, 255, 255, 0.13) !important;
 }
 
 /* stronger generic surface coverage: many old boxes were still visually white */
@@ -886,7 +873,7 @@ html.dark .bg-gray-200,
 html.dark .bg-slate-200,
 html.dark .bg-zinc-200,
 html.dark .bg-neutral-200 {
-  background: linear-gradient(145deg, var(--offl-card-soft), rgba(12, 18, 32, 0.82)) !important;
+  background: linear-gradient(145deg, var(--offl-card-soft), rgba(22, 22, 24, 0.82)) !important;
 }
 
 html.dark [class*='bg-'][class*='white'],
@@ -937,7 +924,7 @@ html.dark .container_des h4,
 html.dark .container_des h5,
 html.dark .container_des h6 {
   color: var(--offl-text-strong) !important;
-  border-color: rgba(130, 170, 255, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
 }
 html.dark .container_des p,
 html.dark .container_des li,
@@ -958,10 +945,10 @@ html.dark .container_des [data-text-highlight='important'],
 html.dark .container_des [data-text-highlight='warning'],
 html.dark .container_des [data-text-highlight='star'] {
   background:
-    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.14), transparent 14rem),
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.14), transparent 14rem),
     linear-gradient(135deg, rgba(22, 33, 55, 0.96), rgba(11, 18, 32, 0.94)) !important;
   color: #d7e2f3 !important;
-  border: 1px solid rgba(130, 170, 255, 0.18) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
 }
 html.dark .container_des table thead,
 html.dark table thead {
@@ -985,14 +972,14 @@ html.dark [role='menu'],
 html.dark .custom_sidebar,
 html.dark .custom_sidebar_category {
   background:
-    radial-gradient(circle at 8% 0%, rgba(56, 107, 249, 0.16), transparent 16rem),
-    linear-gradient(145deg, rgba(8, 13, 26, 0.98), rgba(15, 23, 42, 0.96)) !important;
+    radial-gradient(circle at 8% 0%, rgba(255, 255, 255, 0.16), transparent 16rem),
+    linear-gradient(145deg, rgba(8, 13, 26, 0.98), rgba(22, 22, 24, 0.96)) !important;
   border: 1px solid rgba(148, 163, 184, 0.18) !important;
   box-shadow: 0 28px 80px rgba(0, 0, 0, 0.52) !important;
 }
 html.dark [data-hover='true'],
 html.dark [data-focus='true'] {
-  border-color: rgba(130, 170, 255, 0.42) !important;
+  border-color: rgba(255, 255, 255, 0.42) !important;
 }
 
 /* Header and search refinements */
@@ -1006,14 +993,14 @@ html.dark header .lg\:bg-white {
   background: transparent !important;
 }
 html.dark [data-slot='input-wrapper'] {
-  background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.76)) !important;
-  border: 1px solid rgba(130, 170, 255, 0.18) !important;
+  background: linear-gradient(145deg, rgba(22, 22, 24, 0.96), rgba(30, 41, 59, 0.76)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
 }
 html.dark [data-slot='input-wrapper']:focus-within {
-  border-color: rgba(130, 170, 255, 0.65) !important;
+  border-color: rgba(255, 255, 255, 0.65) !important;
   box-shadow:
-    0 0 0 4px rgba(56, 107, 249, 0.13),
+    0 0 0 4px rgba(255, 255, 255, 0.13),
     0 16px 34px rgba(0, 0, 0, 0.28) !important;
 }
 
@@ -1022,8 +1009,8 @@ html.dark [data-slot='input-wrapper']:focus-within {
    not left as random white blocks. */
 html.dark .product-gallery-shell {
   background:
-    radial-gradient(circle at 10% 0%, rgba(56, 107, 249, 0.12), transparent 18rem),
-    linear-gradient(145deg, rgba(12, 18, 32, 0.92), rgba(8, 13, 26, 0.94)) !important;
+    radial-gradient(circle at 10% 0%, rgba(255, 255, 255, 0.12), transparent 18rem),
+    linear-gradient(145deg, rgba(22, 22, 24, 0.92), rgba(8, 13, 26, 0.94)) !important;
   border: 1px solid rgba(148, 163, 184, 0.18) !important;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42) !important;
 }
@@ -1032,8 +1019,8 @@ html.dark .product-image-stage {
   background: transparent !important;
   border: 1px solid rgba(148, 163, 184, 0.18) !important;
   box-shadow:
-    inset 0 0 0 1px rgba(15, 23, 42, 0.05),
-    inset 0 -28px 60px rgba(56, 107, 249, 0.08),
+    inset 0 0 0 1px rgba(22, 22, 24, 0.05),
+    inset 0 -28px 60px rgba(255, 255, 255, 0.08),
     0 18px 55px rgba(0, 0, 0, 0.28) !important;
 }
 html.dark .product-image-stage::before,
@@ -1050,9 +1037,9 @@ html.dark .product-thumb-stage::before {
       rgba(255, 255, 255, 0.34),
       transparent 24%,
       transparent 70%,
-      rgba(56, 107, 249, 0.1)
+      rgba(255, 255, 255, 0.1)
     ),
-    radial-gradient(circle at 50% 85%, rgba(56, 107, 249, 0.12), transparent 44%);
+    radial-gradient(circle at 50% 85%, rgba(255, 255, 255, 0.12), transparent 44%);
   opacity: 0.85;
 }
 /* حذف لایهٔ سفید (sheen) روی محصول اصلی در حالت تاریک */
@@ -1070,7 +1057,7 @@ html.dark .product-card-image-pad::after {
   bottom: 12%;
   height: 24%;
   border-radius: 999px;
-  background: radial-gradient(ellipse, rgba(15, 23, 42, 0.16), transparent 70%);
+  background: radial-gradient(ellipse, rgba(22, 22, 24, 0.16), transparent 70%);
   filter: blur(10px);
 }
 html.dark .product-image-stage .iiz,
@@ -1079,7 +1066,7 @@ html.dark .product-image-stage img {
   position: relative;
   z-index: 1;
   mix-blend-mode: normal;
-  filter: saturate(1.02) contrast(1.02) drop-shadow(0 18px 22px rgba(15, 23, 42, 0.16)) !important;
+  filter: saturate(1.02) contrast(1.02) drop-shadow(0 18px 22px rgba(22, 22, 24, 0.16)) !important;
 }
 html.dark .product-card-image-pad,
 html.dark .product-card-image-pad > span,
@@ -1096,7 +1083,7 @@ html.dark .product-card-image-pad::before {
     rgba(226, 235, 250, 0.9) 100%
   ) !important;
   box-shadow:
-    inset 0 0 0 1px rgba(15, 23, 42, 0.04),
+    inset 0 0 0 1px rgba(22, 22, 24, 0.04),
     0 14px 38px rgba(0, 0, 0, 0.16);
 }
 html.dark .product-card-image-pad img,
@@ -1109,7 +1096,7 @@ html.dark .product-card-image-pad > div:not(:empty) {
 html.dark .product-card-image-pad img,
 html.dark .product-card-image-pad [data-nimg] {
   mix-blend-mode: multiply;
-  filter: saturate(1.03) contrast(1.02) drop-shadow(0 14px 20px rgba(15, 23, 42, 0.14)) !important;
+  filter: saturate(1.03) contrast(1.02) drop-shadow(0 14px 20px rgba(22, 22, 24, 0.14)) !important;
 }
 html.dark .product-card-image-pad:hover::before {
   background: radial-gradient(
@@ -1137,7 +1124,7 @@ html.dark .assembly-image-pad [data-nimg] {
   position: relative;
   z-index: 1;
   mix-blend-mode: multiply;
-  filter: saturate(1.03) contrast(1.02) drop-shadow(0 8px 12px rgba(15, 23, 42, 0.14)) !important;
+  filter: saturate(1.03) contrast(1.02) drop-shadow(0 8px 12px rgba(22, 22, 24, 0.14)) !important;
 }
 
 /* product/card shell: make all cards feel designed */
@@ -1147,7 +1134,7 @@ html.dark .rounded-xl.shadow,
 html.dark .rounded-lg.shadow,
 html.dark .shadow_pro {
   background:
-    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.09), transparent 14rem),
+    radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.09), transparent 14rem),
     linear-gradient(145deg, rgba(17, 27, 46, 0.94), rgba(9, 14, 28, 0.94)) !important;
   border: 1px solid rgba(148, 163, 184, 0.16) !important;
   box-shadow:
@@ -1156,19 +1143,19 @@ html.dark .shadow_pro {
 }
 html.dark .group.relative.flex.h-full:hover,
 html.dark .group.relative.overflow-hidden:hover {
-  border-color: rgba(130, 170, 255, 0.42) !important;
+  border-color: rgba(255, 255, 255, 0.42) !important;
   box-shadow:
     0 24px 76px rgba(0, 0, 0, 0.42),
-    0 0 0 1px rgba(56, 107, 249, 0.16),
-    0 0 42px rgba(56, 107, 249, 0.08) !important;
+    0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 0 42px rgba(255, 255, 255, 0.08) !important;
 }
 
 /* product detail sticky boxes and tabs */
 html.dark .sticky.top-0,
 html.dark .sticky.bottom-0 {
   background:
-    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.12), transparent 16rem),
-    linear-gradient(145deg, rgba(12, 18, 32, 0.94), rgba(20, 30, 50, 0.88)) !important;
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.12), transparent 16rem),
+    linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(31, 31, 34, 0.88)) !important;
   border: 1px solid rgba(148, 163, 184, 0.16) !important;
   backdrop-filter: blur(18px);
 }
@@ -1180,7 +1167,7 @@ html.dark .sticky.top-0 button[class*='bg-blue-600'] {
 html.dark [data-tab].rounded-lg,
 html.dark .scroll-mt-28.rounded-lg {
   background:
-    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.08), transparent 18rem),
+    radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.08), transparent 18rem),
     linear-gradient(145deg, rgba(13, 20, 35, 0.94), rgba(8, 13, 26, 0.94)) !important;
   border: 1px solid rgba(148, 163, 184, 0.16) !important;
 }
@@ -1197,27 +1184,27 @@ html.dark .container_sidebar .link {
 }
 html.dark .container_sidebar {
   background:
-    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.12), transparent 18rem),
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.12), transparent 18rem),
     linear-gradient(145deg, rgba(17, 27, 46, 0.94), rgba(8, 13, 26, 0.94)) !important;
 }
 html.dark .container_sidebar .menu .link:hover,
 html.dark .container_sidebar .menu .container_link:hover {
-  background: rgba(56, 107, 249, 0.08) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
   border-radius: 1rem;
 }
 html.dark .container_sidebar .menu .active {
   background: linear-gradient(180deg, #386bf9, #6ea0ff) !important;
-  box-shadow: 0 0 22px rgba(56, 107, 249, 0.34);
+  box-shadow: 0 0 22px rgba(255, 255, 255, 0.34);
 }
 
 /* bottom navigation active pill */
 html.dark .shadow_menu_bottom button[class*='bg-main/10'] {
   background: linear-gradient(
     135deg,
-    rgba(56, 107, 249, 0.16),
+    rgba(255, 255, 255, 0.16),
     rgba(255, 255, 255, 0.04)
   ) !important;
-  box-shadow: inset 0 0 0 1px rgba(130, 170, 255, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
 }
 
 /* badges and status colors */
@@ -1244,7 +1231,7 @@ html.dark button:focus-visible,
 html.dark input:focus-visible,
 html.dark textarea:focus-visible,
 html.dark select:focus-visible {
-  outline: 2px solid rgba(130, 170, 255, 0.75) !important;
+  outline: 2px solid rgba(255, 255, 255, 0.75) !important;
   outline-offset: 3px;
 }
 
@@ -1258,7 +1245,7 @@ html.dark .animate-shimmer {
   background-image: linear-gradient(
     90deg,
     transparent,
-    rgba(130, 170, 255, 0.18),
+    rgba(255, 255, 255, 0.18),
     transparent
   ) !important;
 }
@@ -1308,8 +1295,8 @@ html.dark .product-image-pad::before {
     rgba(226, 235, 250, 0.92) 100%
   ) !important;
   box-shadow:
-    inset 0 0 0 1px rgba(15, 23, 42, 0.04),
-    inset 0 -20px 44px rgba(56, 107, 249, 0.08),
+    inset 0 0 0 1px rgba(22, 22, 24, 0.04),
+    inset 0 -20px 44px rgba(255, 255, 255, 0.08),
     0 14px 38px rgba(0, 0, 0, 0.16);
 }
 html.dark .product-image-pad::after {
@@ -1322,13 +1309,13 @@ html.dark .product-image-pad::after {
   z-index: -1;
   height: 22%;
   border-radius: 999px;
-  background: radial-gradient(ellipse, rgba(15, 23, 42, 0.18), transparent 70%);
+  background: radial-gradient(ellipse, rgba(22, 22, 24, 0.18), transparent 70%);
   filter: blur(10px);
 }
 html.dark .product-image-pad img,
 html.dark .product-image-pad [data-nimg] {
   mix-blend-mode: multiply;
-  filter: saturate(1.03) contrast(1.02) drop-shadow(0 14px 20px rgba(15, 23, 42, 0.14)) !important;
+  filter: saturate(1.03) contrast(1.02) drop-shadow(0 14px 20px rgba(22, 22, 24, 0.14)) !important;
 }
 
 /* =========================================================
@@ -1346,8 +1333,8 @@ html.dark [class*='from-blue-50'][class*='to-purple-50'],
 html.dark [class*='from-amber-50'][class*='to-orange-100'],
 html.dark [class*='from-slate-100'][class*='to-white'] {
   background-image:
-    radial-gradient(circle at 12% 0%, rgba(56, 107, 249, 0.16), transparent 18rem),
-    radial-gradient(circle at 100% 35%, rgba(124, 58, 237, 0.13), transparent 20rem),
+    radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 0.16), transparent 18rem),
+    radial-gradient(circle at 100% 35%, rgba(255, 255, 255, 0.13), transparent 20rem),
     linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(7, 12, 24, 0.96)) !important;
   color: var(--offl-text-body) !important;
   border-color: var(--offl-hairline) !important;
@@ -1357,15 +1344,15 @@ html.dark [class*='from-slate-100'][class*='to-white'] {
 html.dark .relative.mx-auto.mb-8.w-\[99\%\],
 html.dark [class*='from-blue-100'][class*='via-blue-50'][class*='to-purple-50'] {
   background:
-    radial-gradient(circle at 8% 10%, rgba(56, 107, 249, 0.18), transparent 26rem),
-    radial-gradient(circle at 88% 18%, rgba(168, 85, 247, 0.16), transparent 24rem),
+    radial-gradient(circle at 8% 10%, rgba(255, 255, 255, 0.18), transparent 26rem),
+    radial-gradient(circle at 88% 18%, rgba(255, 255, 255, 0.16), transparent 24rem),
     linear-gradient(
       135deg,
       rgba(10, 18, 34, 0.98),
-      rgba(15, 23, 42, 0.94) 48%,
+      rgba(22, 22, 24, 0.94) 48%,
       rgba(7, 12, 24, 0.98)
     ) !important;
-  border-color: rgba(130, 170, 255, 0.24) !important;
+  border-color: rgba(255, 255, 255, 0.24) !important;
   box-shadow:
     0 30px 90px rgba(0, 0, 0, 0.42),
     inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
@@ -1392,7 +1379,7 @@ html.dark .container_page.mt-7,
 html.dark .container_page.mt-6.rounded-xl,
 html.dark .container_page.category-dark-shell {
   background:
-    radial-gradient(circle at 95% 0%, rgba(56, 107, 249, 0.1), transparent 20rem),
+    radial-gradient(circle at 95% 0%, rgba(255, 255, 255, 0.1), transparent 20rem),
     linear-gradient(145deg, rgba(11, 18, 32, 0.66), rgba(7, 12, 24, 0.48)) !important;
   border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 1.5rem;
@@ -1422,7 +1409,7 @@ html.dark span.rounded-full {
   ) !important;
   box-shadow:
     0 16px 40px rgba(0, 0, 0, 0.28),
-    inset 0 0 0 1px rgba(15, 23, 42, 0.06) !important;
+    inset 0 0 0 1px rgba(22, 22, 24, 0.06) !important;
 }
 html.dark a .rounded-full + p,
 html.dark a p {
@@ -1436,8 +1423,8 @@ html.dark
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 0%, rgba(56, 107, 249, 0.16), transparent 22rem),
-    radial-gradient(circle at 100% 80%, rgba(168, 85, 247, 0.12), transparent 18rem),
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.16), transparent 22rem),
+    radial-gradient(circle at 100% 80%, rgba(255, 255, 255, 0.12), transparent 18rem),
     linear-gradient(145deg, rgba(18, 27, 45, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border: 1px solid rgba(148, 163, 184, 0.18) !important;
   box-shadow:
@@ -1449,8 +1436,8 @@ html.dark .rounded-full.bg-blue-100,
 html.dark .rounded-full.bg-purple-100 {
   background:
     radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.28), transparent 34%),
-    linear-gradient(135deg, rgba(56, 107, 249, 0.24), rgba(124, 58, 237, 0.26)) !important;
-  box-shadow: 0 18px 45px rgba(56, 107, 249, 0.18) !important;
+    linear-gradient(135deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.26)) !important;
+  box-shadow: 0 18px 45px rgba(255, 255, 255, 0.18) !important;
 }
 html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br h3,
 html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br p {
@@ -1485,8 +1472,8 @@ html.dark .line-clamp-4 {
 html.dark article .bg-gradient-to-br.from-white,
 html.dark article [class*='from-white'][class*='via-blue'] {
   background:
-    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.12), transparent 18rem),
-    linear-gradient(145deg, rgba(15, 23, 42, 0.94), rgba(8, 13, 26, 0.94)) !important;
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.12), transparent 18rem),
+    linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(8, 13, 26, 0.94)) !important;
 }
 html.dark article .text-gray-700,
 html.dark article .group-hover\:text-gray-900:hover,
@@ -1521,7 +1508,7 @@ html.dark .product-image-pad::before {
       rgba(244, 248, 255, 0.96) 58%,
       rgba(226, 235, 250, 0.92) 100%
     ),
-    linear-gradient(135deg, rgba(56, 107, 249, 0.06), rgba(124, 58, 237, 0.05)) !important;
+    linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.05)) !important;
 }
 
 /* Navigation arrows in dark */
@@ -1530,7 +1517,7 @@ html.dark .featured-swiper-button-next,
 html.dark button[aria-label='عکس قبلی'],
 html.dark button[aria-label='عکس بعدی'] {
   background: rgba(10, 16, 30, 0.86) !important;
-  border-color: rgba(130, 170, 255, 0.24) !important;
+  border-color: rgba(255, 255, 255, 0.24) !important;
   color: #eaf1ff !important;
   backdrop-filter: blur(14px);
 }
@@ -1564,13 +1551,13 @@ html.dark section[style*='background-color: white'] {
    Safe selectors only, compatible with Turbopack CSS parser.
    ========================================================= */
 html.dark {
-  --dm-bg-0: #050814;
+  --dm-bg-0: #0a0a0b;
   --dm-bg-1: #080d1a;
   --dm-bg-2: #0d1629;
   --dm-card: rgba(15, 24, 42, 0.94);
   --dm-card-2: rgba(20, 31, 52, 0.92);
   --dm-stroke: rgba(148, 163, 184, 0.18);
-  --dm-stroke-2: rgba(130, 170, 255, 0.28);
+  --dm-stroke-2: rgba(255, 255, 255, 0.28);
   --dm-text: #eef4ff;
   --dm-text-2: #cbd7e9;
   --dm-muted: #9aa8bd;
@@ -1594,8 +1581,8 @@ html.dark .featured-product-showcase::before {
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(circle at 10% 0%, rgba(56, 107, 249, 0.1), transparent 22rem),
-    radial-gradient(circle at 90% 10%, rgba(139, 92, 246, 0.09), transparent 24rem);
+    radial-gradient(circle at 10% 0%, rgba(255, 255, 255, 0.1), transparent 22rem),
+    radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.09), transparent 24rem);
   opacity: 0.9;
 }
 html.dark .category-dark-shell > *,
@@ -1614,18 +1601,18 @@ html.dark .mag-header-shell {
 html.dark .mag-header-mainbar {
   background: linear-gradient(
     90deg,
-    rgba(56, 107, 249, 0.96),
+    rgba(255, 255, 255, 0.96),
     rgba(73, 128, 255, 0.94) 44%,
-    rgba(124, 58, 237, 0.9)
+    rgba(255, 255, 255, 0.9)
   ) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    0 14px 38px rgba(56, 107, 249, 0.18) !important;
+    0 14px 38px rgba(255, 255, 255, 0.18) !important;
 }
 html.dark .mag-short-ticker {
   background:
     radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.09), transparent 10rem),
-    linear-gradient(135deg, rgba(0, 0, 0, 0.92), rgba(15, 23, 42, 0.92)) !important;
+    linear-gradient(135deg, rgba(0, 0, 0, 0.92), rgba(22, 22, 24, 0.92)) !important;
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
@@ -1665,7 +1652,7 @@ html.dark .mag-article-card,
 html.dark .mag-featured-card,
 html.dark .short-news-card {
   background:
-    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.1), transparent 16rem),
+    radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.1), transparent 16rem),
     linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border-color: var(--dm-stroke) !important;
   box-shadow:
@@ -1678,13 +1665,13 @@ html.dark .short-news-card:hover {
   border-color: rgba(125, 167, 255, 0.5) !important;
   box-shadow:
     0 28px 86px rgba(0, 0, 0, 0.44),
-    0 0 0 1px rgba(56, 107, 249, 0.18),
-    0 0 46px rgba(56, 107, 249, 0.1) !important;
+    0 0 0 1px rgba(255, 255, 255, 0.18),
+    0 0 46px rgba(255, 255, 255, 0.1) !important;
 }
 html.dark .mag-article-image {
-  background: #050814 !important;
+  background: #0a0a0b !important;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 -28px 80px rgba(56, 107, 249, 0.08);
+  box-shadow: inset 0 -28px 80px rgba(255, 255, 255, 0.08);
 }
 html.dark .mag-article-image img {
   filter: saturate(1.08) contrast(1.04) brightness(0.92) !important;
@@ -1713,8 +1700,8 @@ html.dark .mag-read-more span {
 html.dark .short-news-hero,
 html.dark .single-blog-summary {
   background:
-    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.16), transparent 18rem),
-    radial-gradient(circle at 100% 100%, rgba(236, 72, 153, 0.1), transparent 18rem),
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.16), transparent 18rem),
+    radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.1), transparent 18rem),
     linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border: 1px solid var(--dm-stroke) !important;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.36) !important;
@@ -1751,14 +1738,14 @@ html.dark .single-blog-title {
   background-clip: text !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  filter: drop-shadow(0 14px 30px rgba(56, 107, 249, 0.14));
+  filter: drop-shadow(0 14px 30px rgba(255, 255, 255, 0.14));
 }
 html.dark .single-blog-cover {
   background: linear-gradient(
     135deg,
-    rgba(56, 107, 249, 0.3),
-    rgba(139, 92, 246, 0.24),
-    rgba(236, 72, 153, 0.18)
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.24),
+    rgba(255, 255, 255, 0.18)
   ) !important;
   border: 1px solid rgba(255, 255, 255, 0.14) !important;
 }
@@ -1774,9 +1761,9 @@ html.dark .product-carousel-section {
 }
 html.dark .featured-product-showcase {
   background:
-    radial-gradient(circle at 10% 5%, rgba(56, 107, 249, 0.22), transparent 26rem),
-    radial-gradient(circle at 90% 20%, rgba(139, 92, 246, 0.18), transparent 24rem),
-    linear-gradient(135deg, rgba(7, 12, 24, 0.98), rgba(15, 23, 42, 0.96)) !important;
+    radial-gradient(circle at 10% 5%, rgba(255, 255, 255, 0.22), transparent 26rem),
+    radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0.18), transparent 24rem),
+    linear-gradient(135deg, rgba(7, 12, 24, 0.98), rgba(22, 22, 24, 0.96)) !important;
   border-color: rgba(125, 167, 255, 0.26) !important;
 }
 html.dark .featured-product-showcase h6,
@@ -1786,7 +1773,7 @@ html.dark .product-carousel-section h6 {
 }
 html.dark .featured-product-showcase a[href*='vitrin_id'],
 html.dark .product-carousel-section a[href*='vitrin_id'] {
-  background: rgba(56, 107, 249, 0.13) !important;
+  background: rgba(255, 255, 255, 0.13) !important;
   border-color: rgba(125, 167, 255, 0.36) !important;
   color: #dbeafe !important;
 }
@@ -1797,7 +1784,7 @@ html.dark .category-filter-panel,
 html.dark .category-sortbar,
 html.dark .category-mobile-filterbar {
   background:
-    radial-gradient(circle at 100% 0%, rgba(56, 107, 249, 0.1), transparent 18rem),
+    radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.1), transparent 18rem),
     linear-gradient(145deg, rgba(13, 20, 35, 0.94), rgba(8, 13, 26, 0.94)) !important;
   border-color: var(--dm-stroke) !important;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28) !important;
@@ -1858,7 +1845,7 @@ html.dark form[data-question-form] textarea {
 }
 html.dark .rounded-2xl.border.border-gray-200.bg-gradient-to-br {
   background:
-    radial-gradient(circle at 50% 0%, rgba(56, 107, 249, 0.16), transparent 22rem),
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.16), transparent 22rem),
     linear-gradient(145deg, rgba(17, 27, 46, 0.96), rgba(8, 13, 26, 0.96)) !important;
   border-color: var(--dm-stroke) !important;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34) !important;
@@ -1884,8 +1871,8 @@ html.dark .assembly-image-pad {
   ) !important;
   border-color: rgba(255, 255, 255, 0.18) !important;
   box-shadow:
-    inset 0 0 0 1px rgba(15, 23, 42, 0.05),
-    inset 0 -24px 58px rgba(56, 107, 249, 0.1),
+    inset 0 0 0 1px rgba(22, 22, 24, 0.05),
+    inset 0 -24px 58px rgba(255, 255, 255, 0.1),
     0 18px 50px rgba(0, 0, 0, 0.26) !important;
 }
 html.dark .product-image-stage img,
@@ -1897,12 +1884,12 @@ html.dark .product-image-pad [data-nimg],
 html.dark .product-thumb-stage [data-nimg],
 html.dark .assembly-image-pad [data-nimg] {
   mix-blend-mode: multiply !important;
-  filter: saturate(1.03) contrast(1.03) drop-shadow(0 18px 20px rgba(15, 23, 42, 0.16)) !important;
+  filter: saturate(1.03) contrast(1.03) drop-shadow(0 18px 20px rgba(22, 22, 24, 0.16)) !important;
 }
 html.dark .product-gallery-shell {
   background:
-    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.14), transparent 18rem),
-    linear-gradient(145deg, rgba(12, 18, 32, 0.94), rgba(7, 12, 24, 0.94)) !important;
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.14), transparent 18rem),
+    linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(7, 12, 24, 0.94)) !important;
 }
 
 /* hard final text contrast */
@@ -1939,9 +1926,9 @@ html.dark .text-neutral-500 {
 
 /* ── CSS Custom Properties for Dark Mode ── */
 :root {
-  --offl-glow-blue: rgba(56, 107, 249, 0.35);
-  --offl-glow-purple: rgba(139, 92, 246, 0.28);
-  --offl-glow-cyan: rgba(14, 165, 233, 0.2);
+  --offl-glow-blue: rgba(255, 255, 255, 0.35);
+  --offl-glow-purple: rgba(255, 255, 255, 0.28);
+  --offl-glow-cyan: rgba(255, 255, 255, 0.2);
 }
 
 /* ── Banner hover effects ── */
@@ -1961,10 +1948,10 @@ html.dark .keen-slider__slide {
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 html.dark .keen-slider__slide:hover {
-  border-color: rgba(130, 170, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
   box-shadow:
     0 20px 50px rgba(0, 0, 0, 0.4),
-    0 0 30px rgba(56, 107, 249, 0.06) !important;
+    0 0 30px rgba(255, 255, 255, 0.06) !important;
   transform: translateY(-4px);
 }
 
@@ -1992,21 +1979,21 @@ html.dark .product-carousel-section h6 {
 /* ── Featured carousel dark polish ── */
 html.dark .featured-product-showcase {
   background:
-    radial-gradient(circle at 12% 8%, rgba(56, 107, 249, 0.22), transparent 30rem),
-    radial-gradient(circle at 88% 18%, rgba(139, 92, 246, 0.16), transparent 28rem),
-    linear-gradient(145deg, rgba(12, 18, 32, 0.96), rgba(20, 30, 50, 0.92)) !important;
-  border-color: rgba(130, 170, 255, 0.18) !important;
+    radial-gradient(circle at 12% 8%, rgba(255, 255, 255, 0.22), transparent 30rem),
+    radial-gradient(circle at 88% 18%, rgba(255, 255, 255, 0.16), transparent 28rem),
+    linear-gradient(145deg, rgba(22, 22, 24, 0.96), rgba(31, 31, 34, 0.92)) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
 }
 html.dark .featured-product-showcase .swiper-slide > div > div {
-  background: rgba(15, 23, 42, 0.72) !important;
+  background: rgba(22, 22, 24, 0.72) !important;
   border-color: rgba(148, 163, 184, 0.12) !important;
   backdrop-filter: blur(12px);
 }
 html.dark .featured-product-showcase .swiper-slide:hover > div > div {
-  border-color: rgba(130, 170, 255, 0.28) !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
   box-shadow:
     0 16px 48px rgba(0, 0, 0, 0.4),
-    0 0 20px rgba(56, 107, 249, 0.08) !important;
+    0 0 20px rgba(255, 255, 255, 0.08) !important;
 }
 html.dark .featured-product-showcase h6 {
   color: var(--offl-text) !important;
@@ -2018,9 +2005,9 @@ html.dark .header-theme-btn {
   border-color: rgba(255, 255, 255, 0.1);
 }
 html.dark .header-theme-btn:hover {
-  background: rgba(56, 107, 249, 0.15);
-  border-color: rgba(130, 170, 255, 0.35);
-  box-shadow: 0 4px 16px rgba(56, 107, 249, 0.18);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.18);
 }
 
 /* ── Footer trust logos glow ── */
@@ -2034,7 +2021,7 @@ html.dark .footer-trust-logo:hover {
 
 /* ── Button hover glow ── */
 html.dark .bg-main:hover {
-  box-shadow: 0 12px 40px rgba(56, 107, 249, 0.38) !important;
+  box-shadow: 0 12px 40px rgba(255, 255, 255, 0.38) !important;
   filter: brightness(1.1);
 }
 
@@ -2047,27 +2034,27 @@ html.dark *::-webkit-scrollbar-thumb {
 /* ── Cart/profile buttons in header ── */
 html.dark header button[class*='bg-white'],
 html.dark header a[class*='bg-white'] {
-  background: rgba(15, 23, 42, 0.6) !important;
+  background: rgba(22, 22, 24, 0.6) !important;
   border-color: rgba(148, 163, 184, 0.15) !important;
   backdrop-filter: blur(12px);
 }
 html.dark header button[class*='bg-white']:hover,
 html.dark header a[class*='bg-white']:hover {
-  border-color: rgba(130, 170, 255, 0.3) !important;
-  background: rgba(15, 23, 42, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(22, 22, 24, 0.8) !important;
 }
 
 /* ── Search bar dark polish ── */
 html.dark [data-slot='input-wrapper'] {
-  background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.76)) !important;
-  border: 1px solid rgba(130, 170, 255, 0.18) !important;
+  background: linear-gradient(145deg, rgba(22, 22, 24, 0.96), rgba(30, 41, 59, 0.76)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
   transition: all 0.3s ease;
 }
 html.dark [data-slot='input-wrapper']:focus-within {
-  border-color: rgba(130, 170, 255, 0.55) !important;
+  border-color: rgba(255, 255, 255, 0.55) !important;
   box-shadow:
-    0 0 0 4px rgba(56, 107, 249, 0.13),
+    0 0 0 4px rgba(255, 255, 255, 0.13),
     0 16px 34px rgba(0, 0, 0, 0.28) !important;
 }
 
@@ -2081,7 +2068,7 @@ html.dark .animate-pulse {
   background: linear-gradient(
     110deg,
     rgba(30, 41, 59, 0.6) 8%,
-    rgba(56, 107, 249, 0.08) 18%,
+    rgba(255, 255, 255, 0.08) 18%,
     rgba(30, 41, 59, 0.6) 33%
   ) !important;
   background-size: 200% 100% !important;
@@ -2096,8 +2083,8 @@ html.dark .animate-pulse {
 /* ── Category section dark ── */
 html.dark .category-dark-shell {
   background:
-    radial-gradient(circle at 50% 0%, rgba(56, 107, 249, 0.1), transparent 24rem),
-    rgba(12, 18, 32, 0.6) !important;
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.1), transparent 24rem),
+    rgba(22, 22, 24, 0.6) !important;
   border: 1px solid rgba(148, 163, 184, 0.08);
   backdrop-filter: blur(8px);
 }
@@ -2120,7 +2107,7 @@ html.dark [class*='brand'] img {
 }
 html.dark .brand-card:hover,
 html.dark [class*='brand']:hover img {
-  filter: brightness(1) saturate(1) drop-shadow(0 4px 12px rgba(56, 107, 249, 0.15));
+  filter: brightness(1) saturate(1) drop-shadow(0 4px 12px rgba(255, 255, 255, 0.15));
   transform: scale(1.04);
 }
 
@@ -2135,46 +2122,46 @@ html.dark *:not(.animate-pulse) {
 /* ── Top slider dark polish ── */
 html.dark .bg-\[\#F3F6FB\] {
   background:
-    radial-gradient(circle at 80% 20%, rgba(56, 107, 249, 0.12), transparent 22rem),
-    linear-gradient(145deg, rgba(12, 18, 32, 0.94), rgba(7, 11, 22, 0.98)) !important;
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.12), transparent 22rem),
+    linear-gradient(145deg, rgba(22, 22, 24, 0.94), rgba(7, 11, 22, 0.98)) !important;
 }
 
 /* ── Navigation buttons dark ── */
 html.dark .featured-swiper-button-prev,
 html.dark .featured-swiper-button-next {
-  background: rgba(15, 23, 42, 0.85) !important;
+  background: rgba(22, 22, 24, 0.85) !important;
   border-color: rgba(148, 163, 184, 0.15) !important;
   backdrop-filter: blur(12px);
 }
 html.dark .featured-swiper-button-prev:hover,
 html.dark .featured-swiper-button-next:hover {
   background: rgba(30, 41, 59, 0.9) !important;
-  border-color: rgba(130, 170, 255, 0.35) !important;
-  box-shadow: 0 8px 24px rgba(56, 107, 249, 0.15);
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
 }
 
 /* ── HeaderTop dark polish ── */
 html.dark header .bg-\[\#F3F6FB\],
 html.dark .header-top-bar {
-  background: rgba(12, 18, 32, 0.92) !important;
+  background: rgba(22, 22, 24, 0.92) !important;
   border-bottom: 1px solid rgba(148, 163, 184, 0.08);
 }
 
 /* ── View all button dark ── */
 html.dark .product-carousel-section a[class*='rounded-lg'] {
-  background: rgba(15, 23, 42, 0.6) !important;
+  background: rgba(22, 22, 24, 0.6) !important;
   border-color: rgba(148, 163, 184, 0.15) !important;
   backdrop-filter: blur(8px);
 }
 html.dark .product-carousel-section a[class*='rounded-lg']:hover {
-  background: rgba(56, 107, 249, 0.15) !important;
-  border-color: rgba(130, 170, 255, 0.35) !important;
-  box-shadow: 0 4px 16px rgba(56, 107, 249, 0.12);
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.12);
 }
 
 /* ── Pagination dots dark ── */
 html.dark .bg-blue-500:not(.bg-main) {
-  box-shadow: 0 0 8px rgba(56, 107, 249, 0.4);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
 }
 html.dark .bg-gray-300,
 html.dark .bg-gray-400 {
@@ -2183,7 +2170,7 @@ html.dark .bg-gray-400 {
 
 /* ── Footer bottom bar ── */
 html.dark footer .bg-white {
-  background: linear-gradient(145deg, rgba(12, 18, 32, 0.96), rgba(7, 11, 22, 0.98)) !important;
+  background: linear-gradient(145deg, rgba(22, 22, 24, 0.96), rgba(7, 11, 22, 0.98)) !important;
   border-top: 1px solid rgba(148, 163, 184, 0.08);
 }
 html.dark footer .bg-white p {
@@ -2204,9 +2191,9 @@ html.dark .shadow_menu_bottom {
 html.dark .special-section,
 html.dark [class*='special'] {
   background:
-    radial-gradient(circle at 15% 10%, rgba(56, 107, 249, 0.14), transparent 22rem),
-    radial-gradient(circle at 85% 80%, rgba(139, 92, 246, 0.1), transparent 20rem),
-    rgba(12, 18, 32, 0.7) !important;
+    radial-gradient(circle at 15% 10%, rgba(255, 255, 255, 0.14), transparent 22rem),
+    radial-gradient(circle at 85% 80%, rgba(255, 255, 255, 0.1), transparent 20rem),
+    rgba(22, 22, 24, 0.7) !important;
   border-color: rgba(148, 163, 184, 0.1) !important;
 }
 
@@ -2220,21 +2207,21 @@ html.dark .bg-gray-200 {
 /* ── Mobile menu dark ── */
 html.dark .custom_sidebar,
 html.dark .custom_sidebar_category {
-  background: rgba(12, 18, 32, 0.97) !important;
+  background: rgba(22, 22, 24, 0.97) !important;
   border-color: rgba(148, 163, 184, 0.08) !important;
   backdrop-filter: blur(20px);
 }
 
 /* ── Selection color ── */
 html.dark ::selection {
-  background: rgba(56, 107, 249, 0.35);
+  background: rgba(255, 255, 255, 0.35);
   color: #fff;
 }
 
 /* ── Focused input glow ── */
 html.dark input:focus,
 html.dark textarea:focus {
-  box-shadow: 0 0 0 3px rgba(56, 107, 249, 0.2) !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2) !important;
 }
 
 /* ── Divider lines ── */
@@ -2262,9 +2249,9 @@ html.dark .banner-flash {
   background: linear-gradient(
     105deg,
     transparent 40%,
-    rgba(130, 170, 255, 0) 45%,
-    rgba(130, 170, 255, 0.35) 50%,
-    rgba(130, 170, 255, 0) 55%,
+    rgba(255, 255, 255, 0) 45%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0) 55%,
     transparent 60%
   ) !important;
   background-size: 250% 100% !important;
@@ -2424,7 +2411,7 @@ html.dark .category-dark-shell {
 html.dark .category-filter-panel,
 html.dark .custom_sidebar.container_filter {
   background:
-    radial-gradient(circle at 0% 0%, rgba(56, 107, 249, 0.1), transparent 14rem),
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.1), transparent 14rem),
     linear-gradient(160deg, rgba(15, 22, 40, 0.97), rgba(8, 12, 24, 0.98)) !important;
   border: 1px solid rgba(148, 163, 184, 0.14) !important;
   border-radius: 1rem !important;
@@ -2446,7 +2433,7 @@ html.dark .category-filter-panel button span {
 /* ── ToggleFilter: background + text ── */
 html.dark .category-filter-panel .rounded-lg.lg\:bg-\[\#F3F6FB\],
 html.dark .category-filter-panel div[class*='lg:bg-[#F3F6FB]'] {
-  background: rgba(56, 107, 249, 0.06) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
   border-radius: 0.75rem !important;
 }
 html.dark .category-filter-panel p.text-\[\#0C0C0C\] {
@@ -2456,7 +2443,7 @@ html.dark .category-filter-panel p.text-\[\#0C0C0C\] {
 /* ── CheckboxFilter container background ── */
 html.dark .container_accordion_filter,
 html.dark div.lg\:bg-\[\#F3F6FB\] {
-  background: rgba(56, 107, 249, 0.04) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
 }
 
 /* ── Accordion item titles in dark ── */
@@ -2518,7 +2505,7 @@ html.dark .category-sortbar .text-main {
 /* ── Sort modal in dark ── */
 html.dark .category-sort-modal,
 html.dark [role='dialog'] .flex.flex-col.items-center.rounded-xl.bg-white {
-  background: rgba(12, 18, 32, 0.98) !important;
+  background: rgba(22, 22, 24, 0.98) !important;
   border: 1px solid rgba(148, 163, 184, 0.18) !important;
 }
 html.dark .category-sort-modal .text-\[\#232429\],
@@ -2556,7 +2543,7 @@ html.dark .category-products-grid {
 
 /* ── Category tags section in dark ── */
 html.dark .category-tags-section {
-  background: rgba(12, 18, 32, 0.5) !important;
+  background: rgba(22, 22, 24, 0.5) !important;
   border: 1px solid rgba(148, 163, 184, 0.12) !important;
   border-radius: 1rem !important;
 }
@@ -2643,13 +2630,13 @@ html.dark .category-filter-text {
 
 /* ── ToggleFilter background in dark ── */
 html.dark .category-toggle-filter {
-  background: rgba(56, 107, 249, 0.06) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
   border-color: rgba(148, 163, 184, 0.14) !important;
 }
 
 /* ── CheckboxFilter background in dark ── */
 html.dark .category-checkbox-filter {
-  background: rgba(56, 107, 249, 0.04) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
 }
 
 /* ── CheckboxFilter borders in dark ── */
@@ -2734,7 +2721,7 @@ html.dark .font-yekan.font-semibold.text-xl.text-gray-800 {
 
 /* ── Factor box (product page sidebar) in dark ── */
 html.dark .factor-box {
-  background: linear-gradient(160deg, rgba(12, 18, 32, 0.97), rgba(8, 12, 26, 0.98)) !important;
+  background: linear-gradient(160deg, rgba(22, 22, 24, 0.97), rgba(8, 12, 26, 0.98)) !important;
   border: 1px solid rgba(148, 163, 184, 0.16) !important;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
   border-radius: 1rem !important;
@@ -2784,7 +2771,7 @@ html.dark .text-2xl.text-black {
 /* ── Product details sections in dark ── */
 html.dark .scroll-mt-28.bg-white,
 html.dark .scroll-mt-28.rounded-lg.border.border-gray-200.bg-white {
-  background: rgba(12, 18, 32, 0.6) !important;
+  background: rgba(22, 22, 24, 0.6) !important;
   border-color: rgba(148, 163, 184, 0.14) !important;
   border-radius: 1rem !important;
 }
@@ -2800,7 +2787,7 @@ html.dark .scroll-mt-28 li {
 
 /* ── Product tags section in dark ── */
 html.dark .product-tags-section {
-  background: rgba(12, 18, 32, 0.4) !important;
+  background: rgba(22, 22, 24, 0.4) !important;
   border: 1px solid rgba(148, 163, 184, 0.12) !important;
   border-radius: 1rem !important;
 }
@@ -2815,13 +2802,13 @@ html.dark .product-tags-section .border-gray-200 {
 /* ── Warranty badge in dark ── */
 html.dark .bg-main.p-2.text-white {
   background: linear-gradient(135deg, var(--offl-primary), #6ea0ff) !important;
-  box-shadow: 0 4px 16px rgba(56, 107, 249, 0.25);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.25);
 }
 
 /* ── Fast shipping badge in dark ── */
 html.dark .rounded-full.bg-main {
   background: linear-gradient(135deg, var(--offl-primary), #6ea0ff) !important;
-  box-shadow: 0 4px 12px rgba(56, 107, 249, 0.2);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
 }
 
 /* ── Short attribute in dark ── */
@@ -2963,10 +2950,10 @@ html.dark .mag-article-card {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
 }
 html.dark .mag-article-card:hover {
-  border-color: rgba(130, 170, 255, 0.35) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
   box-shadow:
     0 16px 48px rgba(0, 0, 0, 0.5),
-    0 0 24px rgba(56, 107, 249, 0.08) !important;
+    0 0 24px rgba(255, 255, 255, 0.08) !important;
 }
 html.dark .mag-article-card .bg-gradient-to-r.from-gray-900 {
   color: #eef4ff !important;
@@ -3017,8 +3004,8 @@ html.dark .home-articles-header a {
 }
 html.dark .home-articles-header button:hover,
 html.dark .home-articles-header a:hover {
-  background: rgba(56, 107, 249, 0.15) !important;
-  border-color: rgba(130, 170, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
   color: #93c5fd !important;
 }
 
@@ -3045,7 +3032,7 @@ html.dark .keen-slider .bg-white\/80 {
   color: #93c5fd !important;
 }
 html.dark .keen-slider .border-blue-300 {
-  border-color: rgba(130, 170, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 /* ── Special section in dark ── */
@@ -3081,11 +3068,11 @@ html.dark .container_des h4 {
 html.dark .from-blue-600.to-purple-600.text-white {
   background: linear-gradient(
     135deg,
-    rgba(56, 107, 249, 0.85),
-    rgba(139, 92, 246, 0.85)
+    rgba(255, 255, 255, 0.85),
+    rgba(255, 255, 255, 0.85)
   ) !important;
   color: #fff !important;
-  box-shadow: 0 4px 12px rgba(56, 107, 249, 0.25) !important;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25) !important;
 }
 
 /* ── Date text in articles dark ── */
@@ -3136,25 +3123,25 @@ html.dark .factor-box {
   100% {
     box-shadow:
       0 20px 60px rgba(0, 0, 0, 0.4),
-      0 0 0 0 rgba(56, 107, 249, 0);
+      0 0 0 0 rgba(255, 255, 255, 0);
   }
   50% {
     box-shadow:
       0 20px 60px rgba(0, 0, 0, 0.4),
-      0 0 30px 0 rgba(56, 107, 249, 0.06);
+      0 0 30px 0 rgba(255, 255, 255, 0.06);
   }
 }
 
 /* ── Add to cart button glow in dark ── */
 html.dark .bg-main {
-  box-shadow: 0 4px 16px rgba(56, 107, 249, 0.2);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
 }
 
 /* ── "ادامه خرید" and "مشاهده در سبد" buttons in dark ── */
 html.dark .factor-box .border-\[\#E4E7E9\] {
   border-color: rgba(148, 163, 184, 0.2) !important;
   color: var(--offl-primary) !important;
-  background: rgba(56, 107, 249, 0.08) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
 }
 
 /* ── Product ID text in dark ── */
@@ -3186,7 +3173,7 @@ html.dark .mag-article-card:hover .text-gray-800 {
 
 /* ── Category badge background fix in dark ── */
 html.dark .mag-article-card .shadow-lg .bg-gradient-to-r {
-  box-shadow: 0 4px 12px rgba(56, 107, 249, 0.3) !important;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3) !important;
 }
 
 /* ── "بیشتر بخوانید" in dark ── */
@@ -3199,7 +3186,7 @@ html.dark .border-2.border-gray-100 {
   border-color: rgba(148, 163, 184, 0.1) !important;
 }
 html.dark .border-blue-200 {
-  border-color: rgba(130, 170, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 /* ── Date text icon color in dark ── */
@@ -3294,7 +3281,7 @@ html.dark .single-blog-article .to-gray-100 {
   position: relative;
   overflow: hidden;
   box-shadow:
-    0 6px 20px rgba(56, 107, 249, 0.35),
+    0 6px 20px rgba(255, 255, 255, 0.35),
     0 0 0 1px rgba(255, 255, 255, 0.08) inset;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   animation: asmHeaderGradientShift 6s ease infinite;
@@ -3326,7 +3313,7 @@ html.dark .single-blog-article .to-gray-100 {
 .asm-header-btn:hover {
   transform: translateY(-2px) scale(1.04);
   box-shadow:
-    0 12px 32px rgba(56, 107, 249, 0.5),
+    0 12px 32px rgba(255, 255, 255, 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.15) inset;
 }
 .asm-header-btn:active {
@@ -3519,7 +3506,7 @@ html.dark .single-blog-prose.container_des h3 {
   margin: 2rem 0;
   border-right: 0;
   border-radius: 1.25rem;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08));
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.08), rgba(255, 255, 255, 0.08));
   padding: 1.25rem 1.5rem;
   color: rgb(51 65 85);
 }
@@ -3536,13 +3523,13 @@ html.dark .single-blog-prose.container_des h3 {
 }
 
 html.dark .single-blog-prose.container_des blockquote {
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.12), rgba(168, 85, 247, 0.12));
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.12), rgba(255, 255, 255, 0.12));
   color: rgb(203 213 225);
 }
 
 .single-blog-prose.container_des img {
   border-radius: 1.25rem;
-  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.14);
+  box-shadow: 0 24px 80px rgba(22, 22, 24, 0.14);
 }
 
 html.dark .single-blog-prose.container_des img {
@@ -3578,7 +3565,7 @@ html.dark .single-blog-prose.container_des img {
   margin: 2rem auto !important;
   border-radius: 1rem;
   object-fit: contain;
-  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.14);
+  box-shadow: 0 20px 60px rgba(22, 22, 24, 0.14);
 }
 
 html.dark .single-blog-content-card {

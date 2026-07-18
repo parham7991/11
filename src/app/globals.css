@@ -2167,9 +2167,9 @@ html.dark .text-black:not(.original-price):not(.final-price) {
   color: var(--offl-text) !important;
 }
 
-/* ── Product name dark mode: dark text on light bg ── */
+/* ── Product name dark mode: LIGHT text on dark card pad (pad is #101012) ── */
 html.dark .product-card-image-pad p:not(.final-price):not(.original-price) {
-  color: #111827 !important;
+  color: #f3f4f6 !important;
 }
 
 /* =========================================================
@@ -2212,16 +2212,16 @@ html.dark .original-price {
   letter-spacing: -0.01em;
 }
 
-/* ── Product name in dark mode: DARK text on light card bg ── */
+/* ── Product name in dark mode: LIGHT text on dark card pad ── */
 html.dark .product-name {
-  color: #111827 !important;
+  color: #f3f4f6 !important;
   text-shadow: none;
 }
 
 /* ── Product card name text in dark: en-num font for English digits ── */
-html.dark .product-card-image-pad p {
+html.dark .product-card-image-pad p:not(.final-price):not(.original-price) {
   font-family: 'en-num', Tahoma, Arial, sans-serif !important;
-  color: #111827 !important;
+  color: #f3f4f6 !important;
   text-shadow: none;
 }
 
@@ -2229,7 +2229,7 @@ html.dark .product-card-image-pad p {
 html.dark .keen-slider__slide p:not(.final-price):not(.original-price),
 html.dark .swiper-slide p:not(.final-price):not(.original-price) {
   font-family: 'en-num', Tahoma, Arial, sans-serif !important;
-  color: #111827 !important;
+  color: #f3f4f6 !important;
   text-shadow: none;
 }
 
@@ -3682,4 +3682,49 @@ html.dark .featured-product-showcase::before {
   background: none !important;
   opacity: 0 !important;
   content: none !important;
+}
+
+/* =========================================================
+   V7.1 — Text visibility hardening (authoritative, last-wins)
+   Fixes:
+   1) Product name went invisible in dark mode because the card pad
+      became dark (#101012 in V7.0) while the name text stayed #111827.
+   2) Assemble header button text must always stay white on its
+      colorful gradient in every theme.
+   3) Guarantee body stays pitch dark with no white halo.
+   ========================================================= */
+
+/* 1) Product name — always light & readable on the dark card pad */
+html.dark .product-name,
+html.dark .product-card-image-pad p:not(.final-price):not(.original-price),
+html.dark .keen-slider__slide p:not(.final-price):not(.original-price),
+html.dark .swiper-slide p:not(.final-price):not(.original-price) {
+  color: #f3f4f6 !important;
+  text-shadow: none !important;
+}
+
+/* 2) Assemble button — text/icons stay white on the gradient (both themes) */
+.asm-header-btn,
+.asm-header-btn__title,
+.asm-header-btn__subtitle,
+html.dark .asm-header-btn,
+html.dark .asm-header-btn__title,
+html.dark .asm-header-btn__subtitle {
+  color: #fff !important;
+}
+html.dark .asm-header-btn__icon svg,
+html.dark .asm-header-btn__arrow svg {
+  color: #fff !important;
+}
+
+/* 3) Body/background: uniform pitch dark, no radial/white halo */
+html.dark,
+html.dark body {
+  background: #0a0a0b !important;
+  background-image: none !important;
+}
+html.dark body::before,
+html.dark body::after {
+  content: none !important;
+  background: none !important;
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Phone_Icon } from '../Icon';
 import { BiLogoTelegram } from 'react-icons/bi';
+import AssembleButton from './AssembleButton';
 
 const HeaderTop = () => {
   return (
@@ -35,6 +36,7 @@ const HeaderTop = () => {
           >
             <BiLogoTelegram className="h-5 w-5 text-white" />
           </a>
+          <AssembleButton className="asm-header-btn--compact" />
         </div>
       </div>
     </div>

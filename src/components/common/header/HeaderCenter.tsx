@@ -15,7 +15,6 @@ import { Skeleton } from '@heroui/react';
 import { useGetSession } from '@/hooks/auth/useGetSession';
 import { getCookieRemoveOptions } from '@/lib/cookie-options';
 import HeaderThemeToggle from '../theme/HeaderThemeToggle';
-import AssembleButton from './AssembleButton';
 
 const HeaderCenter = () => {
   const [isPending, startTransition] = useTransition();
@@ -123,7 +122,6 @@ const HeaderCenter = () => {
         <div className="flex flex-1 items-center justify-end gap-3 space-x-3">
           <HeaderThemeToggle />
           <UserInfo className="hidden md:flex" />
-          <AssembleButton className="hidden xl:flex" />
           <Cart />
         </div>
       </div>

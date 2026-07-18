@@ -61,7 +61,7 @@ export default function AssembleButton({ className = '' }: { className?: string 
         <span className="asm-header-btn__title">اسمبل آنلاین هوشمند</span>
         <span className="asm-header-btn__subtitle">
           <span className="asm-header-btn__dot" />
-          چیدن سیستم با AI
+          اسمبل هوشمند قطعات
         </span>
       </span>
       <span className="asm-header-btn__arrow">

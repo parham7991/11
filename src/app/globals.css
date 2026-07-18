@@ -716,13 +716,13 @@ html.dark .shadow_menu_bottom {
   box-shadow: 0 -18px 60px rgba(0, 0, 0, 0.42) !important;
   backdrop-filter: blur(18px);
 }
-html.dark body,
+/* html.dark body,
 html.dark body *:not(svg):not(path):not(circle):not(rect):not(line):not(polyline) {
   transition-property:
     background-color, border-color, color, box-shadow, filter, opacity, transform;
   transition-duration: 220ms;
   transition-timing-function: ease;
-}
+} */
 .theme-toggle-button::before {
   content: '';
   position: absolute;
@@ -1091,13 +1091,13 @@ html.dark .product-card-image-pad::before {
   inset: 0.35rem;
   background: radial-gradient(
     circle at 50% 36%,
-    rgba(255, 255, 255, 0.98),
-    rgba(244, 248, 255, 0.94) 58%,
-    rgba(226, 235, 250, 0.9) 100%
+    rgba(30, 41, 59, 0.25),
+    rgba(15, 23, 42, 0.5) 58%,
+    rgba(11, 18, 34, 0.8) 100%
   ) !important;
   box-shadow:
-    inset 0 0 0 1px rgba(15, 23, 42, 0.04),
-    0 14px 38px rgba(0, 0, 0, 0.16);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 14px 38px rgba(0, 0, 0, 0.25);
 }
 html.dark .product-card-image-pad img,
 html.dark .product-card-image-pad picture,
@@ -1108,15 +1108,15 @@ html.dark .product-card-image-pad > div:not(:empty) {
 }
 html.dark .product-card-image-pad img,
 html.dark .product-card-image-pad [data-nimg] {
-  mix-blend-mode: multiply;
-  filter: saturate(1.03) contrast(1.02) drop-shadow(0 14px 20px rgba(15, 23, 42, 0.14)) !important;
+  mix-blend-mode: normal !important;
+  filter: saturate(1.03) contrast(1.02) drop-shadow(0 14px 20px rgba(0, 0, 0, 0.2)) !important;
 }
 html.dark .product-card-image-pad:hover::before {
   background: radial-gradient(
     circle at 50% 34%,
-    rgba(255, 255, 255, 1),
-    rgba(239, 246, 255, 0.98) 58%,
-    rgba(210, 225, 252, 0.96) 100%
+    rgba(51, 65, 85, 0.35),
+    rgba(30, 41, 59, 0.6) 58%,
+    rgba(15, 23, 42, 0.9) 100%
   ) !important;
 }
 html.dark .product-thumb-stage,
@@ -1124,20 +1124,20 @@ html.dark .assembly-image-pad {
   overflow: hidden;
   background: radial-gradient(
     circle at 50% 38%,
-    rgba(255, 255, 255, 0.98),
-    rgba(238, 244, 255, 0.94) 62%,
-    rgba(211, 224, 248, 0.9)
+    rgba(30, 41, 59, 0.25),
+    rgba(15, 23, 42, 0.5) 62%,
+    rgba(11, 18, 34, 0.8)
   ) !important;
-  border-color: rgba(255, 255, 255, 0.18) !important;
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.22) !important;
+  border-color: rgba(148, 163, 184, 0.16) !important;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.3) !important;
 }
 html.dark .product-thumb-stage img,
 html.dark .assembly-image-pad img,
 html.dark .assembly-image-pad [data-nimg] {
   position: relative;
   z-index: 1;
-  mix-blend-mode: multiply;
-  filter: saturate(1.03) contrast(1.02) drop-shadow(0 8px 12px rgba(15, 23, 42, 0.14)) !important;
+  mix-blend-mode: normal !important;
+  filter: saturate(1.03) contrast(1.02) drop-shadow(0 8px 12px rgba(0, 0, 0, 0.2)) !important;
 }
 
 /* product/card shell: make all cards feel designed */
@@ -1303,14 +1303,14 @@ html.dark .product-image-pad::before {
   border-radius: inherit;
   background: radial-gradient(
     circle at 50% 36%,
-    rgba(255, 255, 255, 0.99),
-    rgba(244, 248, 255, 0.96) 58%,
-    rgba(226, 235, 250, 0.92) 100%
+    rgba(30, 41, 59, 0.25),
+    rgba(15, 23, 42, 0.5) 58%,
+    rgba(11, 18, 34, 0.8) 100%
   ) !important;
   box-shadow:
-    inset 0 0 0 1px rgba(15, 23, 42, 0.04),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03),
     inset 0 -20px 44px rgba(56, 107, 249, 0.08),
-    0 14px 38px rgba(0, 0, 0, 0.16);
+    0 14px 38px rgba(0, 0, 0, 0.25);
 }
 html.dark .product-image-pad::after {
   content: '';
@@ -1322,13 +1322,13 @@ html.dark .product-image-pad::after {
   z-index: -1;
   height: 22%;
   border-radius: 999px;
-  background: radial-gradient(ellipse, rgba(15, 23, 42, 0.18), transparent 70%);
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.35), transparent 70%);
   filter: blur(10px);
 }
 html.dark .product-image-pad img,
 html.dark .product-image-pad [data-nimg] {
-  mix-blend-mode: multiply;
-  filter: saturate(1.03) contrast(1.02) drop-shadow(0 14px 20px rgba(15, 23, 42, 0.14)) !important;
+  mix-blend-mode: normal !important;
+  filter: saturate(1.03) contrast(1.02) drop-shadow(0 14px 20px rgba(0, 0, 0, 0.2)) !important;
 }
 
 /* =========================================================
@@ -1511,15 +1511,15 @@ html.dark aside span:not(.text-white) {
 html.dark .product-image-pad,
 html.dark .product-thumb-stage,
 html.dark .assembly-image-pad {
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border: 1px solid rgba(148, 163, 184, 0.16) !important;
 }
 html.dark .product-image-pad::before {
   background:
     radial-gradient(
       circle at 50% 36%,
-      rgba(255, 255, 255, 0.99),
-      rgba(244, 248, 255, 0.96) 58%,
-      rgba(226, 235, 250, 0.92) 100%
+      rgba(30, 41, 59, 0.25),
+      rgba(15, 23, 42, 0.5) 58%,
+      rgba(11, 18, 34, 0.8) 100%
     ),
     linear-gradient(135deg, rgba(56, 107, 249, 0.06), rgba(124, 58, 237, 0.05)) !important;
 }
@@ -1878,15 +1878,15 @@ html.dark .product-thumb-stage,
 html.dark .assembly-image-pad {
   background: radial-gradient(
     circle at 50% 38%,
-    rgba(255, 255, 255, 0.99),
-    rgba(241, 246, 255, 0.97) 58%,
-    rgba(219, 232, 253, 0.94) 100%
+    rgba(30, 41, 59, 0.25) 0%,
+    rgba(15, 23, 42, 0.5) 58%,
+    rgba(11, 18, 34, 0.8) 100%
   ) !important;
-  border-color: rgba(255, 255, 255, 0.18) !important;
+  border-color: rgba(148, 163, 184, 0.16) !important;
   box-shadow:
-    inset 0 0 0 1px rgba(15, 23, 42, 0.05),
-    inset 0 -24px 58px rgba(56, 107, 249, 0.1),
-    0 18px 50px rgba(0, 0, 0, 0.26) !important;
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+    inset 0 -24px 58px rgba(56, 107, 249, 0.08),
+    0 18px 50px rgba(0, 0, 0, 0.3) !important;
 }
 html.dark .product-image-stage img,
 html.dark .product-image-pad img,
@@ -1896,8 +1896,8 @@ html.dark .product-image-stage [data-nimg],
 html.dark .product-image-pad [data-nimg],
 html.dark .product-thumb-stage [data-nimg],
 html.dark .assembly-image-pad [data-nimg] {
-  mix-blend-mode: multiply !important;
-  filter: saturate(1.03) contrast(1.03) drop-shadow(0 18px 20px rgba(15, 23, 42, 0.16)) !important;
+  mix-blend-mode: normal !important;
+  filter: saturate(1.03) contrast(1.03) drop-shadow(0 18px 20px rgba(0, 0, 0, 0.2)) !important;
 }
 html.dark .product-gallery-shell {
   background:
@@ -1972,9 +1972,9 @@ html.dark .keen-slider__slide:hover {
 html.dark .product-card-image-pad {
   background: radial-gradient(
     circle at 50% 44%,
-    rgba(255, 255, 255, 0.96) 0 34%,
-    rgba(238, 244, 255, 0.94) 54%,
-    rgba(209, 222, 245, 0.9) 100%
+    rgba(30, 41, 59, 0.25) 0 34%,
+    rgba(15, 23, 42, 0.5) 54%,
+    rgba(11, 18, 34, 0.8) 100%
   ) !important;
 }
 
@@ -2318,9 +2318,9 @@ html.dark .text-black:not(.original-price):not(.final-price) {
   color: var(--offl-text) !important;
 }
 
-/* ── Product name dark mode: dark text on light bg ── */
+/* ── Product name dark mode: premium light text on dark card bg ── */
 html.dark .product-card-image-pad p:not(.final-price):not(.original-price) {
-  color: #111827 !important;
+  color: var(--offl-text-strong) !important;
 }
 
 /* =========================================================
@@ -2363,16 +2363,16 @@ html.dark .original-price {
   letter-spacing: -0.01em;
 }
 
-/* ── Product name in dark mode: DARK text on light card bg ── */
+/* ── Product name in dark mode: premium light text on dark card bg ── */
 html.dark .product-name {
-  color: #111827 !important;
+  color: var(--offl-text-strong) !important;
   text-shadow: none;
 }
 
 /* ── Product card name text in dark: en-num font for English digits ── */
 html.dark .product-card-image-pad p {
   font-family: 'en-num', Tahoma, Arial, sans-serif !important;
-  color: #111827 !important;
+  color: var(--offl-text-strong) !important;
   text-shadow: none;
 }
 
@@ -2380,7 +2380,7 @@ html.dark .product-card-image-pad p {
 html.dark .keen-slider__slide p:not(.final-price):not(.original-price),
 html.dark .swiper-slide p:not(.final-price):not(.original-price) {
   font-family: 'en-num', Tahoma, Arial, sans-serif !important;
-  color: #111827 !important;
+  color: var(--offl-text-strong) !important;
   text-shadow: none;
 }
 
@@ -2891,9 +2891,9 @@ html.dark .pagination-btn[class*='bg-main'] {
 html.dark .product-image-area {
   background: radial-gradient(
     circle at 50% 44%,
-    rgba(255, 255, 255, 0.96) 0 34%,
-    rgba(238, 244, 255, 0.94) 54%,
-    rgba(209, 222, 245, 0.9) 100%
+    rgba(30, 41, 59, 0.25) 0 34%,
+    rgba(15, 23, 42, 0.5) 54%,
+    rgba(11, 18, 34, 0.8) 100%
   ) !important;
   border-radius: 1rem !important;
 }

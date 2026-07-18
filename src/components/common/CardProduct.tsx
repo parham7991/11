@@ -146,12 +146,12 @@ const CardProduct = ({
             </span>
           )}
 
-          <p className="product-name line-clamp-2 min-h-[3.5rem] pt-3 text-[13px] font-[500] leading-7 text-[#1e293b] lg:text-[15px]">
+          <p className="product-name line-clamp-2 h-[52px] pt-3 text-[13px] font-[500] leading-5 text-[#1e293b] lg:h-[64px] lg:text-[15px] lg:leading-6">
             {productName}
           </p>
         </div>
         <div
-          className={`flex h-fit w-full items-center justify-between px-2 pb-3 lg:px-5 ${classItmsBottom}`}
+          className={`mt-auto flex h-[52px] w-full items-center justify-between px-2 pb-3 lg:h-[58px] lg:px-5 ${classItmsBottom}`}
         >
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-main lg:h-10 lg:w-10">
             <>
@@ -187,7 +187,7 @@ const CardProduct = ({
               </svg>
             </>
           </span>
-          <div className="flex flex-col items-end gap-1">
+          <div className="flex h-full flex-col items-end justify-center gap-1">
             {product.special_price && product?.price !== 0 && product?.is_in_stock !== 0 ? (
               <p className="original-price flex w-fit items-center justify-center rounded bg-red-100 px-2 py-0.5 font-medium text-[12px] text-red-500 line-through decoration-red-400 decoration-2 lg:text-[14px]">
                 {addCommas(Number(product.price))}

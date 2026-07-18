@@ -41,7 +41,7 @@ const CardProduct = ({
       className={`group relative flex h-full flex-1 flex-col justify-between overflow-hidden border-gray-200 shadow ${className}`}
     >
       <div
-        className={`absolute left-2 right-2 top-4 z-[4] flex items-start justify-between ${classAction}`}
+        className={`absolute left-2 right-2 top-2 z-[5] flex items-start justify-between ${classAction}`}
       >
         <div className="flex flex-col" style={{ gap: '8px' }}>
           {/* fav */}
@@ -94,7 +94,7 @@ const CardProduct = ({
           </Link>
         </div>
         {product?.special_price && product?.is_in_stock !== 0 ? (
-          <div className="discount-badge flex h-fit w-fit items-center gap-0.5 rounded-md bg-gradient-to-l from-rose-500 to-red-600 px-2 py-0.5 font-bold text-[13px] text-white shadow-sm lg:px-2.5 lg:text-[15px]">
+          <div className="discount-badge z-[6] flex h-fit w-fit items-center gap-0.5 rounded-lg bg-gradient-to-l from-rose-500 to-red-600 px-2 py-0.5 font-bold text-[13px] text-white shadow-md lg:px-2.5 lg:text-[15px]">
             <span>{discount}</span>
             <span>%</span>
           </div>
@@ -128,7 +128,11 @@ const CardProduct = ({
                   : // @ts-expect-error error
                     product?.image?.title || product?.name || ''
               }
-              className={[classImage, 'product-image-pad', shouldHighlightOutOfStock ? 'blur-sm' : '']
+              className={[
+                classImage,
+                'product-image-pad',
+                shouldHighlightOutOfStock ? 'blur-sm' : '',
+              ]
                 .filter(Boolean)
                 .join(' ')}
               imgClass="object-contain"
@@ -142,7 +146,7 @@ const CardProduct = ({
             </span>
           )}
 
-          <p className="product-name line-clamp-2 pt-3 font-[500] text-[13px] leading-7 text-[#1e293b] lg:text-[15px]">
+          <p className="product-name line-clamp-2 min-h-[3.5rem] pt-3 text-[13px] font-[500] leading-7 text-[#1e293b] lg:text-[15px]">
             {productName}
           </p>
         </div>
@@ -196,11 +200,11 @@ const CardProduct = ({
             ) : (
               <div className="flex items-center justify-center gap-px lg:gap-1">
                 <p className="final-price font-bold text-[15px] text-emerald-600 lg:text-[17px]">
-                  {addCommas(
-                    Number(product.special_price ? product.special_price : product.price)
-                  )}
+                  {addCommas(Number(product.special_price ? product.special_price : product.price))}
                 </p>
-                <p className="final-price font-bold text-[11px] text-emerald-600 lg:text-[13px]">تومان</p>
+                <p className="final-price font-bold text-[11px] text-emerald-600 lg:text-[13px]">
+                  تومان
+                </p>
               </div>
             )}
           </div>

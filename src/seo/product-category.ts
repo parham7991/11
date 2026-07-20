@@ -18,9 +18,9 @@ export const getProductsCategory = async ({
   }
   const newQueryString = filterProduct.toString();
   const result = await request({
-    // Pagination offset-label mode: ۱۰ محصول در هر صفحه؛ دکمه‌ها با
-    // شمارهٔ شروع محصول برچسب می‌خورند (۱، ۱۱، ۲۱…).
-    url: `/catalog/category/${id ? `${id}` : ''}?pre_page=10&${newQueryString}`,
+    // Category: ۶۰۰ محصول در هر صفحه (۱۵۰ ردیف × ۴ ستونِ grid) تا
+    // کاربر ~۶۰۰ محصول ببیند و گوگل تنوع را در HTML ببیند.
+    url: `/catalog/category/${id ? `${id}` : ''}?pre_page=600&${newQueryString}`,
   });
 
   return result;

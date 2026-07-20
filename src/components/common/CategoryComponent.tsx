@@ -203,8 +203,8 @@ const CategoryComponent = ({ resultProucts, searchParams, redirect }: Props) => 
             {isPendingCategory ? <Loading /> : null}
             {Number(resultProucts?.products?.length) >= 1 && (
               <Pagination
-                total={Math.ceil(Number(resultProucts?.total) / 10)}
-                perPage={10}
+                total={Math.ceil(Number(resultProucts?.total) / 600)}
+                perPage={600}
                 offsetLabels
                 className="mt-10"
               />

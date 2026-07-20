@@ -18,6 +18,7 @@ import Banners from './Banners';
 import CategoryDescription from './CategoryDescription';
 import Slider from './Slider';
 import Template1 from '../home/Template1';
+import Pagination from '@/components/product/Pagination';
 
 type Props = {
   id: string;
@@ -31,6 +32,7 @@ type Props = {
     maxPrice?: string;
     sort?: string;
     search?: string;
+    page?: string;
   };
 };
 const CategoryComponent = ({ resultProucts, searchParams, redirect, id }: Props) => {
@@ -41,23 +43,29 @@ const CategoryComponent = ({ resultProucts, searchParams, redirect, id }: Props)
   }, [redirect]);
 
   // ── Infinite scroll (batch = 600, matches server-side pre_page) ──
+  const BATCH = 600;
+  const totalCount = Number(resultProucts?.total) || 0;
   const [products, setProducts] = useState<Product[]>(resultProucts?.products ?? []);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(Number(searchParams?.page) || 1);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [hasMore, setHasMore] = useState(
-    (resultProucts?.products?.length ?? 0) < (Number(resultProucts?.total) || 0)
+    (resultProucts?.products?.length ?? 0) < (totalCount || 0)
   );
   const sentinelRef = useRef<HTMLDivElement>(null);
   const loadingRef = useRef(false);
 
-  // Reset on category / filter change (server reloads new resultProucts).
+  // Reset on category / filter / page change (server reloads new resultProucts).
+  // `page` resumes from the URL so the infinite-scroll counter never duplicates
+  // a batch that the server already rendered (e.g. after clicking the pager).
   const filterKey = JSON.stringify({ id, searchParams });
   useEffect(() => {
     setProducts(resultProucts?.products ?? []);
-    setPage(1);
+    setPage(Number(searchParams?.page) || 1);
     setLoadingMore(false);
+    setLoadError(false);
     loadingRef.current = false;
-    setHasMore((resultProucts?.products?.length ?? 0) < (Number(resultProucts?.total) || 0));
+    setHasMore((resultProucts?.products?.length ?? 0) < (totalCount || 0));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterKey]);
 
@@ -65,29 +73,41 @@ const CategoryComponent = ({ resultProucts, searchParams, redirect, id }: Props)
     if (loadingRef.current || loadingMore || !hasMore) return;
     loadingRef.current = true;
     setLoadingMore(true);
+    setLoadError(false);
     try {
       const q = new URLSearchParams();
       q.set('id', id);
       Object.entries(searchParams).forEach(([k, v]) => {
         if (v) q.set(k, String(v));
       });
+      // برای fetch همیشه صفحهٔ بعدی (page+1)؛ اگر در URL page=2 باشد،
+      // این خط عدد را بازنویسی می‌کند تا تکرار نشود.
       q.set('page', String(page + 1));
       const res = await fetch(`/api/category-products?${q.toString()}`);
       const json = await res.json();
       const next: Product[] = (json?.products ?? []) as Product[];
       if (next.length > 0) {
-        setProducts((prev) => [...prev, ...next]);
+        // حذف کپی احتمالی (اگر بک‌اند دو بار همان دسته را برگرداند)
+        setProducts((prev) => {
+          const seen = new Set(prev.map((p) => p.id));
+          const unique = next.filter((p) => !seen.has(p.id));
+          return unique.length ? [...prev, ...unique] : prev;
+        });
         setPage((p) => p + 1);
       }
-      // Backend returns up to 600 per page; a shorter slice means the end.
-      if (next.length < 600) setHasMore(false);
+      // پایان: اگر کل محصولاتِ شناخته‌شده را رسیدیم → تمام؛
+      // وگرنه اگر بک‌اند کمتر از یک بچ کامل داد (آخرین صفحه) → تمام.
+      const loadedSoFar = products.length + next.length;
+      if (totalCount > 0) setHasMore(loadedSoFar < totalCount);
+      else setHasMore(next.length >= BATCH);
     } catch {
+      setLoadError(true);
       setHasMore(false);
     } finally {
       setLoadingMore(false);
       loadingRef.current = false;
     }
-  }, [loadingMore, hasMore, page, id, searchParams]);
+  }, [loadingMore, hasMore, page, id, searchParams, products.length, totalCount]);
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -101,6 +121,13 @@ const CategoryComponent = ({ resultProucts, searchParams, redirect, id }: Props)
     observer.observe(el);
     return () => observer.disconnect();
   }, [loadMore]);
+
+  // وقتی واقعاً همهٔ محصولات لود شده باشد (نه فقط به‌خاطر خطا متوقف شده باشد)
+  const allLoaded =
+    !hasMore &&
+    !loadError &&
+    Number(products?.length) > 0 &&
+    (totalCount === 0 || products.length >= totalCount);
 
   const banners = resultProucts?.banner?.images;
 
@@ -271,12 +298,36 @@ const CategoryComponent = ({ resultProucts, searchParams, redirect, id }: Props)
                 در حال بارگذاری محصولات بیشتر…
               </div>
             ) : null}
-            {!hasMore && Number(products?.length) > 0 ? (
+            {allLoaded ? (
               <p className="mt-10 text-center text-[13px] text-[var(--offl-text-muted)]">
-                {addCommas(Number(products?.length))} محصول از{' '}
-                {addCommas(Number(resultProucts?.total) || Number(products?.length))} نمایش داده شد.
+                همهٔ {addCommas(totalCount || Number(products?.length))} محصول نمایش داده شد.
               </p>
+            ) : loadError ? (
+              <div className="mt-10 flex flex-col items-center justify-center gap-2 text-[13px] text-[var(--offl-text-muted)]">
+                <span>بارگذاری محصولات بیشتر با خطا مواجه شد.</span>
+                <button
+                  type="button"
+                  onClick={() => loadMore()}
+                  className="rounded-lg border border-[var(--offl-border)] px-3 py-1.5 font-medium text-[var(--offl-text)] transition hover:bg-[var(--offl-surface-2)]"
+                >
+                  تلاش مجدد
+                </button>
+              </div>
             ) : null}
+
+            {/* شمارهٔ صفحات (offset ۶۰۰-تایی): ۱، ۶۰۱، ۱۲۰۱… */}
+            {totalCount > 0 && Math.ceil(totalCount / BATCH) > 1 ? (
+              <div className="mt-8">
+                <Pagination
+                  total={Math.ceil(totalCount / BATCH)}
+                  perPage={BATCH}
+                  offsetLabels
+                  top={220}
+                  className="mt-2"
+                />
+              </div>
+            ) : null}
+
             <div ref={sentinelRef} className="h-px w-full" aria-hidden />
           </div>
         </div>

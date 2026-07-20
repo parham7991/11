@@ -55,14 +55,9 @@ export default function AssembleButton({ className = '' }: { className?: string 
             strokeLinecap="round"
           />
         </svg>
-        <span className="asm-header-btn__pulse" />
       </span>
       <span className="asm-header-btn__content">
         <span className="asm-header-btn__title">اسمبل آنلاین هوشمند</span>
-        <span className="asm-header-btn__subtitle">
-          <span className="asm-header-btn__dot" />
-          چیدن سیستم هوشمند
-        </span>
       </span>
       <span className="asm-header-btn__arrow">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

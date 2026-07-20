@@ -1842,3 +1842,16 @@ API دسته‌بندی نیاز به JWT دارد (۴۰۱) پس مستقیما�
 **Note:** The SEO copy is a draft written to match the category style — review/replace with your final marketing text if needed. Content is a plain string constant, easy to swap.
 
 **Test:** Visit `/assemble-online`, scroll to bottom → collapsible SEO block identical in template to category pages.
+
+---
+
+## UI fix: header Assemble button → single-line, no flash
+
+**Request:** Make the header "اسمبل آنلاین هوشمند" button single-line, clear, and remove the pulsing "flash" dot; clean like the contact button.
+
+**Changes:**
+
+- `src/components/common/header/AssembleButton.tsx`: removed the subtitle line (`چیدن سیستم هوشمند`) and the green pulsing dot (`asm-header-btn__pulse`). Button is now one line: icon + title + arrow.
+- `src/app/globals.css`: removed now-dead CSS — `.asm-header-btn__pulse` (+ `asmHeaderPulse` keyframes), `.asm-header-btn__subtitle`, `.asm-header-btn__dot` (+ `asmHeaderDot` keyframes), and the compact subtitle rule. Gradient + single-line height/padding (from earlier fix) preserved so it stays aligned with and as pretty as the contact button.
+
+**Test:** Header (≥1024px) → Assemble button shows one line of text, no green pulse, clean gradient matching the contact button.

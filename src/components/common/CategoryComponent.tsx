@@ -6,10 +6,9 @@ import BackPrevPage from '@/components/common/BackPrevPage';
 import Breadcrumbs from '@/components/common/Breadcrumbs';
 import CardProduct from '@/components/common/CardProduct';
 import Loading from '@/components/common/Loading';
-import Pagination from '@/components/product/Pagination';
-import { FilterCategory } from '@/types/Home';
+import { FilterCategory, Product } from '@/types/Home';
 import useGlobalStore from '@/store/global-store';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from './Image';
@@ -34,12 +33,75 @@ type Props = {
     search?: string;
   };
 };
-const CategoryComponent = ({ resultProucts, searchParams, redirect }: Props) => {
+const CategoryComponent = ({ resultProucts, searchParams, redirect, id }: Props) => {
   const router = useRouter();
   const { isPendingCategory } = useGlobalStore();
   useEffect(() => {
     if (redirect) return router.push(redirect);
   }, [redirect]);
+
+  // ── Infinite scroll (batch = 600, matches server-side pre_page) ──
+  const [products, setProducts] = useState<Product[]>(resultProucts?.products ?? []);
+  const [page, setPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(
+    (resultProucts?.products?.length ?? 0) < (Number(resultProucts?.total) || 0)
+  );
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const loadingRef = useRef(false);
+
+  // Reset on category / filter change (server reloads new resultProucts).
+  const filterKey = JSON.stringify({ id, searchParams });
+  useEffect(() => {
+    setProducts(resultProucts?.products ?? []);
+    setPage(1);
+    setLoadingMore(false);
+    loadingRef.current = false;
+    setHasMore((resultProucts?.products?.length ?? 0) < (Number(resultProucts?.total) || 0));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterKey]);
+
+  const loadMore = useCallback(async () => {
+    if (loadingRef.current || loadingMore || !hasMore) return;
+    loadingRef.current = true;
+    setLoadingMore(true);
+    try {
+      const q = new URLSearchParams();
+      q.set('id', id);
+      Object.entries(searchParams).forEach(([k, v]) => {
+        if (v) q.set(k, String(v));
+      });
+      q.set('page', String(page + 1));
+      const res = await fetch(`/api/category-products?${q.toString()}`);
+      const json = await res.json();
+      const next: Product[] = (json?.products ?? []) as Product[];
+      if (next.length > 0) {
+        setProducts((prev) => [...prev, ...next]);
+        setPage((p) => p + 1);
+      }
+      // Backend returns up to 600 per page; a shorter slice means the end.
+      if (next.length < 600) setHasMore(false);
+    } catch {
+      setHasMore(false);
+    } finally {
+      setLoadingMore(false);
+      loadingRef.current = false;
+    }
+  }, [loadingMore, hasMore, page, id, searchParams]);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) loadMore();
+      },
+      { rootMargin: '800px 0px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loadMore]);
+
   const banners = resultProucts?.banner?.images;
 
   const sliders = resultProucts?.slider?.images;
@@ -98,9 +160,9 @@ const CategoryComponent = ({ resultProucts, searchParams, redirect }: Props) => 
             <Sort options={resultProucts?.sortable} searchParams={searchParams} />
 
             <>
-              {Number(resultProucts?.products?.length) >= 1 ? (
+              {Number(products?.length) >= 1 ? (
                 <div className="category-products-grid grid grid-cols-1 lg:mt-3 lg:grid-cols-4 lg:gap-4">
-                  {resultProucts?.products?.map((product, idx) => (
+                  {products?.map((product, idx) => (
                     <React.Fragment key={product?.id ?? idx}>
                       {/* DESKTOP */}
                       <CardProduct
@@ -201,14 +263,21 @@ const CategoryComponent = ({ resultProucts, searchParams, redirect }: Props) => 
               )}
             </>
             {isPendingCategory ? <Loading /> : null}
-            {Number(resultProucts?.products?.length) >= 1 && (
-              <Pagination
-                total={Math.ceil(Number(resultProucts?.total) / 600)}
-                perPage={600}
-                offsetLabels
-                className="mt-10"
-              />
-            )}
+
+            {/* Infinite scroll: loads the next 600 on scroll, no page reload */}
+            {loadingMore ? (
+              <div className="mt-10 flex items-center justify-center gap-2 text-[13px] text-[var(--offl-text-muted)]">
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--offl-border)] border-t-[var(--offl-primary)]" />
+                در حال بارگذاری محصولات بیشتر…
+              </div>
+            ) : null}
+            {!hasMore && Number(products?.length) > 0 ? (
+              <p className="mt-10 text-center text-[13px] text-[var(--offl-text-muted)]">
+                {addCommas(Number(products?.length))} محصول از{' '}
+                {addCommas(Number(resultProucts?.total) || Number(products?.length))} نمایش داده شد.
+              </p>
+            ) : null}
+            <div ref={sentinelRef} className="h-px w-full" aria-hidden />
           </div>
         </div>
       </div>

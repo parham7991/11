@@ -4,10 +4,13 @@ export const getProductsCategory = async ({
   searchParamsFilter,
   defaultSort = '_4',
   id,
+  page,
 }: {
   searchParamsFilter?: any;
   defaultSort?: string;
   id?: string;
+  /** شمارهٔ صفحه برای بارگذاریِ مرحله‌ای (infinite scroll). پیش‌فرض = ۱ */
+  page?: number | string;
 }) => {
   searchParamsFilter.sort = searchParamsFilter?.sort ? searchParamsFilter?.sort : defaultSort;
 
@@ -17,10 +20,12 @@ export const getProductsCategory = async ({
     filterProduct.append(decodeURIComponent(key), decodeURIComponent(value as string));
   }
   const newQueryString = filterProduct.toString();
+  const pageParam = page ? `&page=${page}` : '';
   const result = await request({
     // Category: ۶۰۰ محصول در هر صفحه (۱۵۰ ردیف × ۴ ستونِ grid) تا
     // کاربر ~۶۰۰ محصول ببیند و گوگل تنوع را در HTML ببیند.
-    url: `/catalog/category/${id ? `${id}` : ''}?pre_page=600&${newQueryString}`,
+    // pageParam برای بارگذاریِ دسته‌های بعدی در infinite scroll استفاده می‌شود.
+    url: `/catalog/category/${id ? `${id}` : ''}?pre_page=600${pageParam}&${newQueryString}`,
   });
 
   return result;

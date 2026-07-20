@@ -1870,3 +1870,18 @@ API دسته‌بندی نیاز به JWT دارد (۴۰۱) پس مستقیما�
 Single-line layout and gradient preserved.
 
 **Test:** Header (≥1024px) → Assemble button text is larger but no longer bold.
+
+---
+
+## UI fix: Assemble button now visible on mobile
+
+**Request:** Only the Assemble button (not the whole top bar) should show on mobile, next to the contact button. Root cause: it lived only in `HeaderTop` which is `hidden lg:block`, so it was fully hidden below 1024px.
+
+**Changes:**
+
+- `src/components/common/header/HeaderCenter.tsx`: imported `AssembleButton` and rendered it next to the mobile phone button with `asm-header-btn--compact lg:hidden` (desktop-hidden, mobile-only).
+- `src/app/globals.css` → `@media (max-width: 1024px)`: retuned the mobile assemble button to icon-only, height 36px / radius 12px / icon 22px, matching the mobile phone button (h-9 / rounded-xl). Previously it was 54px tall (icon 38px).
+
+**Behavior:** Desktop → assemble button in HeaderTop (full, with text). Mobile → icon-only assemble button next to the phone button in HeaderCenter. Hidden on `/assemble` and `/assemble-online` pages (existing rule).
+
+**Test:** Resize below 1024px (or mobile + dark mode) → assemble icon button appears next to the phone button, same height as it.

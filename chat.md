@@ -1855,3 +1855,18 @@ API دسته‌بندی نیاز به JWT دارد (۴۰۱) پس مستقیما�
 - `src/app/globals.css`: removed now-dead CSS — `.asm-header-btn__pulse` (+ `asmHeaderPulse` keyframes), `.asm-header-btn__subtitle`, `.asm-header-btn__dot` (+ `asmHeaderDot` keyframes), and the compact subtitle rule. Gradient + single-line height/padding (from earlier fix) preserved so it stays aligned with and as pretty as the contact button.
 
 **Test:** Header (≥1024px) → Assemble button shows one line of text, no green pulse, clean gradient matching the contact button.
+
+---
+
+## UI fix: header Assemble button text bigger, not bold
+
+**Request:** Don't bold the button text, but make it bigger.
+
+**Change:** `src/app/globals.css` → `.asm-header-btn--compact .asm-header-btn__title`
+
+- font-size: 10.5px → 13.5px (bigger)
+- font-weight: (inherited 800/bold) → 500 (medium, not bold)
+
+Single-line layout and gradient preserved.
+
+**Test:** Header (≥1024px) → Assemble button text is larger but no longer bold.

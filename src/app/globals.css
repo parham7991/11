@@ -3197,7 +3197,8 @@ html.dark .single-blog-article .to-gray-100 {
   height: 13px;
 }
 .asm-header-btn--compact .asm-header-btn__title {
-  font-size: 10.5px;
+  font-size: 13.5px;
+  font-weight: 500;
 }
 .asm-header-btn--compact .asm-header-btn__arrow {
   width: 17px;

@@ -55,19 +55,35 @@ html.dark .aic-root {
   border-radius: 50%;
   cursor: pointer;
   color: #fff;
-  background: linear-gradient(140deg, var(--aic-primary), var(--aic-primary-2) 60%, var(--aic-primary-3));
+  background: linear-gradient(
+    140deg,
+    var(--aic-primary),
+    var(--aic-primary-2) 60%,
+    var(--aic-primary-3)
+  );
   background-size: 180% 180%;
-  box-shadow: 0 12px 34px var(--aic-glow), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  box-shadow:
+    0 12px 34px var(--aic-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease;
   animation: aic-fab-gradient 6s ease infinite;
 }
 @keyframes aic-fab-gradient {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 .aic-fab:hover {
   transform: translateY(-4px) scale(1.07);
-  box-shadow: 0 18px 44px var(--aic-glow), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 18px 44px var(--aic-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 .aic-fab:active {
   transform: scale(0.94);
@@ -96,8 +112,14 @@ html.dark .aic-root {
   animation-delay: 1.3s;
 }
 @keyframes aic-pulse {
-  0% { transform: scale(1); opacity: 0.55; }
-  100% { transform: scale(1.85); opacity: 0; }
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.85);
+    opacity: 0;
+  }
 }
 /* نشان آنلاین */
 .aic-fab__badge {
@@ -116,8 +138,12 @@ html.dark .aic-fab__badge {
   border-color: #0e1626;
 }
 @keyframes aic-online {
-  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55); }
-  100% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
 }
 
 /* ════════════ پنجرهٔ چت ════════════ */
@@ -147,8 +173,14 @@ html.dark .aic-fab__badge {
   right: auto;
 }
 @keyframes aic-pop {
-  from { opacity: 0; transform: translateY(20px) scale(0.92); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* ════════════ هدر ════════════ */
@@ -172,8 +204,15 @@ html.dark .aic-fab__badge {
   pointer-events: none;
 }
 @keyframes aic-header-shine {
-  0%, 100% { transform: translateX(0); opacity: 0.8; }
-  50% { transform: translateX(20%); opacity: 1; }
+  0%,
+  100% {
+    transform: translateX(0);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateX(20%);
+    opacity: 1;
+  }
 }
 .aic-header__avatar {
   position: relative;
@@ -235,7 +274,9 @@ html.dark .aic-fab__badge {
   cursor: pointer;
   color: #fff;
   background: rgba(255, 255, 255, 0.15);
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 .aic-iconbtn:hover {
   background: rgba(255, 255, 255, 0.3);
@@ -284,8 +325,14 @@ html.dark .aic-fab__badge {
   animation: aic-msg-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 @keyframes aic-msg-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .aic-row--user {
   align-self: flex-start;
@@ -351,7 +398,9 @@ html.dark .aic-fab__badge {
   animation: aic-blink 1s step-end infinite;
 }
 @keyframes aic-blink {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 /* ════════════ کارت‌های محصول (منابع) ════════════ */
@@ -377,7 +426,10 @@ html.dark .aic-fab__badge {
   border: 1px solid var(--aic-border);
   border-radius: 16px;
   overflow: hidden;
-  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
   animation: aic-msg-in 0.35s ease;
 }
 .aic-card::before {
@@ -577,11 +629,23 @@ html.dark .aic-card__price {
   opacity: 0.5;
   animation: aic-bounce 1.3s infinite ease-in-out;
 }
-.aic-typing span:nth-child(2) { animation-delay: 0.16s; }
-.aic-typing span:nth-child(3) { animation-delay: 0.32s; }
+.aic-typing span:nth-child(2) {
+  animation-delay: 0.16s;
+}
+.aic-typing span:nth-child(3) {
+  animation-delay: 0.32s;
+}
 @keyframes aic-bounce {
-  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-  30% { transform: translateY(-6px); opacity: 1; }
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
 }
 
 /* ════════════ دکمه‌های پویا (پیشنهاد بعدی) ════════════ */
@@ -677,7 +741,9 @@ html.dark .aic-card__price {
   background: var(--aic-surface);
   border: 1.5px solid var(--aic-border);
   border-radius: 16px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 .aic-input__field:focus-within {
   border-color: var(--aic-primary);
@@ -712,7 +778,10 @@ html.dark .aic-card__price {
   color: #fff;
   background: linear-gradient(135deg, var(--aic-primary), var(--aic-primary-2));
   box-shadow: 0 6px 16px var(--aic-glow);
-  transition: transform 0.18s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.18s ease,
+    opacity 0.2s ease,
+    box-shadow 0.2s ease;
   flex-shrink: 0;
 }
 .aic-send:hover:not(:disabled) {
@@ -746,17 +815,26 @@ html.dark .aic-card__price {
 
 /* ════════════ ریسپانسیو ════════════ */
 /* تبلت کوچک و موبایل بزرگ */
-@media (max-width: 480px) {
+@media (max-width: 1024px) {
   .aic-root {
     bottom: 16px;
   }
-  .aic-root[data-position='left'] { left: 16px; }
-  .aic-root[data-position='right'] { right: 16px; }
+  .aic-root[data-position='left'] {
+    left: 16px;
+  }
+  .aic-root[data-position='right'] {
+    right: 16px;
+  }
+  /* روی موبایل دکمهٔ شناور حذف می‌شود (باز کردن چت از منوی پایین) */
   .aic-fab {
+    display: none;
     width: 56px;
     height: 56px;
   }
-  .aic-fab svg { width: 26px; height: 26px; }
+  .aic-fab svg {
+    width: 26px;
+    height: 26px;
+  }
 
   /* پنجره تمام‌صفحه روی موبایل */
   .aic-window {
@@ -770,8 +848,14 @@ html.dark .aic-card__price {
     animation: aic-slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
   @keyframes aic-slide-up {
-    from { opacity: 0; transform: translateY(100%); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   .aic-header {
     padding-top: max(16px, env(safe-area-inset-top));
@@ -780,7 +864,9 @@ html.dark .aic-card__price {
   .aic-input {
     padding-bottom: max(12px, env(safe-area-inset-bottom));
   }
-  .aic-row { max-width: 92%; }
+  .aic-row {
+    max-width: 92%;
+  }
 }
 
 /* صفحات خیلی کوتاه */

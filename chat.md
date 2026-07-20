@@ -1885,3 +1885,21 @@ Single-line layout and gradient preserved.
 **Behavior:** Desktop → assemble button in HeaderTop (full, with text). Mobile → icon-only assemble button next to the phone button in HeaderCenter. Hidden on `/assemble` and `/assemble-online` pages (existing rule).
 
 **Test:** Resize below 1024px (or mobile + dark mode) → assemble icon button appears next to the phone button, same height as it.
+
+---
+
+## Mobile UI fixes (header button, dark toggle, chat widget)
+
+**Request:** (1) Assemble header button → clean icon-only like the contact button; (2) dark-mode toggle → move to the mobile bottom menu (remove from header on mobile); (3) chat widget → hide the floating bubble on mobile and add a chat button to the bottom menu.
+
+**Changes:**
+
+- `src/app/globals.css` → `@media (max-width:1024px) .asm-header-btn`: mobile assemble button is now solid blue (`#386bf9`, no gradient/animation), 36px, icon-only — matches the contact (phone) button. (Desktop keeps the gradient.)
+- `src/components/common/header/HeaderCenter.tsx`: wrapped `<HeaderThemeToggle />` in `hidden lg:block` so it's desktop-only.
+- `src/components/common/MenuButtom.tsx`: added two icon buttons to the bottom menu (now 6 items): a **chat** button that dispatches `offl-open-chat`, and a **dark-mode** toggle (via `useTheme`). Both mobile-only (the bar is `lg:hidden`).
+- `src/components/ai-chat/ai-chat.css`: extended the responsive rule from `max-width:480px` to `max-width:1024px`; the floating FAB is now `display:none` on mobile (tablet+phone) and the chat window opens full-screen (no overlap with the bottom menu).
+- `src/components/ai-chat/AiChatWidget.tsx`: added a `window` event listener for `offl-open-chat` that opens the chat window, so the bottom-menu button can trigger it.
+
+**Behavior:** Mobile → assemble icon next to phone (solid blue); dark toggle + chat button live in the bottom nav; floating chat bubble gone (tap the menu chat icon to open a full-screen chat).
+
+**Test:** Resize < 1024px → header assemble button is a clean blue icon; bottom menu shows chat + dark-toggle; no floating chat bubble; tapping chat opens full-screen chat.

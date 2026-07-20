@@ -122,7 +122,9 @@ const HeaderCenter = () => {
           </div>
         </div>
         <div className="flex flex-1 items-center justify-end gap-3 space-x-3">
-          <HeaderThemeToggle />
+          <div className="hidden lg:block">
+            <HeaderThemeToggle />
+          </div>
           <UserInfo className="hidden md:flex" />
           <Cart />
         </div>

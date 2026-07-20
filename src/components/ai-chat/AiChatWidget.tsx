@@ -84,6 +84,13 @@ export default function AiChatWidget({
     setMessages([{ role: 'assistant', content: welcome }]);
   }, [welcome]);
 
+  // باز شدن چت از دکمهٔ منوی پایین (موبایل) — از طریق رویداد سفارشی
+  useEffect(() => {
+    const openFromMenu = () => setOpen(true);
+    window.addEventListener('offl-open-chat', openFromMenu);
+    return () => window.removeEventListener('offl-open-chat', openFromMenu);
+  }, []);
+
   // ذخیرهٔ تاریخچه
   useEffect(() => {
     if (!mounted || messages.length === 0) return;
@@ -108,17 +115,14 @@ export default function AiChatWidget({
   }, []);
 
   // به‌روزرسانی پیام ربات در یک ایندکس مشخص (برای استریم زنده)
-  const updateBot = useCallback(
-    (index: number, patch: Partial<DisplayMessage>) => {
-      setMessages((prev) => {
-        if (index < 0 || index >= prev.length) return prev;
-        const copy = [...prev];
-        copy[index] = { ...copy[index], ...patch };
-        return copy;
-      });
-    },
-    []
-  );
+  const updateBot = useCallback((index: number, patch: Partial<DisplayMessage>) => {
+    setMessages((prev) => {
+      if (index < 0 || index >= prev.length) return prev;
+      const copy = [...prev];
+      copy[index] = { ...copy[index], ...patch };
+      return copy;
+    });
+  }, []);
 
   const sendMessage = useCallback(
     async (text: string) => {
@@ -192,7 +196,9 @@ export default function AiChatWidget({
             } else if (evt.type === 'delta' && evt.text) {
               acc += evt.text;
               // هنگام تایپ زنده، خطِ دکمه‌ها را پنهان نگه می‌داریم تا کاربر کد خام نبیند
-              const live = acc.includes('[[') ? acc.replace(/\[\[[^\]]*\]?\]?$/, '').trimEnd() : acc;
+              const live = acc.includes('[[')
+                ? acc.replace(/\[\[[^\]]*\]?\]?$/, '').trimEnd()
+                : acc;
               updateBot(botIndex, { content: live });
             } else if (evt.type === 'error') {
               updateBot(botIndex, {
@@ -352,7 +358,7 @@ export default function AiChatWidget({
                           href={s.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`aic-card${s.inStock === false ? ' aic-card--out' : ''}`}
+                          className={`aic-card${s.inStock === false ? 'aic-card--out' : ''}`}
                         >
                           {/* تصویر + بج تخفیف */}
                           <span className="aic-card__media">
@@ -372,9 +378,7 @@ export default function AiChatWidget({
                             {s.discountPercent ? (
                               <span className="aic-card__badge">{s.discountPercent}٪</span>
                             ) : null}
-                            {s.inStock === false && (
-                              <span className="aic-card__out">ناموجود</span>
-                            )}
+                            {s.inStock === false && <span className="aic-card__out">ناموجود</span>}
                           </span>
 
                           {/* اطلاعات */}
@@ -403,9 +407,7 @@ export default function AiChatWidget({
 
                             {/* قیمت */}
                             <span className="aic-card__prices">
-                              {s.oldPrice && (
-                                <span className="aic-card__old">{s.oldPrice}</span>
-                              )}
+                              {s.oldPrice && <span className="aic-card__old">{s.oldPrice}</span>}
                               {s.price ? (
                                 <span className="aic-card__price">{s.price}</span>
                               ) : (
@@ -574,7 +576,12 @@ const ChatIcon = () => (
 const BotIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <rect x="4" y="8" width="16" height="11" rx="3" stroke="currentColor" strokeWidth="2" />
-    <path d="M12 4v4M9 13h.01M15 13h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <path
+      d="M12 4v4M9 13h.01M15 13h.01"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
     <circle cx="12" cy="4" r="1.4" fill="currentColor" />
     <path d="M2 13v2M22 13v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
   </svg>

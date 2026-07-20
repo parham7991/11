@@ -315,12 +315,12 @@ const CategoryComponent = ({ resultProucts, searchParams, redirect, id }: Props)
               </div>
             ) : null}
 
-            {/* شمارهٔ صفحات (offset ۶۰۰-تایی): ۱، ۶۰۱، ۱۲۰۱… */}
+            {/* شمارهٔ صفحات (لیبل offset ۱۰-تایی قدیمی: ۱، ۱۱، ۲۱…) – اندازهٔ بچ همچنان ۶۰۰ */}
             {totalCount > 0 && Math.ceil(totalCount / BATCH) > 1 ? (
               <div className="mt-8">
                 <Pagination
                   total={Math.ceil(totalCount / BATCH)}
-                  perPage={BATCH}
+                  perPage={10}
                   offsetLabels
                   top={220}
                   className="mt-2"

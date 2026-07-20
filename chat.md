@@ -1792,3 +1792,19 @@ API دسته‌بندی نیاز به JWT دارد (۴۰۱) پس مستقیما�
   - تأیید: پس از دیپلوی، با `curl` روی `https://api.iwcs.ir/offl/v1/catalog/category/<id>?pre_page=600` چک شود چند محصول برمی‌گردد.
 - API route روی خطای fetch، **آرایهٔ خالی** برمی‌گرداند (status ۲۰۰) تا اسکرول در بن‌بست گیر نکند.
 - پیشنهاد تست: صفحهٔ دسته‌بندی (مثل `/category/3995`) → ۶۰۰ محصول اول؛ به پایین اسکرول کن → ۶۰۰ بعدی اضافه شود؛ تا آخرین محصول.
+
+---
+
+## Fix: Footer page labels 1 → 601 → 1201
+
+**Problem:** Category footer pager showed `۱، ۶۰۱، ۱۲۰۱…` instead of the old `۱، ۱۱، ۲۱…`.
+
+**Root cause:** `CategoryComponent.tsx` passes `perPage={BATCH}` (=600) to `<Pagination offsetLabels />`. In offset-label mode the button text is computed as `(page-1) * perPage + 1`, so with 600 it produced 1, 601, 1201.
+
+**Fix:** Changed the label-only `perPage` prop to `10` (the previous per-page size), so labels render `۱، ۱۱، ۲۱…` again. The actual batch size / infinite-scroll remains 600 (`BATCH`), and `total = ceil(totalCount / 600)` is unchanged — only the displayed number on each button changed.
+
+**File:** `src/components/common/CategoryComponent.tsx` (pager block).
+
+**Note / tradeoff:** The label is now cosmetic (page 2 button shows "۱۱" but actually loads products 601–1200). If you'd rather show true sequential page numbers (۱، ۲، ۳…), remove the `offsetLabels` prop instead.
+
+**Test:** Open a category with >1200 products, scroll to footer, confirm labels read ۱، ۱۱، ۲۱…

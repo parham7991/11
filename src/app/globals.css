@@ -3180,10 +3180,11 @@ html.dark .single-blog-article .to-gray-100 {
   transform: translateY(0) scale(0.98);
 }
 .asm-header-btn--compact {
-  padding: 2px 8px;
-  border-radius: 9px;
-  gap: 5px;
-  transform: scale(0.8);
+  height: 40px;
+  padding: 0 12px 0 10px;
+  border-radius: 12px;
+  gap: 6px;
+  transform: none;
   transform-origin: center right;
 }
 .asm-header-btn--compact .asm-header-btn__icon {

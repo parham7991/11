@@ -1808,3 +1808,21 @@ API دسته‌بندی نیاز به JWT دارد (۴۰۱) پس مستقیما�
 **Note / tradeoff:** The label is now cosmetic (page 2 button shows "۱۱" but actually loads products 601–1200). If you'd rather show true sequential page numbers (۱، ۲، ۳…), remove the `offsetLabels` prop instead.
 
 **Test:** Open a category with >1200 products, scroll to footer, confirm labels read ۱، ۱۱، ۲۱…
+
+---
+
+## UI fixes (light theme + header button)
+
+### 1) Articles box → white in light mode
+
+**Target:** `mag-bento-board` section in `src/components/blogs/HottestArticles.tsx` (central box with 5 articles: 1 featured + 4 compact).
+**Before:** `bg-[radial-gradient(... dark blue ...)]` in both modes.
+**After:** `bg-white` in light mode, `dark:bg-[radial-gradient(...)]` preserved for dark. Also gave it a visible `border border-slate-200` (light) / `dark:border-slate-800` so the white box reads like the short-news box. Dark mode unchanged.
+
+### 2) Header "اسمبل آنلاین هوشمند" button aligned with contact button
+
+**Target:** `.asm-header-btn--compact` in `src/app/globals.css`.
+**Before:** `transform: scale(0.8)` + `padding: 2px 8px` + `border-radius: 9px` → visually smaller than the 40px contact button.
+**After:** `height: 40px` (= h-10), `padding: 0 12px 0 10px` (= px-3), `border-radius: 12px` (= rounded-xl), `gap: 6px`, `transform: none`. Now matches the blue contact/tamas button in height, radius and padding.
+
+**Test:** Home `/mag` page → bento board white in light, dark gradient in dark. Header (≥1024px) → Assemble button height/radius/padding equal to contact button.

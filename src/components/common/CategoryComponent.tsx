@@ -73,7 +73,7 @@ const CategoryComponent = ({ resultProucts, searchParams, redirect }: Props) => 
           </h1>
           {/* تعداد کالا - فقط نمایشی، نه heading */}
           {Number(resultProucts?.total) > 0 && (
-            <span className="hidden lg:block lg:w-[320px] lg:min-w-[320px] text-right font-normal text-[14px] text-[#616A76]">
+            <span className="hidden text-right text-[14px] font-normal text-[#616A76] lg:block lg:w-[320px] lg:min-w-[320px]">
               {addCommas(Number(resultProucts?.total))} کالا
             </span>
           )}
@@ -158,7 +158,11 @@ const CategoryComponent = ({ resultProucts, searchParams, redirect }: Props) => 
                                 <div className="flex items-center justify-end gap-px lg:gap-1">
                                   <p className="font-bold text-[14px] text-black lg:text-[16px]">
                                     {addCommas(
-                                      Number(product.special_price ? product.special_price : product.price)
+                                      Number(
+                                        product.special_price
+                                          ? product.special_price
+                                          : product.price
+                                      )
                                     )}
                                   </p>
                                   <p className="font-medium text-[11px] text-black lg:text-[13px]">
@@ -198,7 +202,7 @@ const CategoryComponent = ({ resultProucts, searchParams, redirect }: Props) => 
             </>
             {isPendingCategory ? <Loading /> : null}
             {Number(resultProucts?.products?.length) >= 1 && (
-              <Pagination total={Math.ceil(Number(resultProucts?.total) / 24)} className="mt-10" />
+              <Pagination total={Math.ceil(Number(resultProucts?.total) / 50)} className="mt-10" />
             )}
           </div>
         </div>

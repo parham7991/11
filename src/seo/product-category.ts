@@ -18,7 +18,9 @@ export const getProductsCategory = async ({
   }
   const newQueryString = filterProduct.toString();
   const result = await request({
-    url: `/catalog/category/${id ? `${id}` : ''}?pre_page=24&${newQueryString}`,
+    // SEO: افزایش تعداد محصولات SSR اولیه از ۲۴ به ۵۰ تا گوگل تنوع محصول
+    // (Product Variety) بالای فروشگاه را در HTML اولیه ببیند.
+    url: `/catalog/category/${id ? `${id}` : ''}?pre_page=50&${newQueryString}`,
   });
 
   return result;
@@ -72,9 +74,20 @@ type Props = {
   redirecturltype?: number;
   redirecturl?: string;
   products: Product[];
+  total?: number;
 };
 
-export const jsonLdProductCategory = ({ seo, name, description, id, link, products }: Props) => {
+export const jsonLdProductCategory = ({
+  seo,
+  name,
+  description,
+  id,
+  link,
+  products,
+  total,
+}: Props) => {
+  // تعداد کل موجودی دسته‌بندی (حتی اگر همه در HTML لود نشده باشند)
+  const totalItems = Number(total) > 0 ? Number(total) : products.length;
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -124,6 +137,19 @@ export const jsonLdProductCategory = ({ seo, name, description, id, link, produc
         inLanguage: 'fa-IR',
         breadcrumb: {
           '@id': `${BASEURL_SITE}/category/${id}/#breadcrumb`,
+        },
+        // SEO: به گوگل اعلام می‌کند کلاً چند کالا در این دسته‌بندی موجود است
+        // (numberOfItems = کل موجودی) حتی اگر همهٔ آن‌ها در HTML لود نشده باشند.
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: totalItems,
+          itemListElement: products.map((product, idx) => ({
+            '@type': 'ListItem',
+            position: idx + 1,
+            // @ts-expect-error - normalizeUrl accepts string | null | undefined
+            url: normalizeUrl(BASEURL_SITE, product.link),
+            name: normalizePersianText(product.name),
+          })),
         },
       },
       {

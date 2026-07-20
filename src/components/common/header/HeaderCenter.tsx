@@ -15,7 +15,6 @@ import { Skeleton } from '@heroui/react';
 import { useGetSession } from '@/hooks/auth/useGetSession';
 import { getCookieRemoveOptions } from '@/lib/cookie-options';
 import HeaderThemeToggle from '../theme/HeaderThemeToggle';
-import AssembleButton from './AssembleButton';
 
 const HeaderCenter = () => {
   const [isPending, startTransition] = useTransition();
@@ -118,7 +117,6 @@ const HeaderCenter = () => {
               </span>
               <Phone_Icon className="text-white" />
             </a>
-            <AssembleButton className="asm-header-btn--compact lg:hidden" />
           </div>
         </div>
         <div className="flex flex-1 items-center justify-end gap-3 space-x-3">

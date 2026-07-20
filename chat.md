@@ -1903,3 +1903,15 @@ Single-line layout and gradient preserved.
 **Behavior:** Mobile → assemble icon next to phone (solid blue); dark toggle + chat button live in the bottom nav; floating chat bubble gone (tap the menu chat icon to open a full-screen chat).
 
 **Test:** Resize < 1024px → header assemble button is a clean blue icon; bottom menu shows chat + dark-toggle; no floating chat bubble; tapping chat opens full-screen chat.
+
+---
+
+## Fix: Assemble button moved out of (broken) mobile header → bottom menu
+
+**Problem:** The Assemble button in the mobile header search row was still "very bad" — the header row is too cramped on mobile (logo + search + phone + assemble overflow / looks broken).
+
+**Fix:** Removed the Assemble button from `HeaderCenter` entirely (and its now-unused import). Added it as a clean icon button in the mobile bottom menu (`MenuButtom.tsx`) that navigates to `/assemble-online` — same pattern as the chat and dark-mode buttons added earlier.
+
+**Result:** On mobile the bottom nav now has 7 icon slots: خانه، دسته‌بندی، سبد خرید، پروفایل، چت، دارک‌مود، اسمبل. The header is no longer cramped. Desktop keeps the Assemble button in HeaderTop (unchanged). The dead mobile `.asm-header-btn` media query in globals.css is now unused (left in place, harmless).
+
+**Test:** Resize < 1024px → Assemble icon lives in the bottom menu, header search row is clean.

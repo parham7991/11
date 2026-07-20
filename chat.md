@@ -1826,3 +1826,19 @@ API دسته‌بندی نیاز به JWT دارد (۴۰۱) پس مستقیما�
 **After:** `height: 40px` (= h-10), `padding: 0 12px 0 10px` (= px-3), `border-radius: 12px` (= rounded-xl), `gap: 6px`, `transform: none`. Now matches the blue contact/tamas button in height, radius and padding.
 
 **Test:** Home `/mag` page → bento board white in light, dark gradient in dark. Header (≥1024px) → Assemble button height/radius/padding equal to contact button.
+
+---
+
+## Feature: SEO text block on assemble-online page
+
+**Request:** Add an SEO text block at the bottom of `/assemble-online`, using the same template as category pages.
+
+**Implementation:** `src/app/(user)/assemble-online/page.tsx`
+
+- Reused the existing `CategoryDescription` component (the exact SEO template used at the bottom of every category page: `container_page` wrapper + collapsible "مشاهده بیشتر/کمتر" toggle).
+- Rendered it after `<AssembleWizard />` in the server page.
+- Added a Persian SEO article (`ASSEMBLE_SEO` constant) tailored to the PC/system assembly service (intro, buying guide by component, compatibility, price/discount, FAQ, "why us" list). Mirrors the structure/length of the category SEO copy.
+
+**Note:** The SEO copy is a draft written to match the category style — review/replace with your final marketing text if needed. Content is a plain string constant, easy to swap.
+
+**Test:** Visit `/assemble-online`, scroll to bottom → collapsible SEO block identical in template to category pages.

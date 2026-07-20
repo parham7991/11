@@ -2114,8 +2114,17 @@ html.dark .banner-card:hover {
 }
 
 /* ── Banner flash glow in dark mode ── */
+/* NOTE: dar ghabl "#0f0f11" (solid black) bood ke rooye .banner-flash
+   (absolute inset-0 z-10) mi-oftad va aks-e banner ro dar dark mode
+   kamelan mipushandid. Hala transparent + seda-ye qash-e nuri-ye
+   kamrenge taa aks dida shavad va hover sweep ham kar konad. */
 html.dark .banner-flash {
-  background: #0f0f11 !important;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 60%
+  ) !important;
   background-size: 250% 100% !important;
 }
 

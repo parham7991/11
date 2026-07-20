@@ -18,9 +18,9 @@ export const getProductsCategory = async ({
   }
   const newQueryString = filterProduct.toString();
   const result = await request({
-    // SEO: افزایش تعداد محصولات SSR اولیه از ۲۴ به ۵۰ تا گوگل تنوع محصول
-    // (Product Variety) بالای فروشگاه را در HTML اولیه ببیند.
-    url: `/catalog/category/${id ? `${id}` : ''}?pre_page=50&${newQueryString}`,
+    // Pagination offset-label mode: ۱۰ محصول در هر صفحه؛ دکمه‌ها با
+    // شمارهٔ شروع محصول برچسب می‌خورند (۱، ۱۱، ۲۱…).
+    url: `/catalog/category/${id ? `${id}` : ''}?pre_page=10&${newQueryString}`,
   });
 
   return result;

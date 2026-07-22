@@ -23,7 +23,7 @@ interface Props {
 const Template1 = memo(({ story, className }: Props) => {
   return (
     <div
-      className={`flex items-start justify-start gap-5 overflow-auto pr-5 scrollbar-hide lg:flex-wrap lg:items-center lg:justify-center lg:gap-10 lg:pr-0 ${className}`}
+      className={`flex flex-nowrap items-start justify-start gap-5 overflow-x-auto pr-5 scrollbar-hide lg:items-center lg:justify-center lg:gap-10 lg:pr-0 ${className}`}
     >
       {story?.story?.items?.map((item, idx) => (
         <Link

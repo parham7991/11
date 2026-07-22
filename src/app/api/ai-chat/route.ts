@@ -75,7 +75,9 @@ export async function POST(req: NextRequest): Promise<Response> {
     return jsonError('درخواست نامعتبر است.', 400);
   }
 
-  const message = String(body?.message || '').trim().slice(0, 1000);
+  const message = String(body?.message || '')
+    .trim()
+    .slice(0, 1000);
   if (!message) {
     return jsonError('پیام خالی است.', 400);
   }
@@ -84,10 +86,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   const history: ChatMessage[] = Array.isArray(body?.history)
     ? body.history
         .filter(
-          (m) =>
-            m &&
-            (m.role === 'user' || m.role === 'assistant') &&
-            typeof m.content === 'string'
+          (m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string'
         )
         .slice(-8)
         .map((m) => ({ role: m.role, content: String(m.content).slice(0, 2000) }))
@@ -107,9 +106,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   }
 
   // ساخت پیام‌ها برای مدل
-  const systemContent = context
-    ? `${config.systemPrompt}\n\n${context}`
-    : config.systemPrompt;
+  const systemContent = context ? `${config.systemPrompt}\n\n${context}` : config.systemPrompt;
 
   const messages: ChatMessage[] = [
     { role: 'system', content: systemContent },
@@ -145,10 +142,9 @@ export async function POST(req: NextRequest): Promise<Response> {
       clearTimeout(timeout);
       const errText = await aiRes.text().catch(() => '');
       console.error('AI provider error:', aiRes.status, errText.slice(0, 300));
-      let msg = 'خطا در ارتباط با سرویس هوش مصنوعی.';
-      if (aiRes.status === 401 || aiRes.status === 403) {
-        msg = 'کلید API نامعتبر است یا دسترسی ندارد. کلید سرویس را بررسی کن.';
-      } else if (aiRes.status === 404) {
+      // پیام خطای عمومی — جزئیات فنی (مثل نامعتبر بودن API key) به کاربر نشان داده نمی‌شود
+      let msg = 'مشکلی پیش آمده. لطفاً دوباره تلاش کنید.';
+      if (aiRes.status === 404) {
         msg = 'مدل یا آدرس سرویس یافت نشد. نام مدل/سرویس را بررسی کن.';
       } else if (aiRes.status === 429) {
         msg = 'محدودیت سرویس هوش مصنوعی. کمی بعد دوباره تلاش کن.';
@@ -272,7 +268,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   // تست واقعی اتصال
   if (!config.apiKey) {
-    return NextResponse.json({ ...status, test: 'fail', reason: 'کلید تنظیم نشده' }, { status: 400 });
+    return NextResponse.json(
+      { ...status, test: 'fail', reason: 'کلید تنظیم نشده' },
+      { status: 400 }
+    );
   }
   try {
     const controller = new AbortController();

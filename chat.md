@@ -1915,3 +1915,32 @@ Single-line layout and gradient preserved.
 **Result:** On mobile the bottom nav now has 7 icon slots: خانه، دسته‌بندی، سبد خرید، پروفایل، چت، دارک‌مود، اسمبل. The header is no longer cramped. Desktop keeps the Assemble button in HeaderTop (unchanged). The dead mobile `.asm-header-btn` media query in globals.css is now unused (left in place, harmless).
 
 **Test:** Resize < 1024px → Assemble icon lives in the bottom menu, header search row is clean.
+
+---
+
+# 🔧 تغییر Chat AI و رفع Story Section — ۲۲ جولای ۲۰۲۶
+
+## ۱) تغییر API Key چت به Groq با توکن جدید
+
+**تغییرات:**
+
+| فایل                           | تغییر                                                                                                                                                       |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.env.local`                   | API Key جدید Groq جایگزین کلید قبلی شد (`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`)                                                         |
+| `src/lib/ai-chat/config.ts`    | کلید جدید به‌عنوان fallback سخت‌کد شده در خود کد اضافه شد (اولویت: env → hardcoded fallback)                                                                |
+| `src/app/api/ai-chat/route.ts` | پیام خطای ۴۰۱/۴۰۳ از «کلید API نامعتبر است...» به «مشکلی پیش آمده. لطفاً دوباره تلاش کنید.» تغییر کرد — **جزئیات خطای API دیگر به کاربر نشان داده نمی‌شود** |
+
+**مدیریت خطا:** اگر API Key نامعتبر باشد، کاربر فقط پیام عمومی می‌بیند. جزئیات فنی فقط در `console.error` سمت سرور ثبت می‌شود. کدهای ۴۰۴ و ۴۲۹ همچنان پیام اختصاصی دارند (مرتبط با خطای API Key نیستند).
+
+## ۲) رفع Story Section — تک‌خطی و اسکرول‌شونده در همه سایزها
+
+**فایل:** `src/components/home/Template1.tsx`
+
+| قبل                                                        | بعد                                 |
+| ---------------------------------------------------------- | ----------------------------------- |
+| `lg:flex-wrap` — روی دسکتاپ آیتم‌ها در چند خط wrap می‌شدند | `flex-nowrap` — همیشه تک خط         |
+| `overflow-auto`                                            | `overflow-x-auto` — فقط اسکرول افقی |
+
+آیتم‌های دایره‌ای بالای صفحه در همهٔ سایزها در یک خط می‌مانند و افقی اسکرول می‌شوند.
+
+**نکته:** برای اعمال تغییرات `.env.local` باید dev server ریستارت شود.

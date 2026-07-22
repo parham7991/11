@@ -41,6 +41,3 @@ dev
 /Dockerfile
 /.idea
 .env.local
-
-# Claude worktrees
-.claude/worktrees/

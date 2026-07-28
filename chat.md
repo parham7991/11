@@ -2695,3 +2695,61 @@ Result: pass
 - `GitHub main` و Live Vercel هنوز نباید این Patch را داشته باشند.
 - هیچ Full Build، `npm ci`، `npm audit fix` یا Live shopping request اجرا نشده است.
 - server checkout تمیز است و Commit آمادهٔ Push/Build نهایی کاربر است.
+
+---
+
+# Priority 2 — Grounded Product Recovery
+
+> وضعیت: پیاده‌سازی و تست محلی انجام شده؛ هنوز در این بخش Commit/Push نشده است.
+
+## هدف
+
+اگر AI stream و یک recovery غیرstream هر دو ناموفق باشند، اما RAG منابع معتبر محصول دارد، پاسخ نباید empty/error باشد. پاسخ جایگزین باید فقط از همان منابع واقعی ساخته شود و هیچ نام، قیمت، موجودی یا لینک ساختگی نداشته باشد.
+
+## پیاده‌سازی
+
+### `src/lib/ai-chat/grounded-fallback.ts`
+
+یک ماژول production و deterministic اضافه شد که:
+
+- فقط `ChatSource`های دارای title و URL مجاز (`/` یا `http(s)`) را می‌پذیرد؛
+- منابع تکراری و مقادیر کنترل‌کاراکتری را حذف/نرمال می‌کند؛
+- context مدل را **فقط** از همان Sourceهای ارسال‌شده به UI می‌سازد؛
+- در fallback فقط Sourceهای `inStock === true` را فهرست می‌کند و قیمت را تنها در صورت وجود در همان Source نشان می‌دهد؛
+- اگر تنها Sourceهای ناموجود یا نامعتبر وجود داشته باشند، `null` برمی‌گرداند تا یک محصول ناموجود به‌عنوان پیشنهاد نمایش داده نشود.
+
+### `src/app/api/ai-chat/route.ts`
+
+- بعد از category hard-filter، context مدل دیگر از `rag.context` اولیه استفاده نمی‌کند؛ از sourceهای Filtered/Emitted دوباره ساخته می‌شود. بنابراین rowهای hidden یا نامرتبط نمی‌توانند به مدل برسند.
+- وقتی پس از جستجو هیچ Source معتبر باقی نماند، Route به‌جای صدا زدن AI بدون catalog context، پیام deterministic و بدون product claim می‌دهد.
+- Sourceهای معتبر به `callAi` و `doRecovery` منتقل شدند.
+- در نبود API key یا شکست stream و recovery، ابتدا fallback grounded امتحان می‌شود. اگر Source موجود و معتبر باشد، `delta` غیرخالی همراه با `mode=deterministic-fallback` ارسال می‌شود؛ event خطا ارسال نمی‌شود.
+- اگر هیچ Source موجود و معتبر نباشد، رفتار generic error حفظ می‌شود تا موجودی/قیمت ساختگی تولید نشود.
+
+## تست Production Import محلی
+
+```text
+npm run test:intent
+Result: 10 passed, 0 failed
+git diff --check: pass
+```
+
+سه تست جدید مستقیماً ماژول Production را اجرا می‌کنند:
+
+1. context فقط Sourceهای emitted و URL معتبر را نگه می‌دارد.
+2. fallback فقط محصول موجود و قیمت واقعی همان Source را برمی‌گرداند.
+3. fallback با تنها Source ناموجود، پیشنهاد محصول نمی‌سازد.
+
+## تأیید Staging Priority 2
+
+Patch روی server checkout اعمال و بدون Build کامل با نتیجهٔ واقعی زیر بررسی شد:
+
+```text
+Server: npm run test:intent
+Result: 10 passed, 0 failed
+Server: route_transpile=pass
+Server: git diff --check
+Result: pass
+```
+
+این تغییرها نیز فقط به‌صورت Staging Commit نگهداری می‌شوند؛ Push به GitHub، Full Build و Live shopping test همچنان اجرا نشده‌اند.

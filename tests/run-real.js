@@ -48,6 +48,11 @@ function loadProductionModule(filePath) {
 const { classifyIntent } = loadProductionModule(productionPath);
 assert.equal(typeof classifyIntent, 'function', 'production classifyIntent must be exported');
 
+const fallbackPath = path.resolve(__dirname, '../src/lib/ai-chat/grounded-fallback.ts');
+const { buildGroundedProductContext, buildGroundedProductFallback } = loadProductionModule(fallbackPath);
+assert.equal(typeof buildGroundedProductContext, 'function', 'production grounded context builder must be exported');
+assert.equal(typeof buildGroundedProductFallback, 'function', 'production grounded fallback builder must be exported');
+
 let passed = 0;
 let failed = 0;
 const failures = [];
@@ -113,6 +118,39 @@ test('technical no-product question remains card-free', () => {
   expectIntent('تفاوت DDR4 و DDR5 چیست؟ محصول معرفی نکن.', {
     intent: 'technical_question', needsRag: false, showCards: false, categoryHint: 'ram',
   });
+});
+
+console.log('\n=== Production Grounded Recovery Tests ===');
+
+test('grounded context contains only the exact emitted sources', () => {
+  const context = buildGroundedProductContext([
+    { title: 'SSD NVMe 1TB واقعی', url: '/product/ssd-1', price: '۵٬۰۰۰ تومان', inStock: true, brand: 'برند واقعی' },
+    { title: 'GPU ناموجود', url: '/product/gpu-1', price: '۹٬۰۰۰ تومان', inStock: false },
+    { title: 'منبع نامعتبر', url: 'javascript:alert(1)', price: '۱ تومان', inStock: true },
+  ]);
+  assert.match(context, /SSD NVMe 1TB واقعی/);
+  assert.match(context, /GPU ناموجود/);
+  assert.doesNotMatch(context, /منبع نامعتبر/);
+  assert.doesNotMatch(context, /javascript:/);
+});
+
+test('AI recovery fallback cites only available valid catalog rows', () => {
+  const fallback = buildGroundedProductFallback([
+    { title: 'SSD NVMe 1TB واقعی', url: '/product/ssd-1', price: '۵٬۰۰۰ تومان', inStock: true },
+    { title: 'GPU ناموجود', url: '/product/gpu-1', price: '۹٬۰۰۰ تومان', inStock: false },
+    { title: 'منبع نامعتبر', url: 'javascript:alert(1)', price: '۱ تومان', inStock: true },
+  ]);
+  assert.ok(fallback);
+  assert.match(fallback, /SSD NVMe 1TB واقعی/);
+  assert.match(fallback, /۵٬۰۰۰ تومان/);
+  assert.doesNotMatch(fallback, /GPU ناموجود|منبع نامعتبر|javascript:/);
+});
+
+test('grounded recovery refuses to recommend only out-of-stock sources', () => {
+  const fallback = buildGroundedProductFallback([
+    { title: 'SSD ناموجود', url: '/product/ssd-out', price: '۵٬۰۰۰ تومان', inStock: false },
+  ]);
+  assert.equal(fallback, null);
 });
 
 console.log('\n═══════════════════════════════');

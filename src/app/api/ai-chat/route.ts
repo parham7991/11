@@ -18,6 +18,7 @@ import { getProxyFetch } from '@/lib/ai-chat/proxy-fetch';
 import { SseParser, extractNonStreamContent } from '@/lib/ai-chat/sse-parser';
 import { generateRequestId } from '@/lib/ai-chat/ai-client';
 import { classifyIntent, ASSEMBLY_REDIRECT_MESSAGE } from '@/lib/ai-chat/chat-intent';
+import { buildGroundedProductContext, buildGroundedProductFallback } from '@/lib/ai-chat/grounded-fallback';
 import type { ChatMessage, ChatRequestBody, ChatSource } from '@/lib/ai-chat/types';
 
 export const runtime = 'nodejs';
@@ -181,27 +182,33 @@ export async function POST(req: NextRequest): Promise<Response> {
           try {
             const rag = await buildCategoryFilteredRag(message, intentResult.categoryHint, config.ragCount);
             sources = rag.sources;
-            context = rag.context;
 
             // Category hard filter: only show relevant products
             if (intentResult.categoryHint) {
               sources = filterSourcesByCategory(sources, intentResult.categoryHint);
             }
 
-            // Minimum relevance: don't show irrelevant cards
-            // (For now just show what RAG gives, but limit to 4 cards)
+            // Never send hidden/unfiltered RAG rows to the model. The prompt context
+            // is rebuilt from exactly the sources that are emitted to the client.
             sources = sources.slice(0, 4);
+            context = buildGroundedProductContext(sources);
 
             if (sources.length > 0) {
               w.send({ type: 'sources', sources });
               w.progress('search_complete', 'محصولات مرتبط پیدا شدند', { count: sources.length });
             }
           } catch {
-            // RAG failed, continue without context
+            // RAG failed; do not ask the model to invent product facts.
+          }
+
+          if (sources.length === 0 || !context) {
+            w.send({ type: 'delta', text: 'فعلاً محصول مرتبط و قابل‌نمایشی پیدا نشد. لطفاً نام مدل، ظرفیت یا بودجه را دقیق‌تر بفرستید.' });
+            w.send({ type: 'meta', mode: 'deterministic-fallback', model: 'none', requestId, latencyMs: Date.now() - startTime });
+            return;
           }
 
           w.progress('waiting_for_ai', 'در حال تحلیل تخصصی…');
-          await callAi(w, config, message, history, startTime, requestId, clientAbort, 'product', context);
+          await callAi(w, config, message, history, startTime, requestId, clientAbort, 'product', context, sources);
           return;
         }
 
@@ -250,7 +257,8 @@ async function callAi(
   requestId: string,
   clientAbort: AbortController,
   mode: 'greeting' | 'technical' | 'product' | 'unknown',
-  ragContext?: string
+  ragContext?: string,
+  sources: readonly ChatSource[] = []
 ): Promise<void> {
   // Build messages
   let systemContent = config.systemPrompt;
@@ -269,15 +277,11 @@ async function callAi(
     { role: 'user', content: message },
   ];
 
-  // No API key → skip AI
+  // No API key → skip AI, but still return an honest catalog-grounded recovery.
   if (!config.apiKey) {
-    if (ragContext) {
-      w.send({ type: 'delta', text: 'دستیار هوشمند فعلاً در دسترس نیست، اما محصولات مرتبط را می‌بینید.' });
-      w.send({ type: 'meta', mode: 'deterministic-fallback', model: 'none', requestId, latencyMs: Date.now() - startTime });
-    } else {
-      w.send({ type: 'delta', text: 'دستیار هوشمند آفلند در حال حاضر به سرویس AI متصل نیست.' });
-      w.send({ type: 'meta', mode: 'deterministic-fallback', model: 'none', requestId, latencyMs: Date.now() - startTime });
-    }
+    if (emitGroundedProductFallback(w, sources, 'none', requestId, startTime)) return;
+    w.send({ type: 'delta', text: 'دستیار هوشمند آفلند در حال حاضر به سرویس AI متصل نیست.' });
+    w.send({ type: 'meta', mode: 'deterministic-fallback', model: 'none', requestId, latencyMs: Date.now() - startTime });
     return;
   }
 
@@ -310,7 +314,7 @@ async function callAi(
     clearTimeout(connectionTimer);
 
     if (!aiRes.ok || !aiRes.body) {
-      await doRecovery(w, doFetch, config, messages, startTime, requestId, clientAbort, mode);
+      await doRecovery(w, doFetch, config, messages, startTime, requestId, clientAbort, mode, sources);
       return;
     }
 
@@ -357,15 +361,29 @@ async function callAi(
     }
 
     // Stream empty → recovery
-    await doRecovery(w, doFetch, config, messages, startTime, requestId, clientAbort, mode);
+    await doRecovery(w, doFetch, config, messages, startTime, requestId, clientAbort, mode, sources);
 
   } catch (err) {
     clearTimeout(connectionTimer);
     console.warn(`[ai-chat] [${requestId}] Stream failed:`, err instanceof Error ? err.message : err);
-    await doRecovery(w, doFetch, config, messages, startTime, requestId, clientAbort, mode);
+    await doRecovery(w, doFetch, config, messages, startTime, requestId, clientAbort, mode, sources);
   } finally {
     clientAbort.signal.removeEventListener('abort', onClientAbort);
   }
+}
+
+function emitGroundedProductFallback(
+  w: NdjsonWriter,
+  sources: readonly ChatSource[],
+  model: string,
+  requestId: string,
+  startTime: number
+): boolean {
+  const text = buildGroundedProductFallback(sources);
+  if (!text) return false;
+  w.send({ type: 'delta', text });
+  w.send({ type: 'meta', mode: 'deterministic-fallback', model, requestId, latencyMs: Date.now() - startTime });
+  return true;
 }
 
 // ─── Recovery (one non-stream attempt) ───────────────────────────
@@ -377,7 +395,8 @@ async function doRecovery(
   startTime: number,
   requestId: string,
   clientAbort: AbortController,
-  mode: string
+  mode: string,
+  sources: readonly ChatSource[]
 ): Promise<void> {
   if (w.closed || clientAbort.signal.aborted) return;
 
@@ -424,8 +443,10 @@ async function doRecovery(
     clientAbort.signal.removeEventListener('abort', onClientAbort);
   }
 
-  // Final fallback
+  // Final fallback: catalog sources win over a generic error. This path never
+  // invents product facts; it only formats currently available emitted sources.
   if (w.closed || clientAbort.signal.aborted) return;
+  if (emitGroundedProductFallback(w, sources, config.chatModel, requestId, startTime)) return;
   w.send({ type: 'error', error: 'در حال حاضر امکان پاسخ‌گویی وجود ندارد. لطفاً دوباره تلاش کنید.' });
   w.send({ type: 'meta', mode: 'deterministic-fallback', model: config.chatModel, requestId, latencyMs: Date.now() - startTime });
 }

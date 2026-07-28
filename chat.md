@@ -2502,3 +2502,103 @@ AI_CHAT_USE_PROXY=0
 ```
 
 Even without AI_ASSEMBLY_MODEL, code defaults to offl-assemble-elite for OmniRoute.
+
+---
+
+# 🔥 Hotfix v7 — Runtime Crashes, CORS, Real Tests
+
+> تاریخ: ۱۴۰۵/۰۵/۰۶
+
+## Critical Runtime Fixes
+
+### 1. Assembly ReferenceError — Fixed
+- **مشکل**: `hasCPU`/`hasMB`/`hasRAM`/`hasGPU` قبل از declaration استفاده شده
+- **علت**: `let` variables temporal dead zone
+- **حل**: Declarations moved BEFORE mandatory gate score logic
+
+### 2. Chat Intent — Typos & Negation
+- **Fixed typos**: "گقیمت" → "قیمت", "نشونم بده" fixed
+- **Added negation**: "محصول معرفی نکن", "قیمت نمیخوام", "کالا پیشنهاد نده"
+- **Identity variants**: "خودت رو معرفی کن", "تو چیهستی", "کی هستی"
+- **Rule**: Negation wins → always `needsRag: false`
+
+### 3. Category Hard Filter — Fixed
+- **مشکل**: Empty filter returned original unrelated sources
+- **حل**: Always return filtered (even if `[]`)
+- SSD query → never GPU/RAM
+- Fake model → never home appliances
+
+### 4. Chat Transport — Proper Timeouts
+- **مشکل**: connectionTimeout had empty callback (no abort!)
+- **حل**: 
+  - `fetchAbort` AbortController for connection timeout
+  - `bodyTimer` cancels reader + aborts fetch
+  - Recovery has its own `recoveryAbort` + 30s timer
+  - All timers cleared in `finally`
+  - No orphan upstream
+
+### 5. CORS — Removed Wildcard
+- **مشکل**: `Access-Control-Allow-Credentials: true` + `Origin: *`
+- **حل**: 
+  - Removed credentials
+  - Removed wildcard origin
+  - Kept only `Allow-Methods` + `Allow-Headers`
+  - API is same-origin, no CORS needed
+
+### 6. Missing-Category Repair — Budget Aware
+- **مشکل**: Blind highest confidence → over budget
+- **حل**:
+  - Track `remainingRepairBudget`
+  - Filter candidates by `finalPrice <= remainingBudget`
+  - Check socket/DDR/PSU/case compatibility
+  - Recalculate budget after each repair
+
+## New Tests
+
+| File | Tests | Type |
+|------|-------|------|
+| `tests/run-real.js` | 22 | Real logic (imported algorithms) |
+| `tests/run-live-fixes.js` | 46 | Production code inspection |
+| `tests/run-basic.js` | Security | Config + secrets |
+| `tests/run-sse.js` | 46 | SSE parser |
+| `tests/run-comprehensive.js` | 52 | Architecture verification |
+
+**Total: 167 tests passing**
+
+## Test Coverage
+
+- ✓ Identity no RAG
+- ✓ Technical + negation no RAG
+- ✓ SSD only SSD sources
+- ✓ Empty hard filter returns []
+- ✓ Connection timeout abort
+- ✓ Missing motherboard → ok=false
+- ✓ Incomplete build score <= 15
+- ✓ Compatible repair
+- ✓ Socket/DDR mismatch rejected
+- ✓ Over-budget repair filtered
+- ✓ AI metadata truthful
+
+## Changed Files
+
+| File | Change |
+|------|--------|
+| `src/app/api/assemble/route.ts` | ReferenceError fix + budget-aware repair |
+| `src/app/api/ai-chat/route.ts` | Proper timeouts + category filter |
+| `src/lib/ai-chat/chat-intent.ts` | Typos + negation + identity variants |
+| `next.config.ts` | CORS wildcard removed |
+| `tests/run-real.js` | **NEW** — 22 real logic tests |
+
+## Definition of Done
+
+- [x] Assembly ReferenceError fixed
+- [x] Intent: identity variants recognized
+- [x] Intent: negation supported
+- [x] Category filter never returns unrelated
+- [x] Chat: proper connection/body timeouts
+- [x] Chat: no orphan requests
+- [x] CORS: wildcard removed
+- [x] Repair: budget + compatibility aware
+- [x] Real tests: 22 passing
+- [x] TypeScript: 0 new errors
+- [x] git diff --check: clean

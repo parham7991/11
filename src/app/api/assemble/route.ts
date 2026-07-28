@@ -233,16 +233,30 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         });
       }
 
-      // ─── Fill missing categories with rule-based ──────
+      // ─── Fill missing categories with budget-aware repair ──────
       const missingCategories = usable.filter(
         (c) => !selectedParts.find((p) => p.category === c.category)
       );
+      let remainingRepairBudget = budget - selectedParts.reduce((sum, p) => sum + (p.finalPrice * (p.quantity || 1)), 0);
+
       for (const cat of missingCategories) {
-        const valid = cat.candidates.filter((c) => c.inStock && c.finalPrice > 0);
+        const valid = cat.candidates
+          .filter((c) => c.inStock && c.finalPrice > 0)
+          .filter((c) => c.finalPrice <= remainingRepairBudget); // Must fit budget
         if (valid.length === 0) continue;
 
-        // Rule-based pick: best confidence within budget
-        const sorted = valid.sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
+        // Sort: compatibility with existing parts first, then confidence, then value
+        const sorted = valid.sort((a, b) => {
+          // Prefer parts compatible with already selected
+          const aCompat = isRepairCompatible(a, selectedParts, cat.category) ? 1 : 0;
+          const bCompat = isRepairCompatible(b, selectedParts, cat.category) ? 1 : 0;
+          if (aCompat !== bCompat) return bCompat - aCompat;
+          // Then confidence
+          if ((b.confidence || 0) !== (a.confidence || 0)) return (b.confidence || 0) - (a.confidence || 0);
+          // Then value (lower price for same confidence)
+          return a.finalPrice - b.finalPrice;
+        });
+
         const picked = sorted[0];
         if (picked) {
           aiMeta.repairedLocally.push(cat.category);
@@ -252,6 +266,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             pickReason: 'rule-based-fallback',
             alternatives: valid.filter((c) => c.id !== picked.id).slice(0, 15),
           });
+          remainingRepairBudget -= picked.finalPrice;
         }
       }
 
@@ -314,6 +329,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // ═══════ 6) Compatibility check ════════════════════════
   const compatMatrix = checkFullCompatibility(parts);
 
+  // ─── Category presence (MUST be before mandatory gate) ──
+  const hasCPU = parts.some((p) => p.category === 'cpu' && p.inStock);
+  const gpuOptional = useCaseKey === 'office';
+  const hasGPU = gpuOptional || parts.some((p) => p.category === 'gpu' && p.inStock);
+  const hasRAM = parts.some((p) => p.category === 'ram' && p.inStock);
+  const hasMB = parts.some((p) => p.category === 'motherboard' && p.inStock);
+
   // ─── Mandatory category gate ──────────────────────────────
   const mandatoryByUseCase: Record<string, string[]> = {
     gaming: ['cpu', 'motherboard', 'ram', 'gpu', 'storage', 'psu', 'case'],
@@ -328,11 +350,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // Cap compatibility score for incomplete builds
   let effectiveScore = compatMatrix.score;
   if (missingMandatory.length > 0) {
-    // Missing mandatory → max score 40
     effectiveScore = Math.min(40, compatMatrix.score);
-    // CPU without motherboard or vice versa → max 20
     if ((!hasCPU && hasMB) || (hasCPU && !hasMB)) effectiveScore = Math.min(20, effectiveScore);
-    // No motherboard at all → max 15
     if (!hasMB) effectiveScore = Math.min(15, effectiveScore);
   }
 
@@ -345,12 +364,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const recommendation = generateSystemRecommendation(parts, useCaseKey, tier, budget);
   const summary = summarize(parts);
   const useCase = USE_CASES.find((u) => u.key === useCaseKey) || USE_CASES[0];
-
-  const hasCPU = parts.some((p) => p.category === 'cpu' && p.inStock);
-  const gpuOptional = useCaseKey === 'office';
-  const hasGPU = gpuOptional || parts.some((p) => p.category === 'gpu' && p.inStock);
-  const hasRAM = parts.some((p) => p.category === 'ram' && p.inStock);
-  const hasMB = parts.some((p) => p.category === 'motherboard' && p.inStock);
 
   const unavailableMessages: string[] = [];
   if (!hasCPU) unavailableMessages.push('CPU سازگار الان نداریم، به زودی موجود میشه');
@@ -476,6 +489,57 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       requestId,
     },
   });
+}
+
+// ─── Repair Compatibility Check ──────────────────────────────────
+function isRepairCompatible(candidate: AssemblyPart, selected: AssemblyPart[], category: string): boolean {
+  const cpu = selected.find(p => p.category === 'cpu');
+  const mb = selected.find(p => p.category === 'motherboard');
+  const ram = selected.find(p => p.category === 'ram');
+  const psu = selected.find(p => p.category === 'psu');
+  const cs = selected.find(p => p.category === 'case');
+
+  // Motherboard vs CPU socket
+  if (category === 'motherboard' && cpu) {
+    if (cpu.specs?.socket && candidate.specs?.socket && cpu.specs.socket !== candidate.specs.socket) return false;
+  }
+  if (category === 'cpu' && mb) {
+    if (mb.specs?.socket && candidate.specs?.socket && mb.specs.socket !== candidate.specs.socket) return false;
+  }
+
+  // RAM vs Motherboard DDR type
+  if (category === 'ram' && mb) {
+    if (mb.specs?.ramType && candidate.specs?.ramType && mb.specs.ramType !== candidate.specs.ramType) return false;
+  }
+  if (category === 'motherboard' && ram) {
+    if (candidate.specs?.ramType && ram.specs?.ramType && candidate.specs.ramType !== ram.specs.ramType) return false;
+  }
+
+  // PSU wattage headroom
+  if (category === 'psu') {
+    const gpu = selected.find(p => p.category === 'gpu');
+    const cpuTdp = Number(cpu?.specs?.tdp || 0);
+    const gpuTdp = Number(gpu?.specs?.tdp || 0);
+    const needed = (cpuTdp + gpuTdp + 100) * 1.3;
+    if (Number(candidate.specs?.wattage || 0) < needed) return false;
+  }
+
+  // GPU length vs case
+  if (category === 'gpu' && cs) {
+    const gpuLen = Number(candidate.specs?.length || 0);
+    const caseMax = Number(cs.specs?.gpuMaxLength || 999);
+    if (gpuLen > caseMax) return false;
+  }
+  if (category === 'case') {
+    const gpu = selected.find(p => p.category === 'gpu');
+    if (gpu) {
+      const gpuLen = Number(gpu.specs?.length || 0);
+      const caseMax = Number(candidate.specs?.gpuMaxLength || 999);
+      if (gpuLen > caseMax) return false;
+    }
+  }
+
+  return true;
 }
 
 // ─── Final Analysis ──────────────────────────────────────────────

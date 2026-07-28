@@ -73,7 +73,7 @@ assert(route.includes('sendDone') || route.includes('doneSent'), '18. Exactly on
 assert(route.includes('meta') && route.includes('deterministic-fallback'), '19. Meta with mode');
 assert(route.includes('ai-recovery'), '20. Recovery mode in meta');
 assert(
-  route.includes('connectionTimeout') && route.includes('bodyTimeout'),
+  route.includes('connectionTimer') && route.includes('bodyTimer'),
   '21. Separate timeouts'
 );
 assert(route.includes('clientAbort') || route.includes('client abort'), '22. Client disconnect');

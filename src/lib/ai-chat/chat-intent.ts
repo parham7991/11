@@ -1,5 +1,5 @@
 /**
- * chat-intent.ts — Deterministic intent classifier
+ * chat-intent.ts — Deterministic intent classifier (table-driven)
  * ──────────────────────────────────────────────────────────────────
  * Fast, rule-based. No AI call. Uses keyword matching + synonym maps.
  * Used by chat route to decide: RAG or no RAG, cards or no cards.
@@ -20,57 +20,56 @@ export type ChatIntent =
 
 export interface IntentResult {
   intent: ChatIntent;
-  /** Whether to run RAG / product search */
   needsRag: boolean;
-  /** Whether to show product source cards */
   showCards: boolean;
-  /** Whether to redirect to assembly */
   redirectToAssembly: boolean;
-  /** Category hint if detected */
   categoryHint: string | null;
 }
 
-// ─── Keyword Maps ────────────────────────────────────────────────
+// ─── Tables ──────────────────────────────────────────────────────
 
-const GREETING_WORDS = [
+const GREETING_TABLE = [
   'سلام', 'درود', 'صبح بخیر', 'شب بخیر', 'عصر بخیر', 'خسته نباشید',
-  'hello', 'hi', 'hey', 'good morning',
+  'hello', 'hi', 'hey', 'good morning', 'سلامت باشید', 'خوش آمدید',
 ];
 
-const IDENTITY_PATTERNS = [
-  /\bکی\s*هستی\b/, /\bاسمت\s*چیه\b/, /\bچیکار\s*میکنی\b/,
-  /\bچه\s*کاری\s*بلدی\b/, /\bمعرفی\s*کن\s*خودت\b/,
-  /\bwho\s*are\s*you\b/i, /\bwhat\s*can\s*you\s*do\b/i,
-  /\bاسم\s*تو\b/, /\bهویت\b/,
+const IDENTITY_TABLE = [
+  'کی هستی', 'کیهستی', 'اسمت چیه', 'اسمت', 'چه کاری می‌کنی', 'چه کاری میکنی',
+  'چیکار میکنی', 'چیکار می‌کنی', 'چه کار بلدی', 'چه کاری بلدی',
+  'معرفی کن خودت', 'معرفی کن', 'خودت رو معرفی کن', 'خودتو معرفی کن',
+  'خودت را معرفی کن', 'از خودت بگو', 'تو کی هستی', 'تو چیهستی',
+  'کی هستی تو', 'هویت', 'اسم تو', 'به من بگو کی هستی',
+  'what are you', 'who are you', 'introduce yourself',
+  'what can you do', 'tell me about yourself',
 ];
 
-const FULL_BUILD_PATTERNS = [
-  /سیستم\s*کامل/, /اسمبل\s*کامل/, /یک\s*سیستم/,
-  /system\s*build/i, /full\s*build/i,
-  /پیشنهاد\s*سیستم/, /سیستم\s*بخرم/,
-  /سیستم\s*گیمینگ/, /سیستم\s*اداری/, /سیستم\s*رندر/,
+const FULL_BUILD_TABLE = [
+  'سیستم کامل', 'اسمبل کامل', 'یک سیستم', 'یه سیستم',
+  'system build', 'full build', 'پیشنهاد سیستم', 'سیستم بخرم',
+  'سیستم گیمینگ', 'سیستم اداری', 'سیستم رندر', 'سیستم استریم',
+  'اسمبل کن', 'برام اسمبل کن', 'سیستم ببند',
 ];
 
-const ORDER_SUPPORT_PATTERNS = [
-  /سفارش/, /پیگیری/, /ارسال/, /پست/, /تیپاکس/,
-  /فاکتور/, /خریدم/, /سبد\s*خرید/, /order/i, /tracking/i,
-  /وضعیت\s*سفارش/, /کد\s*پیگیری/,
+const ORDER_SUPPORT_TABLE = [
+  'سفارش', 'پیگیری', 'ارسال', 'پست', 'تیپاکس',
+  'فاکتور', 'خریدم', 'سبد خرید', 'order', 'tracking',
+  'وضعیت سفارش', 'کد پیگیری', 'مژده',
 ];
 
-const SITE_HELP_PATTERNS = [
-  /راهنما/, /چطور\s*از/, /چگونه/, /آموزش/, /help/i,
-  /چطوری\s*ثبت\s*سفارش/, /نحوه\s*خرید/,
+const SITE_HELP_TABLE = [
+  'راهنما', 'چطور از', 'چگونه', 'آموزش', 'help',
+  'چطوری ثبت سفارش', 'نحوه خرید',
 ];
 
-const OFF_TOPIC_PATTERNS = [
-  /آب\s*و\s*هوا/, /سیاسی/, /فوتبال/, /فیلم\s*و\s*سریال/,
-  /دستور\s*غذا/, /طرز\s*تهیه/, /شعر/, /داستان/,
+const OFF_TOPIC_TABLE = [
+  'آب و هوا', 'سیاسی', 'فوتبال', 'فیلم و سریال',
+  'دستور غذا', 'طرز تهیه', 'شعر', 'داستان',
 ];
 
-// ─── Category Detection ──────────────────────────────────────────
+// ─── Category Synonym Map ────────────────────────────────────────
 
-const CATEGORY_SYNONYMS: Record<string, string[]> = {
-  cpu: ['پردازنده', 'سی پی یو', 'cpu', 'اینتل', 'intel', 'رایزن', 'ryzen', 'core', 'i3', 'i5', 'i7', 'i9', 'r3', 'r5', 'r7', 'r9'],
+export const CATEGORY_SYNONYMS: Record<string, string[]> = {
+  cpu: ['پردازنده', 'سی پی یو', 'cpu', 'اینتل', 'intel', 'رایزن', 'ryzen', 'core', 'i3', 'i5', 'i7', 'i9', 'r3', 'r5', 'r7', 'r9', 'core ultra'],
   gpu: ['کارت گرافیک', 'gpu', 'گرافیک', 'rtx', 'rx', 'geforce', 'radeon', 'vram', 'graphics'],
   ram: ['رم', 'ram', 'ddr4', 'ddr5', 'حافظه رم', 'memory'],
   motherboard: ['مادربرد', 'motherboard', 'mainboard', 'بورد', 'b650', 'b760', 'h610', 'z790', 'x670'],
@@ -81,58 +80,69 @@ const CATEGORY_SYNONYMS: Record<string, string[]> = {
   monitor: ['مانیتور', 'monitor', 'صفحه نمایش'],
 };
 
-// Words that indicate user wants to BUY (not just ask technically)
-const PURCHASE_INTENT_WORDS = [
-  'موجود', 'گقیمت', 'چنده', 'bekharam', 'بخرم', 'میخوام', 'می‌خوام',
-  'معرفی کن', 'نشونم بده', 'دارید', 'لینک', 'محصول', 'product',
-  'مقایسه', 'ارزون', 'ارزان', 'بهترین', 'پیشنهاد',
+// Words indicating purchase intent
+const PURCHASE_INTENT_TABLE = [
+  'موجود', 'قیمت', 'چنده', 'بخرم', 'میخوام', 'می‌خوام',
+  'معرفی کن', 'نشونم بده', 'نشونم بده', 'دارید', 'لینک', 'محصول',
+  'product', 'مقایسه', 'ارزون', 'ارزان', 'بهترین', 'پیشنهاد',
+  'کدوم رو', 'کدومو',
 ];
 
-// Technical question indicators (no purchase intent)
-const TECHNICAL_WORDS = [
-  'تفاوت', 'فرق', 'difference', 'vs', 'مقایسه', 'کدوم بهتره',
-  'سازگار', 'compatibility', 'سوکت', 'socket', 'ddr4', 'ddr5',
-  'pcie', 'nvme', 'sata', 'tdp', 'watt', 'بنچمارک', 'benchmark',
-  'چطور', 'چگونه', 'how', 'why', 'چرا',
+// Technical question indicators
+const TECHNICAL_TABLE = [
+  'تفاوت', 'فرق', 'difference', 'vs', 'سازگار', 'compatibility',
+  'سوکت', 'socket', 'tdp', 'pcie', 'sata', 'بنچمارک', 'benchmark',
+  'چطور', 'چگونه', 'how', 'why', 'چرا', 'آیا',
+];
+
+// Negation: user explicitly says "don't show products"
+const NEGATION_TABLE = [
+  'معرفی نکن', 'پیشنهاد نده', 'نشان نده', 'نشون نده',
+  'نمیخوام', 'می‌خوام', 'نیاز ندارم', 'بدون محصول',
+  'قیمت نمیخوام', 'نخریدم', 'کالا نمیخوام', 'محصول نمیخوام',
+  'don\'t show', 'don\'t recommend',
 ];
 
 // ─── Classifier ──────────────────────────────────────────────────
 
 export function classifyIntent(query: string): IntentResult {
-  const q = query.toLowerCase().trim();
-  const qNormalized = q.replace(/\s+/g, ' ');
+  const q = query.toLowerCase().trim().replace(/\s+/g, ' ');
+  const qNormalized = q.replace(/ي/g, 'ی').replace(/ك/g, 'ک'); // Arabic→Persian normalization
 
-  // 1. Greeting
-  if (GREETING_WORDS.some(w => qNormalized.includes(w)) && qNormalized.length < 30) {
+  // ─── 1. Check negation first ─────────────────────────────
+  const hasNegation = NEGATION_TABLE.some(w => qNormalized.includes(w));
+
+  // ─── 2. Greeting ─────────────────────────────────────────
+  if (GREETING_TABLE.some(w => qNormalized.includes(w)) && q.length < 40) {
     return { intent: 'greeting', needsRag: false, showCards: false, redirectToAssembly: false, categoryHint: null };
   }
 
-  // 2. Identity
-  if (IDENTITY_PATTERNS.some(p => p.test(qNormalized))) {
+  // ─── 3. Identity ─────────────────────────────────────────
+  if (IDENTITY_TABLE.some(w => qNormalized.includes(w))) {
     return { intent: 'identity', needsRag: false, showCards: false, redirectToAssembly: false, categoryHint: null };
   }
 
-  // 3. Off-topic
-  if (OFF_TOPIC_PATTERNS.some(p => p.test(qNormalized))) {
+  // ─── 4. Off-topic ────────────────────────────────────────
+  if (OFF_TOPIC_TABLE.some(w => qNormalized.includes(w))) {
     return { intent: 'off_topic', needsRag: false, showCards: false, redirectToAssembly: false, categoryHint: null };
   }
 
-  // 4. Full build → redirect to assembly
-  if (FULL_BUILD_PATTERNS.some(p => p.test(qNormalized))) {
+  // ─── 5. Full build → redirect ────────────────────────────
+  if (FULL_BUILD_TABLE.some(w => qNormalized.includes(w))) {
     return { intent: 'full_build', needsRag: false, showCards: false, redirectToAssembly: true, categoryHint: null };
   }
 
-  // 5. Order support
-  if (ORDER_SUPPORT_PATTERNS.some(p => p.test(qNormalized))) {
+  // ─── 6. Order support ────────────────────────────────────
+  if (ORDER_SUPPORT_TABLE.some(w => qNormalized.includes(w))) {
     return { intent: 'order_support', needsRag: false, showCards: false, redirectToAssembly: false, categoryHint: null };
   }
 
-  // 6. Site help
-  if (SITE_HELP_PATTERNS.some(p => p.test(qNormalized))) {
+  // ─── 7. Site help ────────────────────────────────────────
+  if (SITE_HELP_TABLE.some(w => qNormalized.includes(w))) {
     return { intent: 'site_help', needsRag: false, showCards: false, redirectToAssembly: false, categoryHint: null };
   }
 
-  // 7. Detect category
+  // ─── 8. Detect category ──────────────────────────────────
   let categoryHint: string | null = null;
   for (const [cat, words] of Object.entries(CATEGORY_SYNONYMS)) {
     if (words.some(w => qNormalized.includes(w))) {
@@ -141,45 +151,51 @@ export function classifyIntent(query: string): IntentResult {
     }
   }
 
-  // 8. Check purchase intent vs technical question
-  const hasPurchaseIntent = PURCHASE_INTENT_WORDS.some(w => qNormalized.includes(w));
-  const hasTechnical = TECHNICAL_WORDS.some(w => qNormalized.includes(w));
+  // ─── 9. Negation + anything → NO RAG ─────────────────────
+  if (hasNegation) {
+    // Even if technical or product words exist, negation wins → no RAG
+    return { intent: 'technical_question', needsRag: false, showCards: false, redirectToAssembly: false, categoryHint };
+  }
 
-  // Price/stock check
+  // ─── 10. Price/stock ─────────────────────────────────────
   if (/قیمت|چنده|موجودی|موجوده|stock|price/i.test(qNormalized)) {
     return { intent: 'price_or_stock', needsRag: true, showCards: true, redirectToAssembly: false, categoryHint };
   }
 
-  // Compare
-  if (/مقایسه|vs|تفاوت\s+.*\s+با|فرق/i.test(qNormalized) && hasPurchaseIntent) {
-    return { intent: 'product_compare', needsRag: true, showCards: true, redirectToAssembly: false, categoryHint };
+  // ─── 11. Compare ─────────────────────────────────────────
+  if (/مقایسه|vs|تفاوت\s+.*\s+با|فرق/i.test(qNormalized)) {
+    const hasPurchase = PURCHASE_INTENT_TABLE.some(w => qNormalized.includes(w));
+    if (hasPurchase) {
+      return { intent: 'product_compare', needsRag: true, showCards: true, redirectToAssembly: false, categoryHint };
+    }
+    return { intent: 'technical_question', needsRag: false, showCards: false, redirectToAssembly: false, categoryHint };
   }
 
-  // Product search (explicit purchase intent + category)
+  // ─── 12. Product search (purchase intent + category) ─────
+  const hasPurchaseIntent = PURCHASE_INTENT_TABLE.some(w => qNormalized.includes(w));
+  const hasTechnical = TECHNICAL_TABLE.some(w => qNormalized.includes(w));
+
   if (hasPurchaseIntent && categoryHint) {
     return { intent: 'product_search', needsRag: true, showCards: true, redirectToAssembly: false, categoryHint };
   }
 
-  // Technical question
+  // ─── 13. Technical question (no purchase intent) ─────────
   if (hasTechnical && !hasPurchaseIntent) {
     return { intent: 'technical_question', needsRag: false, showCards: false, redirectToAssembly: false, categoryHint };
   }
 
-  // Product search (general purchase intent without category)
+  // ─── 14. Product search (general) ────────────────────────
   if (hasPurchaseIntent) {
     return { intent: 'product_search', needsRag: true, showCards: true, redirectToAssembly: false, categoryHint };
   }
 
-  // Technical with category hint but ambiguous purchase intent
+  // ─── 15. Technical with category ─────────────────────────
   if (categoryHint && hasTechnical) {
     return { intent: 'technical_question', needsRag: false, showCards: false, redirectToAssembly: false, categoryHint };
   }
 
-  // Unknown — let AI decide, no RAG
+  // ─── 16. Unknown ─────────────────────────────────────────
   return { intent: 'unknown', needsRag: false, showCards: false, redirectToAssembly: false, categoryHint };
 }
 
-/**
- * Assembly redirect message
- */
 export const ASSEMBLY_REDIRECT_MESSAGE = 'برای ساخت سیستم کامل، بهتره از ابزار «اسمبل هوشمند» استفاده کنید. اونجا با توجه به بودجه و کاربری شما، قطعات سازگار و بهینه رو خودش انتخاب می‌کنه. از منوی سایت به بخش «اسمبل آنلاین» برید! 🔧';

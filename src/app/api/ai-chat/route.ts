@@ -17,7 +17,7 @@ import { buildRagContext } from '@/lib/ai-chat/rag';
 import { getProxyFetch } from '@/lib/ai-chat/proxy-fetch';
 import { SseParser, extractNonStreamContent } from '@/lib/ai-chat/sse-parser';
 import { generateRequestId } from '@/lib/ai-chat/ai-client';
-import { classifyIntent, ASSEMBLY_REDIRECT_MESSAGE, type ChatIntent } from '@/lib/ai-chat/chat-intent';
+import { classifyIntent, ASSEMBLY_REDIRECT_MESSAGE } from '@/lib/ai-chat/chat-intent';
 import type { ChatMessage, ChatRequestBody, ChatSource } from '@/lib/ai-chat/types';
 
 export const runtime = 'nodejs';
@@ -285,10 +285,13 @@ async function callAi(
   let doFetch: typeof fetch;
   try { doFetch = await getProxyFetch(config.proxyUrl, config.useProxy); } catch { doFetch = fetch; }
 
-  // ─── STREAMING REQUEST ────────────────────────────────────
-  const connectionTimeout = setTimeout(() => {
-    // Connection-level timeout
-  }, 45_000);
+  // ─── STREAMING REQUEST with proper timeouts ───────────────
+  const fetchAbort = new AbortController();
+  const onClientAbort = () => fetchAbort.abort();
+  clientAbort.signal.addEventListener('abort', onClientAbort, { once: true });
+
+  // Connection timeout: abort fetch if headers don't arrive in time
+  const connectionTimer = setTimeout(() => fetchAbort.abort(), 45_000);
 
   try {
     const aiRes = await doFetch(`${config.apiBase}/chat/completions`, {
@@ -301,29 +304,31 @@ async function callAi(
         max_tokens: mode === 'greeting' ? 200 : config.maxTokens,
         stream: true,
       }),
-      signal: clientAbort.signal,
+      signal: fetchAbort.signal,
     });
 
-    clearTimeout(connectionTimeout);
+    clearTimeout(connectionTimer);
 
     if (!aiRes.ok || !aiRes.body) {
       await doRecovery(w, doFetch, config, messages, startTime, requestId, clientAbort, mode);
       return;
     }
 
-    // Parse SSE
+    // Parse SSE with body timeout
     const parser = new SseParser();
     const reader = aiRes.body.getReader();
     const decoder = new TextDecoder();
     let gotContent = false;
 
-    const bodyTimeout = setTimeout(() => {
+    // Body timeout: cancel reader if body takes too long
+    const bodyTimer = setTimeout(() => {
       try { reader.cancel(); } catch { /* ignore */ }
+      fetchAbort.abort();
     }, 45_000);
 
     try {
       while (true) {
-        if (clientAbort.signal.aborted) break;
+        if (clientAbort.signal.aborted || fetchAbort.signal.aborted) break;
         const { done, value } = await reader.read();
         if (done) break;
         parser.feed(decoder.decode(value, { stream: true }));
@@ -342,7 +347,7 @@ async function callAi(
         }
       }
     } finally {
-      clearTimeout(bodyTimeout);
+      clearTimeout(bodyTimer);
       try { reader.releaseLock(); } catch { /* ignore */ }
     }
 
@@ -355,9 +360,11 @@ async function callAi(
     await doRecovery(w, doFetch, config, messages, startTime, requestId, clientAbort, mode);
 
   } catch (err) {
-    clearTimeout(connectionTimeout);
+    clearTimeout(connectionTimer);
     console.warn(`[ai-chat] [${requestId}] Stream failed:`, err instanceof Error ? err.message : err);
     await doRecovery(w, doFetch, config, messages, startTime, requestId, clientAbort, mode);
+  } finally {
+    clientAbort.signal.removeEventListener('abort', onClientAbort);
   }
 }
 
@@ -376,6 +383,11 @@ async function doRecovery(
 
   w.progress('recovering', 'بازیابی پاسخ…');
 
+  const recoveryAbort = new AbortController();
+  const onClientAbort = () => recoveryAbort.abort();
+  clientAbort.signal.addEventListener('abort', onClientAbort, { once: true });
+  const recoveryTimer = setTimeout(() => recoveryAbort.abort(), 30_000);
+
   try {
     const res = await doFetch(`${config.apiBase}/chat/completions`, {
       method: 'POST',
@@ -387,7 +399,7 @@ async function doRecovery(
         max_tokens: mode === 'greeting' ? 200 : config.maxTokens,
         stream: false,
       }),
-      signal: clientAbort.signal,
+      signal: recoveryAbort.signal,
     });
 
     if (w.closed || clientAbort.signal.aborted) return;
@@ -407,6 +419,9 @@ async function doRecovery(
     }
   } catch {
     // Recovery failed
+  } finally {
+    clearTimeout(recoveryTimer);
+    clientAbort.signal.removeEventListener('abort', onClientAbort);
   }
 
   // Final fallback
@@ -436,8 +451,8 @@ function filterSourcesByCategory(sources: ChatSource[], categoryHint: string): C
     return synonyms.some(syn => title.includes(syn));
   });
 
-  // If filter removed everything, return original (better than empty)
-  return filtered.length > 0 ? filtered : sources;
+  // NEVER return original unrelated sources — return empty if nothing matches
+  return filtered;
 }
 
 // ════════════════════════════════════════════════════════════════

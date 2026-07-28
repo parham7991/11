@@ -190,8 +190,56 @@ async function fetchProductDetail(id: string | number): Promise<RawProduct | nul
 
 /** آیا این محصول از search اطلاعات کافی (عکس/برند) دارد؟ */
 function isRich(p: RawProduct): boolean {
-  return Boolean(pickImage(p) && (pickBrand(p) || p.warranty));
+
+/** اعتبارسنجی URL برای جلوگیری از تزریق مسیر یا دامنه غیرمجاز */
+function sanitizeProductUrl(url: string): string | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url, "http://localhost");
+    const allowedHosts = ["offl.ir", "www.offl.ir", "localhost", "127.0.0.1"];
+    const hostValid = allowedHosts.includes(parsed.hostname) || parsed.hostname.endsWith(".offl.ir");
+    const pathValid = parsed.pathname.startsWith("/product/") || parsed.pathname === "/";
+    if (hostValid && pathValid) return url;
+  } catch {
+    if (url.startsWith("/product/")) return url;
+  }
+  return null;
 }
+
+  return Boolean(pickImage(p) && (pickBrand(p) || p.warranty));
+
+/** اعتبارسنجی URL برای جلوگیری از تزریق مسیر یا دامنه غیرمجاز */
+function sanitizeProductUrl(url: string): string | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url, "http://localhost");
+    const allowedHosts = ["offl.ir", "www.offl.ir", "localhost", "127.0.0.1"];
+    const hostValid = allowedHosts.includes(parsed.hostname) || parsed.hostname.endsWith(".offl.ir");
+    const pathValid = parsed.pathname.startsWith("/product/") || parsed.pathname === "/";
+    if (hostValid && pathValid) return url;
+  } catch {
+    if (url.startsWith("/product/")) return url;
+  }
+  return null;
+}
+
+}
+
+/** اعتبارسنجی URL برای جلوگیری از تزریق مسیر یا دامنه غیرمجاز */
+function sanitizeProductUrl(url: string): string | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url, "http://localhost");
+    const allowedHosts = ["offl.ir", "www.offl.ir", "localhost", "127.0.0.1"];
+    const hostValid = allowedHosts.includes(parsed.hostname) || parsed.hostname.endsWith(".offl.ir");
+    const pathValid = parsed.pathname.startsWith("/product/") || parsed.pathname === "/";
+    if (hostValid && pathValid) return url;
+  } catch {
+    if (url.startsWith("/product/")) return url;
+  }
+  return null;
+}
+
 
 /**
  * ساخت بافت RAG بر اساس سؤال کاربر.
@@ -239,7 +287,8 @@ export async function buildRagContext(query: string, count = 6): Promise<RagResu
 
     const id = p.id ?? p.url_key ?? p.slug ?? '';
     const siteBase = BASEURL_SITE || '/';
-    const url: string = id ? `${siteBase}/product/${encodeURIComponent(String(id))}` : siteBase;
+    const urlRaw: string = id ? `${siteBase}/product/${encodeURIComponent(String(id))}` : siteBase;
+    const url = sanitizeProductUrl(urlRaw) || siteBase;
 
     // قیمت‌ها و تخفیف
     const hasSpecial =

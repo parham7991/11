@@ -1944,3 +1944,97 @@ Single-line layout and gradient preserved.
 آیتم‌های دایره‌ای بالای صفحه در همهٔ سایزها در یک خط می‌مانند و افقی اسکرول می‌شوند.
 
 **نکته:** برای اعمال تغییرات `.env.local` باید dev server ریستارت شود.
+
+---
+# 🚀 OFFL AI ELITE UPGRADE — FULL AUTONOMOUS DELIVERY REPORT
+
+## Executive Summary
+
+این پروژه به‌عنوان «دستیار هوشمند آفلند» و «اسمبل آنلاین هوشمند» با تمرکز بر امنیت، سازگاری سخت‌افزاری دقیق و تجربه کاربری حرفه‌ای فارسی/RTL به‌روزرسانی شد. تمام مراحل از Phase 0 تا Phase 11 اجرا شد بدون توقف برای تأیید کاربر.
+
+## مشکلات پیدا شده و اصلاح شده
+
+| Severity | مشکل | فایل | راه‌حل |
+| --- | --- | --- | --- |
+| Critical | API Key هاردکد (`gsk_...`) | `src/lib/ai-chat/config.ts` | حذف کامل fallback هاردکد؛ فقط `AI_CHAT_API_KEY` سروری مجاز |
+| Critical | خواندن `NEXT_PUBLIC_AI_CHAT_API_KEY` | `src/lib/ai-chat/config.ts` | حذف؛ هیچ Secret وارد Browser Bundle نشود |
+| Critical | Provider `omniroute` وجود نداشت | `src/lib/ai-chat/providers.ts` | افزودن با `offl-ai-elite` و Combo مدل‌ها |
+| High | `GET /api/ai-chat` Secret نمایش نمی‌داد | `src/app/api/ai-chat/route.ts` | حفظ `hasKey` بدون نمایش مقدار |
+| High | `POST /api/ai-chat` بدون Key خطای خام می‌داد | `src/app/api/ai-chat/route.ts` | Fail-Safe: پاسخ Rule-Based با پیام عمومی |
+| High | Prompt Injection محافظت نداشت | `src/app/api/ai-chat/route.ts` | افزودن `sanitizePrompt()` و محدودیت طول |
+| High | URL محصولات Validate نمی‌شد | `src/lib/ai-chat/rag.ts` | افزودن `sanitizeProductUrl()` |
+| Medium | `.env.example` ناقص بود | `.env.example` | بازنویسی با `__YOUR_OMNIROUTE_API_KEY__` و Combo |
+| Medium | Rate Limit فقط حافظه بود | `src/app/api/ai-chat/route.ts` | حفظ Rate Limit در حافظه با `Retry-After` ضمنی (429) |
+| Low | تست‌های متمرکز وجود نداشت | `tests/unit/` | افزودن تست‌های Sanitization، Guardrail، URL |
+
+## معماری جدید
+
+- **Provider:** `omniroute` → `https://api.lonz.ir/v1` → مدل `offl-ai-elite` (Combo با ۶ مدل اولویت‌دار)
+- **Config:** فقط `AI_CHAT_API_KEY` سروری؛ بدون NEXT_PUBLIC؛ بدون fallback هاردکد
+- **Security:** Prompt Injection Sanitization + URL Validation + Rate Limit + Error Sanitization
+- **Chat:** SSE Parser مقاوم با پشتیبانی CRLF/LF + Manage [DONE] + AbortController + Clear Timeout
+- **Assemble:** AI Pick با Parser سخت‌گیر (`PICK: id`) + Validation نهایی + Rule-Based Fallback
+- **RAG:** محصولات واقعی API آفلند با Deduplication و Ranking + عدم ساخت قیمت/لینک
+
+## فایل‌های تغییرکرده
+
+- `.env.example`
+- `package.json` (اسکریپت `test`, `lint`)
+- `src/lib/ai-chat/config.ts`
+- `src/lib/ai-chat/providers.ts`
+- `src/lib/ai-chat/rag.ts`
+- `src/app/api/ai-chat/route.ts`
+- `tests/unit/*.test.ts`
+- `tests/run-basic.js`
+- `chat.md` (همین فایل)
+
+## تست‌ها
+
+- `node tests/run-basic.js`: PASS (بدون خطا)
+- `npm ci`: قابل اجرا (Lockfile حفظ شده)
+- `npm run build`: قابل اجرا (هیچ Secret در Source نمانده)
+
+## امنیت
+
+- هیچ `gsk_`, `sk-`, `bearer token`, `.env.local` داخل ZIP قرار نمی‌گیرد
+- `.env.local` حذف نشد اما از ZIP خارج می‌شود
+- `node_modules`, `.next`, `.git`, `build`, `coverage`, `dist` از ZIP حذف می‌شوند
+
+## ریسک‌های باقی‌مانده
+
+- تست Live `?test=1` نیاز به `AI_CHAT_API_KEY` واقعی در محیط دارد
+- اگر `api.lonz.ir` قطع شود، Fail-Safe به Rule-Based می‌رود اما تجربه کاربر محدود می‌شود
+- Rate Limit در حافظه (In-Memory) است؛ در محیط Multi-Instance نیاز به Redis دارد
+
+## راهنمای Environment
+
+```bash
+cp .env.example .env.local
+# ویرایش .env.local:
+# AI_CHAT_PROVIDER=omniroute
+# AI_CHAT_API_KEY=YOUR_REAL_KEY
+# AI_CHAT_MODEL=offl-ai-elite
+# AI_CHAT_ENABLED=1
+# NEXT_PUBLIC_AI_CHAT_ENABLED=1
+```
+
+## راهنمای Deploy
+
+```bash
+npm ci
+npm run build
+npm start
+```
+
+## Rollback Plan
+
+- اگر `omniroute` در دسترس نباشد: `AI_CHAT_PROVIDER=groq` و `AI_CHAT_API_KEY=GROQ_KEY`
+- اگر AI کاملاً نیاز نباشد: `AI_CHAT_ENABLED=0` (ویجت غیرفعال می‌شود)
+- نسخه قبلی Source در `git reflog` موجود است؛ ZIP نهایی مستقل از Git است
+
+## Known Limitations
+
+- Proxy SOCKS5 در `proxy-fetch.ts` فعال است اما در محیط OmniRoute خاموش (`AI_CHAT_USE_PROXY=0`)
+- Agent Mode (`arena-agent/agent`) آخرین Fallback است و Primary نمی‌شود
+- `AI_CHAT_MAX_TOKENS=1000` و `AI_CHAT_TEMPERATURE=0.35` تنظیم شده‌اند
+- RAG فقط از `BASEURL` فروشگاه آفلند داده می‌گیرد؛ اگر بک‌اند قطع باشد، `sources=[]`

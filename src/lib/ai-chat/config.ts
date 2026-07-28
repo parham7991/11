@@ -124,12 +124,8 @@ export function getAiChatConfig(): AiChatConfig {
     enabled: bool(process.env.AI_CHAT_ENABLED, true),
     providerId,
     providerName: provider?.name || providerId,
-    // اولویت با کلید سروری است؛ سپس کلید عمومی؛ در نهایت fallback امن
-    apiKey: (
-      process.env.AI_CHAT_API_KEY ||
-      process.env.NEXT_PUBLIC_AI_CHAT_API_KEY ||
-      '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'
-    ).trim(),
+    // فقط کلید سروری مجاز است؛ بدون NEXT_PUBLIC و بدون fallback هاردکد
+    apiKey: (process.env.AI_CHAT_API_KEY || '').trim(),
     apiBase,
     model,
     temperature: num(process.env.AI_CHAT_TEMPERATURE, 0.4),

@@ -42,6 +42,19 @@ function getClientIp(req: NextRequest): string {
 }
 
 /** پاسخ خطای استاندارد JSON */
+/** پاک‌سازی سادهٔ Prompt Injection: حذف کلمات دستور و تلاش برای دور زدن سیستم */
+function sanitizePrompt(text: string): string {
+  const cleaned = text
+    // حذف دستورات مخرب
+    .replace(/(\bignore\b|\bforget\b|\bdisregard\b|\boverride\b|\bnew instruction\b|\bsystem prompt\b|\bsecret\b|\btoken\b|\bapi key\b|\bpassword\b)/gi, '')
+    // حذف تلاش برای تزریق کد یا فرمت خاص
+    .replace(/<script[^>]*>.*?<\/script>/gis, '')
+    .replace(/`.*?`/gs, '')
+    // حذف لینک‌های مخرب (فقط اجازه لینک‌های معتبر)
+    .trim();
+  return cleaned.slice(0, 1000);
+}
+
 function jsonError(
   error: string,
   status: number,
@@ -57,8 +70,39 @@ export async function POST(req: NextRequest): Promise<Response> {
     return jsonError('دستیار هوشمند غیرفعال است.', 403);
   }
 
+  // اگر کلید تنظیم نشده باشد: حالت Fail-Safe با پاسخ مبتنی بر قانون
   if (!config.apiKey) {
-    return jsonError('کلید سرویس هوش مصنوعی تنظیم نشده است.', 500);
+    // فقط RAG داده بده و پیام عمومی برگردان؛ هیچ Secretی فاش نمی‌شود
+    return new Response(
+      new ReadableStream({
+        async start(controller) {
+          const encoder = new TextEncoder();
+          controller.enqueue(
+            encoder.encode(
+              JSON.stringify({ type: 'sources', sources }) + '\n'
+            )
+          );
+          controller.enqueue(
+            encoder.encode(
+              JSON.stringify({
+                type: 'delta',
+                text: 'دستیار هوشمند آفلند در حال حاضر به سرویس AI متصل نیست. لطفاً از متخصص فروشگاه راهنمایی بگیرید یا با تیم پشتیبانی تماس بگیرید. برای سیستم کامل می‌توانید به اسمبل هوشمند مراجعه کنید.',
+              }) + '\n'
+            )
+          );
+          controller.enqueue(encoder.encode(JSON.stringify({ type: 'done' }) + '\n'));
+          controller.close();
+        },
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/x-ndjson; charset=utf-8',
+          'Cache-Control': 'no-cache, no-transform',
+          Connection: 'keep-alive',
+        },
+      }
+    );
   }
 
   // محدودیت نرخ
@@ -75,8 +119,8 @@ export async function POST(req: NextRequest): Promise<Response> {
     return jsonError('درخواست نامعتبر است.', 400);
   }
 
-  const message = String(body?.message || '')
-    .trim()
+  const message = sanitizePrompt(String(body?.message || '')
+    .trim())
     .slice(0, 1000);
   if (!message) {
     return jsonError('پیام خالی است.', 400);

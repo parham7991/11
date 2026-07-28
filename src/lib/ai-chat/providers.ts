@@ -41,6 +41,26 @@ export type AiProvider = {
  */
 export const AI_PROVIDERS: AiProvider[] = [
   {
+    id: 'omniroute',
+    name: 'OmniRoute Arena Elite',
+    desc: 'Combo پیشرفته آفلند با مدل‌های برتر (offl-ai-elite)',
+    apiBase: 'https://api.lonz.ir/v1',
+    defaultModel: 'offl-ai-elite',
+    models: [
+      'offl-ai-elite',
+      'lmarena/claude-sonnet-4-6',
+      'lmarena/max',
+      'lmarena/gemini-3.6-flash',
+      'lmarena/grok-4.20-multi-agent-beta-0309',
+      'lmarena/claude-haiku-4-5-20251001',
+    ],
+    free: false,
+    iranian: true,
+    apiKeyUrl: 'https://lonz.ir',
+    color: '#8b5cf6',
+    emoji: '🏆',
+  },
+  {
     id: 'groq',
     name: 'Groq',
     desc: 'بسیار سریع و رایگان (Llama 3.3)',
@@ -196,4 +216,4 @@ export function findProvider(id?: string): AiProvider | undefined {
 }
 
 /** provider پیش‌فرض اگر چیزی انتخاب نشده باشد */
-export const DEFAULT_PROVIDER_ID = 'groq';
+export const DEFAULT_PROVIDER_ID = 'omniroute';

@@ -138,6 +138,21 @@ export function getAiChatConfig(): AiChatConfig {
   };
 }
 
+/**
+ * پاک‌سازی سادهٔ Prompt Injection: حذف کلمات دستور و تلاش برای دور زدن سیستم
+ */
+export function sanitizePrompt(text: string): string {
+  const cleaned = text
+    .replace(
+      /(\bignore\b|\bforget\b|\bdisregard\b|\boverride\b|\bnew instruction\b|\bsystem prompt\b|\bsecret\b|\btoken\b|\bapi key\b|\bpassword\b)/gi,
+      ''
+    )
+    .replace(/<script[^>]*>[^]*?<\/script>/gi, '')
+    .replace(/`[^`]*`/g, '')
+    .trim();
+  return cleaned.slice(0, 1000);
+}
+
 /** فقط برای کلاینت: آیا ویجت روشن است؟ (از طریق NEXT_PUBLIC) */
 export function isAiChatPublicEnabled(): boolean {
   const v = process.env.NEXT_PUBLIC_AI_CHAT_ENABLED;

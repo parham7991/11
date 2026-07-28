@@ -1,26 +1,36 @@
 /**
- * /api/ai-chat — مسیر امن دستیار هوشمند آفلند
+ * /api/ai-chat — Resilient AI chat route with streaming + recovery
  * ──────────────────────────────────────────────────────────────────
- * این route سمت سرور اجرا می‌شود؛ پس:
- *   - کلید API هیچ‌وقت به مرورگر فاش نمی‌شود
- *   - ابتدا با RAG محصولات مرتبط آفلند را پیدا می‌کند
- *   - سپس درخواست را به سرویس سازگار با OpenAI می‌فرستد
- *   - پاسخ + منابع (کارت محصول) را به کلاینت برمی‌گرداند
+ * Architecture:
+ *   1. Streaming request to offl-ai-elite
+ *   2. Full SSE parsing via sse-parser
+ *   3. If valid text received → normal stream to client
+ *   4. If HTTP 200 + empty content → single non-stream recovery
+ *   5. If recovery gives valid content → convert to streaming deltas
+ *   6. If recovery also empty + RAG sources → deterministic fallback
+ *   7. If no sources → safe actionable error
+ *
+ * Security:
+ *   - API key never exposed to client
+ *   - No secrets in logs
+ *   - Safe error messages only
+ *   - Request ID for tracing
  * ──────────────────────────────────────────────────────────────────
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getAiChatConfig } from '@/lib/ai-chat/config';
+import { getAiChatConfig, sanitizePrompt } from '@/lib/ai-chat/config';
 import { buildRagContext } from '@/lib/ai-chat/rag';
 import { getProxyFetch } from '@/lib/ai-chat/proxy-fetch';
-import type { ChatMessage, ChatRequestBody, ChatResponse } from '@/lib/ai-chat/types';
+import { SseParser, extractNonStreamContent, type SseEvent } from '@/lib/ai-chat/sse-parser';
+import type { ChatMessage, ChatRequestBody, ChatResponse, ChatSource } from '@/lib/ai-chat/types';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-/** محدودیت ساده‌ی نرخ درخواست در حافظه (برای جلوگیری از سوءاستفاده) */
-const RATE_LIMIT_WINDOW_MS = 60_000; // یک دقیقه
-const RATE_LIMIT_MAX = 15; // حداکثر ۱۵ درخواست در دقیقه برای هر IP
+// ─── Rate Limiting ───────────────────────────────────────────────
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 15;
 const rateMap = new Map<string, { count: number; reset: number }>();
 
 function checkRateLimit(ip: string): boolean {
@@ -41,20 +51,36 @@ function getClientIp(req: NextRequest): string {
   return req.headers.get('x-real-ip') || 'unknown';
 }
 
-/** پاسخ خطای استاندارد JSON */
-/** پاک‌سازی سادهٔ Prompt Injection: حذف کلمات دستور و تلاش برای دور زدن سیستم */
-function sanitizePrompt(text: string): string {
-  const cleaned = text
-    // حذف دستورات مخرب
-    .replace(/(\bignore\b|\bforget\b|\bdisregard\b|\boverride\b|\bnew instruction\b|\bsystem prompt\b|\bsecret\b|\btoken\b|\bapi key\b|\bpassword\b)/gi, '')
-    // حذف تلاش برای تزریق کد یا فرمت خاص
-    .replace(/<script[^>]*>.*?<\/script>/gis, '')
-    .replace(/`.*?`/gs, '')
-    // حذف لینک‌های مخرب (فقط اجازه لینک‌های معتبر)
-    .trim();
-  return cleaned.slice(0, 1000);
+// ─── Request ID ──────────────────────────────────────────────────
+function generateRequestId(): string {
+  const ts = Date.now().toString(36);
+  const rand = Math.random().toString(36).slice(2, 8);
+  return `aic-${ts}-${rand}`;
 }
 
+// ─── Safe Logging (never logs API key, cookies, full prompts, PII) ───
+function safeLog(
+  level: 'info' | 'warn' | 'error',
+  requestId: string,
+  msg: string,
+  extra?: Record<string, unknown>
+) {
+  const safe: Record<string, unknown> = { requestId };
+  if (extra) {
+    // Strip sensitive fields
+    const keys = Object.keys(extra);
+    for (const k of keys) {
+      if (/key|token|secret|auth|cookie|password|prompt|message|content/i.test(k)) continue;
+      safe[k] = extra[k];
+    }
+  }
+  const line = `[ai-chat] [${requestId}] ${msg}`;
+  if (level === 'error') console.error(line, safe);
+  else if (level === 'warn') console.warn(line, safe);
+  else console.log(line, safe);
+}
+
+// ─── JSON Error Helper ───────────────────────────────────────────
 function jsonError(
   error: string,
   status: number,
@@ -63,32 +89,334 @@ function jsonError(
   return NextResponse.json({ reply: '', sources, error }, { status });
 }
 
+// ─── Deterministic RAG Fallback ──────────────────────────────────
+function buildDeterministicFallback(sources: ChatSource[]): string {
+  if (!sources || sources.length === 0) {
+    return '';
+  }
+
+  const available = sources.filter((s) => s.inStock !== false && s.price);
+  const unavailable = sources.filter((s) => s.inStock === false);
+
+  let text = '';
+
+  if (available.length > 0) {
+    text += 'بر اساس محصولات موجود در فروشگاه آفلند، گزینه‌های زیر پیشنهاد می‌شوند:\n\n';
+    for (const s of available.slice(0, 5)) {
+      text += `• **${s.title}**`;
+      if (s.brand) text += ` — ${s.brand}`;
+      if (s.price) text += ` | ${s.price}`;
+      if (s.discountPercent) text += ` (${s.discountPercent}٪ تخفیف)`;
+      text += '\n';
+    }
+    text += '\nبرای مشاهدهٔ جزئیات بیشتر، روی هر محصول کلیک کنید.';
+  }
+
+  if (unavailable.length > 0) {
+    text += '\n\n⚠️ برخی محصولات مرتبط در حال حاضر ناموجود هستند:';
+    for (const s of unavailable.slice(0, 3)) {
+      text += `\n• ${s.title}`;
+    }
+  }
+
+  return text;
+}
+
+// ─── NDJSON Stream Helpers ───────────────────────────────────────
+function createNdjsonStream(
+  sources: ChatSource[],
+  onStream: (enqueue: (event: object) => void) => Promise<void>,
+  onCancel?: () => void
+): ReadableStream {
+  const encoder = new TextEncoder();
+
+  return new ReadableStream({
+    async start(controller) {
+      const enqueue = (event: object) => {
+        try {
+          controller.enqueue(encoder.encode(JSON.stringify(event) + '\n'));
+        } catch {
+          // Controller might be closed
+        }
+      };
+
+      // Send sources first
+      enqueue({ type: 'sources', sources });
+
+      try {
+        await onStream(enqueue);
+        enqueue({ type: 'done' });
+      } catch (err) {
+        enqueue({ type: 'error', error: 'ارتباط با سرویس قطع شد.' });
+      } finally {
+        try {
+          controller.close();
+        } catch {
+          /* already closed */
+        }
+      }
+    },
+    cancel() {
+      if (onCancel) onCancel();
+    },
+  });
+}
+
+// ─── Streaming AI Request ────────────────────────────────────────
+interface StreamResult {
+  gotContent: boolean;
+  textChunks: string[];
+  finishReason: string;
+  tokensOut: number | undefined;
+  errorCode?: string;
+  retryAfter?: number;
+}
+
+async function streamAiRequest(
+  doFetch: typeof fetch,
+  apiBase: string,
+  apiKey: string,
+  model: string,
+  messages: ChatMessage[],
+  config: { temperature: number; maxTokens: number },
+  abortSignal: AbortSignal,
+  onDelta: (text: string) => void
+): Promise<StreamResult> {
+  const result: StreamResult = {
+    gotContent: false,
+    textChunks: [],
+    finishReason: '',
+    tokensOut: undefined,
+  };
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 45_000);
+
+  // Combine external abort with our timeout
+  const onExternalAbort = () => controller.abort();
+  abortSignal.addEventListener('abort', onExternalAbort, { once: true });
+
+  try {
+    const aiRes = await doFetch(`${apiBase}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model,
+        messages,
+        temperature: config.temperature,
+        max_tokens: config.maxTokens,
+        stream: true,
+      }),
+      signal: controller.signal,
+    });
+
+    // Handle error status codes
+    if (!aiRes.ok) {
+      if (aiRes.status === 429) {
+        const retryAfter = aiRes.headers.get('retry-after');
+        result.errorCode = 'rate_limited';
+        result.retryAfter = retryAfter ? parseInt(retryAfter, 10) : undefined;
+        return result;
+      }
+      if (aiRes.status === 401 || aiRes.status === 403) {
+        result.errorCode = 'auth_error';
+        return result;
+      }
+      if (aiRes.status === 404) {
+        result.errorCode = 'not_found';
+        return result;
+      }
+      if (aiRes.status >= 500) {
+        result.errorCode = 'server_error';
+        return result;
+      }
+      result.errorCode = `http_${aiRes.status}`;
+      return result;
+    }
+
+    if (!aiRes.body) {
+      result.errorCode = 'no_body';
+      return result;
+    }
+
+    // Parse SSE stream
+    const parser = new SseParser();
+    const reader = aiRes.body.getReader();
+    const decoder = new TextDecoder();
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const raw = decoder.decode(value, { stream: true });
+        parser.feed(raw);
+
+        const events = parser.drain();
+        for (const evt of events) {
+          if (evt.type === 'delta' && evt.content) {
+            result.gotContent = true;
+            result.textChunks.push(evt.content);
+            onDelta(evt.content);
+          }
+          if (evt.type === 'usage' && evt.usage) {
+            result.tokensOut = evt.usage.tokens_out;
+          }
+          if (evt.type === 'finish' && evt.finishReason) {
+            result.finishReason = evt.finishReason;
+          }
+        }
+      }
+
+      // Process any remaining buffer
+      parser.end();
+      const finalEvents = parser.drain();
+      for (const evt of finalEvents) {
+        if (evt.type === 'delta' && evt.content) {
+          result.gotContent = true;
+          result.textChunks.push(evt.content);
+          onDelta(evt.content);
+        }
+        if (evt.type === 'usage' && evt.usage) {
+          result.tokensOut = evt.usage.tokens_out;
+        }
+      }
+    } finally {
+      try {
+        reader.releaseLock();
+      } catch {
+        /* ignore */
+      }
+    }
+  } catch (err) {
+    const isAbort =
+      err instanceof Error && (err.name === 'AbortError' || err.name === 'TimeoutError');
+    if (!isAbort) {
+      result.errorCode = 'network_error';
+    }
+  } finally {
+    clearTimeout(timeout);
+    abortSignal.removeEventListener('abort', onExternalAbort);
+  }
+
+  return result;
+}
+
+// ─── Non-Stream Recovery Request ─────────────────────────────────
+async function recoveryNonStreamRequest(
+  doFetch: typeof fetch,
+  apiBase: string,
+  apiKey: string,
+  model: string,
+  messages: ChatMessage[],
+  config: { temperature: number; maxTokens: number },
+  abortSignal: AbortSignal
+): Promise<{ text: string; usage?: SseEvent['usage'] } | null> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30_000);
+
+  const onExternalAbort = () => controller.abort();
+  abortSignal.addEventListener('abort', onExternalAbort, { once: true });
+
+  try {
+    const res = await doFetch(`${apiBase}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model,
+        messages,
+        temperature: config.temperature,
+        max_tokens: config.maxTokens,
+        stream: false,
+      }),
+      signal: controller.signal,
+    });
+
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    const extracted = extractNonStreamContent(data);
+
+    if (extracted.text && extracted.text.trim().length > 0) {
+      return { text: extracted.text.trim(), usage: extracted.usage };
+    }
+
+    return null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+    abortSignal.removeEventListener('abort', onExternalAbort);
+  }
+}
+
+// ─── Convert text to streaming deltas ────────────────────────────
+function* textToDeltas(text: string): Generator<string> {
+  // Split into small chunks for typing effect
+  const chunkSize = 3; // Characters per delta
+  for (let i = 0; i < text.length; i += chunkSize) {
+    yield text.slice(i, i + chunkSize);
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// MAIN POST HANDLER
+// ════════════════════════════════════════════════════════════════
+
 export async function POST(req: NextRequest): Promise<Response> {
+  const requestId = generateRequestId();
   const config = getAiChatConfig();
 
+  // ─── Config checks ───────────────────────────────────────
   if (!config.enabled) {
     return jsonError('دستیار هوشمند غیرفعال است.', 403);
   }
 
-  // اگر کلید تنظیم نشده باشد: حالت Fail-Safe با پاسخ مبتنی بر قانون
+  // ─── Fail-safe: no API key ───────────────────────────────
   if (!config.apiKey) {
-    // فقط RAG داده بده و پیام عمومی برگردان؛ هیچ Secretی فاش نمی‌شود
+    safeLog('warn', requestId, 'No API key — fail-safe mode');
+
+    // Build RAG context for fallback
+    let sources: ChatSource[] = [];
+    let body: ChatRequestBody;
+    try {
+      body = (await req.json()) as ChatRequestBody;
+    } catch {
+      return jsonError('درخواست نامعتبر است.', 400);
+    }
+
+    const message = sanitizePrompt(String(body?.message || '').trim()).slice(0, 1000);
+    if (!message) {
+      return jsonError('پیام خالی است.', 400);
+    }
+
+    if (config.enableRag) {
+      try {
+        const rag = await buildRagContext(message, config.ragCount);
+        sources = rag.sources;
+      } catch {
+        /* ignore */
+      }
+    }
+
+    const fallbackText =
+      sources.length > 0
+        ? buildDeterministicFallback(sources)
+        : 'دستیار هوشمند آفلند در حال حاضر به سرویس AI متصل نیست. لطفاً از متخصص فروشگاه راهنمایی بگیرید یا با تیم پشتیبانی تماس بگیرید. برای سیستم کامل می‌توانید به اسمبل هوشمند مراجعه کنید.';
+
     return new Response(
       new ReadableStream({
         async start(controller) {
           const encoder = new TextEncoder();
+          controller.enqueue(encoder.encode(JSON.stringify({ type: 'sources', sources }) + '\n'));
           controller.enqueue(
-            encoder.encode(
-              JSON.stringify({ type: 'sources', sources }) + '\n'
-            )
-          );
-          controller.enqueue(
-            encoder.encode(
-              JSON.stringify({
-                type: 'delta',
-                text: 'دستیار هوشمند آفلند در حال حاضر به سرویس AI متصل نیست. لطفاً از متخصص فروشگاه راهنمایی بگیرید یا با تیم پشتیبانی تماس بگیرید. برای سیستم کامل می‌توانید به اسمبل هوشمند مراجعه کنید.',
-              }) + '\n'
-            )
+            encoder.encode(JSON.stringify({ type: 'delta', text: fallbackText }) + '\n')
           );
           controller.enqueue(encoder.encode(JSON.stringify({ type: 'done' }) + '\n'));
           controller.close();
@@ -105,13 +433,13 @@ export async function POST(req: NextRequest): Promise<Response> {
     );
   }
 
-  // محدودیت نرخ
+  // ─── Rate limit ──────────────────────────────────────────
   const ip = getClientIp(req);
   if (!checkRateLimit(ip)) {
     return jsonError('درخواست‌های زیاد. لطفاً کمی بعد دوباره تلاش کنید.', 429);
   }
 
-  // خواندن بدنه
+  // ─── Parse request body ──────────────────────────────────
   let body: ChatRequestBody;
   try {
     body = (await req.json()) as ChatRequestBody;
@@ -119,14 +447,12 @@ export async function POST(req: NextRequest): Promise<Response> {
     return jsonError('درخواست نامعتبر است.', 400);
   }
 
-  const message = sanitizePrompt(String(body?.message || '')
-    .trim())
-    .slice(0, 1000);
+  const message = sanitizePrompt(String(body?.message || '').trim()).slice(0, 1000);
   if (!message) {
     return jsonError('پیام خالی است.', 400);
   }
 
-  // تاریخچه (محدود به ۸ پیام آخر برای کنترل هزینه)
+  // ─── History (limit to 8 messages) ───────────────────────
   const history: ChatMessage[] = Array.isArray(body?.history)
     ? body.history
         .filter(
@@ -136,163 +462,247 @@ export async function POST(req: NextRequest): Promise<Response> {
         .map((m) => ({ role: m.role, content: String(m.content).slice(0, 2000) }))
     : [];
 
-  // ساخت بافت RAG
+  // ─── RAG context ─────────────────────────────────────────
   let context = '';
-  let sources: ChatResponse['sources'] = [];
+  let sources: ChatSource[] = [];
   if (config.enableRag) {
     try {
       const rag = await buildRagContext(message, config.ragCount);
       context = rag.context;
       sources = rag.sources;
     } catch {
-      // در صورت خطای RAG، چت بدون بافت ادامه می‌یابد
+      /* RAG failure → continue without context */
     }
   }
 
-  // ساخت پیام‌ها برای مدل
+  // ─── Build messages ──────────────────────────────────────
   const systemContent = context ? `${config.systemPrompt}\n\n${context}` : config.systemPrompt;
-
   const messages: ChatMessage[] = [
     { role: 'system', content: systemContent },
     ...history,
     { role: 'user', content: message },
   ];
 
-  // فراخوانی سرویس سازگار با OpenAI به‌صورت استریم (تایپ زنده)
+  // ─── Get proxy fetch ─────────────────────────────────────
+  let doFetch: typeof fetch;
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 45_000);
-
-    // fetch با پشتیبانی از پروکسی SOCKS5/HTTP (در صورت فعال‌بودن)
-    const doFetch = await getProxyFetch(config.proxyUrl, config.useProxy);
-
-    const aiRes = await doFetch(`${config.apiBase}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${config.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: config.model,
-        messages,
-        temperature: config.temperature,
-        max_tokens: config.maxTokens,
-        stream: true,
-      }),
-      signal: controller.signal,
-    });
-
-    if (!aiRes.ok || !aiRes.body) {
-      clearTimeout(timeout);
-      const errText = await aiRes.text().catch(() => '');
-      console.error('AI provider error:', aiRes.status, errText.slice(0, 300));
-      // پیام خطای عمومی — جزئیات فنی (مثل نامعتبر بودن API key) به کاربر نشان داده نمی‌شود
-      let msg = 'مشکلی پیش آمده. لطفاً دوباره تلاش کنید.';
-      if (aiRes.status === 404) {
-        msg = 'مدل یا آدرس سرویس یافت نشد. نام مدل/سرویس را بررسی کن.';
-      } else if (aiRes.status === 429) {
-        msg = 'محدودیت سرویس هوش مصنوعی. کمی بعد دوباره تلاش کن.';
-      }
-      return jsonError(msg, 502, sources);
-    }
-
-    // پاسخ را به‌صورت stream از نوع NDJSON به کلاینت می‌فرستیم:
-    //   خط اول:  {"type":"sources","sources":[...]}
-    //   خطوط بعد: {"type":"delta","text":"..."}
-    //   خط آخر:  {"type":"done"}
-    const encoder = new TextEncoder();
-    const decoder = new TextDecoder();
-    const upstream = aiRes.body.getReader();
-
-    const stream = new ReadableStream({
-      async start(streamController) {
-        // ابتدا منابع را بفرست
-        streamController.enqueue(
-          encoder.encode(JSON.stringify({ type: 'sources', sources }) + '\n')
-        );
-
-        let buffer = '';
-        let gotAny = false;
-        try {
-          while (true) {
-            const { done, value } = await upstream.read();
-            if (done) break;
-            buffer += decoder.decode(value, { stream: true });
-
-            // پاسخ OpenAI به‌صورت SSE است: خطوط "data: {...}"
-            const lines = buffer.split('\n');
-            buffer = lines.pop() || '';
-            for (const line of lines) {
-              const trimmed = line.trim();
-              if (!trimmed || !trimmed.startsWith('data:')) continue;
-              const payload = trimmed.slice(5).trim();
-              if (payload === '[DONE]') continue;
-              try {
-                const json = JSON.parse(payload);
-                const delta: string = json?.choices?.[0]?.delta?.content || '';
-                if (delta) {
-                  gotAny = true;
-                  streamController.enqueue(
-                    encoder.encode(JSON.stringify({ type: 'delta', text: delta }) + '\n')
-                  );
-                }
-              } catch {
-                // خطوط ناقص را نادیده بگیر
-              }
-            }
-          }
-
-          if (!gotAny) {
-            streamController.enqueue(
-              encoder.encode(
-                JSON.stringify({
-                  type: 'delta',
-                  text: 'متأسفانه نتوانستم پاسخ مناسبی تولید کنم.',
-                }) + '\n'
-              )
-            );
-          }
-          streamController.enqueue(encoder.encode(JSON.stringify({ type: 'done' }) + '\n'));
-        } catch (err) {
-          streamController.enqueue(
-            encoder.encode(
-              JSON.stringify({ type: 'error', error: 'ارتباط با سرویس قطع شد.' }) + '\n'
-            )
-          );
-        } finally {
-          clearTimeout(timeout);
-          streamController.close();
-        }
-      },
-      cancel() {
-        upstream.cancel().catch(() => {});
-      },
-    });
-
-    return new Response(stream, {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/x-ndjson; charset=utf-8',
-        'Cache-Control': 'no-cache, no-transform',
-        Connection: 'keep-alive',
-      },
-    });
-  } catch (e) {
-    const aborted = e instanceof Error && e.name === 'AbortError';
-    console.error('AI chat fetch failed:', e);
-    return jsonError(
-      aborted ? 'زمان پاسخ‌گویی به پایان رسید. دوباره تلاش کنید.' : 'خطای غیرمنتظره رخ داد.',
-      500,
-      sources
-    );
+    doFetch = await getProxyFetch(config.proxyUrl, config.useProxy);
+  } catch {
+    doFetch = fetch;
   }
+
+  safeLog('info', requestId, 'Starting AI chat request', {
+    model: config.model,
+    ragEnabled: config.enableRag,
+    sourceCount: sources.length,
+    historyLength: history.length,
+  });
+
+  // ═══════ PHASE 1: Streaming request ═══════════════════════
+  const clientAbort = new AbortController();
+
+  // Monitor client disconnect
+  const onClientClose = () => {
+    clientAbort.abort();
+  };
+  req.signal.addEventListener('abort', onClientClose, { once: true });
+
+  const stream = createNdjsonStream(
+    sources,
+    async (enqueue) => {
+      // Step 1: Try streaming
+      let streamResult: StreamResult | null = null;
+
+      try {
+        streamResult = await streamAiRequest(
+          doFetch,
+          config.apiBase,
+          config.apiKey,
+          config.model,
+          messages,
+          { temperature: config.temperature, maxTokens: config.maxTokens },
+          clientAbort.signal,
+          (text) => {
+            enqueue({ type: 'delta', text });
+          }
+        );
+      } catch (err) {
+        safeLog('error', requestId, 'Stream request exception', {
+          error: err instanceof Error ? err.message : 'unknown',
+        });
+      }
+
+      // Check if client disconnected
+      if (clientAbort.signal.aborted) {
+        safeLog('info', requestId, 'Client disconnected');
+        return;
+      }
+
+      // ─── Stream succeeded with content ───────────────
+      if (streamResult && streamResult.gotContent) {
+        safeLog('info', requestId, 'Stream completed with content', {
+          chunks: streamResult.textChunks.length,
+          finishReason: streamResult.finishReason,
+        });
+        return;
+      }
+
+      // ─── Handle specific errors ──────────────────────
+      if (streamResult?.errorCode === 'rate_limited') {
+        safeLog('warn', requestId, 'Rate limited (429)', {
+          retryAfter: streamResult.retryAfter,
+        });
+        // Try RAG fallback if available
+        if (sources.length > 0) {
+          const fallbackText = buildDeterministicFallback(sources);
+          enqueue({ type: 'delta', text: fallbackText });
+        } else {
+          enqueue({
+            type: 'error',
+            error: 'محدودیت سرویس هوش مصنوعی. لطفاً کمی بعد دوباره تلاش کنید.',
+          });
+        }
+        return;
+      }
+
+      if (streamResult?.errorCode === 'auth_error') {
+        safeLog('error', requestId, 'Auth error (401/403)');
+        enqueue({ type: 'error', error: 'مشکل اتصال به سرویس. لطفاً بعداً تلاش کنید.' });
+        return;
+      }
+
+      if (streamResult?.errorCode === 'not_found') {
+        safeLog('error', requestId, 'Model/endpoint not found (404)');
+        enqueue({ type: 'error', error: 'سرویس هوش مصنوعی در دسترس نیست.' });
+        return;
+      }
+
+      if (streamResult?.errorCode === 'network_error') {
+        safeLog('error', requestId, 'Network error during stream');
+        // Fall through to recovery
+      }
+
+      // ═══════ PHASE 2: Non-stream recovery ═══════════════
+      // HTTP 200 but no content, or network error — try non-stream recovery
+      safeLog('info', requestId, 'No content from stream — attempting recovery');
+
+      let recoveryResult: { text: string; usage?: SseEvent['usage'] } | null = null;
+
+      try {
+        recoveryResult = await recoveryNonStreamRequest(
+          doFetch,
+          config.apiBase,
+          config.apiKey,
+          config.model,
+          messages,
+          { temperature: config.temperature, maxTokens: config.maxTokens },
+          clientAbort.signal
+        );
+      } catch (err) {
+        safeLog('error', requestId, 'Recovery request exception', {
+          error: err instanceof Error ? err.message : 'unknown',
+        });
+      }
+
+      // Check client disconnect again
+      if (clientAbort.signal.aborted) return;
+
+      // ─── Recovery succeeded ──────────────────────────
+      if (recoveryResult && recoveryResult.text) {
+        safeLog('info', requestId, 'Recovery succeeded with content', {
+          textLength: recoveryResult.text.length,
+        });
+
+        // Convert to streaming deltas for typing experience
+        const gen = textToDeltas(recoveryResult.text);
+        let step = gen.next();
+        while (!step.done) {
+          if (clientAbort.signal.aborted) return;
+          enqueue({ type: 'delta', text: step.value });
+          step = gen.next();
+        }
+        return;
+      }
+
+      // ═══════ PHASE 3: Deterministic RAG fallback ════════
+      safeLog('info', requestId, 'Recovery empty — using deterministic fallback', {
+        sourceCount: sources.length,
+      });
+
+      if (sources.length > 0) {
+        const fallbackText = buildDeterministicFallback(sources);
+        // Stream it as deltas for UX consistency
+        const gen = textToDeltas(fallbackText);
+        let step = gen.next();
+        while (!step.done) {
+          if (clientAbort.signal.aborted) return;
+          enqueue({ type: 'delta', text: step.value });
+          step = gen.next();
+        }
+        return;
+      }
+
+      // ═══════ PHASE 4: Safe error (no sources, no AI) ════
+      enqueue({
+        type: 'error',
+        error:
+          'در حال حاضر امکان پاسخ‌گویی وجود ندارد. لطفاً دوباره تلاش کنید یا مستقیماً از محصولات سایت بازدید کنید.',
+      });
+    },
+    () => {
+      // Cancel callback — client disconnected
+      clientAbort.abort();
+      safeLog('info', requestId, 'Stream cancelled by client');
+    }
+  );
+
+  // Clean up client disconnect listener
+  const cleanupStream = () => {
+    req.signal.removeEventListener('abort', onClientClose);
+  };
+
+  // Wrap stream to ensure cleanup
+  const wrappedStream = new ReadableStream({
+    async start(controller) {
+      const reader = stream.getReader();
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          controller.enqueue(value);
+        }
+      } catch {
+        // Client disconnect or error
+      } finally {
+        cleanupStream();
+        try {
+          controller.close();
+        } catch {
+          /* already closed */
+        }
+      }
+    },
+    cancel() {
+      cleanupStream();
+      clientAbort.abort();
+    },
+  });
+
+  return new Response(wrappedStream, {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/x-ndjson; charset=utf-8',
+      'Cache-Control': 'no-cache, no-transform',
+      'X-Request-Id': requestId,
+      Connection: 'keep-alive',
+    },
+  });
 }
 
-/**
- * GET /api/ai-chat — بررسی وضعیت و تست اتصال
- * بدون فاش‌کردن کلید، فقط می‌گوید سرویس فعال است یا نه و کدام مدل/سرویس.
- * با ?test=1 یک درخواست واقعی کوچک به سرویس می‌زند تا اتصال را تأیید کند.
- */
+// ════════════════════════════════════════════════════════════════
+// GET — Health check / status
+// ════════════════════════════════════════════════════════════════
+
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const config = getAiChatConfig();
   const url = new URL(req.url);
@@ -301,7 +711,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const status = {
     enabled: config.enabled,
     hasKey: Boolean(config.apiKey),
-    provider: config.providerName,
+    provider: config.providerId,
     model: config.model,
     rag: config.enableRag,
   };
@@ -310,17 +720,26 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json(status);
   }
 
-  // تست واقعی اتصال
+  // Real test — non-stream small request
   if (!config.apiKey) {
     return NextResponse.json(
       { ...status, test: 'fail', reason: 'کلید تنظیم نشده' },
       { status: 400 }
     );
   }
+
   try {
+    let doFetch: typeof fetch;
+    try {
+      doFetch = await getProxyFetch(config.proxyUrl, config.useProxy);
+    } catch {
+      doFetch = fetch;
+    }
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15_000);
-    const doFetch = await getProxyFetch(config.proxyUrl, config.useProxy);
+
+    // Try streaming first (the primary path)
     const res = await doFetch(`${config.apiBase}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -330,18 +749,83 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       body: JSON.stringify({
         model: config.model,
         messages: [{ role: 'user', content: 'سلام' }],
-        max_tokens: 5,
-        stream: false,
+        max_tokens: 10,
+        stream: true,
       }),
       signal: controller.signal,
     });
+
     clearTimeout(timeout);
-    if (res.ok) {
+
+    if (!res.ok || !res.body) {
+      return NextResponse.json(
+        { ...status, test: 'fail', reason: `HTTP ${res.status}` },
+        { status: 502 }
+      );
+    }
+
+    // Read the stream and check for content
+    const parser = new SseParser();
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let gotContent = false;
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        parser.feed(decoder.decode(value, { stream: true }));
+        const events = parser.drain();
+        for (const evt of events) {
+          if (evt.type === 'delta' && evt.content) {
+            gotContent = true;
+          }
+        }
+        if (gotContent || parser.done) break;
+      }
+    } finally {
+      try {
+        reader.releaseLock();
+      } catch {
+        /* ignore */
+      }
+    }
+
+    if (gotContent) {
       return NextResponse.json({ ...status, test: 'ok' });
     }
-    const txt = await res.text().catch(() => '');
+
+    // Stream returned no content — try non-stream fallback
+    const controller2 = new AbortController();
+    const timeout2 = setTimeout(() => controller2.abort(), 10_000);
+
+    const res2 = await doFetch(`${config.apiBase}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${config.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: config.model,
+        messages: [{ role: 'user', content: 'سلام' }],
+        max_tokens: 10,
+        stream: false,
+      }),
+      signal: controller2.signal,
+    });
+
+    clearTimeout(timeout2);
+
+    if (res2.ok) {
+      const data = await res2.json();
+      const extracted = extractNonStreamContent(data);
+      if (extracted.text) {
+        return NextResponse.json({ ...status, test: 'ok' });
+      }
+    }
+
     return NextResponse.json(
-      { ...status, test: 'fail', reason: `HTTP ${res.status}`, detail: txt.slice(0, 200) },
+      { ...status, test: 'fail', reason: 'Empty response from both stream and non-stream' },
       { status: 502 }
     );
   } catch (e) {

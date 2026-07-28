@@ -22,21 +22,98 @@ function buildImageUrl(src?: string | null): string | null {
 
 /** کلمات پرتکرار فارسی که برای جستجو حذف می‌شوند */
 const STOPWORDS = new Set([
-  'آیا', 'هست', 'هستش', 'داری', 'دارید', 'داره', 'میخوام', 'می‌خوام', 'میخواهم',
-  'لطفا', 'لطفاً', 'یک', 'یه', 'برای', 'چنده', 'چقدره', 'هستن', 'هستند',
-  'سلام', 'ممنون', 'خوبه', 'چطور', 'کدوم', 'کدام', 'یا', 'و', 'با', 'به', 'از',
-  'در', 'که', 'رو', 'را', 'می', 'خرید', 'قیمت', 'بهترین', 'ارزان', 'ارزون',
+  'آیا',
+  'هست',
+  'هستش',
+  'داری',
+  'دارید',
+  'داره',
+  'میخوام',
+  'می‌خوام',
+  'میخواهم',
+  'لطفا',
+  'لطفاً',
+  'یک',
+  'یه',
+  'برای',
+  'چنده',
+  'چقدره',
+  'هستن',
+  'هستند',
+  'سلام',
+  'ممنون',
+  'خوبه',
+  'چطور',
+  'کدوم',
+  'کدام',
+  'یا',
+  'و',
+  'با',
+  'به',
+  'از',
+  'در',
+  'که',
+  'رو',
+  'را',
+  'می',
+  'خرید',
+  'قیمت',
+  'بهترین',
+  'ارزان',
+  'ارزون',
   // فیلرهای محاوره‌ای رایج در گفتگوی خرید قطعات
-  'میخوام', 'بخرم', 'پیشنهاد', 'بده', 'بدید', 'نشونم', 'نشون', 'ببینم', 'تا',
-  'حدود', 'بودجه', 'تومن', 'تومان', 'میلیون', 'هزار', 'مناسب', 'خوب', 'عالی',
-  'سیستم', 'کامل', 'سازگار', 'معرفی', 'کن', 'کنید', 'چیه', 'چیست', 'داشته',
-  'باشه', 'موجود', 'الان', 'فعلا', 'یعنی', 'مثل', 'مثلا', 'حتی', 'هم', 'این',
-  'اون', 'آن', 'من', 'تو', 'شما', 'ما', 'گیمینگ', 'اداری',
+  'میخوام',
+  'بخرم',
+  'پیشنهاد',
+  'بده',
+  'بدید',
+  'نشونم',
+  'نشون',
+  'ببینم',
+  'تا',
+  'حدود',
+  'بودجه',
+  'تومن',
+  'تومان',
+  'میلیون',
+  'هزار',
+  'مناسب',
+  'خوب',
+  'عالی',
+  'سیستم',
+  'کامل',
+  'سازگار',
+  'معرفی',
+  'کن',
+  'کنید',
+  'چیه',
+  'چیست',
+  'داشته',
+  'باشه',
+  'موجود',
+  'الان',
+  'فعلا',
+  'یعنی',
+  'مثل',
+  'مثلا',
+  'حتی',
+  'هم',
+  'این',
+  'اون',
+  'آن',
+  'من',
+  'تو',
+  'شما',
+  'ما',
+  'گیمینگ',
+  'اداری',
 ]);
 
 /** پاکسازی سؤال کاربر برای جستجوی بهتر */
 function cleanQuery(query: string): string {
-  const stripped = String(query).replace(/<[^>]*>/g, ' ').trim();
+  const stripped = String(query)
+    .replace(/<[^>]*>/g, ' ')
+    .trim();
   const words = stripped.split(/\s+/u);
   const keep: string[] = [];
   for (const raw of words) {
@@ -190,56 +267,24 @@ async function fetchProductDetail(id: string | number): Promise<RawProduct | nul
 
 /** آیا این محصول از search اطلاعات کافی (عکس/برند) دارد؟ */
 function isRich(p: RawProduct): boolean {
-
-/** اعتبارسنجی URL برای جلوگیری از تزریق مسیر یا دامنه غیرمجاز */
-function sanitizeProductUrl(url: string): string | null {
-  if (!url) return null;
-  try {
-    const parsed = new URL(url, "http://localhost");
-    const allowedHosts = ["offl.ir", "www.offl.ir", "localhost", "127.0.0.1"];
-    const hostValid = allowedHosts.includes(parsed.hostname) || parsed.hostname.endsWith(".offl.ir");
-    const pathValid = parsed.pathname.startsWith("/product/") || parsed.pathname === "/";
-    if (hostValid && pathValid) return url;
-  } catch {
-    if (url.startsWith("/product/")) return url;
-  }
-  return null;
-}
-
   return Boolean(pickImage(p) && (pickBrand(p) || p.warranty));
-
-/** اعتبارسنجی URL برای جلوگیری از تزریق مسیر یا دامنه غیرمجاز */
-function sanitizeProductUrl(url: string): string | null {
-  if (!url) return null;
-  try {
-    const parsed = new URL(url, "http://localhost");
-    const allowedHosts = ["offl.ir", "www.offl.ir", "localhost", "127.0.0.1"];
-    const hostValid = allowedHosts.includes(parsed.hostname) || parsed.hostname.endsWith(".offl.ir");
-    const pathValid = parsed.pathname.startsWith("/product/") || parsed.pathname === "/";
-    if (hostValid && pathValid) return url;
-  } catch {
-    if (url.startsWith("/product/")) return url;
-  }
-  return null;
-}
-
 }
 
 /** اعتبارسنجی URL برای جلوگیری از تزریق مسیر یا دامنه غیرمجاز */
-function sanitizeProductUrl(url: string): string | null {
+export function sanitizeProductUrl(url: string): string | null {
   if (!url) return null;
   try {
-    const parsed = new URL(url, "http://localhost");
-    const allowedHosts = ["offl.ir", "www.offl.ir", "localhost", "127.0.0.1"];
-    const hostValid = allowedHosts.includes(parsed.hostname) || parsed.hostname.endsWith(".offl.ir");
-    const pathValid = parsed.pathname.startsWith("/product/") || parsed.pathname === "/";
+    const parsed = new URL(url, 'http://localhost');
+    const allowedHosts = ['offl.ir', 'www.offl.ir', 'localhost', '127.0.0.1'];
+    const hostValid =
+      allowedHosts.includes(parsed.hostname) || parsed.hostname.endsWith('.offl.ir');
+    const pathValid = parsed.pathname.startsWith('/product/') || parsed.pathname === '/';
     if (hostValid && pathValid) return url;
   } catch {
-    if (url.startsWith("/product/")) return url;
+    if (url.startsWith('/product/')) return url;
   }
   return null;
 }
-
 
 /**
  * ساخت بافت RAG بر اساس سؤال کاربر.

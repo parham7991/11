@@ -64,9 +64,12 @@ export default function AiChatWidget({
   const [loading, setLoading] = useState(false); // نشانگر «در حال نوشتن» (تا اولین delta)
   const [busy, setBusy] = useState(false); // کل مدت ارسال (شامل استریم) — جلوگیری از ارسال هم‌زمان
   const [mounted, setMounted] = useState(false);
+  const [copied, setCopied] = useState<number | null>(null); // index of copied message
 
   const bodyRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const lastUserMsgRef = useRef<string>(''); // for retry
 
   // بارگذاری تاریخچه از localStorage
   useEffect(() => {
@@ -124,10 +127,34 @@ export default function AiChatWidget({
     });
   }, []);
 
+  const stopGeneration = useCallback(() => {
+    if (abortRef.current) {
+      abortRef.current.abort();
+      abortRef.current = null;
+    }
+    setLoading(false);
+    setBusy(false);
+  }, []);
+
+  const copyMessage = useCallback((text: string, idx: number) => {
+    if (!text) return;
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopied(idx);
+        setTimeout(() => setCopied(null), 2000);
+      })
+      .catch(() => {
+        /* clipboard not available */
+      });
+  }, []);
+
   const sendMessage = useCallback(
     async (text: string) => {
       const trimmed = text.trim();
       if (!trimmed || busy) return;
+
+      lastUserMsgRef.current = trimmed;
 
       const userMsg: DisplayMessage = { role: 'user', content: trimmed };
       const nextMessages = [...messages, userMsg];
@@ -146,11 +173,16 @@ export default function AiChatWidget({
       const botIndex = nextMessages.length;
       setMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
 
+      // AbortController for stop generation
+      const controller = new AbortController();
+      abortRef.current = controller;
+
       try {
         const res = await fetch('/api/ai-chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: trimmed, history: history.slice(0, -1) }),
+          signal: controller.signal,
         });
 
         // اگر پاسخ استریم نباشد (خطای JSON)، آن را به‌صورت معمولی هندل می‌کن
@@ -179,6 +211,7 @@ export default function AiChatWidget({
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
+          if (controller.signal.aborted) break;
           buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split('\n');
           buffer = lines.pop() || '';
@@ -208,18 +241,26 @@ export default function AiChatWidget({
           }
         }
 
-        if (!acc) {
+        if (controller.signal.aborted && acc) {
+          // User stopped — keep what we have
+          const { clean, actions } = extractActions(acc);
+          updateBot(botIndex, { content: clean, actions });
+        } else if (!acc) {
           updateBot(botIndex, { content: 'پاسخی دریافت نشد.' });
         } else {
           // در پایان: متن را تمیز کن و دکمه‌های پویا را استخراج کن
           const { clean, actions } = extractActions(acc);
           updateBot(botIndex, { content: clean, actions });
         }
-      } catch {
+      } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          return;
+        }
         updateBot(botIndex, {
           content: 'خطا در ارتباط با سرور. اتصال اینترنت را بررسی کنید.',
         });
       } finally {
+        abortRef.current = null;
         setLoading(false);
         setBusy(false);
       }
@@ -451,6 +492,40 @@ export default function AiChatWidget({
                       ))}
                     </div>
                   )}
+                  {/* Copy + Retry buttons on completed assistant messages */}
+                  {isBot && !isStreaming && msg.content && msg.role === 'assistant' && idx > 0 && (
+                    <div className="aic-msg-actions">
+                      <button
+                        type="button"
+                        className="aic-msg-btn"
+                        onClick={() => copyMessage(msg.content, idx)}
+                        title="کپی پاسخ"
+                        aria-label="کپی"
+                      >
+                        {copied === idx ? '✓' : <CopyIcon />}
+                      </button>
+                      {(msg.content.includes('خطا') ||
+                        msg.content.includes('دریافت نشد') ||
+                        msg.content.includes('قطع شد')) && (
+                        <button
+                          type="button"
+                          className="aic-msg-btn"
+                          onClick={() => {
+                            if (lastUserMsgRef.current) {
+                              // Remove the failed assistant message and retry
+                              setMessages((prev) => prev.slice(0, -1));
+                              sendMessage(lastUserMsgRef.current);
+                            }
+                          }}
+                          title="تلاش مجدد"
+                          aria-label="تلاش مجدد"
+                          disabled={busy}
+                        >
+                          <RefreshIcon />
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </React.Fragment>
               );
             })}
@@ -495,16 +570,29 @@ export default function AiChatWidget({
                 placeholder="پیامت رو بنویس…"
                 rows={1}
                 aria-label="پیام"
+                disabled={busy && !loading}
               />
             </div>
-            <button
-              type="submit"
-              className="aic-send"
-              disabled={busy || !input.trim()}
-              aria-label="ارسال"
-            >
-              <SendIcon />
-            </button>
+            {busy ? (
+              <button
+                type="button"
+                className="aic-stop"
+                onClick={stopGeneration}
+                aria-label="توقف تولید"
+                title="توقف"
+              >
+                <StopIcon />
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className="aic-send"
+                disabled={!input.trim()}
+                aria-label="ارسال"
+              >
+                <SendIcon />
+              </button>
+            )}
           </form>
 
           <div className="aic-footer">
@@ -615,6 +703,24 @@ const RefreshIcon = () => (
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const StopIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" />
+  </svg>
+);
+
+const CopyIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" width="14" height="14">
+    <rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" strokeWidth="2" />
+    <path
+      d="M5 15V5a2 2 0 0 1 2-2h10"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
     />
   </svg>
 );

@@ -111,7 +111,19 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       }
 
       const data = await aiRes.json();
-      const text = data?.choices?.[0]?.message?.content || data?.choices?.[0]?.text || '';
+      const rawText = data?.choices?.[0]?.message?.content || data?.choices?.[0]?.text || '';
+      const text = typeof rawText === 'string' ? rawText.trim() : '';
+
+      // If AI returned empty content, use deterministic fallback
+      if (!text) {
+        return NextResponse.json({
+          ok: false,
+          enabled: true,
+          message: 'AI پاسخ خالی داد — تحلیل داخلی نمایش داده شد.',
+          fallback: buildFallbackAnalysis(body),
+          telemetry,
+        });
+      }
 
       return NextResponse.json({
         ok: true,

@@ -889,3 +889,73 @@ html.dark .aic-card__price {
     animation: none !important;
   }
 }
+
+/* ════════════ دکمهٔ توقف (Stop) ════════════ */
+.aic-stop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: #e53e3e;
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background 0.15s,
+    transform 0.15s;
+}
+.aic-stop:hover {
+  background: #c53030;
+  transform: scale(1.05);
+}
+.aic-stop svg {
+  width: 16px;
+  height: 16px;
+}
+html.dark .aic-stop {
+  background: #fc5c5c;
+}
+html.dark .aic-stop:hover {
+  background: #e53e3e;
+}
+
+/* ════════════ دکمه‌های عملیات پیام (کپی/تلاش مجدد) ════════════ */
+.aic-msg-actions {
+  display: flex;
+  gap: 4px;
+  padding: 2px 0 0 32px;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+.aic-msg-actions:hover {
+  opacity: 1;
+}
+.aic-msg-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--aic-border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--aic-muted);
+  cursor: pointer;
+  font-size: 12px;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+}
+.aic-msg-btn:hover {
+  background: var(--aic-surface-2);
+  color: var(--aic-text);
+  border-color: var(--aic-muted);
+}
+.aic-msg-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

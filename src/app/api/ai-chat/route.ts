@@ -213,6 +213,16 @@ export async function POST(req: NextRequest): Promise<Response> {
             return;
           }
 
+          // No model call is useful when every exact, category-filtered result is
+          // unavailable. Return the grounded stock answer immediately instead of
+          // making the customer wait through stream + recovery timeouts.
+          if (sources.every((source) => source.inStock === false)) {
+            const fallback = buildGroundedProductFallback(sources);
+            if (fallback) w.send({ type: 'delta', text: fallback });
+            w.send({ type: 'meta', mode: 'deterministic-fallback', model: 'none', requestId, latencyMs: Date.now() - startTime });
+            return;
+          }
+
           w.progress('waiting_for_ai', 'در حال تحلیل تخصصی…');
           await callAi(w, config, message, history, startTime, requestId, clientAbort, 'product', context, sources);
           return;

@@ -219,6 +219,67 @@ export type RagResult = {
   sources: ChatSource[];
 };
 
+/**
+ * ساخت چندین query جستجو از سؤال کاربر برای پوشش حداکثری.
+ * مثلاً "یه سیستم گیمینگ تا ۳۰ میلیون" → ["سیستم گیمینگ ۳۰ میلیون", "gaming", "گیمینگ"]
+ */
+function buildSearchQueries(originalQuery: string, cleanedTerm: string): string[] {
+  const queries: string[] = [];
+
+  // 1. تمیزشدهٔ کامل
+  if (cleanedTerm) queries.push(cleanedTerm);
+
+  // 2. کلمات کلیدی فارسی رایج در حوزهٔ سخت‌افزار
+  const hwKeywords: Record<string, string[]> = {
+    cpu: ['پردازنده', 'cpu', 'اینتل', 'intel', 'رایزن', 'ryzen', 'core', 'i5', 'i7', 'i9'],
+    gpu: ['کارت گرافیک', 'gpu', 'گرافیک', 'rtx', 'rx', 'geforce', 'radeon'],
+    ram: ['رم', 'ram', 'ddr4', 'ddr5', 'حافظه رم'],
+    mb: ['مادربرد', 'motherboard', 'mainboard'],
+    ssd: ['حافظه', 'ssd', 'nvme', 'm.2', 'هارد'],
+    psu: ['پاور', 'psu', 'منبع تغذیه'],
+    case: ['کیس', 'case', 'کیس گیمینگ'],
+    cooler: ['خنک کننده', 'خنک‌کننده', 'cooler', 'هواخنک', 'آب‌خنک', 'aio'],
+    monitor: ['مانیتور', 'monitor'],
+    gaming: ['گیمینگ', 'gaming', 'بازی'],
+    office: ['اداری', 'office', 'خانگی'],
+  };
+
+  // شناسایی دسته‌بندی‌های موجود در query
+  const qLower = originalQuery.toLowerCase();
+  const detectedCategories: string[] = [];
+  for (const [key, words] of Object.entries(hwKeywords)) {
+    if (words.some((w) => qLower.includes(w))) {
+      detectedCategories.push(key);
+      // هر کلمهٔ مرتبط را هم به عنوان query اضافه کن
+      for (const w of words.slice(0, 2)) {
+        if (!queries.includes(w)) queries.push(w);
+      }
+    }
+  }
+
+  // 3. ترکیب دسته‌بندی‌ها با بودجه (اگر عددی در query هست)
+  const budgetMatch = originalQuery.match(/(\d+)\s*(میلیون|هزار|toman|تومان)/i);
+  if (budgetMatch && detectedCategories.length > 0) {
+    const budget = budgetMatch[1];
+    const cat = detectedCategories[0];
+    const catWord = hwKeywords[cat]?.[0] || cat;
+    queries.push(`${catWord} ${budget} میلیون`);
+  }
+
+  // 4. اگر هیچ دسته‌ای شناسایی نشد، کلمات اصلی را امتحان کن
+  if (detectedCategories.length === 0 && cleanedTerm.includes(' ')) {
+    const words = cleanedTerm.split(/\s+/).filter((w) => w.length >= 2);
+    // هر کلمهٔ مستقل
+    for (const w of words.slice(0, 3)) {
+      if (!queries.includes(w)) queries.push(w);
+    }
+  }
+
+  // 5. dedup و محدود به ۵ کوئری
+  const unique = [...new Set(queries)].slice(0, 5);
+  return unique.length > 0 ? unique : [cleanedTerm || originalQuery.slice(0, 50)];
+}
+
 /** درخواست جستجو به بک‌اند آفلند */
 async function searchAfland(term: string, count: number): Promise<RawProduct[]> {
   try {
@@ -288,41 +349,84 @@ export function sanitizeProductUrl(url: string): string | null {
 
 /**
  * ساخت بافت RAG بر اساس سؤال کاربر.
- * اگر چیزی پیدا نشد، با کلمهٔ اول دوباره تلاش می‌کند.
+ * نسخهٔ جامع: چندین جستجوی موازی + استخراج کلمات کلیدی + deduplication
  */
-export async function buildRagContext(query: string, count = 6): Promise<RagResult> {
+export async function buildRagContext(query: string, count = 10): Promise<RagResult> {
   const term = cleanQuery(query);
 
-  let products = await searchAfland(term, count);
+  // ─── چندین query موازی برای پوشش بیشتر ─────────────────
+  const searchQueries = buildSearchQueries(query, term);
+  console.log(`[rag] Searching with ${searchQueries.length} queries: ${searchQueries.join(' | ')}`);
 
-  // تلاش دوم با کلمهٔ اول
-  if (products.length === 0 && term.includes(' ')) {
-    const first = term.split(' ')[0];
-    if (first && first !== term) {
-      products = await searchAfland(first, count);
+  // جستجوی موازی همهٔ کوئری‌ها
+  const searchResults = await Promise.all(
+    searchQueries.map((q) => searchAfland(q, Math.max(count, 12)))
+  );
+
+  // ─── تجمیع + deduplication بر اساس id ──────────────────
+  const seenIds = new Set<string>();
+  const allProducts: RawProduct[] = [];
+
+  for (const results of searchResults) {
+    for (const p of results) {
+      const id = String(p.id ?? p.url_key ?? p.slug ?? '');
+      if (!id || seenIds.has(id)) continue;
+      seenIds.add(id);
+      allProducts.push(p);
     }
   }
 
-  if (products.length === 0) {
+  console.log(
+    `[rag] Found ${allProducts.length} unique products from ${searchQueries.length} queries`
+  );
+
+  if (allProducts.length === 0) {
     return { context: '', sources: [] };
   }
 
-  // غنی‌سازی ۴ محصول اول با جزئیات کامل (عکس/برند/گارانتی) به‌صورت موازی،
-  // فقط اگر داده‌ی search ناقص باشد. این باعث کارت‌های کامل‌تر می‌شود.
-  const ENRICH = Math.min(4, count, products.length);
-  const enrichTargets = products.slice(0, ENRICH);
+  // ─── امتیازدهی relevance ────────────────────────────────
+  const queryWords = term
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((w) => w.length >= 2);
+  const scored = allProducts.map((p) => {
+    const title = String(p.name || p.title || '').toLowerCase();
+    let score = 0;
+
+    // هر کلمهٔ query که در title باشد = امتیاز
+    for (const w of queryWords) {
+      if (title.includes(w)) score += 10;
+    }
+    // match کامل title = bonus
+    if (queryWords.length > 0 && queryWords.every((w) => title.includes(w))) score += 20;
+    // موجود = bonus
+    if (p.is_in_stock !== 0) score += 5;
+    // تخفیف = bonus
+    if (p.special_price && Number(p.special_price) > 0 && Number(p.special_price) < Number(p.price))
+      score += 3;
+
+    return { product: p, score };
+  });
+
+  // مرتب‌سازی بر اساس relevance (بهترین‌ها اول)
+  scored.sort((a, b) => b.score - a.score);
+  const ranked = scored.map((s) => s.product);
+
+  // ─── غنی‌سازی محصولات برتر ──────────────────────────────
+  const ENRICH = Math.min(6, count, ranked.length);
+  const enrichTargets = ranked.slice(0, ENRICH);
   const enriched = await Promise.all(
     enrichTargets.map(async (p) => {
       if (isRich(p)) return p;
       const id = p.id ?? p.url_key ?? p.slug;
       if (!id) return p;
       const detail = await fetchProductDetail(id);
-      // ادغام: فیلدهای detail روی search می‌نشیند ولی id/قیمت search حفظ می‌شود
       return detail ? { ...p, ...detail } : p;
     })
   );
-  products = [...enriched, ...products.slice(ENRICH)];
+  const products = [...enriched, ...ranked.slice(ENRICH)];
 
+  // ─── ساخت context و sources ─────────────────────────────
   const blocks: string[] = [];
   const sources: ChatSource[] = [];
 

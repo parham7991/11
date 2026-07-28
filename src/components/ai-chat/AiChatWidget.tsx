@@ -198,7 +198,10 @@ export default function AiChatWidget({
         // خواندن استریم NDJSON
         const reader = res.body?.getReader();
         if (!reader) {
-          updateBot(botIndex, { content: 'پاسخی دریافت نشد.' });
+          updateBot(botIndex, {
+            content:
+              'در حال حاضر امکان پاسخ‌گویی وجود ندارد. لطفاً دوباره تلاش کنید یا مستقیماً از محصولات سایت بازدید کنید.',
+          });
           return;
         }
         const decoder = new TextDecoder();
@@ -246,7 +249,10 @@ export default function AiChatWidget({
           const { clean, actions } = extractActions(acc);
           updateBot(botIndex, { content: clean, actions });
         } else if (!acc) {
-          updateBot(botIndex, { content: 'پاسخی دریافت نشد.' });
+          updateBot(botIndex, {
+            content:
+              'در حال حاضر امکان پاسخ‌گویی وجود ندارد. لطفاً دوباره تلاش کنید یا مستقیماً از محصولات سایت بازدید کنید.',
+          });
         } else {
           // در پایان: متن را تمیز کن و دکمه‌های پویا را استخراج کن
           const { clean, actions } = extractActions(acc);

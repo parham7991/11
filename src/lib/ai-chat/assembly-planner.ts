@@ -80,7 +80,9 @@ function buildPlannerPrompt(
   for (const [category, items] of candidates.entries()) {
     if (items.length === 0) continue;
     candidateTexts.push(`\n### ${category} (${items.length} گزینه)`);
-    for (const c of items.slice(0, 15)) {
+    // Keep the global prompt bounded. The candidate arrays are already ranked;
+    // eight options per category preserve choice while cutting Agent latency.
+    for (const c of items.slice(0, 8)) {
       candidateTexts.push(
         `  ID=${c.id} | ${c.name} | ${c.shortSpec || '-'} | ${c.finalPrice.toLocaleString('en')} | stock:${c.inStock}`
       );
@@ -300,8 +302,8 @@ export async function planFullBuild(
   const opts: AiClientOptions = {
     ...clientOptions,
     temperature: 0.1,
-    maxTokens: 2000,
-    timeoutMs: 35_000,
+    maxTokens: 1200,
+    timeoutMs: 45_000,
   };
 
   const result = await aiNonStreamRequest(opts, messages, abortSignal);

@@ -173,8 +173,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         apiBase: config.apiBase,
         model: config.assemblyModel,
         temperature: 0.1,
-        maxTokens: 2000,
-        timeoutMs: 35_000,
+        maxTokens: 1200,
+        timeoutMs: 45_000,
         proxyUrl: config.proxyUrl,
         useProxy: config.useProxy,
       };

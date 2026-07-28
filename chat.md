@@ -2602,3 +2602,96 @@ Even without AI_ASSEMBLY_MODEL, code defaults to offl-assemble-elite for OmniRou
 - [x] Real tests: 22 passing
 - [x] TypeScript: 0 new errors
 - [x] git diff --check: clean
+
+---
+
+# Hotfix Intent v8 — خرید طبیعی، منفی‌سازی و تست Import واقعی
+
+> تاریخ: ۲۰۲۶-۰۷-۲۸
+> وضعیت: Patch محلی آماده است؛ هنوز روی GitHub/Production Deploy نشده، چون احراز هویت SSH با کلید انجام نشد و رمز SSH در این نشست وارد نشده است.
+
+## راستی‌آزمایی وضعیت پیش از Patch
+
+- **GitHub `main`**: `2e71505fd8d7e27e57fd1195895c534623414c6d`
+- **Live Frontend**: `https://offl.vercel.app/` با HTTP 200 در دسترس بود.
+- **Live AI status** (`/api/ai-chat`): فعال، دارای کلید، Provider=`omniroute`، Chat=`offl-chat-elite`، Assembly=`offl-assemble-elite`، RAG فعال.
+- **API**: `https://api.lonz.ir/v1` با HTTP 200 پاسخ داد.
+- **SSH network**: پورت 22 سرور Production قابل دسترس است؛ ورود key-only با `Permission denied` متوقف شد. بنابراین checkout سرور و `omniroute-arena-doctor` هنوز در این نوبت تأیید نشده‌اند و هیچ دستوری روی سرور اجرا نشده است.
+
+## تغییرهای انجام‌شده
+
+### `src/lib/ai-chat/chat-intent.ts`
+
+1. عبارت عمومی `معرفی کن` از `IDENTITY_TABLE` حذف شد. فقط الگوهای دارای ارجاع صریح به خود دستیار (مانند `خودت رو معرفی کن`) Identity هستند.
+2. عبارت `می‌خوام` از `NEGATION_TABLE` حذف شد؛ این عبارت اکنون به‌درستی Purchase Intent باقی می‌ماند.
+3. هر دو شکل منفی `نمی‌خوام` و `نمیخوام` در `NEGATION_TABLE` پشتیبانی می‌شوند.
+4. الگوی واقعی Identity با عبارت میانی «در دو جمله» افزوده شد تا پرسش `خودت رو در دو جمله معرفی کن` همچنان بدون RAG شناخته شود.
+5. یک خطای مستقل Category Hint اصلاح شد: `r5`/`r3`/`r7`/`r9` از synonymهای CPU حذف شدند، چون `r5` زیررشته‌ی `DDR5` بود و سؤال‌های RAM را به CPU منحرف می‌کرد. عبارت‌های کامل `ryzen` و `رایزن` همچنان وجود دارند.
+
+### `tests/run-real.js` و `package.json`
+
+- تست قبلی که الگوریتم classifier را کپی کرده بود، جایگزین شد.
+- Runner جدید فایل Production یعنی `src/lib/ai-chat/chat-intent.ts` را با TypeScript transpile و همان export واقعی `classifyIntent` را اجرا می‌کند؛ جدول یا منطق classifier در تست کپی نشده است.
+- Script هدفمند `npm run test:intent` افزوده شد و همین تست به انتهای `npm test` نیز اضافه شد؛ بنابراین دیگر از Test suite جا نمی‌افتد.
+- TypeScript از قبل در `devDependencies` موجود است؛ تست در محیط توسعه/CI پس از نصب dependencies قابل اجراست.
+
+## تست هدفمند اجراشده
+
+فرمان اجراشده (بدون Build کامل و بدون `npm ci`):
+
+```bash
+npm run test:intent
+git diff --check
+```
+
+نتیجه‌ی واقعی:
+
+```text
+7 passed, 0 failed
+✓ ALL PRODUCTION IMPORT TESTS PASSED
+✓ git diff --check
+```
+
+Caseهای پوشش‌داده‌شده:
+
+- Identity با «در دو جمله» → بدون RAG و بدون Card
+- SSD recommendation طبیعی → `product_search` با category=`ssd`
+- Query دقیق Live: «یک SSD NVMe یک ترابایت موجود برای گیمینگ معرفی کن» → Product intent، نه Identity
+- `می‌خوام` → Purchase intent، نه Negation
+- `نمی‌خوام` و `نمیخوام` → بدون RAG و بدون Card
+- سؤال فنی DDR4/DDR5 با «محصول معرفی نکن» → فنی، بدون Card، category=`ram`
+
+## محدودیت باقی‌مانده برای Deploy
+
+برای بررسی checkout واقعی سرور، `omniroute-arena-doctor`، انتقال امن Patch و Live test ترتیبی، فقط رمز SSH لازم است. این رمز نباید در فایل‌ها، Git، logها یا `chat.md` نوشته شود.
+
+## تأیید Staging Server
+
+پس از ورود امن به سرور Production، پیش از اعمال Patch این موارد با نتیجهٔ واقعی تأیید شدند:
+
+```text
+server_head=2e71505fd8d7e27e57fd1195895c534623414c6d
+server_tree=clean
+agent_queue_active=0
+agent_queue_depth=0
+agent_status=True
+omniroute-arena-doctor: exit code 0
+```
+
+Patch مربوط به `package.json`، `chat-intent.ts` و `tests/run-real.js` روی checkout سرور اعمال شد. سپس فقط برای اجرای تست، TypeScript به‌صورت موقت و خارج از Repository در `/tmp` نصب شد؛ هیچ `npm ci`، Build کامل، dependency lockfile یا فایل Source دیگری تغییر نکرد.
+
+```text
+Server: npm run test:intent
+Result: 7 passed, 0 failed
+Server: git diff --check
+Result: pass
+```
+
+در لحظهٔ ثبت این بخش، تغییرهای Source/Test در server checkout آمادهٔ Commit/Push هستند و هنوز Live shopping test یا Full Build اجرا نشده است.
+## Commit Staging (بدون Build یا Deploy)
+
+تغییرها پس از تست هدفمند روی checkout سرور Commit شدند. Push به GitHub انجام نشده است تا با دستور «Full Build نگیریم؛ کاربر خودش Build نهایی را می‌گیرد» سازگار بماند. در نتیجه در این مرحله:
+
+- `GitHub main` و Live Vercel هنوز نباید این Patch را داشته باشند.
+- هیچ Full Build، `npm ci`، `npm audit fix` یا Live shopping request اجرا نشده است.
+- server checkout تمیز است و Commit آمادهٔ Push/Build نهایی کاربر است.

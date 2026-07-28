@@ -36,8 +36,10 @@ const GREETING_TABLE = [
 const IDENTITY_TABLE = [
   'کی هستی', 'کیهستی', 'اسمت چیه', 'اسمت', 'چه کاری می‌کنی', 'چه کاری میکنی',
   'چیکار میکنی', 'چیکار می‌کنی', 'چه کار بلدی', 'چه کاری بلدی',
-  'معرفی کن خودت', 'معرفی کن', 'خودت رو معرفی کن', 'خودتو معرفی کن',
-  'خودت را معرفی کن', 'از خودت بگو', 'تو کی هستی', 'تو چیهستی',
+  // Keep self-reference in identity patterns. "معرفی کن" alone is a normal shopping request.
+  'معرفی کن خودت', 'خودت رو معرفی کن', 'خودتو معرفی کن',
+  'خودت رو در دو جمله معرفی کن', 'خودتو در دو جمله معرفی کن',
+  'خودت را معرفی کن', 'خودت را در دو جمله معرفی کن', 'از خودت بگو', 'تو کی هستی', 'تو چیهستی',
   'کی هستی تو', 'هویت', 'اسم تو', 'به من بگو کی هستی',
   'what are you', 'who are you', 'introduce yourself',
   'what can you do', 'tell me about yourself',
@@ -69,7 +71,9 @@ const OFF_TOPIC_TABLE = [
 // ─── Category Synonym Map ────────────────────────────────────────
 
 export const CATEGORY_SYNONYMS: Record<string, string[]> = {
-  cpu: ['پردازنده', 'سی پی یو', 'cpu', 'اینتل', 'intel', 'رایزن', 'ryzen', 'core', 'i3', 'i5', 'i7', 'i9', 'r3', 'r5', 'r7', 'r9', 'core ultra'],
+  // Short Ryzen labels such as "r5" are deliberately excluded: they are substrings of DDR5.
+  // "ryzen"/"رایزن" still classify all normal Ryzen product queries as CPU.
+  cpu: ['پردازنده', 'سی پی یو', 'cpu', 'اینتل', 'intel', 'رایزن', 'ryzen', 'core', 'i3', 'i5', 'i7', 'i9', 'core ultra'],
   gpu: ['کارت گرافیک', 'gpu', 'گرافیک', 'rtx', 'rx', 'geforce', 'radeon', 'vram', 'graphics'],
   ram: ['رم', 'ram', 'ddr4', 'ddr5', 'حافظه رم', 'memory'],
   motherboard: ['مادربرد', 'motherboard', 'mainboard', 'بورد', 'b650', 'b760', 'h610', 'z790', 'x670'],
@@ -98,7 +102,7 @@ const TECHNICAL_TABLE = [
 // Negation: user explicitly says "don't show products"
 const NEGATION_TABLE = [
   'معرفی نکن', 'پیشنهاد نده', 'نشان نده', 'نشون نده',
-  'نمیخوام', 'می‌خوام', 'نیاز ندارم', 'بدون محصول',
+  'نمی‌خوام', 'نمیخوام', 'نیاز ندارم', 'بدون محصول',
   'قیمت نمیخوام', 'نخریدم', 'کالا نمیخوام', 'محصول نمیخوام',
   'don\'t show', 'don\'t recommend',
 ];

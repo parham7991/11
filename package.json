@@ -7,10 +7,11 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint || eslint . --ext .ts,.tsx,.js,.jsx",
-    "test": "node tests/run-basic.js && node tests/run-sse.js && node tests/run-comprehensive.js && node tests/run-live-fixes.js",
+    "test": "node tests/run-basic.js && node tests/run-sse.js && node tests/run-comprehensive.js && node tests/run-live-fixes.js && node tests/run-real.js",
     "format": "prettier --write .",
     "format:staged": "prettier --write $(git diff --name-only --diff-filter=ACMRT | grep -E '\\.(js|ts|tsx|jsx|json|css|scss|md)$')",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:intent": "node tests/run-real.js"
   },
   "dependencies": {
     "@heroui/accordion": "^2.2.24",

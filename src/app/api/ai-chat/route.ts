@@ -142,9 +142,15 @@ export async function POST(req: NextRequest): Promise<Response> {
         w.progress('understanding', 'در حال بررسی سوال شما…');
 
         // ─── Handle intent-specific flows ───────────────────
-        if (intentResult.intent === 'greeting' || intentResult.intent === 'identity') {
-          w.progress('ai_thinking', 'در حال نوشتن پاسخ…');
-          await callAi(w, config, message, history, startTime, requestId, clientAbort, 'greeting');
+        if (intentResult.intent === 'greeting') {
+          w.send({ type: 'delta', text: 'سلام! من دستیار هوشمند آفلند هستم. برای مشاوره فنی، انتخاب کالای دیجیتال و اسمبل سیستم کنارت هستم.' });
+          w.send({ type: 'meta', mode: 'deterministic-fallback', model: 'local', requestId, latencyMs: Date.now() - startTime });
+          return;
+        }
+
+        if (intentResult.intent === 'identity') {
+          w.send({ type: 'delta', text: 'من دستیار هوشمند آفلند، مشاور تخصصی قطعات کامپیوتر و کالای دیجیتال هستم. می‌توانم به سؤال‌های فنی پاسخ بدهم، محصولات موجود را براساس داده واقعی فروشگاه پیدا کنم و برای سیستم کامل شما را به اسمبلر هوشمند هدایت کنم.' });
+          w.send({ type: 'meta', mode: 'deterministic-fallback', model: 'local', requestId, latencyMs: Date.now() - startTime });
           return;
         }
 
@@ -268,7 +274,7 @@ async function callAi(
 
   // Mode-specific instructions
   if (mode === 'greeting' || mode === 'technical') {
-    systemContent += '\n\nمهم: این یک سوال فنی/معمولی است. محصولی پیشنهاد نده. فقط پاسخ فنی و کوتاه بده.';
+    systemContent += '\n\nمهم: این یک سؤال فنی/معمولی است. محصولی پیشنهاد نده. مستقیم پاسخ بده، مقدمه و معرفی خودت را تکرار نکن، حداکثر ۶ نکته و حدود ۶۰۰ کاراکتر بنویس.';
   }
 
   const messages: ChatMessage[] = [

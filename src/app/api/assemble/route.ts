@@ -242,18 +242,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       for (const cat of missingCategories) {
         const valid = cat.candidates
           .filter((c) => c.inStock && c.finalPrice > 0)
-          .filter((c) => c.finalPrice <= remainingRepairBudget); // Must fit budget
+          .filter((c) => c.finalPrice <= remainingRepairBudget)
+          // Never complete a build by inserting an incompatible part.
+          .filter((c) => isRepairCompatible(c, selectedParts, cat.category));
         if (valid.length === 0) continue;
 
-        // Sort: compatibility with existing parts first, then confidence, then value
+        // Every remaining candidate is compatible; rank by confidence then value.
         const sorted = valid.sort((a, b) => {
-          // Prefer parts compatible with already selected
-          const aCompat = isRepairCompatible(a, selectedParts, cat.category) ? 1 : 0;
-          const bCompat = isRepairCompatible(b, selectedParts, cat.category) ? 1 : 0;
-          if (aCompat !== bCompat) return bCompat - aCompat;
-          // Then confidence
           if ((b.confidence || 0) !== (a.confidence || 0)) return (b.confidence || 0) - (a.confidence || 0);
-          // Then value (lower price for same confidence)
           return a.finalPrice - b.finalPrice;
         });
 
@@ -355,14 +351,21 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (!hasMB) effectiveScore = Math.min(15, effectiveScore);
   }
 
-  // Determine if build is valid
+  // Determine completeness first; final validity also requires budget and no
+  // blocking compatibility errors after all repairs and optional additions.
   const buildComplete = missingMandatory.length === 0;
-  const isOk = buildComplete && effectiveScore >= 50;
 
   const tier = determineTier(parts, budget);
   const description = generateDescription(parts, useCaseKey, tier);
   const recommendation = generateSystemRecommendation(parts, useCaseKey, tier, budget);
   const summary = summarize(parts);
+  const overBudgetBy = Math.max(0, Number(summary.totalAfter || 0) - budget);
+  const hasBlockingCompatibilityError = compatMatrix.errors.length > 0;
+  const isOk =
+    buildComplete &&
+    effectiveScore >= 50 &&
+    overBudgetBy === 0 &&
+    !hasBlockingCompatibilityError;
   const useCase = USE_CASES.find((u) => u.key === useCaseKey) || USE_CASES[0];
 
   const unavailableMessages: string[] = [];
@@ -374,7 +377,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   // ═══════ 7) Final AI Analysis ══════════════════════════
   let analysisText = '';
-  if (config.apiKey && parts.length >= 4) {
+  if (config.apiKey && isOk && parts.length >= 4) {
     try {
       aiMeta.totalAiCalls++; // Increment BEFORE attempt
       const analysisResult = await doFinalAnalysis(
@@ -416,6 +419,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     useCase: customDesc ? 'custom' : useCaseKey,
     useCaseLabel: customDesc || useCase.label,
     budget,
+    missingCategories: missingMandatory,
+    overBudgetBy,
+    blockingIssues: compatMatrix.errors.length,
     parts,
     summary,
     tier,
@@ -435,6 +441,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         reason: 'mandatory_missing',
         solution: 'قطعهٔ سازگار انتخاب یا اضافه شود',
       })),
+      ...(overBudgetBy > 0
+        ? [{
+            severity: 'error' as const,
+            message: `مجموع قطعات ${overBudgetBy.toLocaleString('fa-IR')} تومان بیشتر از بودجه است`,
+            category: 'budget',
+            reason: 'budget_exceeded',
+            solution: 'یک یا چند قطعه با گزینهٔ سازگار و ارزان‌تر جایگزین شود',
+          }]
+        : []),
     ],
     compatibilityWarnings: compatMatrix.warnings.map((w) => ({
       severity: w.severity,

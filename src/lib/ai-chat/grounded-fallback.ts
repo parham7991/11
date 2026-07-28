@@ -82,8 +82,18 @@ export function buildGroundedProductContext(sources: readonly ChatSource[]): str
  * recovery recommendation.
  */
 export function buildGroundedProductFallback(sources: readonly ChatSource[]): string | null {
-  const available = normalizeSources(sources).filter(source => source.inStock === true);
-  if (available.length === 0) return null;
+  const normalized = normalizeSources(sources);
+  if (normalized.length === 0) return null;
+
+  const available = normalized.filter(source => source.inStock === true);
+  if (available.length === 0) {
+    const names = normalized.slice(0, 3).map(source => `• ${source.title}`);
+    return [
+      'محصولات مرتبط پیدا شدند، اما طبق آخرین اطلاعات فروشگاه هیچ‌کدام در حال حاضر موجود نیستند:',
+      ...names,
+      'برای جلوگیری از پیشنهاد اشتباه، کالای نامرتبط جایگزین نمی‌کنم. می‌توانید مدل یا ظرفیت دیگری بفرستید.',
+    ].join('\n');
+  }
 
   const items = available.map(source => {
     const details = [source.title];
@@ -92,7 +102,7 @@ export function buildGroundedProductFallback(sources: readonly ChatSource[]): st
   });
 
   return [
-    'پاسخ هوشمند فعلاً در دسترس نیست؛ اما این گزینه‌ها بر اساس داده‌های واقعی آفلند پیدا شده‌اند:',
+    'پاسخ هوشمند فعلاً در دسترس نیست؛ اما این گزینه‌ها براساس داده‌های واقعی آفلند پیدا شده‌اند:',
     ...items,
     'برای مشخصات و بررسی نهایی قیمت و موجودی، کارت هر محصول را باز کنید.',
   ].join('\n');

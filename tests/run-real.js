@@ -146,11 +146,14 @@ test('AI recovery fallback cites only available valid catalog rows', () => {
   assert.doesNotMatch(fallback, /GPU ناموجود|منبع نامعتبر|javascript:/);
 });
 
-test('grounded recovery refuses to recommend only out-of-stock sources', () => {
+test('grounded recovery reports relevant out-of-stock sources without unrelated substitutes', () => {
   const fallback = buildGroundedProductFallback([
     { title: 'SSD ناموجود', url: '/product/ssd-out', price: '۵٬۰۰۰ تومان', inStock: false },
   ]);
-  assert.equal(fallback, null);
+  assert.ok(fallback);
+  assert.match(fallback, /SSD ناموجود/);
+  assert.match(fallback, /در حال حاضر موجود نیستند/);
+  assert.match(fallback, /کالای نامرتبط جایگزین نمی‌کنم/);
 });
 
 console.log('\n═══════════════════════════════');

@@ -9,7 +9,7 @@
  */
 
 import { generateToken } from '@/lib/fun';
-import { BASEURL, BASEURL_SITE, BASE_URL_IMAGE, AWS_BUCKET } from '@/lib/variable';
+import { BASEURL, BASE_URL_IMAGE, AWS_BUCKET } from '@/lib/variable';
 import type { ChatSource } from './types';
 
 /** ساخت آدرس کامل تصویر محصول از مسیر خام */
@@ -435,9 +435,10 @@ export async function buildRagContext(query: string, count = 10): Promise<RagRes
     if (!title) return;
 
     const id = p.id ?? p.url_key ?? p.slug ?? '';
-    const siteBase = BASEURL_SITE || '/';
-    const urlRaw: string = id ? `${siteBase}/product/${encodeURIComponent(String(id))}` : siteBase;
-    const url = sanitizeProductUrl(urlRaw) || siteBase;
+    // Relative product URLs work on preview, production and custom domains and
+    // prevent a missing Vercel env from leaking localhost links to customers.
+    const urlRaw: string = id ? `/product/${encodeURIComponent(String(id))}` : '/';
+    const url = sanitizeProductUrl(urlRaw) || '/';
 
     // قیمت‌ها و تخفیف
     const hasSpecial =

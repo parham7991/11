@@ -207,9 +207,9 @@ export default function AiChatWidget({
         const decoder = new TextDecoder();
         let buffer = '';
         let acc = '';
+        let firstDeltaReceived = false;
 
-        // اولین delta که رسید، حالت loading را خاموش می‌کنیم
-        setLoading(false);
+        // IMPORTANT: setLoading(false) ONLY after first delta — not here!
 
         while (true) {
           const { done, value } = await reader.read();
@@ -221,7 +221,7 @@ export default function AiChatWidget({
           for (const line of lines) {
             const t = line.trim();
             if (!t) continue;
-            let evt: { type?: string; text?: string; sources?: ChatSource[]; error?: string };
+            let evt: { type?: string; text?: string; sources?: ChatSource[]; error?: string; phase?: string; message?: string };
             try {
               evt = JSON.parse(t);
             } catch {
@@ -230,13 +230,25 @@ export default function AiChatWidget({
             if (evt.type === 'sources' && Array.isArray(evt.sources)) {
               updateBot(botIndex, { sources: evt.sources.slice(0, 4) });
             } else if (evt.type === 'delta' && evt.text) {
+              if (!firstDeltaReceived) {
+                firstDeltaReceived = true;
+                setLoading(false);
+              }
               acc += evt.text;
-              // هنگام تایپ زنده، خطِ دکمه‌ها را پنهان نگه می‌داریم تا کاربر کد خام نبیند
               const live = acc.includes('[[')
                 ? acc.replace(/\[\[[^\]]*\]?\]?$/, '').trimEnd()
                 : acc;
               updateBot(botIndex, { content: live });
+            } else if (evt.type === 'progress' && evt.message) {
+              // Show progress message in placeholder while waiting
+              if (!firstDeltaReceived) {
+                updateBot(botIndex, { content: `⏳ ${evt.message}` });
+              }
             } else if (evt.type === 'error') {
+              if (!firstDeltaReceived) {
+                firstDeltaReceived = true;
+                setLoading(false);
+              }
               updateBot(botIndex, {
                 content: acc || evt.error || 'خطا در دریافت پاسخ.',
               });

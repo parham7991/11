@@ -1055,40 +1055,14 @@ export default function AssembleWizard() {
         setUnavailablePartIds(new Set(data.compatibilityMatrix.unavailablePartIds));
       }
 
-      // ═══════ فراخوانی AI تحلیل (موازی) ═══════
-      if (data.ok && data.parts?.length) {
-        fetch('/api/assemble/ai-analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            useCase: customDesc ? 'custom' : useCase,
-            budget,
-            useCaseLabel: data.useCaseLabel,
-            compatibilityScore: data.compatibilityScore,
-            parts: data.parts.map((p) => ({
-              category: p.category,
-              categoryLabel: p.categoryLabel,
-              name: p.name,
-              shortSpec: p.shortSpec,
-              specs: p.specs,
-              quantity: p.quantity,
-              quantityLabel: p.quantityLabel,
-              price: p.finalPrice,
-            })),
-          }),
-        })
-          .then((r) => r.json())
-          .then((aiData) => {
-            setAiAnalysis({
-              enabled: aiData.enabled !== false,
-              text: aiData.analysis || aiData.fallback || '',
-              provider: aiData.provider,
-              loading: false,
-            });
-          })
-          .catch(() => {
-            setAiAnalysis({ enabled: false, text: '', loading: false });
-          });
+      // ═══════ تحلیل AI از پاسخ اصلی (بدون call تکراری) ═══════
+      if (data.parts?.length && data.analysis) {
+        setAiAnalysis({
+          enabled: data.ai?.finalAnalysisUsed ?? true,
+          text: data.analysis,
+          provider: data.ai?.finalAnalysisModel || 'internal',
+          loading: false,
+        });
       } else {
         setAiAnalysis({ enabled: false, text: '', loading: false });
       }

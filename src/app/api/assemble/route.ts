@@ -180,6 +180,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       };
 
       const startTime = Date.now();
+      aiMeta.totalAiCalls++; // Increment BEFORE attempt (truthful tracking)
       const plannerResult = await planFullBuild(
         clientOpts,
         useCaseKey,
@@ -195,7 +196,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       aiMeta.planningSucceeded = true;
       aiMeta.planningModel = config.assemblyModel;
       aiMeta.planningLatencyMs = Date.now() - startTime;
-      aiMeta.totalAiCalls++;
 
       // ─── Map AI selections to actual parts ────────────
       const selectedParts: AssemblyPart[] = [];
@@ -313,6 +313,33 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   // ═══════ 6) Compatibility check ════════════════════════
   const compatMatrix = checkFullCompatibility(parts);
+
+  // ─── Mandatory category gate ──────────────────────────────
+  const mandatoryByUseCase: Record<string, string[]> = {
+    gaming: ['cpu', 'motherboard', 'ram', 'gpu', 'storage', 'psu', 'case'],
+    editing: ['cpu', 'motherboard', 'ram', 'gpu', 'storage', 'psu', 'case'],
+    streaming: ['cpu', 'motherboard', 'ram', 'gpu', 'storage', 'psu', 'case'],
+    office: ['cpu', 'motherboard', 'ram', 'storage', 'psu', 'case'],
+  };
+  const mandatory = mandatoryByUseCase[useCaseKey] || mandatoryByUseCase.gaming;
+  const presentCategories = new Set(parts.filter(p => p.inStock && p.finalPrice > 0).map(p => p.category));
+  const missingMandatory = mandatory.filter(cat => !presentCategories.has(cat));
+
+  // Cap compatibility score for incomplete builds
+  let effectiveScore = compatMatrix.score;
+  if (missingMandatory.length > 0) {
+    // Missing mandatory → max score 40
+    effectiveScore = Math.min(40, compatMatrix.score);
+    // CPU without motherboard or vice versa → max 20
+    if ((!hasCPU && hasMB) || (hasCPU && !hasMB)) effectiveScore = Math.min(20, effectiveScore);
+    // No motherboard at all → max 15
+    if (!hasMB) effectiveScore = Math.min(15, effectiveScore);
+  }
+
+  // Determine if build is valid
+  const buildComplete = missingMandatory.length === 0;
+  const isOk = buildComplete && effectiveScore >= 50;
+
   const tier = determineTier(parts, budget);
   const description = generateDescription(parts, useCaseKey, tier);
   const recommendation = generateSystemRecommendation(parts, useCaseKey, tier, budget);
@@ -336,6 +363,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   let analysisText = '';
   if (config.apiKey && parts.length >= 4) {
     try {
+      aiMeta.totalAiCalls++; // Increment BEFORE attempt
       const analysisResult = await doFinalAnalysis(
         config,
         parts,
@@ -348,7 +376,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         analysisText = analysisResult.text;
         aiMeta.finalAnalysisUsed = true;
         aiMeta.finalAnalysisModel = config.analysisModel;
-        aiMeta.totalAiCalls++;
       }
     } catch (err) {
       console.warn(
@@ -371,21 +398,31 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   };
 
   return NextResponse.json({
-    ok: true,
+    ok: isOk,
+    partial: !buildComplete,
     useCase: customDesc ? 'custom' : useCaseKey,
     useCaseLabel: customDesc || useCase.label,
     budget,
     parts,
     summary,
     tier,
-    compatibilityScore: compatMatrix.score,
-    compatibilityIssues: compatMatrix.errors.map((e) => ({
-      severity: e.severity,
-      message: e.message,
-      category: e.category,
-      reason: e.reason,
-      solution: e.solution,
-    })),
+    compatibilityScore: effectiveScore,
+    compatibilityIssues: [
+      ...compatMatrix.errors.map((e) => ({
+        severity: e.severity,
+        message: e.message,
+        category: e.category,
+        reason: e.reason,
+        solution: e.solution,
+      })),
+      ...missingMandatory.map((cat) => ({
+        severity: 'error' as const,
+        message: `قطعهٔ اجباری «${cat}» انتخاب نشده`,
+        category: cat,
+        reason: 'mandatory_missing',
+        solution: 'قطعهٔ سازگار انتخاب یا اضافه شود',
+      })),
+    ],
     compatibilityWarnings: compatMatrix.warnings.map((w) => ({
       severity: w.severity,
       message: w.message,

@@ -2391,3 +2391,114 @@ npm run build:             ✓ Compiled successfully
 1. Pre-existing TS errors: image imports (missing .png type declarations), test runner types
 2. External API dependency: static page generation may timeout if backend unreachable
 3. Arena rate limit: maxConcurrency=1 means serial AI calls only
+
+---
+
+# 🔧 Live Fixes v6 — Identity, Progress, Assembly Gate
+
+> تاریخ: ۱۴۰۵/۰۵/۰۶
+
+## Live Test Findings (offl.vercel.app)
+
+| Test | TTFB | Total | Issue |
+|------|------|-------|-------|
+| Identity question | 2.37s | 23.85s | 10 irrelevant products fetched |
+| Technical DDR4/DDR5 | 2.26s | 39.64s | 10 products shown for non-shopping |
+| SSD 1TB | 2.63s | 64.35s | Deterministic fallback showed GPU/RAM |
+| Fake XYZ-9999 | — | 46.36s | Unrelated home appliances |
+| Gaming Assembly | — | 98.4s | AI timeout, no motherboard, ok=true |
+
+## Root Causes Fixed
+
+### 1. Config: Vercel env fallback
+- **مشکل**: بدون `AI_ASSEMBLY_MODEL` env → `offl-chat-elite` (اشتباه)
+- **حل**: `OMNIROUTE_DEFAULTS` با fallback هوشمند
+- Even without env, OmniRoute gets: chat=offl-chat-elite, assembly=offl-assemble-elite
+
+### 2. Chat Intent Routing
+- **مشکل**: هر سوال → RAG → 10 irrelevant product
+- **حل**: `chat-intent.ts` — deterministic classifier
+  - greeting/identity → no RAG, no cards
+  - technical → no RAG, no cards (unless purchase words detected)
+  - full_build → redirect to assembly page
+  - product_search → RAG with category hard filter
+- Category synonym map: CPU, GPU, RAM, SSD, Motherboard, PSU, Case, Cooler
+
+### 3. Progress Stream (Immediate First Event)
+- **مشکل**: کاربر 2-3 ثانیه هیچ event نمی‌دید
+- **حل**: Stream فوراً return می‌شود
+  - First event: `{"type":"progress","phase":"understanding",...}`
+  - Heartbeat every 5s to prevent timeout
+  - Phases: understanding → searching_catalog → waiting_for_ai → ai_thinking
+
+### 4. Widget Loading Fix
+- **مشکل**: `setLoading(false)` قبل از اولین delta → typing indicator ناپدید
+- **حل**: Loading STAYS true until first `delta` event
+- Widget now shows `⏳ phase_message` during progress events
+
+### 5. Assembly Mandatory Gate
+- **مشکل**: ok=true حتی بدون motherboard
+- **حل**:
+  - Mandatory categories per use case
+  - Missing mandatory → score capped at 40 (max)
+  - CPU without MB → max 20
+  - No MB → max 15
+  - `ok: isOk` (not hardcoded true)
+  - `partial: !buildComplete`
+  - `missingCategories` in response
+
+### 6. Duplicate AI Analyze Removed
+- **مشکل**: `/api/assemble` + `/api/assemble/ai-analyze` → 2 AI calls + 429
+- **حل**: Widget uses `data.analysis` from main response
+- Standalone `/api/assemble/ai-analyze` endpoint kept for manual re-analyze only
+
+### 7. AI Metadata Truthful
+- **مشکل**: totalAiCalls=0 even when attempted
+- **حل**: Increment BEFORE attempt (not after success)
+- Metadata: planningRequested, planningSucceeded, totalAiCalls, etc.
+
+## New Files
+
+| File | Purpose |
+|------|---------|
+| `src/lib/ai-chat/chat-intent.ts` | Deterministic intent classifier |
+| `tests/run-live-fixes.js` | 46 targeted tests for live fixes |
+
+## Changed Files
+
+| File | Change |
+|------|--------|
+| `src/lib/ai-chat/config.ts` | OmniRoute defaults (offl-assemble-elite) |
+| `src/app/api/ai-chat/route.ts` | Intent routing + progress stream |
+| `src/components/ai-chat/AiChatWidget.tsx` | Loading fix + progress events |
+| `src/app/api/assemble/route.ts` | Mandatory gate + score cap + metadata |
+| `src/components/assemble/AssembleWizard.tsx` | No duplicate ai-analyze |
+| `.env.example` | Updated model variables |
+
+## Test Results
+
+```
+tests/run-basic.js:       ✓ PASS
+tests/run-sse.js:         ✓ 46/46
+tests/run-comprehensive.js: ✓ 52/52
+tests/run-live-fixes.js:  ✓ 46/46
+npx tsc --noEmit:         ✓ 0 new errors
+```
+
+## Vercel Environment Checklist
+
+```
+AI_CHAT_PROVIDER=omniroute
+AI_CHAT_API_BASE=https://api.lonz.ir/v1
+AI_CHAT_API_KEY=***
+AI_CHAT_MODEL=offl-chat-elite
+AI_ASSEMBLY_MODEL=offl-assemble-elite
+AI_ANALYSIS_MODEL=offl-chat-elite
+AI_CHAT_ENABLED=1
+NEXT_PUBLIC_AI_CHAT_ENABLED=1
+AI_CHAT_ENABLE_RAG=1
+AI_CHAT_RAG_COUNT=10
+AI_CHAT_USE_PROXY=0
+```
+
+Even without AI_ASSEMBLY_MODEL, code defaults to offl-assemble-elite for OmniRoute.

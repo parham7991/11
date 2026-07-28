@@ -7,7 +7,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint || eslint . --ext .ts,.tsx,.js,.jsx",
-    "test": "node tests/run-basic.js",
+    "test": "node tests/run-basic.js && node tests/run-sse.js && node tests/run-comprehensive.js",
     "format": "prettier --write .",
     "format:staged": "prettier --write $(git diff --name-only --diff-filter=ACMRT | grep -E '\\.(js|ts|tsx|jsx|json|css|scss|md)$')",
     "prepare": "husky"

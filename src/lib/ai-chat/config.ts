@@ -1,32 +1,19 @@
 /**
  * config.ts — تنظیمات سمت سرور دستیار هوشمند آفلند
  * ──────────────────────────────────────────────────────────────────
- * طراحی برای حداکثر سادگی:
- *   کافی است فقط دو چیز را در .env.local بدهی:
- *     AI_CHAT_PROVIDER = groq        ← فقط یک سرویس انتخاب کن
- *     AI_CHAT_API_KEY  = توکنِ همان سرویس
- *   و تمام! آدرس API و مدل پیش‌فرض به‌صورت خودکار از روی همان سرویس
- *   انتخاب می‌شوند (از کاتالوگ providers.ts).
+ * مدل‌ها:
+ *   AI_CHAT_MODEL      = offl-chat-elite (چت آنلاین)
+ *   AI_ASSEMBLY_MODEL  = offl-assemble-elite (اسمبل هوشمند)
+ *   AI_ANALYSIS_MODEL  = offl-chat-elite (تحلیل نهایی اسمبل)
  *
- * همهٔ کلیدها فقط روی سرور خوانده می‌شوند (بدون NEXT_PUBLIC) تا توکن
- * هیچ‌وقت به مرورگر فاش نشود.
- *
- * تنظیمات اختیاری (اگر بخواهی override کنی):
- *   AI_CHAT_MODEL          = نام مدل خاص (پیش‌فرض = مدل پیش‌فرضِ سرویس)
- *   AI_CHAT_API_BASE       = آدرس API دستی (پیش‌فرض = از روی سرویس)
- *   AI_CHAT_ENABLED        = 1 | 0
- *   AI_CHAT_TEMPERATURE    = دمای پاسخ (پیش‌فرض 0.4)
- *   AI_CHAT_MAX_TOKENS     = حداکثر توکن پاسخ (پیش‌فرض 800)
- *   AI_CHAT_SYSTEM_PROMPT  = پرامپت سیستمی سفارشی
- *   AI_CHAT_ENABLE_RAG     = 1 | 0  (جستجو در محصولات آفلند)
- *   AI_CHAT_RAG_COUNT      = تعداد محصول در بافت (پیش‌فرض 6)
+ * همهٔ کلیدها فقط روی سرور خوانده می‌شوند (بدون NEXT_PUBLIC).
  * ──────────────────────────────────────────────────────────────────
  */
 
 import { findProvider, DEFAULT_PROVIDER_ID, type AiProvider } from './providers';
 
 const DEFAULT_SYSTEM_PROMPT = [
-  'تو «دستیار هوشمند آفلند» هستی؛ یک کارشناس فروش و مشاور خرید حرفه‌ای، باهوش و باانرژی برای فروشگاه اینترنتی آفلند (offl.ir) با شعار «سرزمینِ تخفیف».',
+  'تو «دستیار هوشمند آفلند» هستی؛ یک کارشناس فروش و مشاور خرید حرفه‌ای، باهوش و باانرژی برای فروشگاه اینترنتی آفلند (offl.ir) با شعار «سرزمینِ تخفیل».',
   '',
   '🏪 آفلند چه می‌فروشد؟ قطعات و سخت‌افزار کامپیوتر و کالای دیجیتال، شاملِ:',
   'مادربرد، کارت گرافیک (GPU)، پردازنده (CPU)، رم، حافظهٔ SSD/HDD، پاور (منبع تغذیه)، کیس، خنک‌کننده و فن (هواخنک/آب‌خنک)، مودم و روتر، گوشی موبایل، لپ‌تاپ، ساعت هوشمند، هندزفری، کنسول بازی و لوازم جانبی گیمینگ. برندِ اختصاصی فروشگاه «اوست (Aurest)» است.',
@@ -41,7 +28,7 @@ const DEFAULT_SYSTEM_PROMPT = [
   '- کوتاه، دقیق و کاربردی؛ از لیست و ایموجی‌های مرتبط (🖥️⚡🎮💾) به‌اندازه استفاده کن.',
   '- وقتی محصولی پیشنهاد می‌دهی: نام کامل، قیمت دقیق و یک دلیل فنیِ کوتاه بگو و کاربر را به دیدن کارت محصول دعوت کن.',
   '- اگر بودجه/کاربری مشخص نیست، یک سؤال کوتاه بپرس (مثلاً: بودجه‌ات چنده؟ بیشتر گیمینگه یا کار اداری؟).',
-  '- اگر کاربر دنبال «سیستم کامل» است، قطعات سازگار را کنار هم پیشنهاد بده و به سازگاری اشاره کن.',
+  '- اگر کاربر دنبال «سیستم کامل» است، قطعات سازگار را کنار هم پیشنهاد بده و به سازگاری اشاره کن. برای سیستم کامل، کاربر را به اسمبل هوشمند هدایت کن.',
   '',
   '🔒 قوانین مهم (هرگز نقض نکن):',
   '- فقط بر اساس «اطلاعات محصولات» که در اختیارت قرار می‌گیرد دربارهٔ قیمت/موجودی پاسخ بده. هیچ‌وقت قیمت یا موجودی از خودت نساز.',
@@ -61,22 +48,21 @@ export type AiChatConfig = {
   providerName: string;
   apiKey: string;
   apiBase: string;
-  model: string;
+  /** مدل چت آنلاین (offl-chat-elite) */
+  chatModel: string;
+  /** مدل اسمبل هوشمند (offl-assemble-elite) */
+  assemblyModel: string;
+  /** مدل تحلیل نهایی (offl-chat-elite) */
+  analysisModel: string;
   temperature: number;
   maxTokens: number;
   systemPrompt: string;
   enableRag: boolean;
   ragCount: number;
-  /** آدرس کامل پروکسی (مثل socks5://user:pass@host:port) یا '' اگر غیرفعال */
   proxyUrl: string;
-  /** آیا از پروکسی برای ارتباط با سرویس AI استفاده شود؟ */
   useProxy: boolean;
 };
 
-/**
- * ساخت آدرس پروکسی از متغیرهای محیطی.
- * یا AI_CHAT_PROXY_URL کامل، یا اجزای جداگانه (scheme/host/port/user/pass).
- */
 function buildProxyUrl(): string {
   const full = (process.env.AI_CHAT_PROXY_URL || '').trim();
   if (full) return full;
@@ -102,58 +88,77 @@ function num(v: string | undefined, def: number): number {
   return Number.isFinite(n) ? n : def;
 }
 
+function str(v: string | undefined, def: string): string {
+  return (v || '').trim() || def;
+}
+
 /**
- * تنظیمات کامل دستیار را از env می‌خواند (فقط سمت سرور).
- * منطق هوشمند: فقط با provider + key همه‌چیز خودکار ست می‌شود.
+ * تنظیمات کامل دستیار را از env می‌خواند.
+ * مدل‌ها:
+ *   AI_CHAT_MODEL → chatModel (default: provider default)
+ *   AI_ASSEMBLY_MODEL → assemblyModel (default: chatModel fallback)
+ *   AI_ANALYSIS_MODEL → analysisModel (default: chatModel fallback)
  */
 export function getAiChatConfig(): AiChatConfig {
   const providerId = (process.env.AI_CHAT_PROVIDER || DEFAULT_PROVIDER_ID).trim().toLowerCase();
   const provider: AiProvider | undefined = findProvider(providerId);
 
-  // آدرس API: اگر دستی داده شده همان، وگرنه از روی سرویس
   const apiBase = (
     (process.env.AI_CHAT_API_BASE || '').trim() ||
     provider?.apiBase ||
     'https://api.openai.com/v1'
   ).replace(/\/+$/, '');
 
-  // مدل: اگر دستی داده شده همان، وگرنه مدل پیش‌فرضِ سرویس
-  const model = (process.env.AI_CHAT_MODEL || '').trim() || provider?.defaultModel || 'gpt-4o-mini';
+  const defaultModel = provider?.defaultModel || 'gpt-4o-mini';
+
+  // مدل چت: از env یا provider default
+  const chatModel = str(process.env.AI_CHAT_MODEL, defaultModel);
+  // مدل اسمبل: از env یا fallback به chatModel
+  const assemblyModel = str(process.env.AI_ASSEMBLY_MODEL, chatModel);
+  // مدل تحلیل: از env یا fallback به chatModel
+  const analysisModel = str(process.env.AI_ANALYSIS_MODEL, chatModel);
 
   return {
     enabled: bool(process.env.AI_CHAT_ENABLED, true),
     providerId,
     providerName: provider?.name || providerId,
-    // فقط کلید سروری مجاز است؛ بدون NEXT_PUBLIC و بدون fallback هاردکد
     apiKey: (process.env.AI_CHAT_API_KEY || '').trim(),
     apiBase,
-    model,
+    chatModel,
+    assemblyModel,
+    analysisModel,
     temperature: num(process.env.AI_CHAT_TEMPERATURE, 0.4),
     maxTokens: num(process.env.AI_CHAT_MAX_TOKENS, 800),
     systemPrompt: (process.env.AI_CHAT_SYSTEM_PROMPT || '').trim() || DEFAULT_SYSTEM_PROMPT,
     enableRag: bool(process.env.AI_CHAT_ENABLE_RAG, true),
-    ragCount: Math.max(1, Math.min(12, num(process.env.AI_CHAT_RAG_COUNT, 8))),
+    ragCount: Math.max(1, Math.min(12, num(process.env.AI_CHAT_RAG_COUNT, 10))),
     proxyUrl: buildProxyUrl(),
     useProxy: bool(process.env.AI_CHAT_USE_PROXY, false),
   };
 }
 
 /**
- * پاک‌سازی سادهٔ Prompt Injection: حذف کلمات دستور و تلاش برای دور زدن سیستم
+ * sanitizePrompt — محافظت بدون تخریب سوال کاربر.
+ * فقط محدودیت طول + حذف control characters + Unicode normalization.
+ * کلمات کاربر حذف نمی‌شوند — role separation + RAG delimiter محافظت می‌کند.
  */
 export function sanitizePrompt(text: string): string {
-  const cleaned = text
-    .replace(
-      /(\bignore\b|\bforget\b|\bdisregard\b|\boverride\b|\bnew instruction\b|\bsystem prompt\b|\bsecret\b|\btoken\b|\bapi key\b|\bpassword\b)/gi,
-      ''
-    )
-    .replace(/<script[^>]*>[^]*?<\/script>/gi, '')
-    .replace(/`[^`]*`/g, '')
-    .trim();
-  return cleaned.slice(0, 1000);
+  return (
+    text
+      // حذف control characters (به جز whitespace معمول)
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+      // حذف HTML tags
+      .replace(/<[^>]*>/g, ' ')
+      // Unicode normalization (NFC)
+      .normalize('NFC')
+      // trim و collapse whitespace
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 1000)
+  );
 }
 
-/** فقط برای کلاینت: آیا ویجت روشن است؟ (از طریق NEXT_PUBLIC) */
+/** فقط برای کلاینت: آیا ویجت روشن است؟ */
 export function isAiChatPublicEnabled(): boolean {
   const v = process.env.NEXT_PUBLIC_AI_CHAT_ENABLED;
   if (v === undefined || v === '') return true;

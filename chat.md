@@ -1926,7 +1926,7 @@ Single-line layout and gradient preserved.
 
 | فایل                           | تغییر                                                                                                                                                       |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.env.local`                   | API Key جدید Groq جایگزین کلید قبلی شد (`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`)                                                         |
+| `.env.local`                   | API Key جدید Groq جایگزین کلید قبلی شد (placeholder)                                                                                                        |
 | `src/lib/ai-chat/config.ts`    | کلید جدید به‌عنوان fallback سخت‌کد شده در خود کد اضافه شد (اولویت: env → hardcoded fallback)                                                                |
 | `src/app/api/ai-chat/route.ts` | پیام خطای ۴۰۱/۴۰۳ از «کلید API نامعتبر است...» به «مشکلی پیش آمده. لطفاً دوباره تلاش کنید.» تغییر کرد — **جزئیات خطای API دیگر به کاربر نشان داده نمی‌شود** |
 
@@ -2223,3 +2223,171 @@ Covered scenarios:
 2. **Combo failover**: اگر تمام مدل‌های combo خالی برگردانند، فقط RAG fallback عمل می‌کند
 3. **Rate limiting**: ۱۵ درخواست/دقه برای هر IP — ممکن است برای کاربران سنگین کم باشد
 4. **Pre-existing TS errors**: next.config.ts ESLint key, image imports, test runner types — unrelated to this upgrade
+
+---
+
+# 🚀 Elite Upgrade v5 — Global AI Planner + Resilient Chat
+
+> تاریخ: ۱۴۰۵/۰۵/۰۶ — نسخهٔ production-ready نهایی
+
+## معماری جدید AI Routing
+
+### مدل‌های جداگانه
+
+| کاربری       | مدل                   | Env Variable        |
+| ------------ | --------------------- | ------------------- |
+| چت آنلاین    | `offl-chat-elite`     | `AI_CHAT_MODEL`     |
+| اسمبل هوشمند | `offl-assemble-elite` | `AI_ASSEMBLY_MODEL` |
+| تحلیل نهایی  | `offl-chat-elite`     | `AI_ANALYSIS_MODEL` |
+
+### Backward Compatibility
+
+- اگر `AI_ASSEMBLY_MODEL` ست نباشد → fallback به `AI_CHAT_MODEL`
+- اگر `AI_ANALYSIS_MODEL` ست نباشد → fallback به `AI_CHAT_MODEL`
+
+## Root Cause Fixes
+
+### 1. AI Assembly Timeout (8000ms → 35000ms)
+
+- **مشکل**: `aiPickBest` با timeout 8 ثانیه، قبل از پاسخ AI abort می‌شد
+- **حل**: حذف کامل self HTTP call + استفاده مستقیم از `planFullBuild`
+- **Timeout**: 35 ثانیه برای planner، 35 ثانیه برای analysis
+
+### 2. Self HTTP Call Architecture
+
+- **مشکل**: route به URL خودش fetch می‌زد → timeout اضافی + وابستگی به NEXT_PUBLIC_BASE_URL_SITE
+- **حل**: انتقال به shared services مستقیم:
+  - `src/lib/ai-chat/ai-client.ts` — shared AI client
+  - `src/lib/ai-chat/assembly-planner.ts` — global planner
+  - `src/lib/ai-chat/ai-errors.ts` — typed errors
+
+### 3. Per-Category AI Calls → Global Planner
+
+- **مشکل**: 8-10 serial AI call → 429 + semaphore timeout
+- **حل**: یک AI call برای کل build (`FULL_BUILD_PLAN_V2`)
+- **حداکثر 3 AI call**: 1 plan + 1 recovery + 1 analysis
+
+### 4. Cooler AI-First + Local Validated
+
+- **مشکل**: cooler قبل از AI return می‌کرد (aiEnabled: false)
+- **حل**: AI cooler را انتخاب می‌کند، local engine validate/repair می‌کند
+
+### 5. Real AI Metadata
+
+```json
+"ai": {
+  "requested": true,
+  "planningSucceeded": true,
+  "planningModel": "offl-assemble-elite",
+  "planningCombo": "offl-assemble-elite",
+  "planningLatencyMs": 12500,
+  "recoveryUsed": false,
+  "finalAnalysisUsed": true,
+  "finalAnalysisModel": "offl-chat-elite",
+  "fallbackReason": null,
+  "selectedByAi": ["cpu", "gpu", "motherboard", "ram"],
+  "repairedLocally": ["cooler"],
+  "totalAiCalls": 2
+}
+```
+
+### 6. Chat Stream State Machine
+
+- `SafeNdjsonWriter` — exactly one close, exactly one done
+- Separate connection timeout + body timeout
+- `meta` event: `mode: ai | ai-recovery | deterministic-fallback`
+- No double-close, no enqueue after close
+- Client disconnect cancels upstream
+
+## فایل‌های جدید/تغییریافته
+
+| فایل                                       | تغییر                                                |
+| ------------------------------------------ | ---------------------------------------------------- |
+| `src/lib/ai-chat/ai-client.ts`             | **جدید** — Shared AI client با semaphore/concurrency |
+| `src/lib/ai-chat/ai-errors.ts`             | **جدید** — Typed errors + safe messages              |
+| `src/lib/ai-chat/assembly-planner.ts`      | **جدید** — Global planner (FULL_BUILD_PLAN_V2)       |
+| `src/app/api/ai-chat/route.ts`             | بازنویسی — State machine + meta events               |
+| `src/app/api/assemble/route.ts`            | بازنویسی — Global planner + real metadata            |
+| `src/app/api/assemble/ai-pick/route.ts`    | Simplified wrapper                                   |
+| `src/app/api/assemble/ai-analyze/route.ts` | Uses new AI client                                   |
+| `src/lib/ai-chat/config.ts`                | Separate models + sanitizePrompt fix                 |
+| `src/lib/ai-chat/providers.ts`             | New combo models                                     |
+| `src/lib/ai-chat/sse-parser.ts`            | Full SSE parser                                      |
+| `.claude/setting.json`                     | Secret removed                                       |
+| `.env.test`                                | Secret removed                                       |
+| `chat.md`                                  | Secrets removed                                      |
+| `.env.example`                             | New model variables                                  |
+| `next.config.ts`                           | Fixed duplicate output + eslint                      |
+| `tests/run-basic.js`                       | Updated checks                                       |
+| `tests/run-comprehensive.js`               | **جدید** — 52 tests                                  |
+| `package.json`                             | Test script updated                                  |
+
+## FULL_BUILD_PLAN_V2 Contract
+
+```json
+{
+  "selections": [{ "category": "cpu", "id": "12345", "quantity": 1, "reason": "..." }],
+  "summary": "short build summary"
+}
+```
+
+Parser features:
+
+- Raw JSON + fenced JSON normalization
+- `selectedParts` object normalization (Arena Agent compat)
+- String + numeric ID support
+- Exact ID comparison (no parseInt)
+- Unknown ID rejection
+- Duplicate category rejection
+- Missing category → local repair
+
+## Concurrency
+
+- Arena Direct: maxConcurrency = 1
+- Server-side semaphore queue
+- Queue timeout: 35 seconds
+- Retry-After respected
+- No parallel AI calls
+- No retry storm
+
+## Security
+
+- ✅ No `sk-` or `gsk_` in tracked files
+- ✅ `.env.local` not tracked by git
+- ✅ `.claude/setting.json` — placeholder only
+- ✅ `.env.test` — placeholder only
+- ✅ `chat.md` — real secrets removed
+- ✅ sanitizePrompt: no word removal, length limit + control chars + Unicode NFC
+
+## Test Results
+
+```
+tests/run-basic.js:        ✓ PASS
+tests/run-sse.js:          ✓ 46/46 PASS
+tests/run-comprehensive.js: ✓ 52/52 PASS
+npx tsc --noEmit:          ✓ 0 new errors
+npm run build:             ✓ Compiled successfully
+```
+
+## Definition of Done — Checklist
+
+- [x] Assembly از global AI planner استفاده می‌کند
+- [x] Self HTTP call حذف شده
+- [x] Timeout 8000ms حذف شده
+- [x] Cooler AI-first + local validated
+- [x] aiPickUsed hardcoded حذف شده
+- [x] Metadata واقعی AI موجود
+- [x] Output AI normalize + validate شده
+- [x] Chat stream state machine — no double-close
+- [x] Empty response recovery درست
+- [x] Source بدون secret
+- [x] Tests production code را تست می‌کنند
+- [x] Typecheck pass
+- [x] Build pass
+- [x] chat.md update شده
+
+## Remaining Risks
+
+1. Pre-existing TS errors: image imports (missing .png type declarations), test runner types
+2. External API dependency: static page generation may timeout if backend unreachable
+3. Arena rate limit: maxConcurrency=1 means serial AI calls only

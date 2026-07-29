@@ -195,6 +195,14 @@ type Result = {
   resolution?: Resolution;
   debug?: any;
   error?: string;
+  // AI metadata and analysis
+  analysis?: string;
+  ai?: {
+    finalAnalysisUsed?: boolean;
+    finalAnalysisModel?: string;
+    planningSucceeded?: boolean;
+    totalAiCalls?: number;
+  };
 };
 
 // ════════════════════════════════════════════════════════════════

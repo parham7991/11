@@ -29,6 +29,7 @@ import {
   type AssemblyPart,
   type CategoryCandidates,
 } from '@/lib/ai-chat/assembler';
+import type { PartCategory } from '@/lib/ai-chat/types';
 import { isGenuineCpuCooler, validatePartCategory } from '@/lib/ai-chat/guardrails';
 import { checkFullCompatibility } from '@/lib/ai-chat/compatibility-checker';
 import { verifyProducts } from '@/lib/ai-chat/api-verify';
@@ -237,7 +238,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       const missingCategories = usable.filter(
         (c) => !selectedParts.find((p) => p.category === c.category)
       );
-      let remainingRepairBudget = budget - selectedParts.reduce((sum, p) => sum + (p.finalPrice * (p.quantity || 1)), 0);
+      let remainingRepairBudget =
+        budget - selectedParts.reduce((sum, p) => sum + p.finalPrice * (p.quantity || 1), 0);
 
       for (const cat of missingCategories) {
         const valid = cat.candidates
@@ -249,7 +251,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
         // Every remaining candidate is compatible; rank by confidence then value.
         const sorted = valid.sort((a, b) => {
-          if ((b.confidence || 0) !== (a.confidence || 0)) return (b.confidence || 0) - (a.confidence || 0);
+          if ((b.confidence || 0) !== (a.confidence || 0))
+            return (b.confidence || 0) - (a.confidence || 0);
           return a.finalPrice - b.finalPrice;
         });
 
@@ -345,8 +348,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     office: ['cpu', 'motherboard', 'ram', 'storage', 'psu', 'case'],
   };
   const mandatory = mandatoryByUseCase[useCaseKey] || mandatoryByUseCase.gaming;
-  const presentCategories = new Set(parts.filter(p => p.inStock && p.finalPrice > 0).map(p => p.category));
-  const missingMandatory = mandatory.filter(cat => !presentCategories.has(cat));
+  const presentCategories = new Set(
+    parts.filter((p) => p.inStock && p.finalPrice > 0).map((p) => p.category)
+  );
+  const missingMandatory = mandatory.filter((cat) => !presentCategories.has(cat as PartCategory));
 
   // Cap compatibility score for incomplete builds
   let effectiveScore = compatMatrix.score;
@@ -367,10 +372,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const overBudgetBy = Math.max(0, Number(summary.totalAfter || 0) - budget);
   const hasBlockingCompatibilityError = compatMatrix.errors.length > 0;
   const isOk =
-    buildComplete &&
-    effectiveScore >= 50 &&
-    overBudgetBy === 0 &&
-    !hasBlockingCompatibilityError;
+    buildComplete && effectiveScore >= 50 && overBudgetBy === 0 && !hasBlockingCompatibilityError;
   const useCase = USE_CASES.find((u) => u.key === useCaseKey) || USE_CASES[0];
 
   const unavailableMessages: string[] = [];
@@ -447,13 +449,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         solution: 'قطعهٔ سازگار انتخاب یا اضافه شود',
       })),
       ...(overBudgetBy > 0
-        ? [{
-            severity: 'error' as const,
-            message: `مجموع قطعات ${overBudgetBy.toLocaleString('fa-IR')} تومان بیشتر از بودجه است`,
-            category: 'budget',
-            reason: 'budget_exceeded',
-            solution: 'یک یا چند قطعه با گزینهٔ سازگار و ارزان‌تر جایگزین شود',
-          }]
+        ? [
+            {
+              severity: 'error' as const,
+              message: `مجموع قطعات ${overBudgetBy.toLocaleString('fa-IR')} تومان بیشتر از بودجه است`,
+              category: 'budget',
+              reason: 'budget_exceeded',
+              solution: 'یک یا چند قطعه با گزینهٔ سازگار و ارزان‌تر جایگزین شود',
+            },
+          ]
         : []),
     ],
     compatibilityWarnings: compatMatrix.warnings.map((w) => ({
@@ -561,7 +565,10 @@ function repairBuildToBudget(
         const replacement: AssemblyPart = {
           ...alternative,
           quantity,
-          alternatives: [part, ...(part.alternatives || []).filter((item) => item.id !== alternative.id)],
+          alternatives: [
+            part,
+            ...(part.alternatives || []).filter((item) => item.id !== alternative.id),
+          ],
           pickReason: 'جایگزین سازگار برای رعایت سقف بودجه',
         };
         const trial = parts.map((item, itemIndex) => (itemIndex === index ? replacement : item));
@@ -581,32 +588,48 @@ function repairBuildToBudget(
   return { parts, repairedCategories: [...repaired] };
 }
 
-function isRepairCompatible(candidate: AssemblyPart, selected: AssemblyPart[], category: string): boolean {
-  const cpu = selected.find(p => p.category === 'cpu');
-  const mb = selected.find(p => p.category === 'motherboard');
-  const ram = selected.find(p => p.category === 'ram');
-  const psu = selected.find(p => p.category === 'psu');
-  const cs = selected.find(p => p.category === 'case');
+function isRepairCompatible(
+  candidate: AssemblyPart,
+  selected: AssemblyPart[],
+  category: string
+): boolean {
+  const cpu = selected.find((p) => p.category === 'cpu');
+  const mb = selected.find((p) => p.category === 'motherboard');
+  const ram = selected.find((p) => p.category === 'ram');
+  const psu = selected.find((p) => p.category === 'psu');
+  const cs = selected.find((p) => p.category === 'case');
 
   // Motherboard vs CPU socket
   if (category === 'motherboard' && cpu) {
-    if (cpu.specs?.socket && candidate.specs?.socket && cpu.specs.socket !== candidate.specs.socket) return false;
+    if (cpu.specs?.socket && candidate.specs?.socket && cpu.specs.socket !== candidate.specs.socket)
+      return false;
   }
   if (category === 'cpu' && mb) {
-    if (mb.specs?.socket && candidate.specs?.socket && mb.specs.socket !== candidate.specs.socket) return false;
+    if (mb.specs?.socket && candidate.specs?.socket && mb.specs.socket !== candidate.specs.socket)
+      return false;
   }
 
   // RAM vs Motherboard DDR type
   if (category === 'ram' && mb) {
-    if (mb.specs?.ramType && candidate.specs?.ramType && mb.specs.ramType !== candidate.specs.ramType) return false;
+    if (
+      mb.specs?.ramType &&
+      candidate.specs?.ramType &&
+      mb.specs.ramType !== candidate.specs.ramType
+    )
+      return false;
   }
   if (category === 'motherboard' && ram) {
-    if (candidate.specs?.ramType && ram.specs?.ramType && candidate.specs.ramType !== ram.specs.ramType) return false;
+    if (
+      candidate.specs?.ramType &&
+      ram.specs?.ramType &&
+      candidate.specs.ramType !== ram.specs.ramType
+    )
+      return false;
   }
 
   // PSU wattage headroom
   if (category === 'psu') {
-    const gpu = selected.find(p => p.category === 'gpu');
+    const gpu = selected.find((p) => p.category === 'gpu');
     const cpuTdp = Number(cpu?.specs?.tdp || 0);
     const gpuTdp = Number(gpu?.specs?.tdp || 0);
     const needed = (cpuTdp + gpuTdp + 100) * 1.3;
@@ -620,7 +643,7 @@ function isRepairCompatible(candidate: AssemblyPart, selected: AssemblyPart[], c
     if (gpuLen > caseMax) return false;
   }
   if (category === 'case') {
-    const gpu = selected.find(p => p.category === 'gpu');
+    const gpu = selected.find((p) => p.category === 'gpu');
     if (gpu) {
       const gpuLen = Number(gpu.specs?.length || 0);
       const caseMax = Number(candidate.specs?.gpuMaxLength || 999);

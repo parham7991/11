@@ -406,7 +406,7 @@ async function callAi(
         model: config.chatModel,
         temperature: mode === 'greeting' ? 0.5 : config.temperature,
         maxTokens: mode === 'greeting' ? 200 : config.maxTokens,
-        timeoutMs: 45_000,
+        timeoutMs: 60_000, // 60 seconds (increased from 45s for better quality)
         proxyUrl: config.proxyUrl,
         useProxy: config.useProxy,
       },

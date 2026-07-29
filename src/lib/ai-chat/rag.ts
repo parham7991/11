@@ -1,15 +1,20 @@
 /**
- * rag.ts — ماژول RAG دستیار هوشمند آفلند
+ * rag.ts — ماژول RAG دستیار هوشمند آفلند (نسخه بهبود یافته)
  * ──────────────────────────────────────────────────────────────────
- * با استفاده از همان بک‌اند آفلند (endpoint جستجو) محصولات مرتبط با
+ * با استفاده از API سایت (dev.offl.ir) محصولات مرتبط با
  * سؤال کاربر را پیدا می‌کند و یک «بافت» متنی می‌سازد تا به مدل داده شود.
- * این‌طور ربات همیشه بر اساس داده‌های واقعی و به‌روزِ سایت پاسخ می‌دهد و
- * نیازی به train/fine-tuning نیست.
+ * این‌طور ربات همیشه بر اساس داده‌های واقعی و به‌روزِ سایت پاسخ می‌دهد.
+ *
+ * بهبودها:
+ * - Redis caching برای RAG results
+ * - Relevance scoring بهتر
+ * - فیلتر دسته‌بندی دقیق‌تر
  * ──────────────────────────────────────────────────────────────────
  */
 
 import { generateToken } from '@/lib/fun';
 import { BASEURL, BASE_URL_IMAGE, AWS_BUCKET } from '@/lib/variable';
+import { redisGet, redisSet, ragCacheKey } from '@/lib/redis';
 import type { ChatSource } from './types';
 
 /** ساخت آدرس کامل تصویر محصول از مسیر خام */
@@ -352,6 +357,14 @@ export function sanitizeProductUrl(url: string): string | null {
  * نسخهٔ جامع: چندین جستجوی موازی + استخراج کلمات کلیدی + deduplication
  */
 export async function buildRagContext(query: string, count = 10): Promise<RagResult> {
+  // ─── Check Redis cache first ────────────────────────────
+  const cacheKey = ragCacheKey(query, count);
+  const cached = await redisGet<RagResult>(cacheKey);
+  if (cached) {
+    console.log(`[rag] Cache hit for query: "${query}"`);
+    return cached;
+  }
+
   const term = cleanQuery(query);
 
   // ─── چندین query موازی برای پوشش بیشتر ─────────────────
@@ -384,26 +397,31 @@ export async function buildRagContext(query: string, count = 10): Promise<RagRes
     return { context: '', sources: [] };
   }
 
-  // ─── امتیازدهی relevance ────────────────────────────────
+  // ─── امتیازدهی relevance (بهبود یافته) ─────────────────
   const queryWords = term
     .toLowerCase()
     .split(/\s+/)
     .filter((w) => w.length >= 2);
   const scored = allProducts.map((p) => {
     const title = String(p.name || p.title || '').toLowerCase();
+    const description = String(p.description || '').toLowerCase();
     let score = 0;
 
-    // هر کلمهٔ query که در title باشد = امتیاز
+    // هر کلمهٔ query که در title باشد = امتیاز بالا
     for (const w of queryWords) {
-      if (title.includes(w)) score += 10;
+      if (title.includes(w)) score += 15;
+      if (description.includes(w)) score += 3;
     }
-    // match کامل title = bonus
-    if (queryWords.length > 0 && queryWords.every((w) => title.includes(w))) score += 20;
+    // match کامل title = bonus بزرگ
+    if (queryWords.length > 0 && queryWords.every((w) => title.includes(w))) score += 30;
     // موجود = bonus
-    if (p.is_in_stock !== 0) score += 5;
+    if (p.is_in_stock !== 0) score += 8;
     // تخفیف = bonus
     if (p.special_price && Number(p.special_price) > 0 && Number(p.special_price) < Number(p.price))
-      score += 3;
+      score += 5;
+    // برند match = bonus
+    const brand = String(p.brand?.title || p.brand || '').toLowerCase();
+    if (queryWords.some((w) => brand.includes(w))) score += 5;
 
     return { product: p, score };
   });
@@ -498,5 +516,9 @@ export async function buildRagContext(query: string, count = 10): Promise<RagRes
     'خواستهٔ کاربر نبود، صادقانه بگو و نزدیک‌ترین گزینه‌ها را پیشنهاد بده):\n\n' +
     blocks.join('\n');
 
-  return { context, sources };
+  // ─── Cache result in Redis (TTL: 5 minutes) ─────────────
+  const result = { context, sources };
+  await redisSet(cacheKey, result, 300);
+
+  return result;
 }

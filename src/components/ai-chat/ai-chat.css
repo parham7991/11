@@ -1,21 +1,22 @@
 /* ════════════════════════════════════════════════════════════════
-   🤖 دستیار هوشمند آفلند — استایل خفنِ ویجت چت
+   🤖 دستیار هوشمند آفلند — استایل Vibrant & Block-based
    RTL کامل · سازگار با دارک‌مود · ریسپانسیو (موبایل تمام‌صفحه)
+   Design System: UI/UX Pro Max (Purple/Indigo/Pink)
    ════════════════════════════════════════════════════════════════ */
 
 .aic-root {
-  --aic-primary: #386bf9;
-  --aic-primary-2: #6f3cf5;
-  --aic-primary-3: #2554d6;
-  --aic-glow: rgba(56, 107, 249, 0.45);
+  --aic-primary: #7c3aed;
+  --aic-primary-2: #6366f1;
+  --aic-primary-3: #ec4899;
+  --aic-glow: rgba(124, 58, 237, 0.45);
   --aic-bg: #ffffff;
-  --aic-surface: #f5f7fc;
-  --aic-surface-2: #eef2fb;
-  --aic-text: #14233b;
-  --aic-muted: #6b7790;
-  --aic-border: #e6e9f2;
+  --aic-surface: #faf5ff;
+  --aic-surface-2: #f7f3fd;
+  --aic-text: #0f172a;
+  --aic-muted: #64748b;
+  --aic-border: #efe7fc;
   --aic-bubble-bot: #ffffff;
-  --aic-shadow: 0 24px 70px rgba(20, 35, 80, 0.22);
+  --aic-shadow: 0 24px 70px rgba(124, 58, 237, 0.22);
   position: fixed;
   z-index: 9998;
   bottom: 22px;
@@ -33,13 +34,13 @@
 }
 
 html.dark .aic-root {
-  --aic-bg: #0e1626;
-  --aic-surface: #0b1322;
-  --aic-surface-2: #141d30;
-  --aic-text: #eef4ff;
-  --aic-muted: #93a1ba;
-  --aic-border: rgba(148, 163, 184, 0.16);
-  --aic-bubble-bot: #18233a;
+  --aic-bg: #0f172a;
+  --aic-surface: #1e293b;
+  --aic-surface-2: #334155;
+  --aic-text: #f1f5f9;
+  --aic-muted: #94a3b8;
+  --aic-border: rgba(239, 231, 252, 0.16);
+  --aic-bubble-bot: #1e293b;
   --aic-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
 }
 
@@ -58,10 +59,10 @@ html.dark .aic-root {
   background: linear-gradient(
     140deg,
     var(--aic-primary),
-    var(--aic-primary-2) 60%,
+    var(--aic-primary-2) 50%,
     var(--aic-primary-3)
   );
-  background-size: 180% 180%;
+  background-size: 200% 200%;
   box-shadow:
     0 12px 34px var(--aic-glow),
     inset 0 1px 0 rgba(255, 255, 255, 0.25);
@@ -110,6 +111,7 @@ html.dark .aic-root {
 }
 .aic-fab::after {
   animation-delay: 1.3s;
+  border-color: var(--aic-primary-3);
 }
 @keyframes aic-pulse {
   0% {

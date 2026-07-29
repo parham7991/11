@@ -70,7 +70,7 @@ const callQueue: Array<() => void> = [];
 const MAX_CONCURRENCY = 1;
 const QUEUE_TIMEOUT_MS = 35_000;
 
-async function acquireSlot(abortSignal?: AbortSignal): Promise<() => void> {
+export async function acquireSlot(abortSignal?: AbortSignal): Promise<() => void> {
   return new Promise<() => void>((resolve, reject) => {
     const tryAcquire = () => {
       if (abortSignal?.aborted) {

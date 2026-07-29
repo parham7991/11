@@ -16,7 +16,7 @@ import { getAiChatConfig, sanitizePrompt } from '@/lib/ai-chat/config';
 import { buildRagContext } from '@/lib/ai-chat/rag';
 import { getProxyFetch } from '@/lib/ai-chat/proxy-fetch';
 import { SseParser, extractNonStreamContent } from '@/lib/ai-chat/sse-parser';
-import { generateRequestId } from '@/lib/ai-chat/ai-client';
+import { generateRequestId, acquireSlot } from '@/lib/ai-chat/ai-client';
 import { classifyIntent, ASSEMBLY_REDIRECT_MESSAGE } from '@/lib/ai-chat/chat-intent';
 import { buildGroundedProductContext, buildGroundedProductFallback } from '@/lib/ai-chat/grounded-fallback';
 import type { ChatMessage, ChatRequestBody, ChatSource } from '@/lib/ai-chat/types';
@@ -305,6 +305,9 @@ async function callAi(
   let doFetch: typeof fetch;
   try { doFetch = await getProxyFetch(config.proxyUrl, config.useProxy); } catch { doFetch = fetch; }
 
+  // ─── Acquire shared semaphore (chat + assembly share this gate) ──
+  const releaseSlot = await acquireSlot(clientAbort.signal);
+
   // ─── STREAMING REQUEST with proper timeouts ───────────────
   const fetchAbort = new AbortController();
   const onClientAbort = () => fetchAbort.abort();
@@ -385,6 +388,7 @@ async function callAi(
     await doRecovery(w, doFetch, config, messages, startTime, requestId, clientAbort, mode, sources);
   } finally {
     clientAbort.signal.removeEventListener('abort', onClientAbort);
+    releaseSlot();
   }
 }
 

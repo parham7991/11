@@ -318,9 +318,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     aiMeta.fallbackReason = aiMeta.fallbackReason || 'AI not available or failed — rule-based';
   }
 
-  // ═══════ 5) Auto-resolve ═══════════════════════════════
+  // ═══════ 5) Auto-resolve + budget repair ═══════════════
   const resolution = autoResolve(parts, candidatesMap, useCaseKey);
   parts = resolution.parts;
+  const budgetRepair = repairBuildToBudget(parts, budget);
+  parts = budgetRepair.parts;
+  for (const category of budgetRepair.repairedCategories) {
+    if (!aiMeta.repairedLocally.includes(category)) aiMeta.repairedLocally.push(category);
+  }
 
   // ═══════ 6) Compatibility check ════════════════════════
   const compatMatrix = checkFullCompatibility(parts);
@@ -507,6 +512,75 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 }
 
 // ─── Repair Compatibility Check ──────────────────────────────────
+function buildTotal(parts: AssemblyPart[]): number {
+  return parts.reduce(
+    (sum, part) => sum + Number(part.finalPrice || 0) * Math.max(1, Number(part.quantity || 1)),
+    0
+  );
+}
+
+/**
+ * Bring a complete AI plan back under budget without weakening compatibility.
+ * Optional extras are removed first; then same-category alternatives are tried
+ * by maximum saving. Every trial must keep or improve the compatibility result.
+ */
+function repairBuildToBudget(
+  input: AssemblyPart[],
+  budget: number
+): { parts: AssemblyPart[]; repairedCategories: string[] } {
+  let parts = input.map((part) => ({ ...part }));
+  const repaired = new Set<string>();
+
+  for (let iteration = 0; iteration < 24 && buildTotal(parts) > budget; iteration++) {
+    const baselineErrors = checkFullCompatibility(parts).errors.length;
+    const choices: Array<{
+      saving: number;
+      category: string;
+      next: AssemblyPart[];
+    }> = [];
+
+    parts.forEach((part, index) => {
+      const quantity = Math.max(1, Number(part.quantity || 1));
+
+      if (part.isOptional || ['case_fan', 'case_argb'].includes(part.category)) {
+        const trial = parts.filter((_, itemIndex) => itemIndex !== index);
+        if (checkFullCompatibility(trial).errors.length <= baselineErrors) {
+          choices.push({
+            saving: Number(part.finalPrice || 0) * quantity,
+            category: part.category,
+            next: trial,
+          });
+        }
+      }
+
+      for (const alternative of part.alternatives || []) {
+        if (!alternative.inStock || Number(alternative.finalPrice || 0) <= 0) continue;
+        const saving =
+          (Number(part.finalPrice || 0) - Number(alternative.finalPrice || 0)) * quantity;
+        if (saving <= 0) continue;
+        const replacement: AssemblyPart = {
+          ...alternative,
+          quantity,
+          alternatives: [part, ...(part.alternatives || []).filter((item) => item.id !== alternative.id)],
+          pickReason: 'جایگزین سازگار برای رعایت سقف بودجه',
+        };
+        const trial = parts.map((item, itemIndex) => (itemIndex === index ? replacement : item));
+        if (checkFullCompatibility(trial).errors.length <= baselineErrors) {
+          choices.push({ saving, category: part.category, next: trial });
+        }
+      }
+    });
+
+    choices.sort((a, b) => b.saving - a.saving);
+    const best = choices[0];
+    if (!best || best.saving <= 0) break;
+    parts = best.next;
+    repaired.add(best.category);
+  }
+
+  return { parts, repairedCategories: [...repaired] };
+}
+
 function isRepairCompatible(candidate: AssemblyPart, selected: AssemblyPart[], category: string): boolean {
   const cpu = selected.find(p => p.category === 'cpu');
   const mb = selected.find(p => p.category === 'motherboard');

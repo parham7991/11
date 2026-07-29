@@ -985,51 +985,36 @@ export async function getBudgetRange(
       ? baseCategoriesToCheck.filter((cat) => cat.key !== 'gpu')
       : baseCategoriesToCheck;
 
-  const results = await Promise.all(
-    categoriesToCheck.map(async (cat) => {
-      const isOptional = cat.required === false;
-      const all: RawProduct[] = [];
-      const seen = new Set<string>();
-      for (const q of cat.queries.slice(0, 5)) {
-        try {
-          const found = await searchCategory(q, 8);
-          for (const item of found) {
-            const key = String(item.id ?? item.url_key ?? item.slug);
-            if (seen.has(key)) continue;
-            seen.add(key);
-            all.push(item);
-          }
-        } catch {}
-      }
-      const prices: number[] = [];
-      for (const raw of all) {
-        const part = createPart(raw, cat.key, isOptional);
-        if (part && part.inStock && part.finalPrice > 0) prices.push(part.finalPrice);
-      }
-      prices.sort((a, b) => a - b);
-      const pick = (ratio: number) =>
-        prices.length
-          ? prices[
-              Math.min(prices.length - 1, Math.max(0, Math.floor((prices.length - 1) * ratio)))
-            ]
-          : 0;
-      // به‌جای ارزان‌ترین/گران‌ترین مطلق، از percentile استفاده می‌کنیم تا بازه تخمینی واقعی‌تر شود
-      // و یک محصول خیلی ارزان/خیلی گران اسلایدر بودجه را خراب نکند.
-      const catMin = pick(0.15);
-      const catTypical = pick(0.45);
-      const catMax = pick(0.85) || prices[prices.length - 1] || 0;
-      // استفاده از وزن کاربری برای سهم
-      const weight = weights[cat.key] ?? cat.budgetWeight;
-      return {
-        category: cat.key,
-        min: catMin,
-        typical: catTypical,
-        max: catMax,
-        isOptional,
-        weight,
-      };
-    })
-  );
+  // Use the same normalized candidate pipeline as the real assembler. The old
+  // duplicate search path could report GPU=0 while /api/assemble found GPUs.
+  const gathered = await gatherCandidates(useCaseKey, 450_000_000, includeOptional, 20);
+  const byCategory = new Map(gathered.map((entry) => [entry.category, entry.candidates]));
+
+  const results = categoriesToCheck.map((cat) => {
+    const isOptional = cat.required === false;
+    const prices = (byCategory.get(cat.key) || [])
+      .filter((part) => part.inStock && part.finalPrice > 0)
+      .map((part) => part.finalPrice)
+      .sort((a, b) => a - b);
+    const pick = (ratio: number) =>
+      prices.length
+        ? prices[
+            Math.min(prices.length - 1, Math.max(0, Math.floor((prices.length - 1) * ratio)))
+          ]
+        : 0;
+    const catMin = pick(0.15);
+    const catTypical = pick(0.45);
+    const catMax = pick(0.85) || prices[prices.length - 1] || 0;
+    const weight = weights[cat.key] ?? cat.budgetWeight;
+    return {
+      category: cat.key,
+      min: catMin,
+      typical: catTypical,
+      max: catMax,
+      isOptional,
+      weight,
+    };
+  });
 
   // محاسبهٔ min/max کل
   const mandatoryResults = results.filter((r) => !r.isOptional);

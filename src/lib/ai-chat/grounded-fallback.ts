@@ -1,109 +1,104 @@
 /**
- * grounded-fallback.ts — Deterministic, catalog-grounded product recovery
- *
- * This module intentionally works only from the ChatSource records emitted to
- * the client. It must never invent a product name, price, stock state, or URL.
+ * grounded-fallback.ts — پاسخ‌های قطعی بدون AI بر اساس داده‌های RAG
+ * ──────────────────────────────────────────────────────────────────
+ * وقتی AI در دسترس نیست یا محصولی پیدا شده، پاسخ‌های واقعی بر اساس
+ * داده‌های فروشگاه تولید می‌کند.
+ * ──────────────────────────────────────────────────────────────────
  */
 
 import type { ChatSource } from './types';
 
-const MAX_SOURCES = 3;
-const MAX_TITLE_LENGTH = 180;
-const MAX_PRICE_LENGTH = 80;
-
-type GroundedSource = Pick<ChatSource, 'title' | 'url' | 'price' | 'inStock' | 'brand' | 'warranty'>;
-
-function cleanText(value: unknown, limit: number): string {
-  return typeof value === 'string'
-    ? value.replace(/[\u0000-\u001F\u007F]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, limit)
-    : '';
-}
-
 /**
- * Keep only sources safe enough to cite. URL validation is defense in depth:
- * RAG already sanitizes URLs, but recovery must not trust an arbitrary source.
+ * ساخت context متنی از محصولات برای ارسال به AI
  */
-function normalizeSources(sources: readonly ChatSource[]): GroundedSource[] {
-  const seen = new Set<string>();
-  const result: GroundedSource[] = [];
+export function buildGroundedProductContext(sources: ChatSource[]): string {
+  if (sources.length === 0) return '';
 
-  for (const source of sources) {
-    const title = cleanText(source?.title, MAX_TITLE_LENGTH);
-    const url = cleanText(source?.url, 2_000);
-    if (!title || !/^(https?:\/\/|\/)/i.test(url)) continue;
-
-    const key = `${title}\n${url}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-
-    result.push({
-      title,
-      url,
-      price: cleanText(source.price, MAX_PRICE_LENGTH) || null,
-      inStock: source.inStock,
-      brand: cleanText(source.brand, 100) || null,
-      warranty: cleanText(source.warranty, 160) || null,
-    });
-
-    if (result.length >= MAX_SOURCES) break;
-  }
-
-  return result;
-}
-
-/**
- * Serialize exactly the emitted product sources for the AI prompt. Rebuilding
- * context after category filtering prevents hidden, unrelated RAG rows from
- * reaching the model.
- */
-export function buildGroundedProductContext(sources: readonly ChatSource[]): string {
-  const records = normalizeSources(sources);
-  if (records.length === 0) return '';
-
-  const blocks = records.map((source, index) => {
-    const lines = [
-      `محصول ${index + 1}:`,
-      `عنوان: ${source.title}`,
-      `لینک: ${source.url}`,
-      `وضعیت: ${source.inStock === true ? 'موجود' : source.inStock === false ? 'ناموجود' : 'نامشخص'}`,
-    ];
-    if (source.brand) lines.push(`برند: ${source.brand}`);
-    if (source.price) lines.push(`قیمت: ${source.price}`);
-    if (source.warranty) lines.push(`گارانتی: ${source.warranty}`);
-    return lines.join('\n');
+  const blocks = sources.map((s, idx) => {
+    let block = `محصول ${idx + 1}:\n`;
+    block += `عنوان: ${s.title}\n`;
+    if (s.brand) block += `برند: ${s.brand}\n`;
+    if (s.price) block += `قیمت: ${s.price}\n`;
+    if (s.oldPrice) {
+      block += `قیمت قبل از تخفیف: ${s.oldPrice}`;
+      if (s.discountPercent) block += ` (${s.discountPercent}% تخفیف)`;
+      block += '\n';
+    }
+    block += `وضعیت: ${s.inStock ? 'موجود' : 'ناموجود'}\n`;
+    if (s.warranty) block += `گارانتی: ${s.warranty}\n`;
+    if (s.rating) block += `امتیاز کاربران: ${s.rating} از ۵ (${s.reviewCount} نظر)\n`;
+    if (s.specs) block += `مشخصات: ${s.specs}\n`;
+    block += `لینک: ${s.url}\n`;
+    return block;
   });
 
-  return blocks.join('\n\n');
+  return (
+    'اطلاعات محصولات مرتبط از فروشگاه آفلند (فقط بر اساس همین داده‌ها پاسخ بده، ' +
+    'قیمت‌ها را دقیق بگو و لینک محصول مناسب را به کاربر بده. اگر محصولِ منطبق با ' +
+    'خواستهٔ کاربر نبود، صادقانه بگو و نزدیک‌ترین گزینه‌ها را پیشنهاد بده):\n\n' +
+    blocks.join('\n')
+  );
 }
 
 /**
- * Return a useful response only when there are currently available, valid
- * catalog sources. Out-of-stock and malformed rows are never presented as a
- * recovery recommendation.
+ * ساخت پاسخ متنی fallback وقتی AI در دسترس نیست
  */
 export function buildGroundedProductFallback(sources: readonly ChatSource[]): string | null {
-  const normalized = normalizeSources(sources);
-  if (normalized.length === 0) return null;
+  if (sources.length === 0) return null;
 
-  const available = normalized.filter(source => source.inStock === true);
-  if (available.length === 0) {
-    const names = normalized.slice(0, 3).map(source => `• ${source.title}`);
-    return [
-      'محصولات مرتبط پیدا شدند، اما طبق آخرین اطلاعات فروشگاه هیچ‌کدام در حال حاضر موجود نیستند:',
-      ...names,
-      'برای جلوگیری از پیشنهاد اشتباه، کالای نامرتبط جایگزین نمی‌کنم. می‌توانید مدل یا ظرفیت دیگری بفرستید.',
-    ].join('\n');
+  const available = sources.filter((s) => s.inStock);
+  const unavailable = sources.filter((s) => !s.inStock);
+
+  if (available.length === 0 && unavailable.length > 0) {
+    return (
+      'متأسفانه محصولات مرتبطی که پیدا شدند فعلاً ناموجود هستند:\n\n' +
+      unavailable
+        .slice(0, 3)
+        .map((s) => `• **${s.title}** ${s.brand ? `(${s.brand})` : ''}`)
+        .join('\n') +
+      '\n\nلطفاً بعداً دوباره بررسی کنید یا با پشتیبانی آفلند تماس بگیرید.'
+    );
   }
 
-  const items = available.map(source => {
-    const details = [source.title];
-    if (source.price) details.push(source.price);
-    return `• ${details.join(' — ')} (موجود)`;
-  });
+  if (available.length === 0) return null;
 
-  return [
-    'پاسخ هوشمند فعلاً در دسترس نیست؛ اما این گزینه‌ها براساس داده‌های واقعی آفلند پیدا شده‌اند:',
-    ...items,
-    'برای مشخصات و بررسی نهایی قیمت و موجودی، کارت هر محصول را باز کنید.',
-  ].join('\n');
+  let text = 'بر اساس جستجو در محصولات آفلند، این گزینه‌ها مرتبط هستند:\n\n';
+
+  text += available
+    .slice(0, 3)
+    .map((s, idx) => {
+      let line = `${idx + 1}. **${s.title}**`;
+      if (s.brand) line += ` — ${s.brand}`;
+      line += '\n';
+
+      if (s.price) {
+        line += `   💰 قیمت: ${s.price}`;
+        if (s.oldPrice && s.discountPercent) {
+          line += ` ~~${s.oldPrice}~~ (${s.discountPercent}% تخفیف)`;
+        }
+        line += '\n';
+      }
+
+      if (s.warranty) line += `   🛡️ ${s.warranty}\n`;
+      if (s.rating) line += `   ⭐ ${s.rating}/۵ (${s.reviewCount} نظر)\n`;
+      line += `   🔗 [مشاهده محصول](${s.url})\n`;
+
+      return line;
+    })
+    .join('\n');
+
+  text += '\nبرای مشاوره تخصصی‌تر، لطفاً سؤال خود را دقیق‌تر بپرسید.';
+  text += '\n\n[[دکمه‌ها: مقایسه محصولات | مشاوره خرید | اسمبل سیستم]]';
+
+  return text;
+}
+
+/**
+ * فرمت قیمت به تومان
+ */
+export function formatPrice(price?: number | string | null): string | null {
+  if (price === undefined || price === null || price === '') return null;
+  const n = Number(price);
+  if (!Number.isFinite(n) || n <= 0) return null;
+  return `${n.toLocaleString('fa-IR')} تومان`;
 }

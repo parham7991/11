@@ -473,6 +473,7 @@ export async function buildRagContext(query: string, count = 10): Promise<RagRes
 
     blocks.push(block);
     sources.push({
+      id: id || idx,
       title,
       url,
       price: finalPrice,

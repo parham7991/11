@@ -1,409 +1,391 @@
 /**
- * ai-client.ts — Shared AI client for all AI operations
+ * ai-client.ts — کلاینت ارتباط با OmniRouter AI Gateway
  * ──────────────────────────────────────────────────────────────────
- * Supports:
- *   - Streaming OpenAI-compatible
- *   - Non-stream OpenAI-compatible
- *   - Timeout until body completion
- *   - AbortController / client disconnect
- *   - Retry-After for 429
- *   - Sanitized errors (no secrets/keys in messages)
- *   - Request ID for tracing
- *   - Empty response detection
- *   - Exactly one controlled recovery
- *   - No retry storm
- *
- * Concurrency: max 1 concurrent call (Arena Direct account limit)
+ * سرور: 147.45.43.25 | پورت: 20128
+ * Combos: offl-chat-elite, offl-assemble-elite
+ * ──────────────────────────────────────────────────────────────────
  */
 
-import { getProxyFetch } from './proxy-fetch';
-import { SseParser, extractNonStreamContent } from './sse-parser';
-import { AiError, AiErrorCode, createSanitizedError } from './ai-errors';
+import type { AiClientOptions, ChatMessage, AiMeta } from './types';
 
-// ─── Types ───────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
+// SEMAPHORE (shared concurrency gate)
+// ════════════════════════════════════════════════════════════════
 
-export interface AiMessage {
-  role: 'system' | 'user' | 'assistant';
-  content: string;
-}
+const MAX_CONCURRENT = 4;
+let activeSlots = 0;
+const waitQueue: Array<() => void> = [];
 
-export interface AiStreamCallbacks {
-  onDelta?: (text: string) => void;
-  onMeta?: (meta: AiMeta) => void;
-}
+export async function acquireSlot(signal?: AbortSignal): Promise<() => void> {
+  if (activeSlots < MAX_CONCURRENT) {
+    activeSlots++;
+    return releaseSlot;
+  }
 
-export interface AiMeta {
-  mode: 'ai' | 'ai-recovery' | 'deterministic-fallback';
-  model: string;
-  requestId: string;
-  latencyMs: number;
-  finishReason?: string;
-  tokensOut?: number;
-}
-
-export interface AiStreamResult {
-  text: string;
-  meta: AiMeta;
-}
-
-export interface AiNonStreamResult {
-  text: string;
-  meta: AiMeta;
-}
-
-export interface AiClientOptions {
-  apiKey: string;
-  apiBase: string;
-  model: string;
-  temperature?: number;
-  maxTokens?: number;
-  timeoutMs?: number;
-  proxyUrl?: string;
-  useProxy?: boolean;
-}
-
-// ─── Concurrency Semaphore ───────────────────────────────────────
-// Arena Direct account: maxConcurrency = 1
-
-let activeCalls = 0;
-const callQueue: Array<() => void> = [];
-const MAX_CONCURRENCY = 1;
-const QUEUE_TIMEOUT_MS = 35_000;
-
-export async function acquireSlot(abortSignal?: AbortSignal): Promise<() => void> {
-  return new Promise<() => void>((resolve, reject) => {
-    const tryAcquire = () => {
-      if (abortSignal?.aborted) {
-        reject(new AiError(AiErrorCode.ABORTED, 'Request aborted while waiting in queue'));
-        return;
-      }
-      if (activeCalls < MAX_CONCURRENCY) {
-        activeCalls++;
-        const release = () => {
-          activeCalls--;
-          // Process next in queue
-          const next = callQueue.shift();
-          if (next) next();
-        };
-        resolve(release);
-      } else {
-        callQueue.push(tryAcquire);
-      }
+  return new Promise((resolve, reject) => {
+    const onAbort = () => {
+      const idx = waitQueue.indexOf(handler);
+      if (idx >= 0) waitQueue.splice(idx, 1);
+      reject(new Error('Aborted while waiting for slot'));
     };
-    tryAcquire();
 
-    // Queue timeout
-    if (activeCalls >= MAX_CONCURRENCY) {
-      setTimeout(() => {
-        const idx = callQueue.indexOf(tryAcquire);
-        if (idx >= 0) {
-          callQueue.splice(idx, 1);
-          reject(new AiError(AiErrorCode.TIMEOUT, 'Queue timeout exceeded'));
-        }
-      }, QUEUE_TIMEOUT_MS);
-    }
+    const handler = () => {
+      activeSlots++;
+      signal?.removeEventListener('abort', onAbort);
+      resolve(releaseSlot);
+    };
+
+    signal?.addEventListener('abort', onAbort, { once: true });
+    waitQueue.push(handler);
   });
 }
 
-// ─── Request ID Generator ────────────────────────────────────────
-export function generateRequestId(): string {
-  const ts = Date.now().toString(36);
-  const rand = Math.random().toString(36).slice(2, 8);
-  return `ai-${ts}-${rand}`;
-}
-
-// ─── Streaming Request ───────────────────────────────────────────
-
-export async function aiStreamRequest(
-  options: AiClientOptions,
-  messages: AiMessage[],
-  callbacks: AiStreamCallbacks,
-  abortSignal?: AbortSignal
-): Promise<AiStreamResult> {
-  const requestId = generateRequestId();
-  const startTime = Date.now();
-  const timeoutMs = options.timeoutMs || 45_000;
-
-  const release = await acquireSlot(abortSignal);
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), timeoutMs);
-
-  const onExternalAbort = () => controller.abort();
-  abortSignal?.addEventListener('abort', onExternalAbort, { once: true });
-
-  let fullText = '';
-
-  try {
-    const doFetch = await getProxyFetch(options.proxyUrl || '', options.useProxy || false);
-
-    const res = await doFetch(`${options.apiBase}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${options.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: options.model,
-        messages,
-        temperature: options.temperature ?? 0.35,
-        max_tokens: options.maxTokens ?? 1000,
-        stream: true,
-      }),
-      signal: controller.signal,
-    });
-
-    // Handle HTTP errors
-    if (!res.ok) {
-      if (res.status === 429) {
-        const retryAfter = res.headers.get('retry-after');
-        throw new AiError(AiErrorCode.RATE_LIMITED, 'Rate limited', { context: { retryAfter } });
-      }
-      if (res.status === 401 || res.status === 403) {
-        throw new AiError(AiErrorCode.AUTH_ERROR, `Auth error ${res.status}`);
-      }
-      if (res.status === 404) {
-        throw new AiError(AiErrorCode.NOT_FOUND, `Endpoint not found`);
-      }
-      if (res.status >= 500) {
-        throw new AiError(AiErrorCode.SERVER_ERROR, `Server error ${res.status}`);
-      }
-      throw createSanitizedError(res.status);
-    }
-
-    if (!res.body) {
-      throw new AiError(AiErrorCode.EMPTY_RESPONSE, 'No response body');
-    }
-
-    // Parse SSE with timeout on body reading
-    const parser = new SseParser();
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-
-    // Body read timeout (separate from connection timeout)
-    const bodyTimeout = setTimeout(() => {
-      try {
-        reader.cancel();
-      } catch {
-        /* ignore */
-      }
-      controller.abort();
-    }, timeoutMs);
-
-    try {
-      while (true) {
-        if (abortSignal?.aborted) break;
-
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const raw = decoder.decode(value, { stream: true });
-        parser.feed(raw);
-
-        const events = parser.drain();
-        for (const evt of events) {
-          if (evt.type === 'delta' && evt.content) {
-            fullText += evt.content;
-            callbacks.onDelta?.(evt.content);
-          }
-        }
-      }
-
-      // Process remaining buffer
-      parser.end();
-      const finalEvents = parser.drain();
-      for (const evt of finalEvents) {
-        if (evt.type === 'delta' && evt.content) {
-          fullText += evt.content;
-          callbacks.onDelta?.(evt.content);
-        }
-      }
-    } finally {
-      clearTimeout(bodyTimeout);
-      try {
-        reader.releaseLock();
-      } catch {
-        /* ignore */
-      }
-    }
-
-    const latencyMs = Date.now() - startTime;
-
-    if (!fullText.trim()) {
-      throw new AiError(AiErrorCode.EMPTY_RESPONSE, 'Stream completed with no content');
-    }
-
-    const meta: AiMeta = {
-      mode: 'ai',
-      model: options.model,
-      requestId,
-      latencyMs,
-      finishReason: parser.finishReason || undefined,
-    };
-
-    return { text: fullText, meta };
-  } catch (err) {
-    const latencyMs = Date.now() - startTime;
-
-    if (err instanceof AiError) {
-      err.meta = { mode: 'ai', model: options.model, requestId, latencyMs };
-      throw err;
-    }
-
-    if (err instanceof Error && (err.name === 'AbortError' || err.name === 'TimeoutError')) {
-      throw new AiError(AiErrorCode.TIMEOUT, 'Request timed out', {
-        meta: { mode: 'ai', model: options.model, requestId, latencyMs },
-      });
-    }
-
-    throw new AiError(AiErrorCode.NETWORK_ERROR, 'Network error', {
-      context: { cause: err instanceof Error ? err.message : 'unknown' },
-      meta: { mode: 'ai', model: options.model, requestId, latencyMs },
-    });
-  } finally {
-    clearTimeout(timeout);
-    abortSignal?.removeEventListener('abort', onExternalAbort);
-    release();
+function releaseSlot(): void {
+  activeSlots = Math.max(0, activeSlots - 1);
+  if (waitQueue.length > 0 && activeSlots < MAX_CONCURRENT) {
+    const next = waitQueue.shift();
+    if (next) next();
   }
 }
 
-// ─── Non-Stream Request (for recovery and structured output) ────
+// ════════════════════════════════════════════════════════════════
+// REQUEST ID GENERATOR
+// ════════════════════════════════════════════════════════════════
 
-export async function aiNonStreamRequest(
-  options: AiClientOptions,
-  messages: AiMessage[],
-  abortSignal?: AbortSignal
-): Promise<AiNonStreamResult> {
-  const requestId = generateRequestId();
+export function generateRequestId(): string {
+  return `offl-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+// ════════════════════════════════════════════════════════════════
+// PROXY FETCH
+// ════════════════════════════════════════════════════════════════
+
+async function getProxyFetch(proxyUrl: string, useProxy: boolean): Promise<typeof fetch> {
+  if (!useProxy || !proxyUrl) return fetch;
+
+  // For server-side proxy, we'd need a proper SOCKS/HTTP proxy agent
+  // For now, fallback to native fetch
+  console.warn('[ai-client] Proxy not implemented, using native fetch');
+  return fetch;
+}
+
+// ════════════════════════════════════════════════════════════════
+// SSE PARSER
+// ════════════════════════════════════════════════════════════════
+
+type SseEvent = {
+  type: 'delta';
+  content: string;
+};
+
+export class SseParser {
+  private buffer = '';
+  private events: SseEvent[] = [];
+
+  feed(chunk: string): void {
+    this.buffer += chunk;
+    const lines = this.buffer.split('\n');
+    this.buffer = lines.pop() || '';
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed === 'data: [DONE]') continue;
+
+      if (trimmed.startsWith('data: ')) {
+        try {
+          const json = JSON.parse(trimmed.slice(6));
+          const delta = json.choices?.[0]?.delta?.content;
+          if (delta) {
+            this.events.push({ type: 'delta', content: delta });
+          }
+        } catch {
+          // Ignore parse errors
+        }
+      }
+    }
+  }
+
+  drain(): SseEvent[] {
+    const events = this.events;
+    this.events = [];
+    return events;
+  }
+
+  end(): void {
+    if (this.buffer.trim()) {
+      this.feed('\n');
+    }
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// CONTENT EXTRACTOR (non-streaming)
+// ════════════════════════════════════════════════════════════════
+
+export function extractNonStreamContent(data: unknown): { text: string } {
+  if (!data || typeof data !== 'object') return { text: '' };
+
+  const d = data as Record<string, unknown>;
+
+  // Standard OpenAI format
+  const choices = d.choices as Array<{ message?: { content?: string } }> | undefined;
+  if (choices?.[0]?.message?.content) {
+    return { text: choices[0].message.content };
+  }
+
+  // Alternative formats
+  if (typeof d.content === 'string') return { text: d.content };
+  if (typeof d.text === 'string') return { text: d.text };
+  if (typeof d.reply === 'string') return { text: d.reply };
+
+  return { text: '' };
+}
+
+// ════════════════════════════════════════════════════════════════
+// STREAMING AI REQUEST (with recovery)
+// ════════════════════════════════════════════════════════════════
+
+export type StreamCallback = (event: SseEvent) => void;
+
+// Re-export types for compatibility
+export type { AiClientOptions, AiMeta } from './types';
+
+export async function streamAiRequest(
+  opts: AiClientOptions,
+  messages: ChatMessage[],
+  onEvent: StreamCallback,
+  signal?: AbortSignal
+): Promise<AiMeta> {
   const startTime = Date.now();
-  const timeoutMs = options.timeoutMs || 30_000;
-
-  const release = await acquireSlot(abortSignal);
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), timeoutMs);
-
-  const onExternalAbort = () => controller.abort();
-  abortSignal?.addEventListener('abort', onExternalAbort, { once: true });
+  const doFetch = await getProxyFetch(opts.proxyUrl, opts.useProxy);
+  const releaseSlot = await acquireSlot(signal);
 
   try {
-    const doFetch = await getProxyFetch(options.proxyUrl || '', options.useProxy || false);
+    const controller = new AbortController();
+    const onAbort = () => controller.abort();
+    signal?.addEventListener('abort', onAbort, { once: true });
 
-    const res = await doFetch(`${options.apiBase}/chat/completions`, {
+    const connectionTimer = setTimeout(() => controller.abort(), opts.timeoutMs);
+
+    try {
+      const res = await doFetch(`${opts.apiBase}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${opts.apiKey}`,
+        },
+        body: JSON.stringify({
+          model: opts.model,
+          messages,
+          temperature: opts.temperature,
+          max_tokens: opts.maxTokens,
+          stream: true,
+        }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(connectionTimer);
+
+      if (!res.ok || !res.body) {
+        // Fallback to non-streaming
+        return await nonStreamFallback(opts, messages, onEvent, signal);
+      }
+
+      const parser = new SseParser();
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let gotContent = false;
+
+      const bodyTimer = setTimeout(() => {
+        try {
+          reader.cancel();
+        } catch {}
+        controller.abort();
+      }, opts.timeoutMs);
+
+      try {
+        while (true) {
+          if (signal?.aborted || controller.signal.aborted) break;
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          parser.feed(decoder.decode(value, { stream: true }));
+          for (const evt of parser.drain()) {
+            gotContent = true;
+            onEvent(evt);
+          }
+        }
+
+        parser.end();
+        for (const evt of parser.drain()) {
+          gotContent = true;
+          onEvent(evt);
+        }
+      } finally {
+        clearTimeout(bodyTimer);
+        try {
+          reader.releaseLock();
+        } catch {}
+      }
+
+      signal?.removeEventListener('abort', onAbort);
+
+      if (gotContent) {
+        return {
+          model: opts.model,
+          latencyMs: Date.now() - startTime,
+          mode: 'ai',
+        };
+      }
+
+      // Empty stream → fallback
+      return await nonStreamFallback(opts, messages, onEvent, signal);
+    } catch (err) {
+      clearTimeout(connectionTimer);
+      signal?.removeEventListener('abort', onAbort);
+      console.warn('[ai-client] Stream failed:', err instanceof Error ? err.message : err);
+      return await nonStreamFallback(opts, messages, onEvent, signal);
+    }
+  } finally {
+    releaseSlot();
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// NON-STREAMING FALLBACK
+// ════════════════════════════════════════════════════════════════
+
+async function nonStreamFallback(
+  opts: AiClientOptions,
+  messages: ChatMessage[],
+  onEvent: StreamCallback,
+  signal?: AbortSignal
+): Promise<AiMeta> {
+  const startTime = Date.now();
+  const doFetch = await getProxyFetch(opts.proxyUrl, opts.useProxy);
+
+  const controller = new AbortController();
+  const onAbort = () => controller.abort();
+  signal?.addEventListener('abort', onAbort, { once: true });
+
+  const timer = setTimeout(() => controller.abort(), 30_000);
+
+  try {
+    const res = await doFetch(`${opts.apiBase}/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${options.apiKey}`,
+        Authorization: `Bearer ${opts.apiKey}`,
       },
       body: JSON.stringify({
-        model: options.model,
+        model: opts.model,
         messages,
-        temperature: options.temperature ?? 0.1,
-        max_tokens: options.maxTokens ?? 2000,
+        temperature: opts.temperature,
+        max_tokens: opts.maxTokens,
         stream: false,
       }),
       signal: controller.signal,
     });
 
-    if (!res.ok) {
-      if (res.status === 429) {
-        const retryAfter = res.headers.get('retry-after');
-        throw new AiError(AiErrorCode.RATE_LIMITED, 'Rate limited', { context: { retryAfter } });
+    clearTimeout(timer);
+    signal?.removeEventListener('abort', onAbort);
+
+    if (res.ok) {
+      const data = await res.json();
+      const extracted = extractNonStreamContent(data);
+
+      if (extracted.text?.trim()) {
+        // Simulate streaming by chunking
+        const text = extracted.text.trim();
+        for (let i = 0; i < text.length; i += 50) {
+          if (signal?.aborted) break;
+          onEvent({ type: 'delta', content: text.slice(i, i + 50) });
+        }
+
+        return {
+          model: opts.model,
+          latencyMs: Date.now() - startTime,
+          mode: 'ai-recovery',
+        };
       }
-      throw createSanitizedError(res.status);
-    }
-
-    const data = await res.json();
-    const extracted = extractNonStreamContent(data);
-    const latencyMs = Date.now() - startTime;
-
-    if (!extracted.text || !extracted.text.trim()) {
-      throw new AiError(AiErrorCode.EMPTY_RESPONSE, 'Non-stream response has no content');
     }
 
     return {
-      text: extracted.text.trim(),
-      meta: {
-        mode: 'ai',
-        model: options.model,
-        requestId,
-        latencyMs,
-        finishReason: extracted.finishReason || undefined,
-        tokensOut: extracted.usage?.tokens_out,
-      },
+      model: opts.model,
+      latencyMs: Date.now() - startTime,
+      mode: 'deterministic-fallback',
     };
   } catch (err) {
-    const latencyMs = Date.now() - startTime;
+    clearTimeout(timer);
+    signal?.removeEventListener('abort', onAbort);
+    console.warn(
+      '[ai-client] Non-stream fallback failed:',
+      err instanceof Error ? err.message : err
+    );
 
-    if (err instanceof AiError) {
-      err.meta = { mode: 'ai', model: options.model, requestId, latencyMs };
-      throw err;
-    }
-
-    if (err instanceof Error && (err.name === 'AbortError' || err.name === 'TimeoutError')) {
-      throw new AiError(AiErrorCode.TIMEOUT, 'Request timed out', {
-        meta: { mode: 'ai', model: options.model, requestId, latencyMs },
-      });
-    }
-
-    throw new AiError(AiErrorCode.NETWORK_ERROR, 'Network error', {
-      context: { cause: err instanceof Error ? err.message : 'unknown' },
-      meta: { mode: 'ai', model: options.model, requestId, latencyMs },
-    });
-  } finally {
-    clearTimeout(timeout);
-    abortSignal?.removeEventListener('abort', onExternalAbort);
-    release();
+    return {
+      model: opts.model,
+      latencyMs: Date.now() - startTime,
+      mode: 'deterministic-fallback',
+    };
   }
 }
 
-// ─── Streaming with Recovery ─────────────────────────────────────
-// This is the main chat flow: stream → if empty → non-stream recovery → if empty → throw
+// ════════════════════════════════════════════════════════════════
+// NON-STREAMING REQUEST (for assembly)
+// ════════════════════════════════════════════════════════════════
 
-export async function aiStreamWithRecovery(
-  options: AiClientOptions,
-  messages: AiMessage[],
-  callbacks: AiStreamCallbacks,
-  abortSignal?: AbortSignal
-): Promise<AiStreamResult> {
-  // Step 1: Try streaming
+export async function aiNonStreamRequest(
+  opts: AiClientOptions,
+  messages: ChatMessage[],
+  signal?: AbortSignal
+): Promise<{ text: string; meta: AiMeta }> {
+  const startTime = Date.now();
+  const doFetch = await getProxyFetch(opts.proxyUrl, opts.useProxy);
+  const releaseSlot = await acquireSlot(signal);
+
+  const controller = new AbortController();
+  const onAbort = () => controller.abort();
+  signal?.addEventListener('abort', onAbort, { once: true });
+
+  const timer = setTimeout(() => controller.abort(), opts.timeoutMs);
+
   try {
-    const result = await aiStreamRequest(options, messages, callbacks, abortSignal);
-    return result;
-  } catch (err) {
-    // Only recover from EMPTY_RESPONSE, not from auth/rate-limit/abort
-    if (!(err instanceof AiError) || err.code !== AiErrorCode.EMPTY_RESPONSE) {
-      throw err;
-    }
+    const res = await doFetch(`${opts.apiBase}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${opts.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: opts.model,
+        messages,
+        temperature: opts.temperature,
+        max_tokens: opts.maxTokens,
+        stream: false,
+      }),
+      signal: controller.signal,
+    });
 
-    // Step 2: Non-stream recovery (exactly once)
-    console.log(
-      `[ai-client] [${err.meta?.requestId}] Stream empty — attempting non-stream recovery`
-    );
+    clearTimeout(timer);
+    signal?.removeEventListener('abort', onAbort);
 
-    try {
-      const recoveryResult = await aiNonStreamRequest(options, messages, abortSignal);
-
-      // Convert to deltas for typing experience
-      const text = recoveryResult.text;
-      for (let i = 0; i < text.length; i += 50) {
-        callbacks.onDelta?.(text.slice(i, i + 50));
-      }
+    if (res.ok) {
+      const data = await res.json();
+      const extracted = extractNonStreamContent(data);
 
       return {
-        text,
+        text: extracted.text,
         meta: {
-          ...recoveryResult.meta,
-          mode: 'ai-recovery',
+          model: opts.model,
+          latencyMs: Date.now() - startTime,
+          mode: 'ai',
         },
       };
-    } catch (recoveryErr) {
-      // Recovery also failed
-      console.warn(
-        `[ai-client] Recovery failed:`,
-        recoveryErr instanceof Error ? recoveryErr.message : 'unknown'
-      );
-      throw err; // Throw original error
     }
+
+    throw new Error(`HTTP ${res.status}`);
+  } finally {
+    releaseSlot();
   }
 }

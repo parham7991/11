@@ -109,17 +109,22 @@ export default function AiChatWidget({
 
   // Load history from localStorage
   useEffect(() => {
+    console.log('[AiChatWidget] Mounted');
     setMounted(true);
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved) as ChatMessage[];
         if (Array.isArray(parsed) && parsed.length) {
+          console.log('[AiChatWidget] Loaded history:', parsed.length, 'messages');
           setMessages(parsed);
           return;
         }
       }
-    } catch {}
+    } catch (err) {
+      console.error('[AiChatWidget] Failed to load history:', err);
+    }
+    console.log('[AiChatWidget] No history, showing welcome');
     setMessages([{ role: 'assistant', content: welcome }]);
   }, [welcome]);
 

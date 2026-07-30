@@ -2,24 +2,69 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './ai-chat.css';
-import type { ChatMessage, ChatSource } from '@/lib/ai-chat/types';
 
 /**
- * AiChatWidget — ویجت شناور دستیار هوشمند آفلند
+ * AiChatWidget — ویجت چت هوشمند آفلند (نسخه بازنویسی شده)
  * ──────────────────────────────────────────────────────────────────
- * - دکمهٔ شناور + پنجرهٔ چت با RTL کامل و سازگار با دارک‌مود
- * - ذخیرهٔ تاریخچه در localStorage + دکمهٔ «گفتگوی جدید»
- * - سؤال‌های پیشنهادی، نشانگر تایپینگ، کارت محصولات (منابع)
- * - تمام تماس‌ها به /api/ai-chat (سمت سرور، کلید امن)
+ * معماری جدید: همه processing سمت سرور (OFFL AI Engine)
+ * Vercel فقط proxy می‌کنه
+ * 
+ * Features:
+ * - Streaming NDJSON parsing
+ * - Progress indicators
+ * - Product cards (sources)
+ * - Retry on error
+ * - Keyboard shortcuts
+ * - Accessibility (ARIA)
  * ──────────────────────────────────────────────────────────────────
  */
 
-type DisplayMessage = ChatMessage & { sources?: ChatSource[]; actions?: string[] };
+type ChatRole = 'user' | 'assistant';
+
+type ChatMessage = {
+  role: ChatRole;
+  content: string;
+  sources?: ChatSource[];
+  actions?: string[];
+  error?: boolean;
+};
+
+type ChatSource = {
+  id: number | string;
+  title: string;
+  url: string;
+  price?: string | null;
+  oldPrice?: string | null;
+  discountPercent?: number | null;
+  image?: string | null;
+  inStock?: boolean;
+  brand?: string | null;
+  warranty?: string | null;
+  rating?: number | null;
+  reviewCount?: number | null;
+};
+
+type StreamEvent =
+  | { type: 'progress'; phase: string; message: string; elapsedMs?: number }
+  | { type: 'delta'; text: string }
+  | { type: 'sources'; sources: ChatSource[] }
+  | { type: 'meta'; mode: string; model: string; requestId: string; latencyMs: number }
+  | { type: 'error'; error: string }
+  | { type: 'done' };
+
+const STORAGE_KEY = 'offl-ai-chat-history';
+const API_ENDPOINT = '/api/ai-chat';
+
+const DEFAULT_SUGGESTIONS = [
+  'یه سیستم گیمینگ تا ۳۰ میلیون می‌خوام 🎮',
+  'بهترین کارت گرافیک موجود چیه؟',
+  'مادربرد سازگار با Ryzen دارید؟',
+  'ارزان‌ترین کیس‌ها رو نشونم بده',
+];
 
 /**
- * استخراج دکمه‌های پویا از متن پاسخ.
- * مدل در پایان پاسخ خطی مثل «[[دکمه‌ها: الف | ب | ج]]» می‌گذارد.
- * این تابع آن خط را از متن جدا کرده و دکمه‌ها را برمی‌گرداند.
+ * Extract action buttons from message text
+ * Format: [[دکمه‌ها: متن ۱ | متن ۲ | متن ۳]]
  */
 function extractActions(text: string): { clean: string; actions: string[] } {
   const re = /\[\[\s*دکمه‌ها\s*[:：]\s*([^\]]+?)\s*\]\]/;
@@ -42,42 +87,33 @@ type Props = {
   suggestions?: string[];
 };
 
-const STORAGE_KEY = 'offl-ai-chat-history';
-
-const DEFAULT_SUGGESTIONS = [
-  'یه سیستم گیمینگ تا ۳۰ میلیون می‌خوام 🎮',
-  'بهترین کارت گرافیک موجود چیه؟',
-  'مادربرد سازگار با Ryzen دارید؟',
-  'ارزان‌ترین کیس‌ها رو نشونم بده',
-];
-
 export default function AiChatWidget({
   title = 'دستیار هوشمند آفلند',
   welcome = 'سلام! 👋 من دستیار هوشمند آفلندم 🖥️ دنبال قطعه یا سیستمی هستی؟ بگو بودجه و کاربریت چیه تا بهترین گزینه‌ها رو برات پیدا کنم ⚡',
-  position = 'left',
+  position = 'right',
   primaryColor,
   suggestions = DEFAULT_SUGGESTIONS,
 }: Props) {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<DisplayMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false); // نشانگر «در حال نوشتن» (تا اولین delta)
-  const [busy, setBusy] = useState(false); // کل مدت ارسال (شامل استریم) — جلوگیری از ارسال هم‌زمان
+  const [loading, setLoading] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [copied, setCopied] = useState<number | null>(null); // index of copied message
+  const [copied, setCopied] = useState<number | null>(null);
 
   const bodyRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
-  const lastUserMsgRef = useRef<string>(''); // for retry
+  const lastUserMsgRef = useRef<string>('');
 
-  // بارگذاری تاریخچه از localStorage
+  // Load history from localStorage
   useEffect(() => {
     setMounted(true);
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        const parsed = JSON.parse(saved) as DisplayMessage[];
+        const parsed = JSON.parse(saved) as ChatMessage[];
         if (Array.isArray(parsed) && parsed.length) {
           setMessages(parsed);
           return;
@@ -87,14 +123,14 @@ export default function AiChatWidget({
     setMessages([{ role: 'assistant', content: welcome }]);
   }, [welcome]);
 
-  // باز شدن چت از دکمهٔ منوی پایین (موبایل) — از طریق رویداد سفارشی
+  // Listen for custom event to open chat
   useEffect(() => {
     const openFromMenu = () => setOpen(true);
     window.addEventListener('offl-open-chat', openFromMenu);
     return () => window.removeEventListener('offl-open-chat', openFromMenu);
   }, []);
 
-  // ذخیرهٔ تاریخچه
+  // Save history to localStorage
   useEffect(() => {
     if (!mounted || messages.length === 0) return;
     try {
@@ -102,14 +138,14 @@ export default function AiChatWidget({
     } catch {}
   }, [messages, mounted]);
 
-  // اسکرول به پایین هنگام پیام جدید
+  // Auto-scroll to bottom
   useEffect(() => {
     if (bodyRef.current) {
       bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
     }
   }, [messages, loading, open]);
 
-  // ارتفاع خودکار textarea
+  // Auto-resize textarea
   const autoResize = useCallback(() => {
     const el = textareaRef.current;
     if (!el) return;
@@ -117,8 +153,8 @@ export default function AiChatWidget({
     el.style.height = Math.min(el.scrollHeight, 110) + 'px';
   }, []);
 
-  // به‌روزرسانی پیام ربات در یک ایندکس مشخص (برای استریم زنده)
-  const updateBot = useCallback((index: number, patch: Partial<DisplayMessage>) => {
+  // Update bot message at specific index
+  const updateBot = useCallback((index: number, patch: Partial<ChatMessage>) => {
     setMessages((prev) => {
       if (index < 0 || index >= prev.length) return prev;
       const copy = [...prev];
@@ -127,6 +163,7 @@ export default function AiChatWidget({
     });
   }, []);
 
+  // Stop generation
   const stopGeneration = useCallback(() => {
     if (abortRef.current) {
       abortRef.current.abort();
@@ -136,6 +173,7 @@ export default function AiChatWidget({
     setBusy(false);
   }, []);
 
+  // Copy message
   const copyMessage = useCallback((text: string, idx: number) => {
     if (!text) return;
     navigator.clipboard
@@ -144,11 +182,10 @@ export default function AiChatWidget({
         setCopied(idx);
         setTimeout(() => setCopied(null), 2000);
       })
-      .catch(() => {
-        /* clipboard not available */
-      });
+      .catch(() => {});
   }, []);
 
+  // Send message
   const sendMessage = useCallback(
     async (text: string) => {
       const trimmed = text.trim();
@@ -156,7 +193,7 @@ export default function AiChatWidget({
 
       lastUserMsgRef.current = trimmed;
 
-      const userMsg: DisplayMessage = { role: 'user', content: trimmed };
+      const userMsg: ChatMessage = { role: 'user', content: trimmed };
       const nextMessages = [...messages, userMsg];
       setMessages(nextMessages);
       setInput('');
@@ -164,72 +201,76 @@ export default function AiChatWidget({
       setLoading(true);
       if (textareaRef.current) textareaRef.current.style.height = 'auto';
 
-      // فقط user/assistant را به‌عنوان history می‌فرستیم
-      const history: ChatMessage[] = nextMessages
+      // Build history (only user/assistant)
+      const history = nextMessages
         .filter((m) => m.role === 'user' || m.role === 'assistant')
         .map((m) => ({ role: m.role, content: m.content }));
 
-      // یک پیام assistant خالی اضافه می‌کنیم تا متن به‌صورت زنده در آن تایپ شود
+      // Add empty bot message for streaming
       const botIndex = nextMessages.length;
       setMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
 
-      // AbortController for stop generation
+      // AbortController
       const controller = new AbortController();
       abortRef.current = controller;
 
       try {
-        const res = await fetch('/api/ai-chat', {
+        const res = await fetch(API_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: trimmed, history: history.slice(0, -1) }),
           signal: controller.signal,
         });
 
-        // اگر پاسخ استریم نباشد (خطای JSON)، آن را به‌صورت معمولی هندل می‌کن
+        // Handle non-streaming error
         const contentType = res.headers.get('content-type') || '';
         if (!res.ok || contentType.includes('application/json')) {
           const data = await res.json().catch(() => null);
           updateBot(botIndex, {
             content: data?.error || 'متأسفانه خطایی رخ داد. دوباره تلاش کنید.',
+            error: true,
           });
           return;
         }
 
-        // خواندن استریم NDJSON
+        // Stream NDJSON
         const reader = res.body?.getReader();
         if (!reader) {
           updateBot(botIndex, {
-            content:
-              'در حال حاضر امکان پاسخ‌گویی وجود ندارد. لطفاً دوباره تلاش کنید یا مستقیماً از محصولات سایت بازدید کنید.',
+            content: 'در حال حاضر امکان پاسخ‌گویی وجود ندارد. لطفاً دوباره تلاش کنید.',
+            error: true,
           });
           return;
         }
+
         const decoder = new TextDecoder();
         let buffer = '';
         let acc = '';
         let firstDeltaReceived = false;
 
-        // IMPORTANT: setLoading(false) ONLY after first delta — not here!
-
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
           if (controller.signal.aborted) break;
+
           buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split('\n');
           buffer = lines.pop() || '';
+
           for (const line of lines) {
             const t = line.trim();
             if (!t) continue;
-            let evt: { type?: string; text?: string; sources?: ChatSource[]; error?: string; phase?: string; message?: string };
+
+            let evt: StreamEvent;
             try {
               evt = JSON.parse(t);
             } catch {
               continue;
             }
+
             if (evt.type === 'sources' && Array.isArray(evt.sources)) {
               updateBot(botIndex, { sources: evt.sources.slice(0, 4) });
-            } else if (evt.type === 'delta' && evt.text) {
+            } else if (evt.type === 'delta' && 'text' in evt && evt.text) {
               if (!firstDeltaReceived) {
                 firstDeltaReceived = true;
                 setLoading(false);
@@ -239,34 +280,33 @@ export default function AiChatWidget({
                 ? acc.replace(/\[\[[^\]]*\]?\]?$/, '').trimEnd()
                 : acc;
               updateBot(botIndex, { content: live });
-            } else if (evt.type === 'progress' && evt.message) {
-              // Show progress message in placeholder while waiting
+            } else if (evt.type === 'progress' && 'message' in evt && evt.message) {
               if (!firstDeltaReceived) {
                 updateBot(botIndex, { content: `⏳ ${evt.message}` });
               }
-            } else if (evt.type === 'error') {
+            } else if (evt.type === 'error' && 'error' in evt) {
               if (!firstDeltaReceived) {
                 firstDeltaReceived = true;
                 setLoading(false);
               }
               updateBot(botIndex, {
                 content: acc || evt.error || 'خطا در دریافت پاسخ.',
+                error: true,
               });
             }
           }
         }
 
+        // Finalize
         if (controller.signal.aborted && acc) {
-          // User stopped — keep what we have
           const { clean, actions } = extractActions(acc);
           updateBot(botIndex, { content: clean, actions });
         } else if (!acc) {
           updateBot(botIndex, {
-            content:
-              'در حال حاضر امکان پاسخ‌گویی وجود ندارد. لطفاً دوباره تلاش کنید یا مستقیماً از محصولات سایت بازدید کنید.',
+            content: 'در حال حاضر امکان پاسخ‌گویی وجود ندارد. لطفاً دوباره تلاش کنید.',
+            error: true,
           });
         } else {
-          // در پایان: متن را تمیز کن و دکمه‌های پویا را استخراج کن
           const { clean, actions } = extractActions(acc);
           updateBot(botIndex, { content: clean, actions });
         }
@@ -276,6 +316,7 @@ export default function AiChatWidget({
         }
         updateBot(botIndex, {
           content: 'خطا در ارتباط با سرور. اتصال اینترنت را بررسی کنید.',
+          error: true,
         });
       } finally {
         abortRef.current = null;
@@ -305,17 +346,17 @@ export default function AiChatWidget({
     } catch {}
   };
 
-  // تبدیل لینک‌های متن به <a> (و markdown ساده [text](url))
+  // Render message content with markdown links
   const renderContent = (text: string) => {
     const nodes: React.ReactNode[] = [];
     const mdLink = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
     const rawUrl = /(https?:\/\/[^\s)]+)/g;
 
-    // ابتدا markdown links
     let lastIndex = 0;
     let key = 0;
     let m: RegExpExecArray | null;
     const tmp = text;
+
     while ((m = mdLink.exec(tmp)) !== null) {
       if (m.index > lastIndex) nodes.push(tmp.slice(lastIndex, m.index));
       nodes.push(
@@ -325,11 +366,12 @@ export default function AiChatWidget({
       );
       lastIndex = m.index + m[0].length;
     }
+
     let rest = tmp.slice(lastIndex);
-    // سپس لینک‌های خام در باقیمانده
     const restNodes: React.ReactNode[] = [];
     let li = 0;
     let rm: RegExpExecArray | null;
+
     while ((rm = rawUrl.exec(rest)) !== null) {
       if (rm.index > li) restNodes.push(rest.slice(li, rm.index));
       restNodes.push(
@@ -339,6 +381,7 @@ export default function AiChatWidget({
       );
       li = rm.index + rm[0].length;
     }
+
     restNodes.push(rest.slice(li));
     return [...nodes, ...restNodes];
   };
@@ -357,7 +400,7 @@ export default function AiChatWidget({
     >
       {open && (
         <div className="aic-window" role="dialog" aria-label={title}>
-          {/* هدر */}
+          {/* Header */}
           <div className="aic-header">
             <div className="aic-header__avatar" aria-hidden="true">
               <BotIcon />
@@ -388,14 +431,13 @@ export default function AiChatWidget({
             </div>
           </div>
 
-          {/* بدنه */}
+          {/* Body */}
           <div className="aic-body" ref={bodyRef}>
             {messages.map((msg, idx) => {
               const isBot = msg.role !== 'user';
               const isStreaming = isBot && busy && idx === messages.length - 1;
               return (
                 <React.Fragment key={idx}>
-                  {/* حباب خالیِ ربات (در حال آماده‌سازی) را نشان نده؛ به‌جایش typing است */}
                   {(msg.role === 'user' || msg.content !== '') && (
                     <div className={`aic-row aic-row--${isBot ? 'bot' : 'user'}`}>
                       {isBot && (
@@ -403,12 +445,14 @@ export default function AiChatWidget({
                           <BotIcon />
                         </span>
                       )}
-                      <div className="aic-bubble">
+                      <div className={`aic-bubble ${msg.error ? 'aic-bubble--error' : ''}`}>
                         {renderContent(msg.content)}
                         {isStreaming && msg.content !== '' && <span className="aic-cursor" />}
                       </div>
                     </div>
                   )}
+
+                  {/* Sources */}
                   {msg.sources && msg.sources.length > 0 && (
                     <div className="aic-sources">
                       {msg.sources.map((s, si) => (
@@ -417,12 +461,10 @@ export default function AiChatWidget({
                           href={s.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`aic-card${s.inStock === false ? 'aic-card--out' : ''}`}
+                          className={`aic-card${s.inStock === false ? ' aic-card--out' : ''}`}
                         >
-                          {/* تصویر + بج تخفیف */}
                           <span className="aic-card__media">
                             {s.image ? (
-                              // eslint-disable-next-line @next/next/no-img-element
                               <img
                                 className="aic-card__img"
                                 src={s.image}
@@ -440,31 +482,9 @@ export default function AiChatWidget({
                             {s.inStock === false && <span className="aic-card__out">ناموجود</span>}
                           </span>
 
-                          {/* اطلاعات */}
                           <span className="aic-card__body">
                             {s.brand && <span className="aic-card__brand">{s.brand}</span>}
                             <span className="aic-card__title">{s.title}</span>
-
-                            {/* امتیاز + گارانتی */}
-                            <span className="aic-card__meta">
-                              {s.rating ? (
-                                <span className="aic-card__rating">
-                                  <StarIcon /> {s.rating.toLocaleString('fa-IR')}
-                                  {s.reviewCount ? (
-                                    <span className="aic-card__reviews">
-                                      ({s.reviewCount.toLocaleString('fa-IR')})
-                                    </span>
-                                  ) : null}
-                                </span>
-                              ) : null}
-                              {s.warranty ? (
-                                <span className="aic-card__warranty">
-                                  <ShieldIcon /> {s.warranty}
-                                </span>
-                              ) : null}
-                            </span>
-
-                            {/* قیمت */}
                             <span className="aic-card__prices">
                               {s.oldPrice && <span className="aic-card__old">{s.oldPrice}</span>}
                               {s.price ? (
@@ -477,7 +497,6 @@ export default function AiChatWidget({
                             </span>
                           </span>
 
-                          {/* دکمهٔ مشاهده */}
                           <span className="aic-card__cta" aria-hidden="true">
                             مشاهده
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
@@ -494,7 +513,8 @@ export default function AiChatWidget({
                       ))}
                     </div>
                   )}
-                  {/* دکمه‌های پویا (پیشنهادهای بعدی بر اساس پاسخ) */}
+
+                  {/* Action buttons */}
                   {isBot && msg.actions && msg.actions.length > 0 && !isStreaming && (
                     <div className="aic-actions">
                       {msg.actions.map((a, ai) => (
@@ -510,7 +530,8 @@ export default function AiChatWidget({
                       ))}
                     </div>
                   )}
-                  {/* Copy + Retry buttons on completed assistant messages */}
+
+                  {/* Copy/Retry buttons */}
                   {isBot && !isStreaming && msg.content && msg.role === 'assistant' && idx > 0 && (
                     <div className="aic-msg-actions">
                       <button
@@ -522,15 +543,12 @@ export default function AiChatWidget({
                       >
                         {copied === idx ? '✓' : <CopyIcon />}
                       </button>
-                      {(msg.content.includes('خطا') ||
-                        msg.content.includes('دریافت نشد') ||
-                        msg.content.includes('قطع شد')) && (
+                      {msg.error && (
                         <button
                           type="button"
                           className="aic-msg-btn"
                           onClick={() => {
                             if (lastUserMsgRef.current) {
-                              // Remove the failed assistant message and retry
                               setMessages((prev) => prev.slice(0, -1));
                               sendMessage(lastUserMsgRef.current);
                             }
@@ -562,7 +580,7 @@ export default function AiChatWidget({
             )}
           </div>
 
-          {/* سؤال‌های پیشنهادی (فقط در شروع گفتگو) */}
+          {/* Suggestions */}
           {messages.length <= 1 && suggestions.length > 0 && (
             <div className="aic-suggestions">
               {suggestions.map((s, i) => (
@@ -574,7 +592,7 @@ export default function AiChatWidget({
             </div>
           )}
 
-          {/* ورودی */}
+          {/* Input */}
           <form className="aic-input" onSubmit={handleSubmit}>
             <div className="aic-input__field">
               <textarea
@@ -619,7 +637,7 @@ export default function AiChatWidget({
         </div>
       )}
 
-      {/* دکمهٔ شناور */}
+      {/* FAB */}
       <button
         type="button"
         className="aic-fab"
@@ -633,31 +651,13 @@ export default function AiChatWidget({
   );
 }
 
-/* ───────────────────────── آیکن‌ها ───────────────────────── */
+// Icons
 const BoxIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path
       d="M21 8l-9-5-9 5v8l9 5 9-5V8z M3 8l9 5 9-5 M12 13v8"
       stroke="currentColor"
       strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-const StarIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 2l2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 17.8 6.1 20.8l1.2-6.6L2.5 9l6.6-.9L12 2z" />
-  </svg>
-);
-
-const ShieldIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path
-      d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z M9 12l2 2 4-4"
-      stroke="currentColor"
-      strokeWidth="1.7"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
@@ -695,7 +695,6 @@ const BotIcon = () => (
 
 const SendIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    {/* فلش به سمت چپ (RTL ارسال) */}
     <path
       d="M20 4L4 11l6 2 2 6 8-15z"
       stroke="currentColor"

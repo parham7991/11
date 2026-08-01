@@ -2,26 +2,10 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Cpu,
-  Monitor,
-  MemoryStick,
-  HardDrive,
-  Fan,
-  Zap,
-  Box,
-  Snowflake,
-  ChevronRight,
-  ChevronLeft,
-  Check,
-  Sparkles,
-  TrendingUp,
-  Shield,
-  Save,
-  Share2,
-  RotateCcw,
-  X,
-} from 'lucide-react';
+import { FiCpu, FiMonitor, FiHardDrive, FiZap, FiBox, FiChevronRight, FiChevronLeft, FiCheck, FiSave, FiRefreshCw } from 'react-icons/fi';
+import { HiSparkles, HiChip, HiLightningBolt } from 'react-icons/hi';
+import { BsSnow2, BsMemory } from 'react-icons/bs';
+import { TbArrowBigRight, TbArrowBigLeft } from 'react-icons/tb';
 
 // ═══════════════════════════════════════════════════════════════
 // TYPES
@@ -62,11 +46,11 @@ interface PerformanceMetrics {
 // ═══════════════════════════════════════════════════════════════
 
 const USAGE_TYPES: { id: UsageType; label: string; icon: React.ReactNode; color: string }[] = [
-  { id: 'gaming', label: 'گیمینگ', icon: <Monitor className="w-6 h-6" />, color: 'from-purple-500 to-pink-500' },
-  { id: 'rendering', label: 'رندرینگ', icon: <Cpu className="w-6 h-6" />, color: 'from-blue-500 to-cyan-500' },
-  { id: 'office', label: 'اداری', icon: <Box className="w-6 h-6" />, color: 'from-green-500 to-emerald-500' },
-  { id: 'streaming', label: 'استریم', icon: <Zap className="w-6 h-6" />, color: 'from-orange-500 to-red-500' },
-  { id: 'programming', label: 'برنامه‌نویسی', icon: <MemoryStick className="w-6 h-6" />, color: 'from-indigo-500 to-purple-500' },
+  { id: 'gaming', label: 'گیمینگ', icon: <FiMonitor className="w-6 h-6" />, color: 'from-purple-500 to-pink-500' },
+  { id: 'rendering', label: 'رندرینگ', icon: <FiCpu className="w-6 h-6" />, color: 'from-blue-500 to-cyan-500' },
+  { id: 'office', label: 'اداری', icon: <FiBox className="w-6 h-6" />, color: 'from-green-500 to-emerald-500' },
+  { id: 'streaming', label: 'استریم', icon: <FiZap className="w-6 h-6" />, color: 'from-orange-500 to-red-500' },
+  { id: 'programming', label: 'برنامه‌نویسی', icon: <BsMemory className="w-6 h-6" />, color: 'from-indigo-500 to-purple-500' },
 ];
 
 const BUDGET_RANGES = [
@@ -78,14 +62,14 @@ const BUDGET_RANGES = [
 ];
 
 const COMPONENT_TYPES = [
-  { key: 'cpu', label: 'پردازنده', icon: Cpu, required: true },
-  { key: 'motherboard', label: 'مادربرد', icon: Box, required: true },
-  { key: 'ram', label: 'رم', icon: MemoryStick, required: true },
-  { key: 'gpu', label: 'کارت گرافیک', icon: Monitor, required: true },
-  { key: 'storage', label: 'حافظه SSD', icon: HardDrive, required: true },
-  { key: 'psu', label: 'پاور', icon: Zap, required: true },
-  { key: 'case', label: 'کیس', icon: Box, required: true },
-  { key: 'cooler', label: 'خنک‌کننده', icon: Snowflake, required: false },
+  { key: 'cpu', label: 'پردازنده', icon: FiCpu, required: true },
+  { key: 'motherboard', label: 'مادربرد', icon: FiBox, required: true },
+  { key: 'ram', label: 'رم', icon: BsMemory, required: true },
+  { key: 'gpu', label: 'کارت گرافیک', icon: FiMonitor, required: true },
+  { key: 'storage', label: 'حافظه SSD', icon: FiHardDrive, required: true },
+  { key: 'psu', label: 'پاور', icon: FiZap, required: true },
+  { key: 'case', label: 'کیس', icon: FiBox, required: true },
+  { key: 'cooler', label: 'خنک‌کننده', icon: BsSnow2, required: false },
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -224,7 +208,7 @@ export default function AssembleWizardV2() {
                     step >= s ? 'shadow-lg shadow-purple-500/50' : ''
                   }`}
                 >
-                  {step > s ? <Check className="w-5 h-5" /> : s}
+                  {step > s ? <FiCheck className="w-5 h-5" /> : s}
                 </motion.div>
                 {s < 4 && (
                   <div className="flex-1 h-1 mx-2 bg-gray-700 rounded">
@@ -285,7 +269,7 @@ export default function AssembleWizardV2() {
             disabled={step === 1}
             className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gray-800 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 transition-all"
           >
-            <ChevronRight className="w-5 h-5" />
+            <FiChevronRight className="w-5 h-5" />
             قبلی
           </button>
 
@@ -296,7 +280,7 @@ export default function AssembleWizardV2() {
               className="flex items-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-purple-500/50 transition-all"
             >
               بعدی
-              <ChevronLeft className="w-5 h-5" />
+              <FiChevronLeft className="w-5 h-5" />
             </button>
           ) : (
             <div className="flex gap-3">
@@ -304,11 +288,11 @@ export default function AssembleWizardV2() {
                 onClick={resetWizard}
                 className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gray-800 text-white hover:bg-gray-700 transition-all"
               >
-                <RotateCcw className="w-5 h-5" />
+                <FiRefreshCw className="w-5 h-5" />
                 شروع مجدد
               </button>
               <button className="flex items-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold hover:shadow-lg hover:shadow-green-500/50 transition-all">
-                <Save className="w-5 h-5" />
+                <FiSave className="w-5 h-5" />
                 ذخیره سیستم
               </button>
             </div>
@@ -413,7 +397,7 @@ function StepBudget({
                   animate={{ scale: 1 }}
                   className="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center"
                 >
-                  <Check className="w-6 h-6 text-white" />
+                  <FiCheck className="w-6 h-6 text-white" />
                 </motion.div>
               )}
             </div>
@@ -456,7 +440,7 @@ function StepParts({
           <div className="relative">
             <div className="w-16 h-16 border-4 border-purple-500/30 rounded-full animate-spin" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-purple-500 animate-pulse" />
+              <HiSparkles className="w-6 h-6 text-purple-500 animate-pulse" />
             </div>
           </div>
           <p className="text-white mr-4">AI در حال انتخاب بهترین قطعات...</p>
@@ -468,7 +452,7 @@ function StepParts({
           {aiRecommendation && (
             <div className="bg-gradient-to-r from-purple-900/30 to-pink-900/30 rounded-2xl p-6 border border-purple-500/30">
               <div className="flex items-start gap-3">
-                <Sparkles className="w-6 h-6 text-purple-400 flex-shrink-0 mt-1" />
+                <HiSparkles className="w-6 h-6 text-purple-400 flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="text-lg font-bold text-white mb-2">پیشنهاد AI</h3>
                   <p className="text-gray-300 leading-relaxed">{aiRecommendation}</p>
@@ -504,7 +488,7 @@ function StepParts({
                         animate={{ scale: 1 }}
                         className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center"
                       >
-                        <Check className="w-4 h-4 text-white" />
+                        <FiCheck className="w-4 h-4 text-white" />
                       </motion.div>
                     )}
                   </div>
@@ -562,7 +546,7 @@ function StepReview({
         <div className="bg-gradient-to-br from-purple-900/30 to-pink-900/30 rounded-2xl p-6 border border-purple-500/30">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-purple-400" />
+              <HiSparkles className="w-5 h-5 text-purple-400" />
             </div>
             <div>
               <p className="text-sm text-gray-400">کاربری</p>
@@ -574,7 +558,7 @@ function StepReview({
         <div className="bg-gradient-to-br from-blue-900/30 to-cyan-900/30 rounded-2xl p-6 border border-blue-500/30">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-blue-400" />
+              <HiLightningBolt className="w-5 h-5 text-blue-400" />
             </div>
             <div>
               <p className="text-sm text-gray-400">تعداد قطعات</p>
@@ -586,7 +570,7 @@ function StepReview({
         <div className="bg-gradient-to-br from-green-900/30 to-emerald-900/30 rounded-2xl p-6 border border-green-500/30">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
-              <Shield className="w-5 h-5 text-green-400" />
+              <FiBox className="w-5 h-5 text-green-400" />
             </div>
             <div>
               <p className="text-sm text-gray-400">سازگاری</p>

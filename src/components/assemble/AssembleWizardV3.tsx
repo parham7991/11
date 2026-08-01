@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+
 import {
   CpuIcon, GpuIcon, RamIcon, SsdIcon, PsuIcon,
   MotherboardIcon, CaseIcon, CoolerIcon,
@@ -210,7 +210,7 @@ export default function AssembleWizardV3() {
 
       {/* Content */}
       <main className="asm-v3-container asm-v3-main">
-        <AnimatePresence mode="wait">
+        <>
           {step === 'usage' && (
             <StepUsage key="usage" usage={usage} setUsage={setUsage} onNext={goToBudget} />
           )}
@@ -226,15 +226,15 @@ export default function AssembleWizardV3() {
               setActiveTab={setActiveTab} expandedPart={expandedPart}
               setExpandedPart={setExpandedPart} onEdit={goToBudget} />
           )}
-        </AnimatePresence>
+        </>
 
         {error && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+          <div}}
             className="asm-v3-error">
             <WarningIcon size={20} />
             <span>{error}</span>
             <button onClick={() => setError(null)}>بستن</button>
-          </motion.div>
+          </div>
         )}
       </main>
     </div>
@@ -284,8 +284,8 @@ function StepUsage({ usage, setUsage, onNext }: {
   onNext: () => void;
 }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }} className="asm-v3-step">
+    <div}}
+     } className="asm-v3-step">
       <div className="asm-v3-step-header">
         <h2>سیستم را برای چه کاری می‌خواهید؟</h2>
         <p>نوع کاربری اصلی سیستم خود را انتخاب کنید</p>
@@ -297,7 +297,7 @@ function StepUsage({ usage, setUsage, onNext }: {
           const isSelected = usage === opt.id;
           
           return (
-            <motion.button key={opt.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+            <button key={opt.id}}}
               onClick={() => setUsage(opt.id)}
               className={`asm-v3-usage-card ${isSelected ? 'selected' : ''}`}
               style={{ '--accent': opt.color } as React.CSSProperties}>
@@ -307,12 +307,12 @@ function StepUsage({ usage, setUsage, onNext }: {
               <h3>{opt.label}</h3>
               <p>{opt.desc}</p>
               {isSelected && (
-                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
+                <div}}
                   className="asm-v3-usage-check">
                   <CheckIcon size={16} />
-                </motion.div>
+                </div>
               )}
-            </motion.button>
+            </button>
           );
         })}
       </div>
@@ -323,7 +323,7 @@ function StepUsage({ usage, setUsage, onNext }: {
           <ArrowIcon size={18} />
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -342,8 +342,8 @@ function StepBudget({ usage, budget, setBudget, onBack, onNext }: {
   const usageColor = USAGE_OPTIONS.find(u => u.id === usage)?.color || '#7C3AED';
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }} className="asm-v3-step">
+    <div}}
+     } className="asm-v3-step">
       <div className="asm-v3-step-header">
         <h2>بودجه مورد نظر</h2>
         <p>حداکثر مبلغی که برای سیستم <strong>{usageLabel}</strong> در نظر دارید</p>
@@ -403,7 +403,7 @@ function StepBudget({ usage, budget, setBudget, onBack, onNext }: {
           <span>ساخت سیستم</span>
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -429,8 +429,8 @@ function StepBuilding({ usage, budget }: { usage: UsageType; budget: number }) {
   }, []);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }} className="asm-v3-step asm-v3-building">
+    <div}}
+     } className="asm-v3-step asm-v3-building">
       <div className="asm-v3-building-animation">
         <div className="asm-v3-building-ring" />
         <div className="asm-v3-building-ring delay-1" />
@@ -440,21 +440,21 @@ function StepBuilding({ usage, budget }: { usage: UsageType; budget: number }) {
         </div>
       </div>
       <h2>در حال ساخت سیستم شما</h2>
-      <AnimatePresence mode="wait">
-        <motion.p key={messageIndex}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
+      <>
+        <p key={messageIndex}
+         }
+         }
+         }
           className="asm-v3-building-message">
           {messages[messageIndex]}
-        </motion.p>
-      </AnimatePresence>
+        </p>
+      </>
       <div className="asm-v3-building-meta">
         <span>{USAGE_OPTIONS.find(u => u.id === usage)?.label}</span>
         <span className="asm-v3-dot" />
         <span>{formatPriceM(budget)} تومان</span>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -471,7 +471,7 @@ function StepResult({ result, activeTab, setActiveTab, expandedPart, setExpanded
   onEdit: () => void;
 }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+    <div}}
       className="asm-v3-step asm-v3-result">
       {/* Summary Header */}
       <div className="asm-v3-result-header">
@@ -556,17 +556,17 @@ function StepResult({ result, activeTab, setActiveTab, expandedPart, setExpanded
       </div>
 
       {/* Tab Content */}
-      <AnimatePresence mode="wait">
+      <>
         {activeTab === 'overview' ? (
-          <motion.div key="overview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <div key="overview"}}}>
             <OverviewTab result={result} />
-          </motion.div>
+          </div>
         ) : (
-          <motion.div key="details" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <div key="details"}}}>
             <DetailsTab result={result} expandedPart={expandedPart} setExpandedPart={setExpandedPart} />
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </>
 
       {/* AI Recommendation */}
       {result.recommendation && (
@@ -590,7 +590,7 @@ function StepResult({ result, activeTab, setActiveTab, expandedPart, setExpanded
           <span>تغییر بودجه و کاربری</span>
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -606,8 +606,8 @@ function OverviewTab({ result }: { result: BuildResult }) {
         if (!part) return null;
         
         return (
-          <motion.div key={key} initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
+          <div key={key}}
+           }
             className="asm-v3-part-row">
             <div className="asm-v3-part-icon">
               <Icon size={24} />
@@ -630,7 +630,7 @@ function OverviewTab({ result }: { result: BuildResult }) {
                 <span className="asm-v3-out-stock">ناموجود</span>
               )}
             </div>
-          </motion.div>
+          </div>
         );
       })}
     </div>
@@ -671,11 +671,11 @@ function DetailsTab({ result, expandedPart, setExpandedPart }: {
               </div>
             </button>
             
-            <AnimatePresence>
+            <>
               {isExpanded && (
-                <motion.div initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
+                <div}
+                 }
+                 }
                   className="asm-v3-detail-body">
                   {/* Price Info */}
                   <div className="asm-v3-detail-section">
@@ -834,9 +834,9 @@ function DetailsTab({ result, expandedPart, setExpandedPart }: {
                       ))}
                     </div>
                   )}
-                </motion.div>
+                </div>
               )}
-            </AnimatePresence>
+            </>
           </div>
         );
       })}

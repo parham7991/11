@@ -1172,3 +1172,56 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* ═══ ANIMATIONS (replacing framer-motion) ═══ */
+@keyframes asm-fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes asm-fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes asm-scaleIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+.asm-v3-step {
+  animation: asm-fadeIn 0.3s ease-out;
+}
+
+.asm-v3-result {
+  animation: asm-fadeInUp 0.4s ease-out;
+}
+
+.asm-v3-usage-card {
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.asm-v3-usage-card:hover {
+  transform: scale(1.02);
+}
+
+.asm-v3-usage-card:active {
+  transform: scale(0.98);
+}
+
+.asm-v3-usage-check {
+  animation: asm-scaleIn 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.asm-v3-part-row {
+  animation: asm-fadeIn 0.3s ease-out backwards;
+}
+
+.asm-v3-part-row:nth-child(1) { animation-delay: 0.05s; }
+.asm-v3-part-row:nth-child(2) { animation-delay: 0.1s; }
+.asm-v3-part-row:nth-child(3) { animation-delay: 0.15s; }
+.asm-v3-part-row:nth-child(4) { animation-delay: 0.2s; }
+.asm-v3-part-row:nth-child(5) { animation-delay: 0.25s; }
+.asm-v3-part-row:nth-child(6) { animation-delay: 0.3s; }
+.asm-v3-part-row:nth-child(7) { animation-delay: 0.35s; }
+.asm-v3-part-row:nth-child(8) { animation-delay: 0.4s; }

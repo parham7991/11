@@ -1,0 +1,161 @@
+/* ═══════════════════════════════════════════════════════════════
+   OFFL Assembly Wizard V2 - Gaming Dark Theme
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Custom scrollbar */
+.assemble-wizard-v2::-webkit-scrollbar {
+  width: 8px;
+}
+
+.assemble-wizard-v2::-webkit-scrollbar-track {
+  background: #1a1a2e;
+  border-radius: 4px;
+}
+
+.assemble-wizard-v2::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #7C3AED, #F43F5E);
+  border-radius: 4px;
+}
+
+.assemble-wizard-v2::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #8B5CF6, #FB7185);
+}
+
+/* Glassmorphism cards */
+.glass-card {
+  background: rgba(30, 28, 53, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(124, 58, 237, 0.15);
+}
+
+.glass-card:hover {
+  border-color: rgba(124, 58, 237, 0.4);
+  box-shadow: 0 8px 32px 0 rgba(124, 58, 237, 0.3);
+}
+
+/* Neon glow effects */
+.neon-purple {
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.5),
+              0 0 20px rgba(124, 58, 237, 0.3),
+              0 0 30px rgba(124, 58, 237, 0.2);
+}
+
+.neon-pink {
+  box-shadow: 0 0 10px rgba(244, 63, 94, 0.5),
+              0 0 20px rgba(244, 63, 94, 0.3),
+              0 0 30px rgba(244, 63, 94, 0.2);
+}
+
+.neon-text {
+  text-shadow: 0 0 10px rgba(124, 58, 237, 0.8),
+               0 0 20px rgba(124, 58, 237, 0.5);
+}
+
+/* Animated gradient background */
+.animated-gradient {
+  background: linear-gradient(-45deg, #0F0F23, #1a1a2e, #16213e, #0F0F23);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Floating particles */
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(124, 58, 237, 0.6);
+  border-radius: 50%;
+  animation: float 20s infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+}
+
+/* Pulse animation for selected items */
+.pulse-purple {
+  animation: pulse-purple 2s infinite;
+}
+
+@keyframes pulse-purple {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.7); }
+  50% { box-shadow: 0 0 0 10px rgba(124, 58, 237, 0); }
+}
+
+/* Loading spinner */
+.spinner-ring {
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Custom focus styles */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #7C3AED;
+  outline-offset: 2px;
+}
+
+/* Progress bar animation */
+.progress-fill {
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover lift effect */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(124, 58, 237, 0.3);
+}
+
+/* Badge styles */
+.badge-new {
+  background: linear-gradient(135deg, #7C3AED, #F43F5E);
+  animation: badge-pulse 2s infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Performance meter */
+.performance-bar {
+  background: linear-gradient(90deg, #7C3AED 0%, #F43F5E 50%, #FBBF24 100%);
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Compatibility check animation */
+@keyframes check-appear {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.check-icon {
+  animation: check-appear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}

@@ -229,7 +229,7 @@ export default function AssembleWizardV3() {
         </>
 
         {error && (
-          <div}}
+          <div
             className="asm-v3-error">
             <WarningIcon size={20} />
             <span>{error}</span>
@@ -284,8 +284,7 @@ function StepUsage({ usage, setUsage, onNext }: {
   onNext: () => void;
 }) {
   return (
-    <div}}
-     } className="asm-v3-step">
+    <div className="asm-v3-step">
       <div className="asm-v3-step-header">
         <h2>سیستم را برای چه کاری می‌خواهید؟</h2>
         <p>نوع کاربری اصلی سیستم خود را انتخاب کنید</p>
@@ -297,7 +296,7 @@ function StepUsage({ usage, setUsage, onNext }: {
           const isSelected = usage === opt.id;
           
           return (
-            <button key={opt.id}}}
+            <button key={opt.id}
               onClick={() => setUsage(opt.id)}
               className={`asm-v3-usage-card ${isSelected ? 'selected' : ''}`}
               style={{ '--accent': opt.color } as React.CSSProperties}>
@@ -307,7 +306,7 @@ function StepUsage({ usage, setUsage, onNext }: {
               <h3>{opt.label}</h3>
               <p>{opt.desc}</p>
               {isSelected && (
-                <div}}
+                <div
                   className="asm-v3-usage-check">
                   <CheckIcon size={16} />
                 </div>
@@ -342,8 +341,7 @@ function StepBudget({ usage, budget, setBudget, onBack, onNext }: {
   const usageColor = USAGE_OPTIONS.find(u => u.id === usage)?.color || '#7C3AED';
 
   return (
-    <div}}
-     } className="asm-v3-step">
+    <div className="asm-v3-step">
       <div className="asm-v3-step-header">
         <h2>بودجه مورد نظر</h2>
         <p>حداکثر مبلغی که برای سیستم <strong>{usageLabel}</strong> در نظر دارید</p>
@@ -429,8 +427,7 @@ function StepBuilding({ usage, budget }: { usage: UsageType; budget: number }) {
   }, []);
 
   return (
-    <div}}
-     } className="asm-v3-step asm-v3-building">
+    <div className="asm-v3-step asm-v3-building">
       <div className="asm-v3-building-animation">
         <div className="asm-v3-building-ring" />
         <div className="asm-v3-building-ring delay-1" />
@@ -471,7 +468,7 @@ function StepResult({ result, activeTab, setActiveTab, expandedPart, setExpanded
   onEdit: () => void;
 }) {
   return (
-    <div}}
+    <div
       className="asm-v3-step asm-v3-result">
       {/* Summary Header */}
       <div className="asm-v3-result-header">
@@ -558,11 +555,11 @@ function StepResult({ result, activeTab, setActiveTab, expandedPart, setExpanded
       {/* Tab Content */}
       <>
         {activeTab === 'overview' ? (
-          <div key="overview"}}}>
+          <div key="overview">
             <OverviewTab result={result} />
           </div>
         ) : (
-          <div key="details"}}}>
+          <div key="details">
             <DetailsTab result={result} expandedPart={expandedPart} setExpandedPart={setExpandedPart} />
           </div>
         )}
@@ -606,7 +603,7 @@ function OverviewTab({ result }: { result: BuildResult }) {
         if (!part) return null;
         
         return (
-          <div key={key}}
+          <div key={key}
            }
             className="asm-v3-part-row">
             <div className="asm-v3-part-icon">

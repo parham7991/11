@@ -439,9 +439,6 @@ function StepBuilding({ usage, budget }: { usage: UsageType; budget: number }) {
       <h2>در حال ساخت سیستم شما</h2>
       <>
         <p key={messageIndex}
-         }
-         }
-         }
           className="asm-v3-building-message">
           {messages[messageIndex]}
         </p>
@@ -604,7 +601,6 @@ function OverviewTab({ result }: { result: BuildResult }) {
         
         return (
           <div key={key}
-           }
             className="asm-v3-part-row">
             <div className="asm-v3-part-icon">
               <Icon size={24} />
@@ -670,10 +666,7 @@ function DetailsTab({ result, expandedPart, setExpandedPart }: {
             
             <>
               {isExpanded && (
-                <div}
-                 }
-                 }
-                  className="asm-v3-detail-body">
+                <div className="asm-v3-detail-body">
                   {/* Price Info */}
                   <div className="asm-v3-detail-section">
                     <h4>قیمت</h4>

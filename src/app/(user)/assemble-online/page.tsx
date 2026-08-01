@@ -1,14 +1,14 @@
 import { Metadata } from 'next';
-import SmartBuildWizard from '@/components/assemble/SmartBuildWizard';
+import AssembleWizard from '@/components/assemble/AssembleWizard';
 import CategoryDescription from '@/components/common/CategoryDescription';
 
 export const metadata: Metadata = {
-  title: 'اسمبل هوشمند SmartBuild Pro | چیدن سیستم با هوش مصنوعی آفلند',
+  title: 'اسمبل آنلاین هوشمند | چیدن سیستم با هوش مصنوعی آفلند',
   description:
-    'با اسمبلر هوشمند SmartBuild Pro آفلند، بر اساس کاربری و بودجه‌ات یک سیستم کامپیوتر سازگار و بهینه بچین. محاسبهٔ دقیق قیمت، بررسی سازگاری و تشخیص گلوگاه.',
+    'با اسمبلر هوشمند آفلند، بر اساس کاربری و بودجه‌ات یک سیستم کامپیوتر سازگار و بهینه بچین. محاسبهٔ دقیق قیمت قبل و بعد از تخفیف.',
   openGraph: {
-    title: 'اسمبل هوشمند SmartBuild Pro آفلند',
-    description: 'سیستم کامپیوتر رویایی خود را با هوش مصنوعی بسازید - دقیق، سریع و حرفه‌ای',
+    title: 'اسمبل آنلاین هوشمند آفلند',
+    description: 'سیستم دلخواهت رو با هوش مصنوعی و بهترین قیمت بچین.',
   },
 };
 
@@ -66,7 +66,7 @@ const ASSEMBLE_SEO = `
 export default function Page() {
   return (
     <>
-      <SmartBuildWizard />
+      <AssembleWizard />
       <CategoryDescription description={ASSEMBLE_SEO} />
     </>
   );

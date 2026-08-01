@@ -1,11 +1,11 @@
-import AssembleWizardV3 from '@/components/assemble/AssembleWizardV3';
-import '@/components/assemble/assemble-v3.css';
+import { Metadata } from 'next';
+import AssembleWizard from '@/components/assemble/AssembleWizard';
 
-export const metadata = {
-  title: 'اسمبل هوشمند | سیستم کامپیوتر حرفه‌ای بسازید | آفلند',
-  description: 'با اسمبلر هوشمند آفلند، بر اساس کاربری و بودجه خود یک سیستم کامپیوتر سازگار و بهینه بچینید.',
+export const metadata: Metadata = {
+  title: 'اسمبل هوشمند | آفلند',
+  description: 'سیستم رویایی خودت رو با هوش مصنوعی بساز',
 };
 
 export default function AssemblePage() {
-  return <AssembleWizardV3 />;
+  return <AssembleWizard />;
 }

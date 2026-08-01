@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { Metadata } from 'next';
 import AssembleWizard from '@/components/assemble/AssembleWizard';
 import CategoryDescription from '@/components/common/CategoryDescription';

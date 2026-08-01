@@ -162,11 +162,11 @@ const CategoryComponent = ({ resultProucts, searchParams, redirect, id }: Props)
           </h1>
           {/* تعداد کالا - فقط نمایشی، نه heading */}
           {Number(resultProucts?.total) > 0 && (
-            <span className="hidden shrink-0 text-right text-[14px] font-normal text-[#616A76] lg:block lg:w-[320px] lg:min-w-[320px]">
+            <span className="hidden shrink-0 text-right text-[14px] font-normal text-[#616A76] lg:block">
               {addCommas(Number(resultProucts?.total))} کالا
             </span>
           )}
-          <div className="flex min-w-0 w-full flex-1 items-center justify-center overflow-hidden">
+          <div className="flex min-w-0 w-full flex-1 items-center overflow-hidden">
             {stories ? <Template1 story={stories} /> : null}
           </div>
         </div>

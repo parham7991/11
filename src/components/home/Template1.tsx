@@ -22,8 +22,8 @@ interface Props {
 
 const Template1 = memo(({ story, className }: Props) => {
   return (
-    <div className={`w-full overflow-hidden ${className}`}>
-      <div className="flex flex-nowrap items-start justify-start gap-5 overflow-x-auto pr-5 scrollbar-hide lg:items-center lg:justify-center lg:gap-10 lg:pr-0">
+    <div className={`w-full ${className}`}>
+      <div className="flex flex-nowrap items-center justify-start gap-5 overflow-x-auto px-3 py-2 scrollbar-hide lg:items-center lg:justify-center lg:gap-8 lg:px-0 lg:py-0">
       {story?.story?.items?.map((item, idx) => (
         <Link
           target="_blank"
@@ -31,7 +31,7 @@ const Template1 = memo(({ story, className }: Props) => {
           prefetch={false}
           key={`${item.link}-${idx}`}
           href={item.link}
-          className="flex !w-fit cursor-pointer flex-col items-center justify-center rounded-lg py-3"
+          className="flex !w-fit shrink-0 cursor-pointer flex-col items-center justify-center rounded-lg"
         >
           <span className="relative flex h-[80px] w-[80px] items-center justify-center rounded-full lg:h-[100px] lg:w-[100px]">
             <span className="relative block h-full w-full overflow-hidden rounded-full">

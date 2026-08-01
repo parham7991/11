@@ -156,17 +156,17 @@ const CategoryComponent = ({ resultProucts, searchParams, redirect, id }: Props)
           />
         )}
         {/* title and stories */}
-        <div className="mt-[24px] flex flex-col items-center gap-3 lg:mt-10 lg:flex-row lg:gap-[24px]">
-          <h1 className="w-full text-right font-medium text-[20px] text-[#232429] lg:w-[320px] lg:min-w-[320px] lg:text-[28px]">
+        <div className="mt-[24px] flex flex-col items-center gap-3 overflow-hidden lg:mt-10 lg:flex-row lg:gap-[24px]">
+          <h1 className="w-full shrink-0 text-right font-medium text-[20px] text-[#232429] lg:w-[320px] lg:min-w-[320px] lg:text-[28px]">
             {resultProucts?.name}
           </h1>
           {/* تعداد کالا - فقط نمایشی، نه heading */}
           {Number(resultProucts?.total) > 0 && (
-            <span className="hidden text-right text-[14px] font-normal text-[#616A76] lg:block lg:w-[320px] lg:min-w-[320px]">
+            <span className="hidden shrink-0 text-right text-[14px] font-normal text-[#616A76] lg:block lg:w-[320px] lg:min-w-[320px]">
               {addCommas(Number(resultProucts?.total))} کالا
             </span>
           )}
-          <div className="flex w-full flex-1 items-center justify-center">
+          <div className="flex min-w-0 w-full flex-1 items-center justify-center overflow-hidden">
             {stories ? <Template1 story={stories} /> : null}
           </div>
         </div>

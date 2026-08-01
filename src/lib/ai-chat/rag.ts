@@ -354,7 +354,7 @@ export function sanitizeProductUrl(url: string): string | null {
 
 /**
  * ساخت بافت RAG بر اساس سؤال کاربر.
- * نسخهٔ جامع: چندین جستجوی موازی + استخراج کلمات کلیدی + deduplication
+ * نسخهٔ جامع: چندین جستجوی موازی + استخراج کلمات کلیدی + deduplication + compatibility filtering
  */
 export async function buildRagContext(query: string, count = 10): Promise<RagResult> {
   // ─── Check Redis cache first ────────────────────────────
@@ -366,6 +366,10 @@ export async function buildRagContext(query: string, count = 10): Promise<RagRes
   }
 
   const term = cleanQuery(query);
+
+  // ─── Detect compatibility requirements ──────────────────
+  const compatibilityFilter = detectCompatibilityRequirements(query);
+  console.log(`[rag] Compatibility filter:`, compatibilityFilter);
 
   // ─── چندین query موازی برای پوشش بیشتر ─────────────────
   const searchQueries = buildSearchQueries(query, term);
@@ -397,12 +401,19 @@ export async function buildRagContext(query: string, count = 10): Promise<RagRes
     return { context: '', sources: [] };
   }
 
+  // ─── Compatibility filtering (بسیار مهم) ────────────────
+  let filteredProducts = allProducts;
+  if (compatibilityFilter.socket || compatibilityFilter.ddrType) {
+    filteredProducts = filterByCompatibility(allProducts, compatibilityFilter);
+    console.log(`[rag] After compatibility filter: ${filteredProducts.length} products`);
+  }
+
   // ─── امتیازدهی relevance (بهبود یافته) ─────────────────
   const queryWords = term
     .toLowerCase()
     .split(/\s+/)
     .filter((w) => w.length >= 2);
-  const scored = allProducts.map((p) => {
+  const scored = filteredProducts.map((p) => {
     const title = String(p.name || p.title || '').toLowerCase();
     const description = String(p.description || '').toLowerCase();
     let score = 0;
@@ -422,6 +433,8 @@ export async function buildRagContext(query: string, count = 10): Promise<RagRes
     // برند match = bonus
     const brand = String(p.brand?.title || p.brand || '').toLowerCase();
     if (queryWords.some((w) => brand.includes(w))) score += 5;
+    // Compatibility bonus
+    if (compatibilityFilter.socket || compatibilityFilter.ddrType) score += 20;
 
     return { product: p, score };
   });
@@ -521,4 +534,115 @@ export async function buildRagContext(query: string, count = 10): Promise<RagRes
   await redisSet(cacheKey, result, 300);
 
   return result;
+}
+
+/**
+ * تشخیص نیازمندی‌های سازگاری از query کاربر
+ */
+function detectCompatibilityRequirements(query: string): {
+  socket?: string;
+  ddrType?: string;
+  platform?: string;
+} {
+  const q = query.toLowerCase();
+  const requirements: { socket?: string; ddrType?: string; platform?: string } = {};
+
+  // CPU Platform detection
+  if (q.includes('ryzen') || q.includes('amd')) {
+    requirements.platform = 'amd';
+    if (q.includes('am4') || q.includes('ryzen 1') || q.includes('ryzen 2') || 
+        q.includes('ryzen 3') || q.includes('ryzen 5') || q.includes('ryzen 7') || q.includes('ryzen 9')) {
+      requirements.socket = 'am4';
+    } else if (q.includes('am5') || q.includes('ryzen 7') || q.includes('ryzen 8')) {
+      requirements.socket = 'am5';
+    } else {
+      // Default to AM4 for Ryzen (most common)
+      requirements.socket = 'am4';
+    }
+  } else if (q.includes('intel') || q.includes('core i')) {
+    requirements.platform = 'intel';
+    if (q.includes('lga 1151') || q.includes('نسل 6') || q.includes('نسل 7') || 
+        q.includes('6th') || q.includes('7th')) {
+      requirements.socket = 'lga1151';
+    } else if (q.includes('lga 1200') || q.includes('نسل 10') || q.includes('نسل 11') || 
+               q.includes('10th') || q.includes('11th')) {
+      requirements.socket = 'lga1200';
+    } else if (q.includes('lga 1700') || q.includes('نسل 12') || q.includes('نسل 13') || q.includes('نسل 14') || 
+               q.includes('12th') || q.includes('13th') || q.includes('14th')) {
+      requirements.socket = 'lga1700';
+    }
+  }
+
+  // DDR type detection
+  if (q.includes('ddr5')) {
+    requirements.ddrType = 'ddr5';
+  } else if (q.includes('ddr4')) {
+    requirements.ddrType = 'ddr4';
+  } else if (q.includes('ddr3')) {
+    requirements.ddrType = 'ddr3';
+  }
+
+  return requirements;
+}
+
+/**
+ * فیلتر کردن محصولات بر اساس نیازمندی‌های سازگاری
+ */
+function filterByCompatibility(
+  products: RawProduct[],
+  requirements: { socket?: string; ddrType?: string; platform?: string }
+): RawProduct[] {
+  return products.filter((p) => {
+    const name = String(p.name || p.title || '').toLowerCase();
+    const attrs = p.attributes || p.attribiuts || [];
+    
+    // Extract specs from attributes
+    const specs = attrs.reduce((acc: Record<string, string>, attr: any) => {
+      if (attr.title && attr.value) {
+        acc[attr.title.toLowerCase()] = attr.value.toLowerCase();
+      }
+      return acc;
+    }, {});
+
+    // Socket compatibility
+    if (requirements.socket) {
+      const hasSocket = name.includes(requirements.socket) || 
+                       Object.values(specs).some(v => v.includes(requirements.socket!));
+      
+      if (requirements.platform === 'amd' && requirements.socket === 'am4') {
+        // For AMD AM4, exclude Intel sockets
+        if (name.includes('lga') || name.includes('h61') || name.includes('h81') || 
+            name.includes('h110') || name.includes('h310') || name.includes('b360') || 
+            name.includes('z270') || name.includes('z370') || name.includes('z390') ||
+            name.includes('z490') || name.includes('z590') || name.includes('z690') || name.includes('z790')) {
+          return false;
+        }
+      } else if (requirements.platform === 'intel') {
+        // For Intel, exclude AMD sockets
+        if (name.includes('am4') || name.includes('am5') || 
+            name.includes('a320') || name.includes('b450') || name.includes('b550') || 
+            name.includes('x370') || name.includes('x470') || name.includes('x570') ||
+            name.includes('a520') || name.includes('x670') || name.includes('b650')) {
+          return false;
+        }
+      }
+    }
+
+    // DDR type compatibility
+    if (requirements.ddrType) {
+      const hasDdr = name.includes(requirements.ddrType) || 
+                    Object.values(specs).some(v => v.includes(requirements.ddrType!));
+      
+      // If DDR type is required, exclude incompatible products
+      if (requirements.ddrType === 'ddr5') {
+        if (name.includes('ddr3') || name.includes('ddr4')) return false;
+      } else if (requirements.ddrType === 'ddr4') {
+        if (name.includes('ddr3') || name.includes('ddr5')) return false;
+      } else if (requirements.ddrType === 'ddr3') {
+        if (name.includes('ddr4') || name.includes('ddr5')) return false;
+      }
+    }
+
+    return true;
+  });
 }

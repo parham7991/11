@@ -104,6 +104,7 @@ const USE_CASES = [
   { key: 'streaming', label: 'استریم', desc: 'OBS، یوتیوب، توییچ', icon: 'streaming' },
   { key: 'server', label: 'سرور', desc: 'مجازی‌سازی، ۲۴ ساعته', icon: 'server' },
   { key: 'home', label: 'خانگی', desc: 'فیلم، وب‌گردی، خانوادگی', icon: 'home' },
+  { key: 'custom', label: 'دلخواه', desc: 'خودت بنویس چی می‌خوای', icon: 'custom' },
 ];
 
 const FALLBACK_PRESETS: Record<string, number[]> = {
@@ -157,6 +158,7 @@ function UseCaseIcon({ k }: { k: string }) {
   if (k === 'streaming') return <GpuIcon />;
   if (k === 'server') return <PsuIcon />;
   if (k === 'home') return <RamIcon />;
+  if (k === 'custom') return <SparkIcon />;
   return <CpuIcon />;
 }
 
@@ -498,21 +500,71 @@ export default function AssembleOnlineWizard() {
             })}
           </div>
 
-          <div className="asm__custom-box">
-            <label className="asm__custom-label">
-              <SparkIcon /> توضیح اختیاری (به موتور می‌رود):
-            </label>
-            <textarea
-              className="asm__note"
-              value={customDesc}
-              onChange={(e) => setCustomDesc(e.target.value)}
-              placeholder="مثال: گیمینگ 1440p + استریم همزمان، یا رندرینگ بلندر با بودجه متوسط"
-              maxLength={300}
-              rows={3}
-            />
-          </div>
+          {useCase === 'custom' ? (
+            <div
+              className="asm__custom-box"
+              style={{
+                borderColor: '#7C3AED',
+                background: 'linear-gradient(135deg, rgba(124,58,237,0.08), rgba(168,85,247,0.06))',
+              }}
+            >
+              <label className="asm__custom-label" style={{ color: '#7C3AED' }}>
+                <SparkIcon /> چی می‌خوای؟ بنویس تا AI بفهمه برای کدوم کاربریه:
+              </label>
+              <textarea
+                className="asm__note"
+                value={customDesc}
+                onChange={(e) => setCustomDesc(e.target.value)}
+                placeholder="مثال: می‌خوام هم گیم 1440p بازی کنم هم با پریمیر ادیت کنم، گاهی هم استریم — بودجه متوسط"
+                maxLength={300}
+                rows={4}
+                autoFocus
+                style={{ borderColor: customDesc.trim().length < 3 ? '#F59E0B' : '#7C3AED' }}
+              />
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginTop: 8,
+                  fontSize: 11,
+                  color: '#64748B',
+                }}
+              >
+                <span>
+                  {customDesc.trim().length < 3
+                    ? 'حداقل ۳ حرف بنویس تا AI کاربری رو تشخیص بده'
+                    : `AI تشخیص می‌دهد → موتور قیمت و قطعات مخصوص همین کاربری رو می‌چیند`}
+                </span>
+                <span>{customDesc.length}/300</span>
+              </div>
+            </div>
+          ) : (
+            <div className="asm__custom-box">
+              <label className="asm__custom-label">
+                <SparkIcon /> توضیح اختیاری (به موتور می‌رود):
+              </label>
+              <textarea
+                className="asm__note"
+                value={customDesc}
+                onChange={(e) => setCustomDesc(e.target.value)}
+                placeholder="مثال: گیمینگ 1440p + استریم همزمان، یا رندرینگ بلندر با بودجه متوسط"
+                maxLength={300}
+                rows={3}
+              />
+            </div>
+          )}
 
-          <button className="asm__cta" style={{ marginTop: 18 }} onClick={() => setStep(2)}>
+          <button
+            className="asm__cta"
+            style={{ marginTop: 18 }}
+            onClick={() => setStep(2)}
+            disabled={useCase === 'custom' && customDesc.trim().length < 3}
+            title={
+              useCase === 'custom' && customDesc.trim().length < 3
+                ? 'برای دلخواه حداقل ۳ حرف توضیح بده'
+                : undefined
+            }
+          >
             ادامه <ArrowIcon />
           </button>
         </div>

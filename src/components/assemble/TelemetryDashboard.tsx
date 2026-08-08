@@ -39,6 +39,8 @@ type Props = {
   parts: TelemetryPart[];
   compact?: boolean;
   onAutoBalance?: (targetCategory: 'cpu' | 'gpu' | 'ram' | null) => void;
+  useCase?: string;
+  useCaseLabel?: string;
 };
 
 const PSU_COLORS: Record<PsuStatus, { bg: string }> = {
@@ -74,9 +76,38 @@ function BottleneckPill({ report }: { report: BottleneckReport }) {
   );
 }
 
-export default function TelemetryDashboard({ parts, compact = false, onAutoBalance }: Props) {
-  const [dailyHours, setDailyHours] = useState<number>(6);
-  const [activeBenchTab, setActiveBenchTab] = useState<BenchmarkCategory>('GAME_AAA');
+export default function TelemetryDashboard({
+  parts,
+  compact = false,
+  onAutoBalance,
+  useCase = 'gaming',
+  useCaseLabel,
+}: Props) {
+  // default benchmark tab per useCase
+  const defaultBench: Record<string, BenchmarkCategory> = {
+    gaming: 'GAME_AAA',
+    streaming: 'GAME_AAA',
+    editing: 'CREATIVE',
+    rendering: 'CREATIVE',
+    office: 'PRODUCTIVITY',
+    home: 'PRODUCTIVITY',
+    programming: 'PRODUCTIVITY',
+    server: 'PRODUCTIVITY',
+  };
+  const initialBench = (defaultBench[useCase] || 'GAME_AAA') as BenchmarkCategory;
+  const [dailyHours, setDailyHours] = useState<number>(
+    useCase === 'server' ? 24 : useCase === 'office' ? 8 : 6
+  );
+  const [activeBenchTab, setActiveBenchTab] = useState<BenchmarkCategory>(initialBench);
+
+  // update bench tab when useCase changes
+  React.useEffect(() => {
+    const nb = defaultBench[useCase] || 'GAME_AAA';
+    setActiveBenchTab(nb as BenchmarkCategory);
+    if (useCase === 'server') setDailyHours(24);
+    else if (useCase === 'office' || useCase === 'home') setDailyHours(8);
+    else setDailyHours(6);
+  }, [useCase]);
 
   const t = useMemo(() => buildFullTelemetry(parts || []), [parts]);
   const liveCheck = useMemo(() => performLiveAiValidation(parts || []), [parts]);
@@ -116,13 +147,32 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
         ? 'asm-tele__temp-cell asm-tele__temp-cell--warm'
         : 'asm-tele__temp-cell asm-tele__temp-cell--ok';
 
+  // per-usecase flags
+  const isGaming = ['gaming', 'streaming'].includes(useCase);
+  const isOffice = ['office', 'home'].includes(useCase);
+  const isCreative = ['editing', 'rendering'].includes(useCase);
+  const isProgramming = useCase === 'programming';
+  const isServer = useCase === 'server';
+
   return (
     <div className={`asm-tele${compact ? 'asm-tele--compact' : ''}`}>
       <div className="asm-tele__header">
         <span className="asm-tele__title">
-          <span className="asm-tele__pulse" /> داشبورد تله‌متری زنده
+          <span className="asm-tele__pulse" /> داشبورد تله‌متری زنده — {useCaseLabel || useCase}
         </span>
-        <span className="asm-tele__sub">تحلیل بلادرنگ سیستم اسمبل‌شده</span>
+        <span className="asm-tele__sub">
+          {isGaming
+            ? 'تمرکز: گیمینگ و FPS'
+            : isOffice
+              ? 'تمرکز: پایداری و کم‌مصرف'
+              : isCreative
+                ? 'تمرکز: رندر و تدوین'
+                : isProgramming
+                  ? 'تمرکز: کامپایل و بهره‌وری'
+                  : isServer
+                    ? 'تمرکز: پایداری ۲۴ ساعته'
+                    : 'تحلیل بلادرنگ مخصوص همین کاربری'}
+        </span>
       </div>
 
       {/* ═════ v6.0: بنر بررسی زندهٔ هوش مصنوعی ═════ */}
@@ -205,52 +255,137 @@ export default function TelemetryDashboard({ parts, compact = false, onAutoBalan
           </div>
         </div>
 
-        {/* ═════ کارت ۲: Bottleneck ═════ */}
-        <div className="asm-tele__card">
-          <div className="asm-tele__card-head">
-            <span className="asm-tele__ico">🎯</span>
-            <span className="asm-tele__cap">تحلیل گلوگاه CPU/GPU</span>
+        {/* ═════ کارت ۲: Bottleneck — فقط برای کاربری‌های GPUدار ═════ */}
+        {(isGaming || isCreative || isProgramming) && (
+          <div className="asm-tele__card">
+            <div className="asm-tele__card-head">
+              <span className="asm-tele__ico">🎯</span>
+              <span className="asm-tele__cap">
+                تحلیل گلوگاه {isCreative ? '— رندر محور' : isGaming ? '— گیمینگ' : ''}
+              </span>
+            </div>
+            <div className="asm-tele__bnrow">
+              <BottleneckPill report={t.bottleneck.resolution1080p} />
+              <BottleneckPill report={t.bottleneck.resolution1440p} />
+              <BottleneckPill report={t.bottleneck.resolution4K} />
+            </div>
+            <div className="asm-tele__bnmsg">{t.bottleneck.resolution1440p.description}</div>
           </div>
-          <div className="asm-tele__bnrow">
-            <BottleneckPill report={t.bottleneck.resolution1080p} />
-            <BottleneckPill report={t.bottleneck.resolution1440p} />
-            <BottleneckPill report={t.bottleneck.resolution4K} />
+        )}
+        {isOffice && (
+          <div className="asm-tele__card">
+            <div className="asm-tele__card-head">
+              <span className="asm-tele__ico">✅</span>
+              <span className="asm-tele__cap">سازگاری اداری — بدون گلوگاه</span>
+            </div>
+            <div style={{ padding: '10px 0', fontSize: 13, color: '#475569' }}>
+              برای آفیس و وب، گلوگاه GPU معنی نداره — CPU و RAM کافیه. سیستم کاملاً متوازنه.
+            </div>
           </div>
-          <div className="asm-tele__bnmsg">{t.bottleneck.resolution1440p.description}</div>
-        </div>
+        )}
+        {isServer && (
+          <div className="asm-tele__card">
+            <div className="asm-tele__card-head">
+              <span className="asm-tele__ico">🖥️</span>
+              <span className="asm-tele__cap">پایداری سرور ۲۴ ساعته</span>
+            </div>
+            <div style={{ padding: '10px 0', fontSize: 13, color: '#475569' }}>
+              بدون GPU مجزا — تمرکز روی CPU/RAM و پایداری برق. برای مجازی‌سازی عالیه.
+            </div>
+          </div>
+        )}
 
-        {/* ═════ کارت ۳: FPS ═════ */}
-        <div className="asm-tele__card">
-          <div className="asm-tele__card-head">
-            <span className="asm-tele__ico">🎮</span>
-            <span className="asm-tele__cap">تخمین فریم‌ریت در بازی‌های محبوب</span>
+        {/* ═════ کارت ۳: per-usecase — FPS برای گیمینگ، امتیاز رندر برای کریتیو ═════ */}
+        {isGaming ? (
+          <div className="asm-tele__card">
+            <div className="asm-tele__card-head">
+              <span className="asm-tele__ico">🎮</span>
+              <span className="asm-tele__cap">تخمین فریم‌ریت — مخصوص گیمینگ</span>
+            </div>
+            <div className="asm-tele__fpslist">
+              <div className="asm-tele__fpsitem">
+                <span className="asm-tele__fps-name">Cyberpunk 2077</span>
+                <span className="asm-tele__fps-set">RT Ultra @ 1440p</span>
+                <span className="asm-tele__fps-val">{t.fps.cyberpunk_1440p_rt} FPS</span>
+              </div>
+              <div className="asm-tele__fpsitem">
+                <span className="asm-tele__fps-name">Warzone</span>
+                <span className="asm-tele__fps-set">High @ 1080p</span>
+                <span className="asm-tele__fps-val">{t.fps.warzone_1080p_high} FPS</span>
+              </div>
+              <div className="asm-tele__fpsitem">
+                <span className="asm-tele__fps-name">CS 2</span>
+                <span className="asm-tele__fps-set">Competitive @ 1080p</span>
+                <span className="asm-tele__fps-val">{t.fps.cs2_1080p_pro} FPS</span>
+              </div>
+              <div className="asm-tele__fpsitem">
+                <span className="asm-tele__fps-name">Forza Horizon 5</span>
+                <span className="asm-tele__fps-set">Extreme @ 1440p</span>
+                <span className="asm-tele__fps-val">{t.fps.forza_1440p_extreme} FPS</span>
+              </div>
+            </div>
+            <div className="asm-tele__renderscore">
+              امتیاز رندر: <b>{t.renderScore}</b> /۱۰ — {isGaming ? 'برای استریم هم عالیه' : ''}
+            </div>
           </div>
-          <div className="asm-tele__fpslist">
-            <div className="asm-tele__fpsitem">
-              <span className="asm-tele__fps-name">Cyberpunk 2077</span>
-              <span className="asm-tele__fps-set">RT Ultra @ 1440p</span>
-              <span className="asm-tele__fps-val">{t.fps.cyberpunk_1440p_rt} FPS</span>
+        ) : isCreative ? (
+          <div className="asm-tele__card">
+            <div className="asm-tele__card-head">
+              <span className="asm-tele__ico">🎬</span>
+              <span className="asm-tele__cap">قدرت رندر و تدوین — مخصوص {useCaseLabel}</span>
             </div>
-            <div className="asm-tele__fpsitem">
-              <span className="asm-tele__fps-name">Warzone</span>
-              <span className="asm-tele__fps-set">High @ 1080p</span>
-              <span className="asm-tele__fps-val">{t.fps.warzone_1080p_high} FPS</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '10px 0' }}>
+              <div style={{ fontSize: 36, fontFamily: 'bold', color: '#7C3AED' }}>
+                {t.renderScore}
+                <span style={{ fontSize: 14, color: '#64748B' }}> /۱۰</span>
+              </div>
+              <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.8 }}>
+                {t.renderScore >= 8
+                  ? 'رندر 4K روان — پریمیر و بلندر بدون لگ'
+                  : t.renderScore >= 6
+                    ? 'رندر Full-HD عالی — برای پروژه‌های نیمه‌حرفه‌ای'
+                    : 'برای رندر سبک مناسبه — پروژه‌های سنگین زمان‌بره'}
+                <br />
+                <small style={{ color: '#94A3B8' }}>امتیاز بر اساس CPU+GPU+RAM همین سیستم</small>
+              </div>
             </div>
-            <div className="asm-tele__fpsitem">
-              <span className="asm-tele__fps-name">CS 2</span>
-              <span className="asm-tele__fps-set">Competitive @ 1080p</span>
-              <span className="asm-tele__fps-val">{t.fps.cs2_1080p_pro} FPS</span>
-            </div>
-            <div className="asm-tele__fpsitem">
-              <span className="asm-tele__fps-name">Forza Horizon 5</span>
-              <span className="asm-tele__fps-set">Extreme @ 1440p</span>
-              <span className="asm-tele__fps-val">{t.fps.forza_1440p_extreme} FPS</span>
+            <div className="asm-tele__renderscore">
+              CPU: {t.futureProofing.score}/۱۰ آینده‌نگری — {t.acoustic.rating}
             </div>
           </div>
-          <div className="asm-tele__renderscore">
-            امتیاز رندر (Blender / Premiere): <b>{t.renderScore}</b> از ۱۰
+        ) : isOffice || isServer ? (
+          <div className="asm-tele__card">
+            <div className="asm-tele__card-head">
+              <span className="asm-tele__ico">💼</span>
+              <span className="asm-tele__cap">بهره‌وری اداری — مخصوص {useCaseLabel}</span>
+            </div>
+            <div style={{ padding: '12px 0', fontSize: 13, color: '#475569', lineHeight: 1.9 }}>
+              <b>بدون نیاز به GPU مجزا</b> — گرافیک مجتمع برای آفیس و وب کافیه.
+              <br />
+              تمرکز: <b>پایداری، کم‌صدا بودن و مصرف برق پایین</b>
+              <br />
+              امتیاز آینده‌نگری: <b>{t.futureProofing.score}/۱۰</b> —{' '}
+              {t.futureProofing.reasons[0] || 'برای کارهای روزمره عالیه'}
+            </div>
+            <div className="asm-tele__renderscore">
+              مصرف: {t.power.totalTdp}W — {isServer ? '۲۴ ساعته' : '۸ ساعت اداری'}
+            </div>
           </div>
-        </div>
+        ) : isProgramming ? (
+          <div className="asm-tele__card">
+            <div className="asm-tele__card-head">
+              <span className="asm-tele__ico">💻</span>
+              <span className="asm-tele__cap">قدرت کامپایل — مخصوص برنامه‌نویسی</span>
+            </div>
+            <div style={{ padding: '12px 0', fontSize: 13, color: '#475569', lineHeight: 1.9 }}>
+              امتیاز رندر: <b>{t.renderScore}/۱۰</b> — برای بیلد و داکر
+              <br />
+              آینده‌نگری: <b>{t.futureProofing.score}/۱۰</b> — CPU محور
+              <br />
+              {t.bottleneck.resolution1440p.description}
+            </div>
+          </div>
+        ) : null}
 
         {/* ═════ کارت ۴: Thermal Simulator ═════ */}
         <div className="asm-tele__card">

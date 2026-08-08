@@ -723,7 +723,12 @@ export default function AssembleOnlineWizard() {
               )}
 
               {/* Telemetry — live */}
-              <TelemetryDashboard parts={parts as any} onAutoBalance={() => build()} />
+              <TelemetryDashboard
+                parts={parts as any}
+                onAutoBalance={() => build()}
+                useCase={result?.detectedUseCase || useCase}
+                useCaseLabel={result?.useCaseLabel}
+              />
 
               {/* Compatibility — from engine verifyBuild */}
               {result.compatibilityMatrix && (

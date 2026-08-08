@@ -2,35 +2,52 @@
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import './assemble.css';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  CpuIcon,
-  GpuIcon,
-  RamIcon,
-  SsdIcon,
-  PsuIcon,
-  SparkIcon,
-  ArrowIcon,
-  RefreshIcon,
-  CheckIcon,
-  ShieldIcon,
-  WarningIcon,
-  CartIcon,
-  InfoIcon,
-  EyeIcon,
-  ExpandIcon,
-  CollapseIcon,
-} from './PartIcons';
+  Cpu,
+  Bot,
+  Gamepad2,
+  Briefcase,
+  Clapperboard,
+  Box,
+  Code2,
+  Radio,
+  Video,
+  Server,
+  Home,
+  Tv,
+  Wand2,
+  Sparkles,
+  Wallet,
+  ShieldCheck,
+  BrainCircuit,
+  LayoutGrid,
+  Check,
+  MousePointerClick,
+  Tag,
+  BadgeCheck,
+  Eye,
+  ShoppingCart,
+  Receipt,
+  RotateCcw,
+  ArrowRight,
+  Layers,
+  HardDrive,
+  Zap,
+  Fan,
+  CircuitBoard,
+  Monitor,
+  Circle,
+  TrendingUp,
+} from 'lucide-react';
 import AssembleProductCard from './AssembleProductCard';
 import TelemetryDashboard from './TelemetryDashboard';
 import InvoiceModal from './InvoiceModal';
 import { useAddBulkCart } from '@/hooks/cart/useAddBulkCart';
+import './assemble.css';
 
-/* ──────────────────────────────────────────────────────────
-   Types — aligned with engine proxy (api/assemble route v2)
-   ────────────────────────────────────────────────────────── */
+/* Types */
 type Specs = Record<string, any>;
-
 type Part = {
   category: string;
   categoryLabel: string;
@@ -53,18 +70,16 @@ type Part = {
   alternatives: Part[];
   pickReason?: string;
 };
-
 type CompatibilityMatrix = {
   buildable: boolean;
   score: number;
   status: 'compatible' | 'warning' | 'incompatible';
-  errors: { severity: string; message: string; reason?: string; solution?: string }[];
+  errors: { severity: string; message: string }[];
   warnings: { severity: string; message: string }[];
   info: any[];
   blockedPartIds: string[];
   unavailablePartIds: string[];
 };
-
 type Summary = {
   totalBefore: number;
   totalAfter: number;
@@ -75,7 +90,6 @@ type Summary = {
   optionalCount: number;
   totalTdp: number;
 };
-
 type AssembleResult = {
   ok: boolean;
   useCaseLabel: string;
@@ -90,22 +104,31 @@ type AssembleResult = {
   recommendation?: any;
   ai?: { finalAnalysisUsed: boolean; finalAnalysisModel: string };
   error?: string;
+  detectedUseCase?: string;
 };
 
-/* ──────────────────────────────────────────────────────────
-   Constants — mirrors engine PROFILES
-   ────────────────────────────────────────────────────────── */
 const USE_CASES = [
-  { key: 'gaming', label: 'گیمینگ', desc: 'بازی‌های روز و آنلاین', icon: 'gaming' },
-  { key: 'office', label: 'اداری', desc: 'آفیس، وب، حسابداری', icon: 'office' },
-  { key: 'editing', label: 'ادیت و تدوین', desc: 'پریمیر، فتوشاپ، افترافکت', icon: 'editing' },
-  { key: 'rendering', label: 'رندرینگ', desc: 'بلندر، 3ds Max، مایا', icon: 'rendering' },
-  { key: 'programming', label: 'برنامه‌نویسی', desc: 'کد، داکر، هوش مصنوعی', icon: 'programming' },
-  { key: 'streaming', label: 'استریم', desc: 'OBS، یوتیوب، توییچ', icon: 'streaming' },
-  { key: 'server', label: 'سرور', desc: 'مجازی‌سازی، ۲۴ ساعته', icon: 'server' },
-  { key: 'home', label: 'خانگی', desc: 'فیلم، وب‌گردی، خانوادگی', icon: 'home' },
-  { key: 'custom', label: 'دلخواه', desc: 'خودت بنویس چی می‌خوای', icon: 'custom' },
+  { key: 'gaming', label: 'گیمینگ', desc: 'بازی‌های روز', icon: Gamepad2 },
+  { key: 'office', label: 'اداری', desc: 'آفیس و حسابداری', icon: Briefcase },
+  { key: 'editing', label: 'ادیت و تدوین', desc: 'پریمیر، فتوشاپ', icon: Clapperboard },
+  { key: 'rendering', label: 'رندرینگ', desc: 'بلندر، 3D', icon: Box },
+  { key: 'programming', label: 'برنامه‌نویسی', desc: 'کد و داکر', icon: Code2 },
+  { key: 'streaming', label: 'استریم', desc: 'OBS و یوتیوب', icon: Radio },
+  { key: 'server', label: 'سرور', desc: 'مجازی‌سازی', icon: Server },
+  { key: 'home', label: 'خانگی', desc: 'فیلم و وب‌گردی', icon: Home },
+  { key: 'custom', label: 'دلخواه', desc: 'خودت بنویس', icon: Wand2 },
 ];
+
+const CATEGORY_TABS: Record<string, { label: string; icon: any }> = {
+  cpu: { label: 'پردازنده', icon: Cpu },
+  motherboard: { label: 'مادربرد', icon: CircuitBoard },
+  ram: { label: 'رم', icon: Layers },
+  gpu: { label: 'گرافیک', icon: Monitor },
+  storage: { label: 'حافظه', icon: HardDrive },
+  psu: { label: 'پاور', icon: Zap },
+  case: { label: 'کیس', icon: Box },
+  cooler: { label: 'خنک‌کننده', icon: Fan },
+};
 
 const FALLBACK_PRESETS: Record<string, number[]> = {
   gaming: [32_000_000, 45_000_000, 65_000_000, 85_000_000, 120_000_000, 160_000_000],
@@ -118,73 +141,22 @@ const FALLBACK_PRESETS: Record<string, number[]> = {
   home: [18_000_000, 25_000_000, 32_000_000, 45_000_000, 58_000_000, 70_000_000],
 };
 
-const TIER_META: Record<string, { label: string; color: string; bg: string }> = {
-  ultra: { label: 'پرچم‌دار', color: '#7C3AED', bg: 'rgba(124,58,237,0.14)' },
-  high: { label: 'حرفه‌ای', color: '#2563EB', bg: 'rgba(37,99,235,0.12)' },
-  medium: { label: 'میان‌رده', color: '#059669', bg: 'rgba(5,150,105,0.12)' },
-  entry: { label: 'اقتصادی', color: '#6B7280', bg: 'rgba(107,114,128,0.12)' },
-  // engine raw labels
-  پرچم‌دار: { label: 'پرچم‌دار', color: '#7C3AED', bg: 'rgba(124,58,237,0.14)' },
-  حرفه‌ای: { label: 'حرفه‌ای', color: '#2563EB', bg: 'rgba(37,99,235,0.12)' },
-  میان‌رده: { label: 'میان‌رده', color: '#059669', bg: 'rgba(5,150,105,0.12)' },
-  اقتصادی: { label: 'اقتصادی', color: '#6B7280', bg: 'rgba(107,114,128,0.12)' },
-};
-
-const LOADING_STEPS = [
-  'تحلیل کاربری و بودجه در موتور اسمبل…',
-  'دریافت موجودی زنده از فروشگاه آفلند…',
-  'اعتبارسنجی سازگاری سوکت و رم…',
-  'محاسبه توان پاور و انتخاب قطعات بهینه…',
-  'تولید تحلیل هوش مصنوعی و امتیاز عملکرد…',
-];
-
 const toman = (n: number) => `${Math.round(n).toLocaleString('fa-IR')} تومان`;
 const shortToman = (n: number) => {
-  if (n >= 1_000_000_000)
-    return `${(n / 1_000_000_000).toLocaleString('fa-IR', { maximumFractionDigits: 1 })} میلیارد`;
+  if (n >= 1_000_000_000) return `${(n / 1_000_000_000).toLocaleString('fa-IR', { maximumFractionDigits: 1 })} میلیارد`;
   if (n >= 1_000_000) return `${Math.round(n / 1_000_000).toLocaleString('fa-IR')} میلیون`;
   return n.toLocaleString('fa-IR');
 };
 
-/* ──────────────────────────────────────────────────────────
-   Helper: icon per useCase (uses same icons as PartIcons)
-   ────────────────────────────────────────────────────────── */
-function UseCaseIcon({ k }: { k: string }) {
-  if (k === 'gaming') return <GpuIcon />;
-  if (k === 'office') return <CpuIcon />;
-  if (k === 'editing') return <SsdIcon />;
-  if (k === 'rendering') return <CpuIcon />;
-  if (k === 'programming') return <CpuIcon />;
-  if (k === 'streaming') return <GpuIcon />;
-  if (k === 'server') return <PsuIcon />;
-  if (k === 'home') return <RamIcon />;
-  if (k === 'custom') return <SparkIcon />;
-  return <CpuIcon />;
-}
-
-/* ──────────────────────────────────────────────────────────
-   Main — Engine-driven Wizard
-   ────────────────────────────────────────────────────────── */
 export default function AssembleOnlineWizard() {
   const router = useRouter();
   const { mutate: addBulk, isPending: buying } = useAddBulkCart();
-
-  // Steps
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [useCase, setUseCase] = useState<string>('gaming');
   const [customDesc, setCustomDesc] = useState('');
   const [budget, setBudget] = useState<number>(65_000_000);
-
-  // Budget range from engine
-  const [range, setRange] = useState<{
-    min: number;
-    max: number;
-    recommended: number;
-    presets: number[];
-  } | null>(null);
+  const [range, setRange] = useState<{ min: number; max: number; recommended: number; presets: number[] } | null>(null);
   const [rangeLoading, setRangeLoading] = useState(false);
-
-  // Build
   const [loading, setLoading] = useState(false);
   const [loadStep, setLoadStep] = useState(0);
   const [result, setResult] = useState<AssembleResult | null>(null);
@@ -193,29 +165,23 @@ export default function AssembleOnlineWizard() {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [invoiceOpen, setInvoiceOpen] = useState(false);
   const [bought, setBought] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>('cpu');
 
-  // Fetch budget range when step 2 enters or useCase/customDesc changes — per-useCase LIVE
   useEffect(() => {
     if (step !== 2) return;
     let cancelled = false;
     setRangeLoading(true);
     const qs = new URLSearchParams({ useCase });
     if (customDesc.trim()) qs.set('customDesc', customDesc.trim());
-    fetch(`/api/assemble/budget-range?${qs.toString()}`, {
-      cache: 'no-store',
-    })
+    fetch(`/api/assemble/budget-range?${qs.toString()}`, { cache: 'no-store' })
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return;
         const min = Number(data.min) || 15_000_000;
         const max = Number(data.max) || 200_000_000;
         const recommended = Number(data.recommended) || 50_000_000;
-        const presets =
-          Array.isArray(data.presets) && data.presets.length
-            ? data.presets
-            : FALLBACK_PRESETS[useCase] || FALLBACK_PRESETS.gaming;
+        const presets = Array.isArray(data.presets) && data.presets.length ? data.presets : FALLBACK_PRESETS[useCase] || FALLBACK_PRESETS.gaming;
         setRange({ min, max, recommended, presets });
-        // snap budget inside range
         setBudget((b) => (b < min || b > max ? recommended : b));
       })
       .catch(() => {
@@ -226,19 +192,13 @@ export default function AssembleOnlineWizard() {
       .finally(() => {
         if (!cancelled) setRangeLoading(false);
       });
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [step, useCase, customDesc]);
 
-  // Loading steps animation
   useEffect(() => {
     if (!loading) return;
     setLoadStep(0);
-    const iv = setInterval(
-      () => setLoadStep((s) => (s < LOADING_STEPS.length - 1 ? s + 1 : s)),
-      1200
-    );
+    const iv = setInterval(() => setLoadStep((s) => (s < 4 ? s + 1 : s)), 1200);
     return () => clearInterval(iv);
   }, [loading]);
 
@@ -250,851 +210,447 @@ export default function AssembleOnlineWizard() {
     setExpanded(new Set());
     setBought(false);
     setStep(3);
-
-    // retry 3x with backoff for resilience
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
         const res = await fetch('/api/assemble', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ useCase, budget, customDesc }),
-          signal: AbortSignal.timeout(25_000),
+          signal: AbortSignal.timeout(25000),
         });
-
         const data = (await res.json()) as AssembleResult;
-
-        if (!res.ok || !data.ok) {
-          throw new Error((data as any)?.error || `خطای سرور ${res.status}`);
-        }
-
+        if (!res.ok || !data.ok) throw new Error((data as any)?.error || `خطای سرور ${res.status}`);
         setResult(data);
-        setParts(Array.isArray(data.parts) ? data.parts : []);
+        const p = Array.isArray(data.parts) ? data.parts : [];
+        setParts(p);
+        if (p.length) setActiveTab(p[0].category);
         setLoading(false);
         return;
       } catch (e: any) {
-        console.error(`[AssembleOnline] attempt ${attempt} failed:`, e?.message);
         if (attempt === 3) {
-          setError(e?.message || 'خطا در ارتباط با موتور اسمبل. لطفاً دوباره تلاش کنید.');
+          setError(e?.message || 'خطا در ارتباط با موتور اسمبل.');
           setLoading(false);
-        } else {
-          await new Promise((r) => setTimeout(r, 600 * attempt));
-        }
+        } else await new Promise((r) => setTimeout(r, 600 * attempt));
       }
     }
   }, [useCase, budget, customDesc]);
 
   const restart = () => {
-    setResult(null);
-    setParts([]);
-    setError(null);
-    setBought(false);
-    setExpanded(new Set());
-    setStep(1);
+    setResult(null); setParts([]); setError(null); setBought(false); setExpanded(new Set()); setStep(1);
   };
 
-  const toggleExpand = (id: string) =>
-    setExpanded((prev) => {
-      const n = new Set(prev);
-      if (n.has(id)) n.delete(id);
-      else n.add(id);
-      return n;
-    });
+  const toggleExpand = (id: string) => setExpanded((prev) => {
+    const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n;
+  });
 
   const selectAlternative = (partId: string, alt: Part) => {
-    setParts((prev) =>
-      prev.map((p) =>
-        String(p.id) === String(partId)
-          ? { ...alt, alternatives: p.alternatives, isOptional: p.isOptional }
-          : p
-      )
-    );
-    setExpanded((prev) => {
-      const n = new Set(prev);
-      n.delete(String(partId));
-      return n;
-    });
+    setParts((prev) => prev.map((p) => String(p.id) === String(partId) ? { ...alt, alternatives: p.alternatives, isOptional: p.isOptional } : p));
+    setExpanded((prev) => { const n = new Set(prev); n.delete(String(partId)); return n; });
   };
 
-  const removeOptional = (id: string) =>
-    setParts((prev) => prev.filter((p) => String(p.id) !== String(id)));
+  const removeOptional = (id: string) => setParts((prev) => prev.filter((p) => String(p.id) !== String(id)));
 
-  // ───────── Multi-quantity for RAM & Storage (user can add/remove) ─────────
   const updateQuantity = (id: string, delta: number) => {
     setParts((prev) => {
       const mb = prev.find((p) => p.category === 'motherboard');
       const ramSlots = Number((mb?.specs as any)?.ramSlots || 4);
-      const m2Slots = Number(
-        (mb?.specs as any)?.m2Slots ||
-          (String((mb?.specs as any)?.chipset || '')
-            .toUpperCase()
-            .includes('Z790')
-            ? 4
-            : 2)
-      );
+      const m2Slots = Number((mb?.specs as any)?.m2Slots || 2);
       const sataPorts = Number((mb?.specs as any)?.sataPorts || 4);
-
       return prev.map((p) => {
         if (String(p.id) !== String(id)) return p;
         if (p.category !== 'ram' && p.category !== 'storage') return p;
         const cur = Math.max(1, Number(p.quantity || 1));
         let next = cur + delta;
         if (next < 1) next = 1;
-
-        // ── RAM: check slots ──
         if (p.category === 'ram') {
-          // هر کیت معمولاً 1 یا 2 ماژول؛ ما ساده: هر کیت 1 اسلات حساب می‌کنیم، ولی اگر dual باشد 2 اسلات
-          const modulesPerKit = Number(
-            (p.specs as any)?.moduleCount ||
-              (String((p.specs as any)?.channel || '').toLowerCase() === 'dual' ? 2 : 1)
-          );
-          const neededSlots = next * modulesPerKit;
-          if (neededSlots > ramSlots) {
-            alert(
-              `مادربرد فقط ${ramSlots} اسلات RAM دارد — حداکثر ${Math.floor(ramSlots / modulesPerKit)} کیت قابل نصب است.`
-            );
-            return p;
-          }
+          const modulesPerKit = Number((p.specs as any)?.moduleCount || 1);
+          if (next * modulesPerKit > ramSlots) { alert(`مادربرد فقط ${ramSlots} اسلات RAM دارد`); return p; }
         }
-        // ── Storage: M.2 vs SATA ──
         if (p.category === 'storage') {
-          const isNVMe =
-            (p.specs as any)?.isM2 ||
-            (p.specs as any)?.isNVMe ||
-            String((p.specs as any)?.formFactor || '').includes('M.2');
+          const isNVMe = (p.specs as any)?.isM2 || (p.specs as any)?.isNVMe;
           const maxAllowed = isNVMe ? m2Slots : sataPorts;
-          if (next > maxAllowed) {
-            alert(
-              `${p.categoryLabel} ${isNVMe ? 'M.2' : 'SATA'}: مادربرد فقط ${maxAllowed} اسلات دارد.`
-            );
-            return p;
-          }
+          if (next > maxAllowed) { alert(`${p.categoryLabel} فقط ${maxAllowed} اسلات دارد`); return p; }
         }
-
-        return {
-          ...p,
-          quantity: next,
-          quantityLabel: p.category === 'ram' ? `${next} کیت` : `${next} عدد`,
-        };
+        return { ...p, quantity: next, quantityLabel: `${next} عدد` } as Part;
       });
     });
   };
 
   const buyAll = () => {
     const available = parts.filter((p) => p.inStock && p.finalPrice > 0);
-    if (!available.length) {
-      alert('هیچ قطعهٔ موجودی برای افزودن به سبد نیست.');
-      return;
-    }
-    addBulk(
-      available.map((p) => ({ id: p.id, qty: Math.max(1, Number(p.quantity || 1)) })),
-      { onSuccess: () => setBought(true) }
-    );
+    if (!available.length) { alert('هیچ قطعهٔ موجودی نیست.'); return; }
+    addBulk(available.map((p) => ({ id: p.id, qty: Math.max(1, Number(p.quantity || 1)) })), { onSuccess: () => setBought(true) });
   };
 
-  // Derived
-  const tierInfo = useMemo(() => {
-    if (!result?.tier) return TIER_META.medium;
-    return TIER_META[result.tier] || TIER_META.medium;
-  }, [result?.tier]);
+  const blockedIds = useMemo(() => new Set(result?.compatibilityMatrix?.blockedPartIds || []), [result?.compatibilityMatrix]);
+  const unavailableIds = useMemo(() => new Set(result?.compatibilityMatrix?.unavailablePartIds || []), [result?.compatibilityMatrix]);
+  const isIncompatible = result?.compatibilityMatrix?.status === 'incompatible';
 
   const summary = useMemo(() => {
     if (parts.length) {
-      const totalBefore = parts.reduce(
-        (s, p) => s + Number(p.price || 0) * Math.max(1, Number(p.quantity || 1)),
-        0
-      );
-      const totalAfter = parts.reduce(
-        (s, p) => s + Number(p.finalPrice || 0) * Math.max(1, Number(p.quantity || 1)),
-        0
-      );
+      const totalBefore = parts.reduce((s, p) => s + Number(p.price || 0) * Math.max(1, Number(p.quantity || 1)), 0);
+      const totalAfter = parts.reduce((s, p) => s + Number(p.finalPrice || 0) * Math.max(1, Number(p.quantity || 1)), 0);
       const saving = Math.max(0, totalBefore - totalAfter);
-      return {
-        totalBefore,
-        totalAfter,
-        totalSaving: saving,
-        savingPercent: totalBefore ? Math.round((saving / totalBefore) * 100) : 0,
-        itemCount: parts.length,
-      };
+      return { totalBefore, totalAfter, totalSaving: saving, savingPercent: totalBefore ? Math.round((saving / totalBefore) * 100) : 0, itemCount: parts.length };
     }
-    return result?.summary ? { ...result.summary, itemCount: result.summary.itemCount } : null;
+    return result?.summary ? { ...result.summary, itemCount: result.summary.itemCount } as any : null;
   }, [parts, result?.summary]);
 
-  const blockedIds = useMemo(
-    () => new Set(result?.compatibilityMatrix?.blockedPartIds || []),
-    [result?.compatibilityMatrix]
-  );
-  const unavailableIds = useMemo(
-    () => new Set(result?.compatibilityMatrix?.unavailablePartIds || []),
-    [result?.compatibilityMatrix]
-  );
-  const isIncompatible = useMemo(
-    () => result?.compatibilityMatrix?.status === 'incompatible',
-    [result?.compatibilityMatrix]
-  );
+  const activePart = parts.find((p) => p.category === activeTab) || parts[0];
 
   return (
-    <div className="asm">
-      {/* ───────── HERO — UI/UX Pro Max: Vibrant Block + Gaming Neon ───────── */}
-      <div className="asm__hero">
-        <span className="asm__hero-icon">
-          <CpuIcon />
-        </span>
-        <h1>اسمبل آنلاین هوشمند — موتور واقعی</h1>
-        <p>
-          منطق جدید مستقیماً به <b>Assembly Engine v5</b> (۲۰۱۴۳) وصل است — موجودی زنده، سازگاری
-          سوکت/DDR و توان پاور به‌صورت Real-time از بک‌اند می‌آید و به فرانت تحویل داده می‌شود. UI
-          همین مانده اما روان‌تر و تمیزتر.
-        </p>
-        <div className="asm__hero-stats">
-          <span className="asm__hero-stat">
-            <b>Engine</b> 20143 — Single Source
-          </span>
-          <span className="asm__hero-stat">
-            <b>Real-time</b> قیمت و موجودی
-          </span>
-          <span className="asm__hero-stat">
-            <b>8</b> دسته — 100% سازگار
-          </span>
-          <span className="asm__hero-stat">
-            <b>AI</b> offl-assemble-elite
-          </span>
-        </div>
-      </div>
+    <div className="asm font-[Vazirmatn] dir-rtl" dir="rtl" style={{ ['--font-vazir' as any]: 'Vazirmatn, sans-serif' }}>
+      {/* HERO — Glassmorphism + Aurora */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#2563EB] via-[#3B82F6] to-[#7C3AED] p-8 md:p-10 text-white shadow-[0_20px_60px_-20px_rgba(37,99,235,.35)]"
+      >
+        {/* Aurora glows */}
+        <div className="pointer-events-none absolute -top-24 -right-24 h-80 w-80 rounded-full bg-[#60A5FA]/30 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-[#A78BFA]/25 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(255,255,255,0.15),transparent_60%)]" />
+        {/* dot grid */}
+        <div className="pointer-events-none absolute inset-0 opacity-[0.08]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 
-      {/* Stepper */}
-      <div className="asm__steps">
-        <Step n={1} label="کاربری" active={step === 1} done={step > 1} />
-        <Step n={2} label="بودجه" active={step === 2} done={step > 2} />
-        <Step n={3} label="پیشنهاد موتور" active={step === 3} done={false} />
-      </div>
-
-      {/* ───────── STEP 1: USE CASE ───────── */}
-      {step === 1 && (
-        <div className="asm__panel">
-          <h2>سیستم برای چه کاری می‌خواهی؟</h2>
-          <p className="asm__sub">
-            انتخاب کاربری، وزن بودجه و بازهٔ پیشنهادی موتور را تعیین می‌کند — همه از بک‌اند.
-          </p>
-
-          <div className="asm__usecases">
-            {USE_CASES.map((u) => {
-              const active = useCase === u.key;
-              return (
-                <button
-                  key={u.key}
-                  type="button"
-                  className={`asm__usecase${active ? 'asm__usecase--active' : ''}`}
-                  onClick={() => setUseCase(u.key)}
-                  aria-pressed={active}
-                >
-                  <span className="asm__usecase-check">
-                    <CheckIcon />
-                  </span>
-                  <span className="asm__usecase-icon">
-                    <UseCaseIcon k={u.key} />
-                  </span>
-                  <div className="asm__usecase-label">{u.label}</div>
-                  <div className="asm__usecase-desc">{u.desc}</div>
-                </button>
-              );
-            })}
+        <div className="relative">
+          <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-lg">
+            <Cpu className="h-7 w-7 text-white" />
           </div>
-
-          {useCase === 'custom' && (
-            <div
-              className="asm__custom-box"
-              style={{
-                borderColor: '#7C3AED',
-                background: 'linear-gradient(135deg, rgba(124,58,237,0.08), rgba(168,85,247,0.06))',
-              }}
-            >
-              <label className="asm__custom-label" style={{ color: '#7C3AED' }}>
-                <SparkIcon /> چی می‌خوای؟ بنویس تا AI بفهمه برای کدوم کاربریه:
-              </label>
-              <textarea
-                className="asm__note"
-                value={customDesc}
-                onChange={(e) => setCustomDesc(e.target.value)}
-                placeholder="مثال: می‌خوام هم گیم 1440p بازی کنم هم با پریمیر ادیت کنم، گاهی هم استریم — بودجه متوسط"
-                maxLength={300}
-                rows={4}
-                autoFocus
-                style={{ borderColor: customDesc.trim().length < 3 ? '#F59E0B' : '#7C3AED' }}
-              />
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  marginTop: 8,
-                  fontSize: 11,
-                  color: '#64748B',
-                }}
-              >
-                <span>
-                  {customDesc.trim().length < 3
-                    ? 'حداقل ۳ حرف بنویس تا AI کاربری رو تشخیص بده'
-                    : `AI تشخیص می‌دهد → موتور قیمت و قطعات مخصوص همین کاربری رو می‌چیند`}
-                </span>
-                <span>{customDesc.length}/300</span>
-              </div>
-            </div>
-          )}
-
-          <button
-            className="asm__cta"
-            style={{ marginTop: 18 }}
-            onClick={() => setStep(2)}
-            disabled={useCase === 'custom' && customDesc.trim().length < 3}
-            title={
-              useCase === 'custom' && customDesc.trim().length < 3
-                ? 'برای دلخواه حداقل ۳ حرف توضیح بده'
-                : undefined
-            }
-          >
-            ادامه <ArrowIcon />
-          </button>
-        </div>
-      )}
-
-      {/* ───────── STEP 2: BUDGET (from engine) ───────── */}
-      {step === 2 && (
-        <div className="asm__panel">
-          <h2>بودجه‌ات چقدر است؟</h2>
-          <p className="asm__sub">
-            {rangeLoading ? (
-              <span className="asm__sub-loading">
-                <span className="asm__sub-spinner" /> در حال گرفتن بازهٔ واقعی از موتور ۲۰۱۴۳…
-              </span>
-            ) : range ? (
-              <span className="asm__sub-range">
-                بازه موتور: <b>{shortToman(range.min)}</b> تا <b>{shortToman(range.max)}</b>
-                <span className="asm__sub-range-rec">
-                  پیشنهادی: {shortToman(range.recommended)}
-                </span>
-              </span>
-            ) : (
-              'اسلایدر بودجه'
-            )}
+          <h1 className="text-2xl md:text-3xl font-black tracking-tight">سیستم دلخواهت رو هوشمند بچین</h1>
+          <p className="mt-3 max-w-2xl text-sm md:text-[15px] leading-7 text-white/90">
+            فقط بگو سیستم رو برای چی می‌خوای و چقدر بودجه داری. ما بهترین قطعات رو با قیمت و موجودی لحظه‌ای برات می‌چینیم و خیالت رو از سازگاری کامل همه‌چیز راحت می‌کنیم.
           </p>
+          <div className="mt-6 flex flex-wrap gap-2.5">
+            {[
+              { icon: Wallet, text: 'قیمت و موجودی زنده‌ی بازار' },
+              { icon: ShieldCheck, text: 'تضمین سازگاری ۱۰۰٪' },
+              { icon: BrainCircuit, text: 'پیشنهاد هوش مصنوعی' },
+              { icon: LayoutGrid, text: '۸ نوع کاربری حرفه‌ای' },
+            ].map(({ icon: Icon, text }) => (
+              <span key={text} className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-md border border-white/20 px-3.5 py-2 text-xs font-medium text-white">
+                <Icon className="h-4 w-4" /> {text}
+              </span>
+            ))}
+          </div>
+        </div>
+      </motion.div>
 
-          {rangeLoading || !range ? (
-            <div className="asm__budget-loading">
-              <div className="asm__budget-loading-skeleton">
-                <div className="asm__skeleton-bar asm__skeleton-bar--value" />
-                <div className="asm__skeleton-bar asm__skeleton-bar--range" />
-                <div className="asm__skeleton-presets">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="asm__skeleton-preset" />
+      {/* STEPER */}
+      <div className="mt-6 flex items-center justify-between gap-2">
+        {[
+          { n: 1, label: 'کاربری', icon: MousePointerClick, active: step === 1, done: step > 1 },
+          { n: 2, label: 'بودجه', icon: Wallet, active: step === 2, done: step > 2 },
+          { n: 3, label: 'پیشنهاد موتور', icon: Sparkles, active: step === 3, done: false },
+        ].map((s, idx, arr) => (
+          <React.Fragment key={s.n}>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.07, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className={`flex flex-1 items-center gap-2.5 rounded-2xl border px-3 py-2.5 md:px-4 md:py-3 ${s.active ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-[0_8px_24px_rgba(37,99,235,.3)]' : s.done ? 'bg-[#ECFDF5] text-[#065F46] border-[#A7F3D0]' : 'bg-white text-[#64748B] border-[#E2E8F0]'}`}
+            >
+              <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${s.active ? 'bg-white/20 text-white' : s.done ? 'bg-[#10B981] text-white' : 'bg-[#F1F5F9] text-[#64748B]'}`}>
+                {s.done ? <Check className="h-4 w-4" /> : s.n}
+              </span>
+              <s.icon className="h-4 w-4 hidden md:block" />
+              <span className="text-xs md:text-sm font-bold">{s.label}</span>
+            </motion.div>
+            {idx < arr.length - 1 && <div className={`h-px flex-1 ${s.done ? 'bg-[#10B981]' : 'bg-[#E2E8F0]'}`} />}
+          </React.Fragment>
+        ))}
+      </div>
+
+      {/* STEP 1 */}
+      <AnimatePresence mode="wait">
+        {step === 1 && (
+          <motion.div
+            key="step1"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-6 rounded-[24px] border border-[#E2E8F0] bg-white/80 backdrop-blur-xl p-6 shadow-[0_8px_32px_rgba(15,23,42,0.06)]"
+          >
+            <h2 className="text-[17px] font-black text-[#0F172A]">برای چه کاری می‌خوای؟</h2>
+            <p className="mt-1 text-sm text-[#64748B]">کاربری رو انتخاب کن — موتور قیمت و قطعات مخصوص همین کاربری رو می‌چینه.</p>
+            <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3">
+              {USE_CASES.map((u, idx) => {
+                const Icon = u.icon as any;
+                const active = useCase === u.key;
+                return (
+                  <motion.button
+                    key={u.key}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.05, duration: 0.3 }}
+                    whileHover={{ y: -3, scale: 1.01 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setUseCase(u.key)}
+                    className={`relative flex flex-col items-center gap-2 rounded-2xl border p-5 text-center transition-all ${active ? 'border-[#2563EB] bg-gradient-to-br from-white to-[#EFF6FF] shadow-[0_12px_32px_rgba(37,99,235,.15)]' : 'border-[#E2E8F0] bg-white hover:border-[#BFDBFE] hover:shadow-[0_8px_24px_rgba(37,99,235,.08)]'}`}
+                  >
+                    {active && <span className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-[#2563EB] text-white"><Check className="h-3.5 w-3.5" /></span>}
+                    <span className={`flex h-14 w-14 items-center justify-center rounded-2xl border ${active ? 'bg-[#2563EB] text-white border-transparent shadow-md' : 'bg-[#F8FAFC] text-[#2563EB] border-[#E2E8F0]'}`}>
+                      <Icon className="h-7 w-7" />
+                    </span>
+                    <span className="text-sm font-black text-[#0F172A]">{u.label}</span>
+                    <span className="text-xs text-[#64748B]">{u.desc}</span>
+                  </motion.button>
+                );
+              })}
+            </div>
+            {useCase === 'custom' && (
+              <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-5 rounded-2xl border border-[#E9D5FF] bg-gradient-to-br from-[#FAF5FF] to-white p-4 shadow-sm">
+                <label className="flex items-center gap-2 text-sm font-bold text-[#6D28D9]"><Wand2 className="h-4 w-4" /> چی می‌خوای؟ بنویس تا AI بفهمه</label>
+                <textarea
+                  value={customDesc}
+                  onChange={(e) => setCustomDesc(e.target.value)}
+                  placeholder="مثال: می‌خوام هم گیم 1440p بازی کنم هم با پریمیر ادیت کنم — بودجه متوسط"
+                  maxLength={300}
+                  rows={4}
+                  autoFocus
+                  className="mt-3 w-full resize-none rounded-xl border bg-white p-3 text-sm leading-6 outline-none focus:border-[#7C3AED] focus:ring-2 focus:ring-[#E9D5FF]"
+                  style={{ borderColor: customDesc.trim().length < 3 ? '#F59E0B' : '#7C3AED' }}
+                />
+                <div className="mt-2 flex justify-between text-xs text-[#64748B]">
+                  <span>{customDesc.trim().length < 3 ? 'حداقل ۳ حرف' : 'AI تشخیص می‌دهد'}</span><span>{customDesc.length}/300</span>
+                </div>
+              </motion.div>
+            )}
+            <motion.button
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setStep(2)}
+              disabled={useCase === 'custom' && customDesc.trim().length < 3}
+              className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#7C3AED] py-4 text-[15px] font-black text-white shadow-[0_12px_32px_rgba(37,99,235,.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              ادامه <ArrowRight className="h-5 w-5 rotate-180" />
+            </motion.button>
+          </motion.div>
+        )}
+
+        {step === 2 && (
+          <motion.div
+            key="step2"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.3 }}
+            className="mt-6 rounded-[24px] border border-[#E2E8F0] bg-white/80 backdrop-blur-xl p-6 shadow-[0_8px_32px_rgba(15,23,42,0.06)]"
+          >
+            <h2 className="text-[17px] font-black text-[#0F172A]">بودجه‌ات چقدره؟</h2>
+            {rangeLoading ? (
+              <div className="mt-4 flex items-center gap-2 text-sm text-[#2563EB]"><span className="h-4 w-4 animate-spin rounded-full border-2 border-[#BFDBFE] border-t-[#2563EB]" /> در حال گرفتن بازه‌ی واقعی…</div>
+            ) : range ? (
+              <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-[#64748B]">
+                <span>بازه موتور: <b className="text-[#0F172A]">{shortToman(range.min)}</b> تا <b className="text-[#0F172A]">{shortToman(range.max)}</b></span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#FEF3C7] px-3 py-1 text-xs font-bold text-[#92400E]"><BadgeCheck className="h-3.5 w-3.5" /> پیشنهادی: {shortToman(range.recommended)}</span>
+              </div>
+            ) : null}
+
+            {rangeLoading || !range ? (
+              <div className="mt-6 space-y-4">
+                <div className="h-8 w-2/3 animate-pulse rounded bg-[#F1F5F9] mx-auto" />
+                <div className="h-2 w-full animate-pulse rounded bg-[#E2E8F0]" />
+                <div className="flex gap-2 justify-center">{[1,2,3,4,5,6].map(i=><div key={i} className="h-9 w-20 animate-pulse rounded-full bg-[#F1F5F9]" />)}</div>
+              </div>
+            ) : (
+              <>
+                <div className="mt-6 text-center">
+                  <div className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#7C3AED] bg-clip-text text-3xl font-black text-transparent">
+                    <Wallet className="h-6 w-6 text-[#2563EB]" /> {budget.toLocaleString('fa-IR')} <span className="text-sm font-medium text-[#64748B]">تومان</span>
+                  </div>
+                </div>
+                <div className="relative mt-6">
+                  <input
+                    type="range"
+                    min={range.min}
+                    max={range.max}
+                    step={Math.max(1_000_000, Math.round((range.max - range.min) / 100))}
+                    value={budget}
+                    onChange={(e) => setBudget(Number(e.target.value))}
+                    className="h-2 w-full appearance-none rounded-full bg-[#E2E8F0] accent-[#2563EB] [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-[0_4px_16px_rgba(37,99,235,.3)] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#2563EB]"
+                    style={{ background: `linear-gradient(to right, #2563EB 0%, #7C3AED ${(budget - range.min) / (range.max - range.min) * 100}%, #E2E8F0 ${(budget - range.min) / (range.max - range.min) * 100}%, #E2E8F0 100%)` }}
+                  />
+                  <div className="mt-2 flex justify-between text-xs text-[#64748B]">
+                    <span>{shortToman(range.min)}</span>
+                    <button onClick={() => setBudget(range.recommended)} className="rounded-full bg-[#2563EB] px-3 py-1 text-xs font-bold text-white shadow">پیشنهادی {shortToman(range.recommended)}</button>
+                    <span>{shortToman(range.max)}</span>
+                  </div>
+                </div>
+                <div className="mt-4 flex flex-wrap justify-center gap-2">
+                  {range.presets.map((v) => (
+                    <button
+                      key={v}
+                      onClick={() => setBudget(v)}
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold transition-all ${budget === v ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-[0_8px_20px_rgba(37,99,235,.3)]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:border-[#BFDBFE] hover:shadow'}`}
+                    >
+                      <Tag className="h-3.5 w-3.5" /> {shortToman(v)}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            <div className="mt-6 flex gap-3">
+              <button onClick={() => setStep(1)} className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-[#E2E8F0] bg-white py-3.5 text-sm font-bold text-[#0F172A] hover:border-[#2563EB] hover:text-[#2563EB]">
+                <ArrowRight className="h-4 w-4" /> بازگشت
+              </button>
+              <button
+                onClick={build}
+                disabled={!range || rangeLoading}
+                className="flex-[2] inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#7C3AED] py-4 text-[15px] font-black text-white shadow-[0_12px_32px_rgba(37,99,235,.3)] disabled:opacity-50"
+              >
+                <Wand2 className="h-5 w-5" /> بچین برام
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {step === 3 && (
+          <motion.div
+            key="step3"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-6 rounded-[24px] border border-[#E2E8F0] bg-white/80 backdrop-blur-xl p-6 shadow-[0_8px_32px_rgba(15,23,42,0.06)]"
+          >
+            {loading && (
+              <div className="py-10 text-center">
+                <div className="mx-auto h-14 w-14 animate-spin rounded-full border-4 border-[#E0E7FF] border-t-[#2563EB]" />
+                <p className="mt-4 font-bold text-[#0F172A]">موتور دارد سیستم می‌چیند…</p>
+                <div className="mx-auto mt-4 max-w-sm space-y-2 text-right text-sm text-[#64748B]">
+                  {['تحلیل کاربری','موجودی زنده','سازگاری','انتخاب بهینه','تحلیل AI'].map((t,i)=>(
+                    <div key={t} className={`flex items-center gap-2 ${i<=loadStep?'text-[#0F172A] opacity-100':'opacity-40'}`}>
+                      <span className={`h-2 w-2 rounded-full ${i<=loadStep?'bg-[#10B981] shadow-[0_0_0_4px_rgba(16,185,129,.15)]':'bg-[#E2E8F0]'}`} /> {t}
+                    </div>
                   ))}
                 </div>
               </div>
-              <div className="asm__budget-loading-message">
-                <span className="asm__budget-loading-spinner" /> موتور دارد کف و سقف واقعی را حساب
-                می‌کند…
+            )}
+
+            {!loading && error && (
+              <div className="py-10 text-center">
+                <p className="font-bold text-[#DC2626]">{error}</p>
+                <div className="mt-4 flex justify-center gap-2">
+                  <button onClick={build} className="inline-flex items-center gap-2 rounded-xl bg-[#2563EB] px-4 py-2 text-sm font-bold text-white"><RotateCcw className="h-4 w-4" /> تلاش دوباره</button>
+                  <button onClick={restart} className="rounded-xl border px-4 py-2 text-sm font-bold">شروع دوباره</button>
+                </div>
               </div>
-            </div>
-          ) : (
-            <>
-              <div className="asm__budget-val">
-                {budget.toLocaleString('fa-IR')} <span>تومان</span>
-              </div>
-              <input
-                className="asm__range"
-                type="range"
-                min={range.min}
-                max={range.max}
-                step={Math.max(1_000_000, Math.round((range.max - range.min) / 100))}
-                value={budget}
-                onChange={(e) => setBudget(Number(e.target.value))}
-              />
-              <div className="asm__range-labels">
-                <span>{shortToman(range.min)}</span>
-                <span className="asm__range-rec" onClick={() => setBudget(range.recommended)}>
-                  پیشنهادی {shortToman(range.recommended)}
-                </span>
-                <span>{shortToman(range.max)}</span>
-              </div>
-              <div className="asm__presets">
-                {(range.presets.length ? range.presets : FALLBACK_PRESETS[useCase] || []).map(
-                  (v) => (
-                    <button
-                      key={v}
-                      type="button"
-                      className={`asm__preset${budget === v ? 'asm__preset--active' : ''}`}
-                      onClick={() => setBudget(v)}
-                    >
-                      {shortToman(v)}
-                    </button>
-                  )
+            )}
+
+            {!loading && result?.ok && (
+              <>
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#2563EB] text-white"><Cpu className="h-5 w-5" /></span>
+                  <h2 className="text-lg font-black text-[#0F172A]">سیستم {result.useCaseLabel}</h2>
+                  <span className="rounded-full bg-[#EFF6FF] px-3 py-1 text-xs font-bold text-[#2563EB]">{result.tier}</span>
+                  <span className="rounded-full bg-[#F1F5F9] px-3 py-1 text-xs text-[#64748B]">{summary?.itemCount} قطعه • {toman(summary?.totalAfter || 0)}</span>
+                </div>
+
+                <TelemetryDashboard parts={parts as any} onAutoBalance={() => build()} useCase={result?.detectedUseCase || useCase} useCaseLabel={result?.useCaseLabel} />
+
+                {/* AI card */}
+                {(result.analysis || result.ai?.finalAnalysisUsed) && (
+                  <div className="mt-4 rounded-2xl border border-[#E9D5FF] bg-gradient-to-br from-[#FAF5FF] to-white p-4">
+                    <div className="flex items-center gap-2 text-sm font-black text-[#6D28D9]"><BrainCircuit className="h-5 w-5" /> تحلیل موتور <span className="rounded-full bg-[#EDE9FE] px-2 py-0.5 text-xs">{result.ai?.finalAnalysisModel || 'AI'}</span></div>
+                    <div className="mt-2 space-y-1 text-sm leading-7 text-[#334155]">{(result.analysis || '').split('\n').slice(0,3).map((l,i)=><p key={i}>{l}</p>)}</div>
+                  </div>
                 )}
-              </div>
-              <p className="asm__presets-hint">
-                اسلایدر و پریست‌ها مستقیماً از Engine می‌آید — نه حدس فرانت‌اند.
-              </p>
-            </>
-          )}
 
-          <div className="asm__sum-actions" style={{ marginTop: 22 }}>
-            <button className="asm__btn-ghost" onClick={() => setStep(1)}>
-              <ArrowIcon /> بازگشت
-            </button>
-            <button
-              className="asm__cta"
-              style={{ flex: 2 }}
-              onClick={build}
-              disabled={!range || rangeLoading}
-            >
-              {rangeLoading ? (
-                <>
-                  <span className="asm__buy-spin" /> صبر کن…
-                </>
-              ) : (
-                <>
-                  <SparkIcon /> بسپار به موتور!
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ───────── STEP 3: RESULT (engine-driven) ───────── */}
-      {step === 3 && (
-        <div className="asm__panel">
-          {loading && (
-            <div className="asm__loading">
-              <div className="asm__spinner" />
-              <div className="asm__loading-title">موتور دارد سیستم می‌چیند…</div>
-              <div className="asm__loading-steps">
-                {LOADING_STEPS.map((s, i) => (
-                  <div
-                    key={i}
-                    className={`asm__loading-step${i <= loadStep ? 'asm__loading-step--on' : ''}`}
-                  >
-                    <span className="asm__ls-dot" />
-                    {s}
+                {/* TABS */}
+                <div className="mt-6">
+                  <div className="flex gap-1 overflow-x-auto pb-2 scrollbar-thin">
+                    {parts.map((p) => {
+                      const TabIcon = (CATEGORY_TABS[p.category]?.icon || Cpu) as any;
+                      const active = activeTab === p.category;
+                      return (
+                        <button
+                          key={p.category}
+                          onClick={() => setActiveTab(p.category)}
+                          className={`relative flex items-center gap-2 whitespace-nowrap rounded-full border px-4 py-2.5 text-sm font-bold transition-all ${active ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-[0_8px_20px_rgba(37,99,235,.25)]' : 'bg-white text-[#475569] border-[#E2E8F0] hover:border-[#BFDBFE]'}`}
+                        >
+                          <TabIcon className="h-4 w-4" /> {CATEGORY_TABS[p.category]?.label || p.categoryLabel} <span className="text-xs opacity-70">{shortToman(p.finalPrice)}</span>
+                          {!blockedIds.has(String(p.id)) && !unavailableIds.has(String(p.id)) && <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-[#10B981] ring-2 ring-white" />}
+                        </button>
+                      );
+                    })}
                   </div>
-                ))}
-              </div>
-              <p style={{ fontSize: 12, color: '#6B7790', marginTop: 14 }}>
-                POST /api/assemble → 20143/assemble (retry 3×)
-              </p>
-            </div>
-          )}
 
-          {!loading && error && (
-            <div className="asm__error">
-              <p style={{ color: '#DC2626', fontFamily: 'bold' }}>{error}</p>
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 16 }}>
-                <button className="asm__btn-ghost" onClick={build}>
-                  <RefreshIcon /> تلاش دوباره
-                </button>
-                <button className="asm__btn-ghost" onClick={restart}>
-                  شروع دوباره
-                </button>
-              </div>
-            </div>
-          )}
-
-          {!loading && result?.ok && (
-            <>
-              {/* Header — tier + engine badge */}
-              <div className="asm__result-head">
-                <span className="asm__usecase-icon" style={{ width: 42, height: 42 }}>
-                  <UseCaseIcon k={useCase} />
-                </span>
-                <h2 className="asm__black">سیستم {result.useCaseLabel}</h2>
-                <span
-                  className="asm__badge-tier"
-                  style={{ background: tierInfo.bg, color: tierInfo.color }}
-                >
-                  {tierInfo.label}
-                </span>
-                <span className="asm__badge-count">
-                  {summary?.itemCount || parts.length} قطعه • {toman(summary?.totalAfter || 0)}
-                </span>
-              </div>
-
-              {result.description && (
-                <div className="asm__reason">
-                  <SparkIcon />
-                  <span>{result.description}</span>
-                </div>
-              )}
-
-              {/* Telemetry — live */}
-              <TelemetryDashboard
-                parts={parts as any}
-                onAutoBalance={() => build()}
-                useCase={result?.detectedUseCase || useCase}
-                useCaseLabel={result?.useCaseLabel}
-              />
-
-              {/* Compatibility — from engine verifyBuild */}
-              {result.compatibilityMatrix && (
-                <div
-                  className="asm__compat-panel-v3"
-                  style={{
-                    borderColor: isIncompatible
-                      ? '#EF4444'
-                      : result.compatibilityMatrix.score >= 85
-                        ? '#10B981'
-                        : '#F59E0B',
-                  }}
-                >
-                  <div
-                    className="asm__compat-v3-head"
-                    style={{
-                      borderColor: isIncompatible ? '#FECACA' : '#E5E7EB',
-                      background: isIncompatible ? '#FEF2F2' : '#F9FAFB',
-                    }}
-                  >
-                    <div
-                      className="asm__compat-v3-score-circle"
-                      style={{
-                        borderColor: isIncompatible ? '#EF4444' : '#10B981',
-                        color: isIncompatible ? '#EF4444' : '#10B981',
-                      }}
+                  {activePart && (
+                    <motion.div
+                      key={activePart.id}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                      className="mt-4 rounded-[20px] border border-[#E2E8F0] bg-white p-4 shadow-[0_8px_24px_rgba(15,23,42,0.06)]"
                     >
-                      <span className="asm__compat-v3-score-num">
-                        {result.compatibilityMatrix.score}
-                      </span>
-                      <span className="asm__compat-v3-score-max">/100</span>
-                    </div>
-                    <div className="asm__compat-v3-status">
-                      <div
-                        className="asm__compat-v3-status-label"
-                        style={{ color: isIncompatible ? '#DC2626' : '#059669' }}
-                      >
-                        {isIncompatible
-                          ? 'ناسازگار'
-                          : result.compatibilityMatrix.score >= 90
-                            ? 'کاملاً سازگار'
-                            : 'سازگار با هشدار'}
-                      </div>
-                      <div className="asm__compat-v3-status-desc">
-                        {isIncompatible
-                          ? 'موتور ناسازگاری سوکت/DDR/توان را تشخیص داد'
-                          : `سوکت ${(result.compatibilityMatrix as any) ? (result as any).compatibilityMatrix?.socket || '—' : '—'} — هماهنگی کامل`}
-                      </div>
-                    </div>
-                  </div>
-
-                  {result.compatibilityMatrix.errors.length > 0 && (
-                    <div className="asm__compat-v3-section asm__compat-v3-section--error">
-                      <div className="asm__compat-v3-section-title">
-                        مشکلات ({result.compatibilityMatrix.errors.length})
-                      </div>
-                      {result.compatibilityMatrix.errors.map((e, i) => (
-                        <div key={i} className="asm__compat-v3-row">
-                          <WarningIcon /> {e.message}
+                      <div className="grid gap-4 md:grid-cols-[160px_1fr_auto] md:items-center">
+                        <div className="flex justify-center">
+                          {activePart.image ? (
+                            <img src={activePart.image} alt={activePart.name} className="h-36 w-36 object-contain rounded-xl border bg-[#F8FAFC] p-2" />
+                          ) : (
+                            <span className="flex h-36 w-36 items-center justify-center rounded-xl bg-[#F1F5F9] text-[#94A3B8]"><Cpu className="h-10 w-10" /></span>
+                          )}
                         </div>
-                      ))}
-                    </div>
-                  )}
-                  {result.compatibilityMatrix.warnings.length > 0 && (
-                    <div className="asm__compat-v3-section asm__compat-v3-section--warning">
-                      <div className="asm__compat-v3-section-title">
-                        هشدارها ({result.compatibilityMatrix.warnings.length})
-                      </div>
-                      {result.compatibilityMatrix.warnings.map((w, i) => (
-                        <div key={i} className="asm__compat-v3-row">
-                          <InfoIcon /> {w.message}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  {result.compatibilityMatrix.errors.length === 0 &&
-                    result.compatibilityMatrix.warnings.length === 0 && (
-                      <div className="asm__compat-v3-section asm__compat-v3-section--ok">
-                        <CheckIcon /> همهٔ قوانین سازگاری پاس شد — سیستم آمادهٔ سفارش است.
-                      </div>
-                    )}
-                </div>
-              )}
-
-              {/* AI Analysis — from engine queryAiCombo */}
-              {(result.analysis || result.ai?.finalAnalysisUsed) && (
-                <div className="asm__ai-panel">
-                  <div className="asm__ai-head">
-                    <span className="asm__ai-icon">
-                      <SparkIcon />
-                    </span>
-                    <div className="asm__ai-info">
-                      <div className="asm__ai-title">
-                        تحلیل موتور
-                        <span className="asm__ai-provider-badge">
-                          {result.ai?.finalAnalysisModel || 'offl-assemble-elite'}
-                        </span>
-                      </div>
-                      <div className="asm__ai-subtitle">
-                        {result.ai?.finalAnalysisUsed ? 'تولیدشده با OmniRouter' : 'تحلیل داخلی'}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="asm__ai-content">
-                    <div className="asm__ai-text">
-                      {(result.analysis || 'سیستم با قطعات کاملاً هماهنگ اسمبل شد.')
-                        .split('\n')
-                        .slice(0, 4)
-                        .map((line, i) => (
-                          <p key={i}>{line}</p>
-                        ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Parts grid — directly from engine + multi-quantity for RAM/Storage */}
-              <div className="asm__parts-section">
-                <h3 className="asm__parts-title">
-                  قطعات پیشنهادی موتور <span className="asm__parts-count">{parts.length} قطعه</span>
-                  <span style={{ fontSize: 11, color: '#6B7790', marginInlineStart: 8 }}>
-                    — RAM و SSD را می‌توانی چندتا کنی (حداقل ۱ اجباری)
-                  </span>
-                </h3>
-                <div className="asm__parts-cards-grid">
-                  {parts.map((p, idx) => {
-                    const blocked = blockedIds.has(String(p.id));
-                    const unavailable = unavailableIds.has(String(p.id));
-                    const isMulti = p.category === 'ram' || p.category === 'storage';
-                    const qty = Math.max(1, Number((p as any).quantity || 1));
-                    const mb = parts.find((x) => x.category === 'motherboard');
-                    const ramSlots = Number((mb?.specs as any)?.ramSlots || 4);
-                    const m2Slots = Number((mb?.specs as any)?.m2Slots || 2);
-                    return (
-                      <div
-                        key={`${p.category}-${p.id}`}
-                        style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
-                      >
-                        <AssembleProductCard
-                          part={p}
-                          index={idx}
-                          expanded={expanded.has(String(p.id))}
-                          onToggleExpand={() => toggleExpand(String(p.id))}
-                          onSelectAlternative={(alt) => selectAlternative(String(p.id), alt)}
-                          onRemoveOptional={
-                            p.isOptional ? () => removeOptional(String(p.id)) : undefined
-                          }
-                          blocked={blocked}
-                          unavailable={unavailable}
-                          blockingReason={
-                            blocked ? 'ناسازگار با بقیه سیستم' : unavailable ? 'ناموجود' : undefined
-                          }
-                        />
-                        {isMulti && !blocked && !unavailable && (
-                          <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              gap: 10,
-                              padding: '10px 14px',
-                              borderRadius: 14,
-                              background:
-                                'linear-gradient(135deg, rgba(56,107,249,0.06), rgba(111,60,245,0.05))',
-                              border: '1px solid rgba(56,107,249,0.16)',
-                              marginTop: -4,
-                            }}
-                          >
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 8,
-                                fontSize: 12,
-                                color: '#475569',
-                              }}
-                            >
-                              <span style={{ fontFamily: 'bold' }}>
-                                {p.category === 'ram'
-                                  ? `کیت RAM — هر کیت ${(p.specs as any)?.capacity || 8}GB`
-                                  : `SSD — ${(p.specs as any)?.capacity || 256}GB`}
-                              </span>
-                              <span style={{ fontSize: 11, color: '#94A3B8' }}>
-                                {p.category === 'ram'
-                                  ? `(${ramSlots} اسلات)`
-                                  : `(${m2Slots} اسلات M.2)`}
-                              </span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <button
-                                type="button"
-                                onClick={() => updateQuantity(String(p.id), -1)}
-                                disabled={qty <= 1}
-                                style={{
-                                  width: 34,
-                                  height: 34,
-                                  borderRadius: 10,
-                                  border: '1px solid #E2E8F0',
-                                  background: qty <= 1 ? '#F1F5F9' : '#FFFFFF',
-                                  color: qty <= 1 ? '#94A3B8' : '#334155',
-                                  cursor: qty <= 1 ? 'not-allowed' : 'pointer',
-                                  fontSize: 18,
-                                  fontWeight: 700,
-                                  lineHeight: 1,
-                                }}
-                                title="کم کردن"
-                              >
-                                −
-                              </button>
-                              <span
-                                style={{
-                                  minWidth: 56,
-                                  textAlign: 'center',
-                                  fontFamily: 'bold',
-                                  fontSize: 14,
-                                  padding: '6px 10px',
-                                  borderRadius: 10,
-                                  background: '#FFFFFF',
-                                  border: '1px solid #E2E8F0',
-                                  color: '#0F172A',
-                                }}
-                              >
-                                × {qty.toLocaleString('fa-IR')}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => updateQuantity(String(p.id), 1)}
-                                style={{
-                                  width: 34,
-                                  height: 34,
-                                  borderRadius: 10,
-                                  border: '1px solid #386BF9',
-                                  background: 'linear-gradient(135deg, #386BF9, #6F3CF5)',
-                                  color: '#FFFFFF',
-                                  cursor: 'pointer',
-                                  fontSize: 18,
-                                  fontWeight: 700,
-                                  lineHeight: 1,
-                                }}
-                                title="اضافه کردن"
-                              >
-                                +
-                              </button>
-                            </div>
+                        <div>
+                          <div className="flex items-center gap-2 text-xs text-[#2563EB] font-bold"><BadgeCheck className="h-4 w-4 text-[#10B981]" /> موجود <span className="text-[#64748B]">•</span> {activePart.brand || ''}</div>
+                          <h3 className="mt-1 text-[15px] font-bold leading-6 text-[#0F172A]">{activePart.name}</h3>
+                          <p className="mt-1 text-xs text-[#64748B]">{activePart.specs ? Object.entries(activePart.specs).slice(0,3).map(([k,v])=>`${k}:${v}`).join(' • ') : ''}</p>
+                          <div className="mt-3 flex items-baseline gap-2">
+                            {activePart.discountPercent>0 && <span className="text-xs line-through text-[#94A3B8]">{toman(activePart.price)}</span>}
+                            <span className="text-lg font-black text-[#10B981]">{toman(activePart.finalPrice)}</span>
                           </div>
-                        )}
+                          {/* quantity for ram/storage */}
+                          {(activePart.category==='ram' || activePart.category==='storage') && (
+                            <div className="mt-3 flex items-center gap-2">
+                              <button onClick={()=>updateQuantity(String(activePart.id), -1)} disabled={Number(activePart.quantity||1)<=1} className="flex h-8 w-8 items-center justify-center rounded-full border bg-white disabled:opacity-40">−</button>
+                              <span className="min-w-12 rounded-full border bg-white px-3 py-1 text-center text-sm font-bold">× {Number(activePart.quantity||1).toLocaleString('fa-IR')}</span>
+                              <button onClick={()=>updateQuantity(String(activePart.id), 1)} className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2563EB] text-white">+</button>
+                              <span className="text-xs text-[#64748B]">حداقل ۱</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <a href={activePart.url} target="_blank" className="inline-flex items-center justify-center gap-2 rounded-xl border bg-white px-4 py-2.5 text-sm font-bold hover:border-[#2563EB] hover:text-[#2563EB]"><Eye className="h-4 w-4" /> مشاهده محصول</a>
+                          <button onClick={buyAll} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2563EB] px-4 py-2.5 text-sm font-bold text-white shadow hover:bg-[#1D4ED8]"><ShoppingCart className="h-4 w-4" /> افزودن</button>
+                          {activePart.alternatives?.length>0 && <button onClick={()=>toggleExpand(String(activePart.id))} className="text-xs text-[#2563EB]">{expanded.has(String(activePart.id))?'بستن':'جایگزین‌ها'}</button>}
+                        </div>
                       </div>
-                    );
-                  })}
-                </div>
-                <p
-                  style={{
-                    fontSize: 11,
-                    color: '#94A3B8',
-                    marginTop: 10,
-                    lineHeight: 1.8,
-                    textAlign: 'center',
-                  }}
-                >
-                  حداقل ۱ عدد اجباری — اگر بودجه‌ات بالاست می‌توانی چند کیت RAM یا چند SSD اضافه
-                  کنی، قیمت مجموع به‌صورت لحظه‌ای حساب می‌شود.
-                </p>
-              </div>
-
-              {/* Summary — from engine totals, but recalculated if user edited qty/alternatives */}
-              {summary && (
-                <div className="asm__summary">
-                  <div className="asm__sum-row">
-                    <span>قیمت قبل تخفیف</span>
-                    <span className="asm__sum-before">{toman(summary.totalBefore)}</span>
-                  </div>
-                  <div className="asm__sum-row">
-                    <span>صرفه‌جویی</span>
-                    <span className="asm__sum-saving">
-                      − {toman(summary.totalSaving)} ({summary.savingPercent}٪)
-                    </span>
-                  </div>
-                  <div className="asm__sum-row asm__sum-total">
-                    <span>قیمت نهایی (موتور)</span>
-                    <span>{toman(summary.totalAfter)}</span>
-                  </div>
-
-                  {bought ? (
-                    <div className="asm__bought">
-                      <CheckIcon /> به سبد اضافه شد
-                      <button
-                        className="asm__btn-ghost"
-                        style={{ flex: 'none', marginInlineStart: 8 }}
-                        onClick={() => router.push('/cart')}
-                      >
-                        <CartIcon /> سبد خرید
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      className="asm__buy"
-                      onClick={buyAll}
-                      disabled={buying || isIncompatible}
-                    >
-                      {buying ? (
-                        <>
-                          <span className="asm__buy-spin" /> در حال افزودن…
-                        </>
-                      ) : (
-                        <>
-                          <CartIcon /> افزودن قطعات موجود به سبد
-                        </>
+                      {expanded.has(String(activePart.id)) && activePart.alternatives?.length>0 && (
+                        <div className="mt-4 grid gap-2 max-h-64 overflow-auto pr-1">
+                          {activePart.alternatives.slice(0,6).map((alt:any)=>(
+                            <div key={alt.id} className="flex items-center justify-between rounded-xl border bg-[#F8FAFC] p-3">
+                              <span className="text-sm font-medium truncate">{alt.name}</span><span className="text-sm font-bold text-[#10B981]">{toman(alt.finalPrice)}</span><button onClick={()=>selectAlternative(String(activePart.id), alt)} className="rounded-full bg-[#2563EB] px-3 py-1 text-xs font-bold text-white">انتخاب</button>
+                            </div>
+                          ))}
+                        </div>
                       )}
-                    </button>
+                    </motion.div>
                   )}
-
-                  <div className="asm__sum-actions">
-                    <button className="asm__btn-ghost" onClick={() => setStep(2)}>
-                      <RefreshIcon /> تغییر بودجه
-                    </button>
-                    <button className="asm__btn-ghost" onClick={build}>
-                      <RefreshIcon /> پیشنهاد دیگر موتور
-                    </button>
-                    <button className="asm__btn-ghost" onClick={() => setInvoiceOpen(true)}>
-                      🧾 پیش‌فاکتور
-                    </button>
-                    <button className="asm__btn-ghost" onClick={restart}>
-                      شروع دوباره
-                    </button>
-                  </div>
                 </div>
-              )}
-            </>
-          )}
-        </div>
-      )}
 
-      <InvoiceModal
-        open={invoiceOpen}
-        onClose={() => setInvoiceOpen(false)}
-        parts={parts as any}
-        useCaseLabel={result?.useCaseLabel}
-        budget={budget}
-      />
+                {/* Sticky total bar */}
+                {summary && (
+                  <div className="sticky bottom-4 z-20 mt-6 flex flex-col gap-3 rounded-2xl border border-[#E2E8F0] bg-white/90 backdrop-blur-xl p-4 shadow-[0_16px_40px_rgba(15,23,42,.12)] md:flex-row md:items-center md:justify-between">
+                    <div className="flex items-center gap-2 text-sm font-bold text-[#0F172A]"><Receipt className="h-5 w-5 text-[#2563EB]" /> جمع کل: <span className="text-lg font-black text-[#10B981]">{toman(summary.totalAfter)}</span> {summary.savingPercent>0 && <span className="rounded-full bg-[#FEF2F2] px-2 py-0.5 text-xs text-[#DC2626]">صرفه‌جویی {toman(summary.totalSaving)}</span>}</div>
+                    <div className="flex gap-2">
+                      <button onClick={restart} className="inline-flex items-center gap-2 rounded-xl border bg-white px-4 py-2.5 text-sm font-bold"><RotateCcw className="h-4 w-4" /> شروع دوباره</button>
+                      <button onClick={buyAll} disabled={buying || isIncompatible} className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#7C3AED] px-6 py-3 text-sm font-black text-white shadow disabled:opacity-50"><ShoppingCart className="h-4 w-4" /> افزودن همه به سبد</button>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Footer info — engine link */}
-      <p style={{ textAlign: 'center', fontSize: 11, color: '#94A3B8', marginTop: 14 }}>
-        Backend: <code>POST /api/assemble → {`http://147.45.43.25:20143/assemble`}</code> • Budget:{' '}
-        <code>GET /api/assemble/budget-range</code> • Engine v5
-      </p>
+      <InvoiceModal open={invoiceOpen} onClose={()=>setInvoiceOpen(false)} parts={parts as any} useCaseLabel={result?.useCaseLabel} budget={budget} />
     </div>
   );
 }
 
-function Step({
-  n,
-  label,
-  active,
-  done,
-}: {
-  n: number;
-  label: string;
-  active: boolean;
-  done: boolean;
-}) {
-  return (
-    <div
-      className={`asm__step${active ? 'asm__step--active' : ''}${done ? 'asm__step--done' : ''}`}
-    >
-      <span className="asm__step-num">{done ? <CheckIcon /> : n}</span>
-      {label}
-    </div>
-  );
+function Step({ n, label, active, done }: { n:number; label:string; active:boolean; done:boolean }) {
+  return <div className={`flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-bold ${active ? 'bg-[#2563EB] text-white border-[#2563EB]' : done ? 'bg-[#10B981] text-white border-[#10B981]' : 'bg-white text-[#64748B] border-[#E2E8F0]'}`}><span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20">{done?<Check className="h-3 w-3"/>:n}</span>{label}</div>;
 }

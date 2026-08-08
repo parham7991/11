@@ -316,6 +316,67 @@ export default function AssembleOnlineWizard() {
   const removeOptional = (id: string) =>
     setParts((prev) => prev.filter((p) => String(p.id) !== String(id)));
 
+  // ───────── Multi-quantity for RAM & Storage (user can add/remove) ─────────
+  const updateQuantity = (id: string, delta: number) => {
+    setParts((prev) => {
+      const mb = prev.find((p) => p.category === 'motherboard');
+      const ramSlots = Number((mb?.specs as any)?.ramSlots || 4);
+      const m2Slots = Number(
+        (mb?.specs as any)?.m2Slots ||
+          (String((mb?.specs as any)?.chipset || '')
+            .toUpperCase()
+            .includes('Z790')
+            ? 4
+            : 2)
+      );
+      const sataPorts = Number((mb?.specs as any)?.sataPorts || 4);
+
+      return prev.map((p) => {
+        if (String(p.id) !== String(id)) return p;
+        if (p.category !== 'ram' && p.category !== 'storage') return p;
+        const cur = Math.max(1, Number(p.quantity || 1));
+        let next = cur + delta;
+        if (next < 1) next = 1;
+
+        // ── RAM: check slots ──
+        if (p.category === 'ram') {
+          // هر کیت معمولاً 1 یا 2 ماژول؛ ما ساده: هر کیت 1 اسلات حساب می‌کنیم، ولی اگر dual باشد 2 اسلات
+          const modulesPerKit = Number(
+            (p.specs as any)?.moduleCount ||
+              (String((p.specs as any)?.channel || '').toLowerCase() === 'dual' ? 2 : 1)
+          );
+          const neededSlots = next * modulesPerKit;
+          if (neededSlots > ramSlots) {
+            alert(
+              `مادربرد فقط ${ramSlots} اسلات RAM دارد — حداکثر ${Math.floor(ramSlots / modulesPerKit)} کیت قابل نصب است.`
+            );
+            return p;
+          }
+        }
+        // ── Storage: M.2 vs SATA ──
+        if (p.category === 'storage') {
+          const isNVMe =
+            (p.specs as any)?.isM2 ||
+            (p.specs as any)?.isNVMe ||
+            String((p.specs as any)?.formFactor || '').includes('M.2');
+          const maxAllowed = isNVMe ? m2Slots : sataPorts;
+          if (next > maxAllowed) {
+            alert(
+              `${p.categoryLabel} ${isNVMe ? 'M.2' : 'SATA'}: مادربرد فقط ${maxAllowed} اسلات دارد.`
+            );
+            return p;
+          }
+        }
+
+        return {
+          ...p,
+          quantity: next,
+          quantityLabel: p.category === 'ram' ? `${next} کیت` : `${next} عدد`,
+        };
+      });
+    });
+  };
+
   const buyAll = () => {
     const available = parts.filter((p) => p.inStock && p.finalPrice > 0);
     if (!available.length) {
@@ -741,35 +802,152 @@ export default function AssembleOnlineWizard() {
                 </div>
               )}
 
-              {/* Parts grid — directly from engine */}
+              {/* Parts grid — directly from engine + multi-quantity for RAM/Storage */}
               <div className="asm__parts-section">
                 <h3 className="asm__parts-title">
                   قطعات پیشنهادی موتور <span className="asm__parts-count">{parts.length} قطعه</span>
+                  <span style={{ fontSize: 11, color: '#6B7790', marginInlineStart: 8 }}>
+                    — RAM و SSD را می‌توانی چندتا کنی (حداقل ۱ اجباری)
+                  </span>
                 </h3>
                 <div className="asm__parts-cards-grid">
                   {parts.map((p, idx) => {
                     const blocked = blockedIds.has(String(p.id));
                     const unavailable = unavailableIds.has(String(p.id));
+                    const isMulti = p.category === 'ram' || p.category === 'storage';
+                    const qty = Math.max(1, Number((p as any).quantity || 1));
+                    const mb = parts.find((x) => x.category === 'motherboard');
+                    const ramSlots = Number((mb?.specs as any)?.ramSlots || 4);
+                    const m2Slots = Number((mb?.specs as any)?.m2Slots || 2);
                     return (
-                      <AssembleProductCard
+                      <div
                         key={`${p.category}-${p.id}`}
-                        part={p}
-                        index={idx}
-                        expanded={expanded.has(String(p.id))}
-                        onToggleExpand={() => toggleExpand(String(p.id))}
-                        onSelectAlternative={(alt) => selectAlternative(String(p.id), alt)}
-                        onRemoveOptional={
-                          p.isOptional ? () => removeOptional(String(p.id)) : undefined
-                        }
-                        blocked={blocked}
-                        unavailable={unavailable}
-                        blockingReason={
-                          blocked ? 'ناسازگار با بقیه سیستم' : unavailable ? 'ناموجود' : undefined
-                        }
-                      />
+                        style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+                      >
+                        <AssembleProductCard
+                          part={p}
+                          index={idx}
+                          expanded={expanded.has(String(p.id))}
+                          onToggleExpand={() => toggleExpand(String(p.id))}
+                          onSelectAlternative={(alt) => selectAlternative(String(p.id), alt)}
+                          onRemoveOptional={
+                            p.isOptional ? () => removeOptional(String(p.id)) : undefined
+                          }
+                          blocked={blocked}
+                          unavailable={unavailable}
+                          blockingReason={
+                            blocked ? 'ناسازگار با بقیه سیستم' : unavailable ? 'ناموجود' : undefined
+                          }
+                        />
+                        {isMulti && !blocked && !unavailable && (
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: 10,
+                              padding: '10px 14px',
+                              borderRadius: 14,
+                              background:
+                                'linear-gradient(135deg, rgba(56,107,249,0.06), rgba(111,60,245,0.05))',
+                              border: '1px solid rgba(56,107,249,0.16)',
+                              marginTop: -4,
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                                fontSize: 12,
+                                color: '#475569',
+                              }}
+                            >
+                              <span style={{ fontFamily: 'bold' }}>
+                                {p.category === 'ram'
+                                  ? `کیت RAM — هر کیت ${(p.specs as any)?.capacity || 8}GB`
+                                  : `SSD — ${(p.specs as any)?.capacity || 256}GB`}
+                              </span>
+                              <span style={{ fontSize: 11, color: '#94A3B8' }}>
+                                {p.category === 'ram'
+                                  ? `(${ramSlots} اسلات)`
+                                  : `(${m2Slots} اسلات M.2)`}
+                              </span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <button
+                                type="button"
+                                onClick={() => updateQuantity(String(p.id), -1)}
+                                disabled={qty <= 1}
+                                style={{
+                                  width: 34,
+                                  height: 34,
+                                  borderRadius: 10,
+                                  border: '1px solid #E2E8F0',
+                                  background: qty <= 1 ? '#F1F5F9' : '#FFFFFF',
+                                  color: qty <= 1 ? '#94A3B8' : '#334155',
+                                  cursor: qty <= 1 ? 'not-allowed' : 'pointer',
+                                  fontSize: 18,
+                                  fontWeight: 700,
+                                  lineHeight: 1,
+                                }}
+                                title="کم کردن"
+                              >
+                                −
+                              </button>
+                              <span
+                                style={{
+                                  minWidth: 56,
+                                  textAlign: 'center',
+                                  fontFamily: 'bold',
+                                  fontSize: 14,
+                                  padding: '6px 10px',
+                                  borderRadius: 10,
+                                  background: '#FFFFFF',
+                                  border: '1px solid #E2E8F0',
+                                  color: '#0F172A',
+                                }}
+                              >
+                                × {qty.toLocaleString('fa-IR')}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => updateQuantity(String(p.id), 1)}
+                                style={{
+                                  width: 34,
+                                  height: 34,
+                                  borderRadius: 10,
+                                  border: '1px solid #386BF9',
+                                  background: 'linear-gradient(135deg, #386BF9, #6F3CF5)',
+                                  color: '#FFFFFF',
+                                  cursor: 'pointer',
+                                  fontSize: 18,
+                                  fontWeight: 700,
+                                  lineHeight: 1,
+                                }}
+                                title="اضافه کردن"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
+                <p
+                  style={{
+                    fontSize: 11,
+                    color: '#94A3B8',
+                    marginTop: 10,
+                    lineHeight: 1.8,
+                    textAlign: 'center',
+                  }}
+                >
+                  حداقل ۱ عدد اجباری — اگر بودجه‌ات بالاست می‌توانی چند کیت RAM یا چند SSD اضافه
+                  کنی، قیمت مجموع به‌صورت لحظه‌ای حساب می‌شود.
+                </p>
               </div>
 
               {/* Summary — from engine totals, but recalculated if user edited qty/alternatives */}

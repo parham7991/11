@@ -209,6 +209,24 @@ export default function TelemetryDashboard({
         )}
       </div>
 
+      {/* ===== NEW: AI System Summary per-useCase — خیلی کامل و رو راست ===== */}
+      <div className="rounded-2xl border bg-gradient-to-br from-[#EFF6FF] via-white to-[#FAF5FF] p-4 mb-4">
+        <div className="flex items-center gap-2 text-sm font-black text-[#1E40AF]"><span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#2563EB] text-white"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a7 7 0 0 1 7 7c0 3.5-2.5 6-5 8 -2.5-2-5-4.5-5-8a7 7 0 0 1 7-7z"/></svg></span> تحلیل هوش مصنوعی — {useCaseLabel || useCase} {isGaming ? 'گیمینگ' : isOffice ? 'اداری' : isCreative ? 'کریتیو' : isServer ? 'سرور' : ''}</div>
+        <div className="mt-2 grid gap-2 md:grid-cols-3 text-sm">
+          <div className="rounded-xl bg-white border p-3"><div className="text-xs text-muted-foreground">امتیاز کلی</div><div className="text-lg font-black text-foreground">{t.futureProofing.score}/۱۰ <span className="text-xs font-normal text-muted-foreground">آینده‌نگری</span></div><div className="text-xs text-muted-foreground">{t.futureProofing.reasons[0] || 'ترکیب متوازن'}</div></div>
+          <div className="rounded-xl bg-white border p-3"><div className="text-xs text-muted-foreground">گلوگاه اصلی</div><div className="text-sm font-bold text-foreground">{t.bottleneck.resolution1440p.severity === 'BALANCED' ? 'بدون گلوگاه — متوازن' : `${t.bottleneck.resolution1440p.percentage}% ${t.bottleneck.resolution1440p.limitingComponent}`}</div><div className="text-xs text-muted-foreground">{t.bottleneck.resolution1440p.description.slice(0,60)}</div></div>
+          <div className="rounded-xl bg-white border p-3"><div className="text-xs text-muted-foreground">مصرف و پاور</div><div className="text-sm font-bold text-foreground">{t.power.totalTdp}W کل • {t.power.recommendedPsuWattage}W پیشنهادی</div><div className={`text-xs ${t.power.status==='GREEN'?'text-emerald-600':t.power.status==='YELLOW'?'text-amber-600':'text-red-600'}`}>{t.power.message.slice(0,50)}</div></div>
+        </div>
+        <div className="mt-3 rounded-xl bg-white border p-3 text-sm leading-6 text-slate-700">
+          {isGaming && `برای گیمینگ: Cyberpunk ${t.fps.cyberpunk_1440p_rt} FPS، Warzone ${t.fps.warzone_1080p_high} FPS — ${t.fps.cyberpunk_1440p_rt >= 60 ? 'روان' : t.fps.cyberpunk_1440p_rt >= 30 ? 'قابل بازی' : 'نیاز به ارتقا'}. رندر امتیاز ${t.renderScore}/۱۰.`}
+          {isOffice && `برای اداری: بدون GPU مجزا، مصرف پایین ${t.power.totalTdp}W، صدای کم ${t.acoustic.estimatedDB}dB — برای آفیس و وب عالیه. امتیاز پایداری ${t.futureProofing.score}/۱۰.`}
+          {isCreative && `برای رندر/ادیت: امتیاز رندر ${t.renderScore}/۱۰ — ${t.renderScore>=8?'رندر 4K روان':'رندر Full-HD مناسب'}. دما CPU ${t.thermal.estimatedCpuLoadTempC}°C.`}
+          {isServer && `برای سرور ۲۴ ساعته: مصرف ${t.power.totalTdp}W، پاور ${t.power.currentPsuWattage}W، دما ${t.thermal.estimatedCpuLoadTempC}°C — پایداری عالی.`}
+          {isProgramming && `برای برنامه‌نویسی: کامپایل سریع، امتیاز ${t.renderScore}/۱۰، آینده‌نگری ${t.futureProofing.score}/۱۰.`}
+          {!isGaming && !isOffice && !isCreative && !isServer && !isProgramming && `تحلیل کامل: توان ${t.power.totalTdp}W، گلوگاه ${t.bottleneck.resolution1440p.percentage}%`}
+        </div>
+      </div>
+
       <div className="asm-tele__grid">
         {/* ═════ کارت ۱: گیج توان ═════ */}
         <div className="asm-tele__card">

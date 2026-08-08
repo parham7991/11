@@ -500,7 +500,7 @@ export default function AssembleOnlineWizard() {
             })}
           </div>
 
-          {useCase === 'custom' ? (
+          {useCase === 'custom' && (
             <div
               className="asm__custom-box"
               style={{
@@ -537,20 +537,6 @@ export default function AssembleOnlineWizard() {
                 </span>
                 <span>{customDesc.length}/300</span>
               </div>
-            </div>
-          ) : (
-            <div className="asm__custom-box">
-              <label className="asm__custom-label">
-                <SparkIcon /> توضیح اختیاری (به موتور می‌رود):
-              </label>
-              <textarea
-                className="asm__note"
-                value={customDesc}
-                onChange={(e) => setCustomDesc(e.target.value)}
-                placeholder="مثال: گیمینگ 1440p + استریم همزمان، یا رندرینگ بلندر با بودجه متوسط"
-                maxLength={300}
-                rows={3}
-              />
             </div>
           )}
 

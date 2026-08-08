@@ -11,22 +11,27 @@ const ASSEMBLY_ENGINE_URL = process.env.ASSEMBLY_ENGINE_URL || 'http://147.45.43
  */
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const useCase = (req.nextUrl.searchParams.get('useCase') || 'gaming').trim() || 'gaming';
+  const customDesc = (
+    req.nextUrl.searchParams.get('customDesc') ||
+    req.nextUrl.searchParams.get('desc') ||
+    req.nextUrl.searchParams.get('q') ||
+    ''
+  ).trim();
 
   try {
-    const res = await fetch(
-      `${ASSEMBLY_ENGINE_URL}/budget-range?useCase=${encodeURIComponent(useCase)}`,
-      {
-        headers: { Accept: 'application/json' },
-        signal: AbortSignal.timeout(8000),
-        cache: 'no-store',
-      }
-    );
+    const qs = new URLSearchParams({ useCase });
+    if (customDesc) qs.set('customDesc', customDesc);
+    const res = await fetch(`${ASSEMBLY_ENGINE_URL}/budget-range?${qs.toString()}`, {
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(8000),
+      cache: 'no-store',
+    });
 
     if (!res.ok) throw new Error(`engine ${res.status}`);
 
     const data = await res.json();
 
-    // Engine returns: { ok, budget: {min,recommended,max}, presets, min,max,recommended }
+    // Engine returns LIVE per-useCase: { min,max,recommended,presets,perCategory,label,source:live }
     const min = Number(data.min ?? data.budget?.min ?? 15_000_000);
     const max = Number(data.max ?? data.budget?.max ?? 200_000_000);
     const recommended = Number(data.recommended ?? data.budget?.recommended ?? 50_000_000);
@@ -40,7 +45,11 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         presets: data.presets || [],
         perCategory: data.perCategory || [],
         label: data.label || useCase,
-        source: 'engine',
+        source: data.source || 'engine',
+        detectedUseCase: data.detectedUseCase || data.useCase || useCase,
+        note: data.note,
+        live: data.live,
+        profileKey: data.profileKey,
       },
       {
         headers: { 'Cache-Control': 'private, max-age=120, stale-while-revalidate=300' },

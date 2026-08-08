@@ -192,12 +192,14 @@ export default function AssembleOnlineWizard() {
   const [invoiceOpen, setInvoiceOpen] = useState(false);
   const [bought, setBought] = useState(false);
 
-  // Fetch budget range when step 2 enters or useCase changes
+  // Fetch budget range when step 2 enters or useCase/customDesc changes — per-useCase LIVE
   useEffect(() => {
     if (step !== 2) return;
     let cancelled = false;
     setRangeLoading(true);
-    fetch(`/api/assemble/budget-range?useCase=${encodeURIComponent(useCase)}`, {
+    const qs = new URLSearchParams({ useCase });
+    if (customDesc.trim()) qs.set('customDesc', customDesc.trim());
+    fetch(`/api/assemble/budget-range?${qs.toString()}`, {
       cache: 'no-store',
     })
       .then((r) => r.json())
@@ -225,7 +227,7 @@ export default function AssembleOnlineWizard() {
     return () => {
       cancelled = true;
     };
-  }, [step, useCase]);
+  }, [step, useCase, customDesc]);
 
   // Loading steps animation
   useEffect(() => {

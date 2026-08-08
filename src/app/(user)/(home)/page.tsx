@@ -2,7 +2,8 @@ import HomePage from '@/components/home/HomePage';
 import { fetchHome } from './services/fetch-home';
 import { jsonLdHome, generate_metadata_home } from '@/seo/home';
 
-export const revalidate = 1800; // ISR: har 30 daghighe yek bar re-render mishavad
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const generateMetadata = generate_metadata_home;
 

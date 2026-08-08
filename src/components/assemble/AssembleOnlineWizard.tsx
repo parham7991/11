@@ -599,6 +599,8 @@ export default function AssembleOnlineWizard() {
                   })}
                 </div>
 
+                <TelemetryDashboard parts={parts as any} onAutoBalance={() => build()} useCase={result?.detectedUseCase || useCase} useCaseLabel={result?.useCaseLabel} />
+
                 {/* Sticky total bar */}
                 {summary && (
                   <div className="sticky bottom-4 z-20 mt-6 flex flex-col gap-3 rounded-2xl border border-[#E2E8F0] bg-white/90 backdrop-blur-xl p-4 shadow-[0_16px_40px_rgba(15,23,42,.12)] md:flex-row md:items-center md:justify-between">

@@ -462,16 +462,17 @@ export default function AssembleOnlineWizard() {
                     <Wallet className="h-6 w-6 text-[#2563EB]" /> {budget.toLocaleString('fa-IR')} <span className="text-sm font-medium text-[#64748B]">تومان</span>
                   </div>
                 </div>
-                <div className="relative mt-6">
+                <div dir="rtl" className="relative mt-6">
                   <input
                     type="range"
+                    dir="rtl"
                     min={range.min}
                     max={range.max}
                     step={Math.max(1_000_000, Math.round((range.max - range.min) / 100))}
                     value={budget}
                     onChange={(e) => setBudget(Number(e.target.value))}
-                    className="h-2 w-full appearance-none rounded-full bg-[#E2E8F0] accent-[#2563EB] [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-[0_4px_16px_rgba(37,99,235,.3)] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#2563EB]"
-                    style={{ background: `linear-gradient(to right, #2563EB 0%, #7C3AED ${(budget - range.min) / (range.max - range.min) * 100}%, #E2E8F0 ${(budget - range.min) / (range.max - range.min) * 100}%, #E2E8F0 100%)` }}
+                    className="h-2 w-full appearance-none rounded-full accent-[#2563EB] [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-[0_4px_16px_rgba(37,99,235,.3)] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#2563EB]"
+                    style={{ background: `linear-gradient(to left, #2563EB 0%, #7C3AED ${(budget - range.min) / (range.max - range.min) * 100}%, #E2E8F0 ${(budget - range.min) / (range.max - range.min) * 100}%, #E2E8F0 100%)` }}
                   />
                   <div className="mt-2 flex justify-between text-xs text-[#64748B]">
                     <span>{shortToman(range.min)}</span>
@@ -548,16 +549,6 @@ export default function AssembleOnlineWizard() {
                   <span className="rounded-full bg-[#F1F5F9] px-3 py-1 text-xs text-[#64748B]">{summary?.itemCount} قطعه • {toman(summary?.totalAfter || 0)}</span>
                 </div>
 
-                <TelemetryDashboard parts={parts as any} onAutoBalance={() => build()} useCase={result?.detectedUseCase || useCase} useCaseLabel={result?.useCaseLabel} />
-
-                {/* AI card */}
-                {(result.analysis || result.ai?.finalAnalysisUsed) && (
-                  <div className="mt-4 rounded-2xl border border-[#E9D5FF] bg-gradient-to-br from-[#FAF5FF] to-white p-4">
-                    <div className="flex items-center gap-2 text-sm font-black text-[#6D28D9]"><BrainCircuit className="h-5 w-5" /> تحلیل موتور <span className="rounded-full bg-[#EDE9FE] px-2 py-0.5 text-xs">{result.ai?.finalAnalysisModel || 'AI'}</span></div>
-                    <div className="mt-2 space-y-1 text-sm leading-7 text-[#334155]">{(result.analysis || '').split('\n').slice(0,3).map((l,i)=><p key={i}>{l}</p>)}</div>
-                  </div>
-                )}
-
                 {/* TABS */}
                 <div className="mt-6">
                   <div className="flex gap-1 overflow-x-auto pb-2 scrollbar-thin">
@@ -629,6 +620,16 @@ export default function AssembleOnlineWizard() {
                     </motion.div>
                   )}
                 </div>
+
+                <TelemetryDashboard parts={parts as any} onAutoBalance={() => build()} useCase={result?.detectedUseCase || useCase} useCaseLabel={result?.useCaseLabel} />
+
+                {/* AI card */}
+                {(result.analysis || result.ai?.finalAnalysisUsed) && (
+                  <div className="mt-4 rounded-2xl border border-[#E9D5FF] bg-gradient-to-br from-[#FAF5FF] to-white p-4">
+                    <div className="flex items-center gap-2 text-sm font-black text-[#6D28D9]"><BrainCircuit className="h-5 w-5" /> تحلیل موتور <span className="rounded-full bg-[#EDE9FE] px-2 py-0.5 text-xs">{result.ai?.finalAnalysisModel || 'AI'}</span></div>
+                    <div className="mt-2 space-y-1 text-sm leading-7 text-[#334155]">{(result.analysis || '').split('\n').slice(0,3).map((l,i)=><p key={i}>{l}</p>)}</div>
+                  </div>
+                )}
 
                 {/* Sticky total bar */}
                 {summary && (

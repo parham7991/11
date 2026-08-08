@@ -1,25 +1,32 @@
 import { generateToken } from '@/lib/fun';
 import { BASEURL, BASEURL_SITE } from '@/lib/variable';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const PRODUCTS_PER_SITEMAP = 1000;
 async function fetchCount(url: string): Promise<number> {
-  const jwtKey = await generateToken();
-  const response = await fetch(`${BASEURL}${url}`, {
-    next: {
-      revalidate: 43200,
-    },
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: `Bearer ${jwtKey}`,
-    },
-  });
-  const data = await response.json();
-  console.log(data, 'data');
-  return data?.total ?? 0;
+  try {
+    const jwtKey = await generateToken();
+    const response = await fetch(`${BASEURL}${url}`, {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(6000),
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `Bearer ${jwtKey}`,
+      },
+    });
+    if (!response.ok) return 0;
+    const data = await response.json().catch(() => null);
+    return data?.total ?? data?.response?.total ?? 0;
+  } catch {
+    return 0;
+  }
 }
 
 export async function GET(): Promise<Response> {
+  // fallback 0 if API timeout — sitemap must never crash build
   const [totalProducts, totalCategories, totalPosts] = await Promise.all([
     fetchCount(`/catalog/product/sitemap?page=1&per_page=1`),
     fetchCount(`/catalog/categories/sitemap?page=1&per_page=1`),

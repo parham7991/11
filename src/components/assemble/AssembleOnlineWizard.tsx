@@ -549,87 +549,55 @@ export default function AssembleOnlineWizard() {
                   <span className="rounded-full bg-[#F1F5F9] px-3 py-1 text-xs text-[#64748B]">{summary?.itemCount} قطعه • {toman(summary?.totalAfter || 0)}</span>
                 </div>
 
-                {/* TABS */}
-                <div className="mt-6">
-                  <div className="flex gap-1 overflow-x-auto pb-2 scrollbar-thin">
-                    {parts.map((p) => {
-                      const TabIcon = (CATEGORY_TABS[p.category]?.icon || Cpu) as any;
-                      const active = activeTab === p.category;
-                      return (
-                        <button
-                          key={p.category}
-                          onClick={() => setActiveTab(p.category)}
-                          className={`relative flex items-center gap-2 whitespace-nowrap rounded-full border px-4 py-2.5 text-sm font-bold transition-all ${active ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-[0_8px_20px_rgba(37,99,235,.25)]' : 'bg-white text-[#475569] border-[#E2E8F0] hover:border-[#BFDBFE]'}`}
-                        >
-                          <TabIcon className="h-4 w-4" /> {CATEGORY_TABS[p.category]?.label || p.categoryLabel} <span className="text-xs opacity-70">{shortToman(p.finalPrice)}</span>
-                          {!blockedIds.has(String(p.id)) && !unavailableIds.has(String(p.id)) && <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-[#10B981] ring-2 ring-white" />}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {activePart && (
-                    <motion.div
-                      key={activePart.id}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                      className="mt-4 rounded-[20px] border border-[#E2E8F0] bg-white p-4 shadow-[0_8px_24px_rgba(15,23,42,0.06)]"
-                    >
-                      <div className="grid gap-4 md:grid-cols-[160px_1fr_auto] md:items-center">
-                        <div className="flex justify-center">
-                          {activePart.image ? (
-                            <img src={activePart.image} alt={activePart.name} className="h-36 w-36 object-contain rounded-xl border bg-[#F8FAFC] p-2" />
-                          ) : (
-                            <span className="flex h-36 w-36 items-center justify-center rounded-xl bg-[#F1F5F9] text-[#94A3B8]"><Cpu className="h-10 w-10" /></span>
-                          )}
+                {/* ===== LIST PARTS VERTICAL — clean rows ===== */}
+                <div className="asm-list mt-6 flex flex-col gap-3">
+                  {parts.map((p, idx) => {
+                    const blocked = blockedIds.has(String(p.id));
+                    const unavailable = unavailableIds.has(String(p.id));
+                    const qty = Math.max(1, Number((p as any).quantity || 1));
+                    return (
+                      <motion.div
+                        key={`${p.category}-${p.id}`}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.05, duration: 0.3, ease: [0.22,1,0.36,1] }}
+                        className="asm-row group flex flex-col gap-3 rounded-2xl border bg-card p-3 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all md:grid md:grid-cols-[96px_1fr_auto] md:items-center"
+                      >
+                        <div className="asm-row__img flex h-24 w-24 items-center justify-center rounded-xl bg-muted mx-auto md:mx-0 overflow-hidden">
+                          {p.image ? <img src={p.image} alt={p.name} className="h-full w-full object-contain p-2" /> : <Cpu className="h-8 w-8 text-muted-foreground" />}
                         </div>
-                        <div>
-                          <div className="flex items-center gap-2 text-xs text-[#2563EB] font-bold"><BadgeCheck className="h-4 w-4 text-[#10B981]" /> موجود <span className="text-[#64748B]">•</span> {activePart.brand || ''}</div>
-                          <h3 className="mt-1 text-[15px] font-bold leading-6 text-[#0F172A]">{activePart.name}</h3>
-                          <p className="mt-1 text-xs text-[#64748B]">{activePart.specs ? Object.entries(activePart.specs).slice(0,3).map(([k,v])=>`${k}:${v}`).join(' • ') : ''}</p>
-                          <div className="mt-3 flex items-baseline gap-2">
-                            {activePart.discountPercent>0 && <span className="text-xs line-through text-[#94A3B8]">{toman(activePart.price)}</span>}
-                            <span className="text-lg font-black text-[#10B981]">{toman(activePart.finalPrice)}</span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
+                              {(() => { const Icon = (CATEGORY_TABS[p.category]?.icon || Cpu) as any; return <Icon className="h-3.5 w-3.5" />; })()} {CATEGORY_TABS[p.category]?.label || p.categoryLabel}
+                            </span>
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-bold text-emerald-600"><BadgeCheck className="h-3.5 w-3.5" /> موجود</span>
+                            {qty > 1 && <span className="rounded-full bg-muted px-2 py-0.5 text-xs">× {qty.toLocaleString('fa-IR')}</span>}
                           </div>
-                          {/* quantity for ram/storage */}
-                          {(activePart.category==='ram' || activePart.category==='storage') && (
-                            <div className="mt-3 flex items-center gap-2">
-                              <button onClick={()=>updateQuantity(String(activePart.id), -1)} disabled={Number(activePart.quantity||1)<=1} className="flex h-8 w-8 items-center justify-center rounded-full border bg-white disabled:opacity-40">−</button>
-                              <span className="min-w-12 rounded-full border bg-white px-3 py-1 text-center text-sm font-bold">× {Number(activePart.quantity||1).toLocaleString('fa-IR')}</span>
-                              <button onClick={()=>updateQuantity(String(activePart.id), 1)} className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2563EB] text-white">+</button>
-                              <span className="text-xs text-[#64748B]">حداقل ۱</span>
+                          <div className="mt-1 line-clamp-2 text-sm font-bold text-foreground">{p.name}</div>
+                          <div className="text-xs text-muted-foreground" style={{ fontFamily: 'Inter, sans-serif' }}>{p.name}</div>
+                          {(p.category==='ram' || p.category==='storage') && (
+                            <div className="mt-2 flex items-center gap-1.5">
+                              <button onClick={()=>updateQuantity(String(p.id), -1)} disabled={qty<=1} className="flex h-7 w-7 items-center justify-center rounded-full border bg-card text-foreground disabled:opacity-40">−</button>
+                              <span className="min-w-10 rounded-full border bg-card px-2 py-1 text-center text-xs font-bold">× {qty.toLocaleString('fa-IR')}</span>
+                              <button onClick={()=>updateQuantity(String(p.id), 1)} className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground">+</button>
                             </div>
                           )}
                         </div>
-                        <div className="flex flex-col gap-2">
-                          <a href={activePart.url} target="_blank" className="inline-flex items-center justify-center gap-2 rounded-xl border bg-white px-4 py-2.5 text-sm font-bold hover:border-[#2563EB] hover:text-[#2563EB]"><Eye className="h-4 w-4" /> مشاهده محصول</a>
-                          <button onClick={buyAll} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2563EB] px-4 py-2.5 text-sm font-bold text-white shadow hover:bg-[#1D4ED8]"><ShoppingCart className="h-4 w-4" /> افزودن</button>
-                          {activePart.alternatives?.length>0 && <button onClick={()=>toggleExpand(String(activePart.id))} className="text-xs text-[#2563EB]">{expanded.has(String(activePart.id))?'بستن':'جایگزین‌ها'}</button>}
+                        <div className="asm-row__price flex flex-col items-stretch gap-2 md:items-end">
+                          <div className="flex items-baseline gap-2">
+                            {p.discountPercent>0 && <span className="text-xs line-through text-muted-foreground">{toman(p.price * qty)}</span>}
+                            <span className="text-base font-black text-emerald-600">{toman(p.finalPrice * qty)}</span>
+                          </div>
+                          <div className="flex gap-1.5">
+                            <a href={p.url} target="_blank" className="inline-flex items-center gap-1.5 rounded-xl border bg-card px-3 py-2 text-xs font-bold hover:border-primary hover:text-primary"><Eye className="h-4 w-4" /> مشاهده</a>
+                            <button onClick={buyAll} className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:opacity-90"><ShoppingCart className="h-4 w-4" /> افزودن</button>
+                          </div>
                         </div>
-                      </div>
-                      {expanded.has(String(activePart.id)) && activePart.alternatives?.length>0 && (
-                        <div className="mt-4 grid gap-2 max-h-64 overflow-auto pr-1">
-                          {activePart.alternatives.slice(0,6).map((alt:any)=>(
-                            <div key={alt.id} className="flex items-center justify-between rounded-xl border bg-[#F8FAFC] p-3">
-                              <span className="text-sm font-medium truncate">{alt.name}</span><span className="text-sm font-bold text-[#10B981]">{toman(alt.finalPrice)}</span><button onClick={()=>selectAlternative(String(activePart.id), alt)} className="rounded-full bg-[#2563EB] px-3 py-1 text-xs font-bold text-white">انتخاب</button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </motion.div>
-                  )}
+                      </motion.div>
+                    );
+                  })}
                 </div>
-
-                <TelemetryDashboard parts={parts as any} onAutoBalance={() => build()} useCase={result?.detectedUseCase || useCase} useCaseLabel={result?.useCaseLabel} />
-
-                {/* AI card */}
-                {(result.analysis || result.ai?.finalAnalysisUsed) && (
-                  <div className="mt-4 rounded-2xl border border-[#E9D5FF] bg-gradient-to-br from-[#FAF5FF] to-white p-4">
-                    <div className="flex items-center gap-2 text-sm font-black text-[#6D28D9]"><BrainCircuit className="h-5 w-5" /> تحلیل موتور <span className="rounded-full bg-[#EDE9FE] px-2 py-0.5 text-xs">{result.ai?.finalAnalysisModel || 'AI'}</span></div>
-                    <div className="mt-2 space-y-1 text-sm leading-7 text-[#334155]">{(result.analysis || '').split('\n').slice(0,3).map((l,i)=><p key={i}>{l}</p>)}</div>
-                  </div>
-                )}
 
                 {/* Sticky total bar */}
                 {summary && (
